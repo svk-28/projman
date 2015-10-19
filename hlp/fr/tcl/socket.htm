@@ -1,0 +1,62 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>socket&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">socket - Ouvre une connection réseau TCP 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><br>
+<b>socket </b>?<i>options</i>? <i>host port</i> <br>
+<b>socket</b> <b>-server </b><i>command</i> ?<i>options</i>? <i>port</i>&nbsp; <br>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande ouvre une socket réseau et retourne un identificateur de canal qui peut être employé dans les appels futurs des commandes comme <A HREF="151.htm"><b>read</b></A>, <A HREF="148.htm"><b>puts</b></A> et <A HREF="114.htm"><b>flush</b></A>. A présent seul le protocole réseau TCP est supporté; les versions futures pourront inclure un support pour des protocoles supplémentaires. La commande <b>socket</b> peut être employée pour ouvrir soit le coté client ou serveur d'une connection, dépendant de si le switch <b>-server</b> est spécifié <br>
+</div><br>
+<div><b>SOCKETS CLIENTES </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si l'option <b>-server</b> n'est pas spécifiée, alors la partie client d'un connection est ouverte et la commande retourne un identificateur de canal qui peut être utilisé pour la lecture et l'écriture. <i>Port</i> et <i>host</i> spécifient un port pour la connection;&nbsp; il doit y avoir un serveur qui accepte des connections sur ce port <i>Port</i> est un numéro de port entier et <i>host</i> est soit un nom qualifié tel que <b>www.sunlabs.com</b> ou une adresse numérique IP telle que <b>127.0.0.1</b>. Utilisez <i>localhost</i> pour vous référer à la machine sur laquelle la commande a été appelée. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les options suivantes peuvent être aussi présentes avant <i>host</i> pour spécifier des information supplémentaires concernant la connection: 
+<DL>
+  <DT><b>-myaddr</b><i> addr</i>
+</DT><DD><i>Addr</i> donne le nom qualifié ou l'adresse IP numérique de l'interface réseau coté client à utiliser pour la connection. Cette option peut être utile si la machine cliente a plusieurs interfaces réseau Si l'option est omise alors l'interface coté client sera choisie par le logiciel système. 
+</DD>
+  <DT><br><b>-myport</b><i> port</i></DT><DD><i>Port</i> spécifie un numéro de port entier à utiliser pour le coté client de la connection. Si cette option est omise, un numéro de port client aléatoire sera choisi par le logiciel système. 
+</DD>
+  <DT><br><b>-async</b>
+</DT><DD>L'option <b>-async</b> induit une connection asynchrone pour&nbsp; la socket cliente. Ceci signifie que la socket sera crée immédiatement mais ne peut pas encore être connectée au serveur, quand l'appel de <b>socket</b> retourne. Quand une <A HREF="118.htm"><b>gets</b></A> ou <A HREF="114.htm"><b>flush</b></A> est fait sur le socket avant que la tentative de connection ait réussi ou échoué, si la socket est en mode bloquant, l'opération attendra jusqu'a ce que la connection soit complétée ou échoue. Si la socket est en mode non bloquant et qu'une <A HREF="118.htm"><b>gets</b></A> ou <A HREF="114.htm"><b>flush</b></A> est fait sur la socket avant que la tentative de connection ait réussi ou échoué, l'opération retourne immédiatement et <A HREF="108.htm"><b>fblocked</b></A> sur le socket retourne 1.
+</DD>
+</DL>
+</div><br>
+<div><b>SOCKETS SERVEUR </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si l'option <b>-server</b> est spécifiée alors la nouvelle socket sera un serveur pour le port indiqué par <i>port</i>. Tcl acceptera automatiquement les connections sur ce port. Pour chaque connection Tcl créera un nouveau canal qui pourra être employé pour communiquer avec le client Tcl appelle alors <i>command</i> avec trois arguments supplémentaire: le nom du nouveau canal, l'adresse, en notation réseau, de la machine cliente, et le numéro de port du client. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">L'option supplémentaire suivante peut aussi être spécifiée avant <i>host</i>: 
+<DL>
+  <DT><b>-myaddr</b><i> addr</i>
+</DT><DD><i>Addr</i> donne le nom qualifié ou l'adresse IP numérique de l'interface réseau du coté serveur à utiliser pour la connection. Cette option peut être utile si la machine serveur a plusieurs interfaces réseau. Si l'option est omise alors la socket serveur est attachée à l'adresse spéciale INADDR_ANY ainsi elle peut accepter les connections sur une interface quelconque. 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les canaux serveurs ne peuvent pas être utilisés pour les entrées ou sorties; leur seul usage est d'accepter de nouvelles connections client. Les canaux créés pour chaque connection client entrante sont ouvert pour l'entrée et la sortie. Fermer le canal serveur ferme le serveur ainsi aucune nouvelle connectios ne sera acceptée néanmoins, les connections existantes ne seront pas affectées. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les sockets serveurs dépendent du mécanisme d'évènement Tcl pour réagir aux nouvelles connections ouvertes. Si l'application n'entre pas dans la boucle d'évènement, par exemple en appelant la commande <A HREF="180.htm"><b>vwait</b></A> ou l'appel de fonction C <A HREF="29.htm"><b>Tcl_DoOneEvent</b></A>, alors aucunes connections ne seront acceptées <br>
+</div><br>
+<div><b>OPTIONS DE CONFIGURATION </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <A HREF="109.htm"><b>fconfigure</b></A> peut être utilisée pour consulter plusieurs options de configuration en lecture seule pour les canaux socket: 
+<DL>
+  <DT><b>-error</b></DT><DD>Cette option lit le statut d'erreur courant de la socket donnée. Ceci est utile quand vous avez besoin de determiner si une opération de connection asynchrone a réussi. S'il y a eu une erreur, le message d'erreur est renvoyé. Si il n'y avait pas d'erreur, une chaîne vide est renvoyée. 
+</DD>
+  <DT><br><b>-sockname</b>
+</DT><DD>Cette option retourne une liste de trois éléments, l'adresse, le nom de machine et le numéro de port pour la socket. Si le nom de machine ne peut pas calculé, le second élément est identique à l'adresse, le premier élément de la liste.
+</DD>
+  <DT><br><b>-peername</b>
+</DT><DD>Cette option n'est pas supportée par les sockets serveur. Pour les sockets clients acceptés, cette option retourne une liste de trois éléments; ce sont l'adresse, le nom de machine et le port auquels la socket peer est connectée ou liée. Si le nom de machine ne peut être calculé, le second élément de la liste est identique à l'adresse, son premier élément.</DD>
+</DL>
+</div>
+<br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="114.htm">flush</A>(n), <A HREF="142.htm">open</A>(n), <A HREF="151.htm">read</A>(n)</div><br>
+<div>Dernière révision: 8.0</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="161.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="163.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

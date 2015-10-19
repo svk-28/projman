@@ -1,0 +1,20 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>proc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">proc - Crée une fonction Tcl 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>proc </b><i>name args body</i> 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>proc</b> crée une nouvelle fonction Tcl nommée <i>name</i>, remplaçant toute commande ou fonction existante de ce nom. Chaque fois que la nouvelle commande est appelée, le contenu de <i>body</i> sera exécuté par l'interpréteur Tcl. Normalement, <i>name</i> est non qualifié (n'inclut pas les noms des namespaces contenant), et la nouvelle fonction est créée dans le namespace courant. Si <i>name</i> inclut un quelconque qualificateurs namespace, la fonction est créée dans le namespace spécifié . <i>Args</i> spécifie les arguments formels à la fonction. Ils consiste d'une liste, qui peur être vide, dont chaque éléments spécifie un argument. Chaque spécificateur d'argument est aussi une liste avec soit un ou deux champs. S'il y a seul champ dans le spécificateur alors c'est le nom de l'argument; s'il y a deux champs, alors le premier est le nom de l'argument et le second est sa valeur par défaut. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Quand <i>name</i> est appelée une variable locale sera créée pour chacun des arguments formel à la fonction; leur valeur sera la valeur de l'argument correspondant dans la commande appelée ou la valeur par défaut de l'argument. Les arguments avec une valeur par défaut n'ont pas besoin être spécifiés dans un appel de fonction. Néanmoins, il doit y avoir assez d'arguments pour tous les arguments qui n'ont pas de valeur par défaut, et il ne doit pas y avoir d'arguments supplémentaires. Il y a un cas spécial pour permettre les fonctions avec un nombre variable d'arguments. Si le dernier argument a le nom <b>args</b>, alors un appel à la fonction peut contenir plus d'arguments que la fonction en a. Dans ce cas, tous les arguments à partir de celui qui serait assigné à <b>args</b> sont combinés en une liste (comme si la commande <A HREF="132.htm"><b>list</b></A> avait été utilisée); ces valeurs combinées sont assignées à la variable locale <b>args</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Quand <i>body</i> est exécuté,les noms de variables normalement se refèrent aux variables locales, qui sont créées automatiquement quand référencées et effacées quand la fonction retourne. Une variable locale est automatiquement créée pour chacun de ses arguments de fonction. Les variables globales peuvent seulement être accédée en appelant la commande <A HREF="120.htm"><b>global</b></A> ou la commande<A HREF="178.htm"><b> upvar</b></A>. Les variables namespace peuvent seulement être accédées en appelant la commande <A HREF="179.htm"><b>variable</b></A> ou la commande<A HREF="178.htm"><b> upvar</b></A>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>proc</b> retourne une chaîne vide. Quand une fonction est appelée, la valeur de retour de la fonction est la valeur spécifiée dans une instruction<A HREF="157.htm"><b> return</b></A>. Si la fonction n'exécute pas un <A><b>return</b></A> explicite , alors sa valeur de retour est la valeur de la dernière commande exécutée dans le corps de la fonction. Si une erreur se produit pendant l'exécution du corps la fonction, alors la fonction renverra cette même erreur. </div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="146.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="148.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

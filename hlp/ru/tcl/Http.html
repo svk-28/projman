@@ -1,0 +1,450 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Http</title>
+  </head>
+
+  <body>
+    <h1>Http</h1>
+
+    <p>Клиентская часть реализации протокола HTTP/1.0.</p>
+
+    <h2><a name="СИНТАКСИС"></a>СИНТАКСИС</h2>
+
+    <pre>
+      <strong>package</strong> <strong>require</strong> <em>http</em> ?<em>2.0</em>?
+      <a href="#http::config"><strong>::http::config</strong></a> ?<em>options</em>?
+      <a href="#http::geturl_url"><strong>::http::geturl</strong> <strong>url</strong></a> ?<em>options</em>?
+      <a href="#http::formatQuery"><strong>::http::formatQuery</strong></a> <em>list</em>
+      <a href="#http::reset"><strong>::http::reset</strong></a> <em>token</em> ?<em>why</em>?
+      <a href="#http::wait"><strong>::http::wait</strong></a> <em>token</em>
+      <a href="#http::status"><strong>::http::status</strong></a> <em>token</em>
+      <a href="#http::size"><strong>::http::size</strong></a> <em>token</em>
+      <a href="#http::code"><strong>::http::code</strong></a> <em>token</em>
+      <a href="#http::data"><strong>::http::data</strong></a> <em>token</em>
+    </pre>
+
+    <h2><a name="ОПИСАНИЕ"></a>ОПИСАНИЕ</h2>
+
+    <p>Пакет <strong>http</strong> обеспечивает клиентскую часть протокола
+      HTTP/1.0 и реализует операции GET, POST и HEAD. Он позволяет
+      конфигурировать сервер-представитель (proxy) для выхода через
+      межсетевые экраны. Пакет совместим с политикой безопасности
+      Safesock.</p>
+
+    <p>Процедура <a href="#http::geturl_url"><strong>::http::geturl</strong></a>
+      выполняет HTTP транзакцию. В зависимости от заданной опции это
+      может быть GET, POST или HEAD транзакция.  Величина,
+      возвращаемая процедурой <a href="#http::geturl_url">
+      <strong>::http::geturl</strong></a>, является признаком (token) выполнения
+      транзакции. Кроме того, ее значение совпадает с именем массива в
+      пространстве имен <strong>::http</strong>, который содержит информацию о
+      выполнении транзакции. Элементы массива описаны ниже, см. &quot;<a
+      href="#МАССИВ_СОСТОЯНИЯ_ТРАНЗАКЦИИ">Массив
+      состояния транзакции</a>&quot;.</p>
+
+    <p>Если процедура вызвана с опцией <strong>-command</strong>, операция
+      выполняется в фоновом режиме. Процедура <a href=
+      "#http::geturl_url"><strong>::http::geturl</strong></a>
+      завершается сразу после формирования HTTP запроса, а результаты
+      запроса обрабатываются после их получения. Для успешной работы в
+      таком режиме необходимо, чтобы был запущен обработчик
+      событий. Это всегда так для Tk-приложений. В чисто Tcl -
+      приложениях можно использовать процедуру <a
+	href="#http::wait"><strong>::http::wait</strong></a> для запуска
+      обработчика событий.</p>
+
+    <h2><a name="КОМАНДЫ"></a>КОМАНДЫ</h2>
+
+    <dl>
+      <dt><a name="http::config"></a><strong>::http::config</strong>
+	?<em>options?</em></dt>
+
+      <dd><p>Команда <strong>::http::config</strong> используется, чтобы
+	  установить или запросить имя proxy-сервера, порта и
+	  пользовательского приложения (User-Agent), используемые в
+	  HTTP запросах. Если никакие опции не заданы, возвращается
+	  текущая конфигурация.  Если задан единственный аргумент,
+	  тогда, он должен быть именем одной из опций, описанных
+	  ниже. В этом случае возвращается текущая величина указанной
+	  опции. В противном случае аргументы состоят из пар: имя
+	  опции - присваиваемое значение.</p>
+
+	<dl>
+	  <dt><strong>-accept</strong> <em>mimetypes</em></dt>
+
+	  <dd>Определяет типы документов, которые могут быть приняты
+	    по запросу. Значение по умолчанию "*/*" означает, что
+	    могут быть приняты документы любого типа. Чтобы ограничить
+	    список допустимых документов, можно использовать список
+	    (через запятую) шаблонов документов следующего вида:
+	    "image/gif, image/jpeg, text/*".</dd>
+
+	  <dt><strong>-proxyhost</strong> <em>hostname</em></dt>
+
+	  <dd>Имя proxy-сервера, через который осуществляется связь.
+	    Если не указано, связь осуществляется напрямую.</dd>
+
+	  <dt><strong>-proxyport</strong> <em>number</em></dt>
+
+	  <dd>Имя proxy-порта.</dd>
+
+	  <dt><strong>-proxyfilter</strong> <em>command</em></dt>
+
+	  <dd>Определяет команду, которая возвращает имена
+	    proxy-сервера и proxy-порта, необходимые для данной
+	    связи. В противном случае возвращает пустое значение. В
+	    качестве аргумента при вызове команды используется имя
+	    сервера (host).  Если команда не задана, используются
+	    значения опций <strong>-proxyhost</strong> и
+	    <strong>-proxyport</strong>.</dd>
+
+	  <dt><strong>-useragent</strong> <em>string</em></dt>
+
+	  <dd>Определяет имя пользовательского приложения
+	    (User-Agent).  Значение по умолчанию &quot;Tcl http client
+	    package 2.0.&quot;</dd>
+	</dl>
+      </dd>
+
+      <dt><a name="http::geturl_url"></a><strong>::http::geturl url</strong>
+	?<em>options</em>?</dt>
+    
+      <dd><p>Команда <strong>::http::geturl</strong> - основная команда пакета.
+	  Если задана опция <strong>-query</strong>, выполняется операция POST,
+	  если задана опция <strong>-validate</strong>, выполняется операция
+	  HEAD.  В противном случае выполняется операция GET. Команда
+	  возвращает признак - имя массива, который может быть
+	  использован для получения дополнительной информации о
+	  состоянии транзакции.  Подробности см. <a
+	  href="#МАССИВ_СОСТОЯНИЯ_ТРАНЗАКЦИИ">&quot;Массив
+	  состояния транзакции&quot;</a>. Команда завершается после
+	  завершения соответствующей операции, если она вызвана без
+	  опции <strong>-command</strong>. В противном случае команда
+	  <strong>::http::geturl</strong> завершается немедленно, а по
+	  завершении операции вызывается соответствующая команда для
+	  обработки ее результатов. Команда <strong>::http::geturl</strong>
+	  может использоваться с различными опциями:</p>
+
+	<dl>
+	  <dt><strong>-blocksize</strong> <em>size</em></dt>
+
+	  <dd>Используется при чтении информации. Определяет
+	    максимальный размер блока (в байтах), который может быть
+	    прочитан за один раз. После каждого чтения блока
+	    вызывается команда, определенная с помощью опции
+	    <strong>-progress</strong>.
+	  </dd>
+
+	  <dt><strong>-channel</strong> <em>name</em></dt>
+
+	  <dd>Перенаправляет полученную информация в соответствующий
+	    канал вместо того, чтобы сохранять ее в переменной
+	    <em>state(body)</em>.
+	  </dd>
+      
+	  <dt><strong>-command</strong> <em>callback</em></dt>
+
+	  <dd><p>Обеспечивает вызов команды <em>callback</em> после
+	      завершения транзакции. При использовании этой опции
+	      команда <strong>::http::geturl</strong> завершается сразу. Команда
+	      <em>callback</em> вызывается с аргументом <em>token</em>,
+	      который содержит имя массива, описанного ниже, см. <a
+	      href="#МАССИВ_СОСТОЯНИЯ_ТРАНЗАКЦИИ">&quot;Массив
+	      состояния транзакции&quot;</a>. Ниже приведен шаблон
+	      типовой процедуры для использования в данной опции:</p>
+	    <pre>
+    proc httpCallback {token} { 
+                  upvar #0 $token state 
+                  # Далее возможна работа со state как с обычным Tcl-массивом
+	      }
+	    </pre>
+	  </dd>
+
+	  <dt><strong>-handler</strong> <em>callback</em></dt>
+
+	  <dd><p>Опция обеспечивает вызов команды <em>callback</em> как
+	      только HTTP данные получены. Команда получает два
+	      дополнительных аргумента: HTTP <em>socket</em> и имя
+	      массива <em>token</em>, возвращенное командой
+	      <strong>::http::geturl</strong> (см. <a href=
+		"#МАССИВ_СОСТОЯНИЯ_ТРАНЗАКЦИИ">&quot;Массив состояния
+	      транзакции&quot;</a>). Команда должна возвращать число
+	      байтов, прочитанных из <em>socket</em>. Ниже приведен
+	      шаблон подобной процедуры:</p>
+<pre>
+     proc httpHandlerCallback {socket token} {
+                   upvar #0 $token state
+                   # Получен доступ к socket и Tcl-массиву state 
+                   # ... 
+                   # (например: 
+                   # set data [read $socket 1000];
+                   # set nbytes [string length $data])
+                   # ...
+                   return nbytes
+               }
+</pre>
+	  </dd>
+
+	  <dt><strong>-headers</strong> <em>keyvaluelist</em></dt>
+
+	  <dd><p>Опция используется для включения в заголовок HTTP
+	      запроса дополнительных полей. Аргумент должен быть
+	      правильным списком с четным числом элементов, состоящим
+	      попеременно из ключей и их значений. Ключи используются
+	      как имена полей заголовка. Из значений удаляются символы
+	      перехода на новую строку, чтобы избежать формирования
+	      неправильного заголовка. Например, если
+	      <em>keyvaluelist</em> содержит список <em>{Pragma
+	      no-cache}</em> будет сформирован следующий заголовок
+	      запроса:</p>
+	    <pre>
+	      Pragma: no-cache
+	    </pre>
+	  </dd>
+
+	  <dt><strong>-progress</strong> <em>callback</em></dt>
+
+	  <dd><p>Опция обеспечивает вызов команды <em>callback</em> для
+	      обработки очередной порции данных. Команда
+	      <em>callback</em> получает три аргумента: значение
+	      <em>token</em>, возвращенное командой
+	      <strong>::http::geturl</strong>, предполагаемый полный размер
+	      данных из мета-данных и текущее количество поступивших
+	      данных в байтах. Если предполагаемый полный размер
+	      неизвестен, вместо него подставляется 0. Ниже приведен
+	      шаблон для процедуры, вызываемой по опции
+	      <strong>-progress</strong>:</p>
+
+	    <pre>
+    proc httpProgress {token total current} { 
+                  upvar #0 $token state 
+	      }
+	    </pre>
+	  </dd>
+
+	  <dt><strong>-query</strong> <em>query</em></dt>
+
+	  <dd>Если указана данная опция, <strong>::http::geturl</strong>
+	    формирует запрос POST и передает его на сервер. Запрос
+	    должен быть сформатирован. Для выполнения форматирования
+	    может использоваться процедура <a href=
+	    "#http::formatQuery"><strong>::http::formatQuery</strong></a>.
+	  </dd>
+
+	  <dt><strong>-timeout</strong> <em>milliseconds</em></dt>
+
+	  <dd>Если значение <em>milliseconds</em> не равно нулю,
+	    устанавливается соответствующее время задержки. Задержка
+	    выполняется перед вызовом команды <a href=
+	    "#http::reset"><strong>::http::reset</strong></a> и команды,
+	    заданной опцией <strong>-command</strong>. Во время задержки команда
+	    <a href="#http::status"><strong>::http::status</strong></a>
+	    возвращает значение <em>timeout</em>.
+	  </dd>
+
+	  <dt><strong>-validate</strong> <em>boolean</em></dt>
+
+	  <dd>Если значение boolean не равно нулю,
+	    <strong>::http::geturl</strong> выполняет HTTP HEAD запрос. Такой
+	    запрос возвращает мета информацию об источнике данных
+	    (URL), а не его содержание. Мета информация содержится в
+	    переменной <em>state(meta)</em> (см. &quot;<a
+	    href="#МАССИВ_СОСТОЯНИЯ_ТРАНЗАКЦИИ">Массив
+	    состояния транзакции</a>&quot;).
+	  </dd>
+	</dl>
+      </dd>
+
+      <dt><a name="http::formatQuery"></a><strong>::http::formatQuery</strong>
+	<em>key</em> <em>value</em> ?<em>key</em> <em>value</em>...?</dt>
+
+      <dd>Команда выполняет перекодирование запроса. Команда
+	использует четное число аргументов, являющихся соответственно
+	ключами запроса и их значениями. Она преобразует ключи и
+	значения и возвращает одну строку, в которой расставлены
+	необходимые &quot;&amp;&quot; и &quot;=&quot;
+	разделители. Результат можно использовать в качестве значения
+  для опции <strong>-query</strong> команды <a href="#http::geturl_url">
+    <strong>::http::geturl</strong></a>.
+      </dd>
+
+      <dt><a name="http::reset"></a><strong>::http::reset</strong> <em>token</em>
+	?<em>why</em>?</dt>
+
+      <dd>Команда перезапускает HTTP транзакцию <em>token</em>, если
+	такая исполняется. Значение переменной <strong>state(status)</strong>
+	при этом переустанавливается в <em>why</em> (по умолчанию -
+	<strong>reset</strong>) и вызывается команда, заданная опцией
+	<strong>-command</strong>.
+      </dd>
+
+      <dt><a name="http::wait"></a><strong>::http::wait</strong>
+	<em>token</em></dt>
+    
+      <dd>Эта команда обеспечивает ожидание завершения транзакции. Она
+	работает только в надежных интерпретаторах, так как она
+	использует команду <a href="vwait.html"><strong>vwait</strong></a>.
+      </dd>
+
+      <dt><a name="http::data"></a><strong>::http::data</strong>
+      <em>token</em></dt>
+
+      <dd>Эта команда возвращает значение переменной
+	<strong>state(body)</strong>.
+      </dd>
+
+      <dt><a name="http::status"></a><strong>::http::status</strong>
+	<em>token</em></dt>
+
+      <dd>Эта команда возвращает значение переменной
+	<strong>state(status)</strong>.
+      </dd>
+
+      <dt><a name="http::code"></a><strong>::http::code</strong>
+	<em>token</em></dt>
+    
+      <dd>Эта команда возвращает значение переменной
+	<strong>state(http)</strong>.
+      </dd>
+
+      <dt><a name="http::size"></a><strong>::http::size</strong>
+	<em>token</em></dt>
+
+      <dd>Эта команда возвращает значение переменной
+	<strong>state(currentsize)</strong>.
+      </dd>
+    </dl>
+
+    <h2><a name="МАССИВ_СОСТОЯНИЯ_ТРАНЗАКЦИИ"></a>МАССИВ СОСТОЯНИЯ ТРАНЗАКЦИИ</h2>
+
+    <p>Команда <a href="#http::geturl_url">
+	<strong>::http::geturl</strong></a> возвращает <em>token</em> - имя
+	Tcl-массива, содержащего информацию о HTTP транзакции. Для
+	упрощения доступа к массиву можно использовать следующую
+	конструкцию:</p>
+    <pre>
+      upvar #0 $token state
+    </pre>
+
+    <p>Массив содержит следующие элементы:</p>
+    <dl>
+
+      <dt>body</dt>
+
+      <dd>Содержание документа, заданного с помощью URL. Пусто, если
+	указана опция <strong>-channel</strong>. Значение переменной можно
+	получить также с помощью команды <a href=
+	"#http::data"><strong>::http::data</strong></a>.
+      </dd>
+
+      <dt>сurrentsize</dt>
+
+      <dd>Текущий объем информации в байтах, полученный от
+	источника. Значение переменной можно получить с помощью
+	команды <a href="#http::size"><strong>::http::size</strong></a>.
+      </dd>
+
+      <dt>error</dt>
+
+      <dd>Если элемент определен, он содержит строку с сообщением об
+	ошибке, полученную при прерывании HTTP транзакции.</dd>
+
+      <dt>http</dt>
+
+      <dd>Элемент содержит значение HTTP статуса, полученное от
+	сервера. Значение переменной можно получить также с помощью
+	команды <a
+	href="#http::code"><strong>::http::code</strong></a>. Статус
+	представляет собой строку из трех цифр, значения которой
+	соответствуют HTTP стандарту. Код 200 соответствует успешному
+	выполнению транзакции. Коды, начинающиеся с '4' или '5';,
+	указывают на ошибку. Коды, начинающиеся с '3', соответствуют
+	ошибкам перенаправления. В этом случае мета данные
+	<strong>Location</strong> определяют новый источник информации, который
+	содержит запрошенные данные.</dd>
+
+      <dt>meta</dt>
+
+      <dd><p>Мета данные, описывающие содержание документа. Данный
+        элемент массива содержит список ключей и их значений. Чтобы
+        облегчить доступ к данным можно использовать следующую
+        конструкцию:</p>
+	<pre>
+	  array set meta $state(meta)
+	</pre>
+        <p>Некоторые ключи мета данных перечислены ниже, но в HTTP
+	  стандарте их перечислено больше, кроме того, сервер может
+	  добавлять собственные.</p>
+      </dd>
+
+      <dt>Content-Type</dt>
+
+      <dd>Тип документа. Например, <strong>text/html</strong>, <strong>image/gif</strong>,
+	<strong>application/postscript</strong> или <strong>application/x-tcl</strong>.</dd>
+
+      <dt>Content-Length</dt>
+
+      <dd>Объявленный размер документа. Реальный объем информации,
+      полученной с помощью команды <a href="#http::geturl_url">
+        <strong>::http::geturl</strong></a>, содержится в переменной
+	<strong>state(size)</strong>.
+      </dd>
+
+      <dt>Location</dt>
+
+      <dd>Измененный адрес документа.</dd>
+
+      <dt>status</dt>
+
+      <dd>Возможные значения <strong>ok</strong>,<strong>reset</strong> или
+	<strong>error</strong>. Во время транзакции значение пустое.</dd>
+
+      <dt>totalsize</dt>
+
+      <dd>Копия значения мета данных <strong>Content-Length</strong>.</dd>
+
+      <dt>type</dt>
+
+      <dd>Копия значения мета данных <strong>Content-Type</strong>.</dd>
+
+      <dt>url</dt>
+
+      <dd><p>Запрошенный адрес. Пример:</p>
+	<pre>
+	  # Копирование источника в файл и печать мета данных
+	  proc ::http::copy { url file {chunk 4096} } { 
+              set out [open $file w]
+              set token [geturl $url -channel $out -progress ::http::Progress \
+                  -blocksize $chunk]
+              close $out
+              # Следующая команда завершает строку, начатую
+              # процедурой http::Progress
+              puts stderr ""
+              upvar #0 $token state
+              set max 0
+              foreach {name value} $state(meta) {
+                  if {[string length $name] &gt; $max} { 
+                      set max [string length $name]
+	          }
+	          if {[regexp -nocase ^location$ $name]} { 
+                      # Обработка перенаправления адреса 
+                      puts stderr "Location:$value" 
+	              return [copy [string trim $value] $file $chunk] 
+	          }
+	      }
+	      incr max
+	      foreach {name value} $state(meta) { 
+	          puts [format "%-*s %s" $max $name: $value]
+	      }
+	      return $token 
+	  }
+	  proc ::http::Progress {args} { 
+	      puts -nonewline stderr . ;
+	      flush stderr
+	  }
+	</pre>
+      </dd>
+    </dl>
+  </body>
+</html>

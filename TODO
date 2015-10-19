@@ -1,0 +1,82 @@
+##########################################################
+#                Tcl/Tk project Manager
+#        Distributed under GNU Public License
+# Copyright (c) "CONERO lab", 2002, http://conero.lrn.ru
+# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru
+##########################################################
+
+1. GUI
+
+- one click tree procedure
+- added tcl-console    
+- added readline widget
+- into settings dialog
+-- on/off highligttning
+-- on/off
+- Add color scheme
+- Переключение закладок с помощью Alt+>  Alt+<
+- перед первой фукнцией возможность перейти в начало документа, а после последней на конец 
+документа
+- В статусбаре самый последнее поле (правое) где тест file saved уж 
+больно большое для таких кратких сообщений.
+- Edit Window split
+
+2. An package managers system independed files
+- rpm spec file
+- deb
+
+4. Working with release (distribute)
+- ftp received
+
+5. Working with files
+- open file dialog
+- include internal cvs support
+- search and replacement text into all projects files (ala grep)
+
+6. Working with projects
+-   - making project procedure
+-- compile error out
+- generate installiation script for projects (install.tcl)
+- synchronize version number into all projects file (if needed)
+- added template file with headers
+- documentation projects (LaTeX)
+- added Select license procedure (settings dialog)
+- change project dir (put into .proj file)
+
+
+8. Internal editor
+- files export
+-- ps
+-- html
+- alphabetics ordered procedure list
+- code/encode text files
+- Add Insert curent date procedure
+- search procedure with reguliar expretions
+- Comment/uncomment selected area
+- On/Off wrap function
+
+
+9. Locale (messages)
+- autodetect system locale
+
+10. Help system
+- patching html_lib
+- searchin in help
+- lock mouse and keyboard when help file opened
+
+11. Multiplatform featuring
+- Windows printing
+
+фолдинг
+поддержка frink (автоформаттер)
+нумерация строк
+
+
+
+
+########################################
+
+
+
+
+

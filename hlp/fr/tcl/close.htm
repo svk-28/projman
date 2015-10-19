@@ -1,0 +1,24 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>close&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">close - Ferme un canal ouvert. 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>close </b><i>channelId</i>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51.px;">Ferme le canal donné par <i>channelId</i>.&nbsp; <i>ChannelId</i> doit être un identificateur de canal tel que la valeur de retour d'une précédente commande<A HREF="142.htm"><b> open</b></A> ou <A HREF="162.htm"><b>socket</b></A>. Tout le tampon de sortie est vidé dans le périphérique de sortie du canal, Tout ce qu'il y a dans le tampon d'entrée est éliminé, le fichier ou périphérique sous-jacent est fermé, et <i>channelId</i> devient inutilisable. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si le canal est bloquant, la commande ne retourne pas jusqu'àvce que toute sortie soit vidée. Si le canal est non bloquant et qu'il reste des données à emettre, le canal reste ouvert et la commande retourne immédiatement; la sortie sera vidée en arrière-plan et le canal sera fermé quand toutes les données auront été <i>flushées</i>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si <i>channelId</i> est un canal bloquant pour une commande pipeline alors <b>close</b> attend que les processus enfants soient terminés. </div>
+<div ALIGN="LEFT" style="margin-left: 51.px;">Si le canal est partagé entre des interpréteurs, alors <b>close</b> rend <i>channelId</i> indisponible pour l'interpréteur appelant mais n'a pas autre effet jusqu'a ce que tous les interpréteurs aient fermé le canal. Quand le dernier interpréteur dans lequel le canal est declaré appelle <b>close</b>, les actions de nettoyage décrites plus haut se déclenchent. Voir la commande <A HREF="126.htm"><b>interp</b></A> pour une description du partage de canal. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les canaux sont automatiquement fermés quand un interpréteur est détruit et quand le processus se termine. Les canaux sont passent en mode bloquant, pour s'assurer que toute sortie est correctement vidée avant que le processus se termine. </div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande renvoie une chaîne vide, et peut générer une erreur si une erreur se produit pendant le <i>flushing</i> de sortie. </div><br>
+<div>Dernière révision: 7.5</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="96.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="98.htm"><b>Suivant</b></A></div>
+
+</BODY></HTML>

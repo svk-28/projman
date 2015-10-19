@@ -1,0 +1,195 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>namespace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">namespace - crée et manipule des contextes pour les commandes et variables 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>namespace </b>?<i>option</i>? ?<i>arg ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>namespace</b> vous permet de créer, d'acceder, et de détruire des contextes séparés pour les commandes et variables. Voir la section <b>QU'EST CE QU'UN NAMESPACE?</b> ci-dessous pour un bref aperçu des namespaces. Les <i>option</i>s légales sont listées ci-dessous. Notez que vous pouvez abréger les <i>option</i>s. 
+<DL>
+  <DT><br><b>namespace children </b>?<i>namespace</i>? ?<i>pattern</i>?
+</DT><DD>Renvoie une liste de tous les namespaces enfants qui appartiennent à <i>namespace</i>. Si <i>namespace</i> n'est pas spécifié, alors les enfants sont renvoyés pour le namespace courant. Cette commande retourne des noms pleinement qualifiés, qui commencent avec <b>::</b>. Si l'option <i>pattern</i> est donnée, alors cette commande retourne seulement les noms qui correspond au modèle glob-style. Le modèle actuel utilisé est déterminé comme suit: un modèle qui commence avec <b>::</b> est utilisé directement, autrement le namespace <i>namespace</i> (ou le nom pleinement qualifié du namespace courant) est ajouté au modèle. 
+</DD>
+  <DT><br><b>namespace code </b><i>script</i>
+</DT><DD>Capture le contexte namespace courant pour une exécution ultérieure du script <i>script</i>.  Retourne un nouveau script dans lequel <i>script</i> aura été englobé dans une commande<b> </b><b>namespace code</b>. Le nouveau script a deux propriétés importantes. D'abord, il peut être évalué dans tout namespace et provoquera l'évaluation de <i>script</i> dans le namespace courant (celui où la commande <b>namespace code</b> a été appelée). 
+Deuxièmement, des arguments supplémentaires peuvent être ajoutés au script résultant et ils seront transmis à <i>script</i> comme arguments additionels. Par exemple, supposez que la commande <b>set script &#91;namespace code &#123;foo bar}]</b> est appelée dans le namespace <b>::a::b</b>. Ensuite <b>eval &quot;&#36;script x y&quot;</b> peut être exécuté dans tout namespace (en supposant que la valeur de <b>script</b> lui ait été transmise correctement) et aura le même effet que la commande <b>namespace eval ::a::b &#123;foo bar x y}</b>. Cette commande est nécessaire parce que les extensions comme Tk exécutent normalement les scripts callback dans le namespace global . Une commande visible capture une commande et son contexte namespace de façon à l'exécuter correctement plus tard. Voir la section <b>VALEURS VISIBLES</b> pour quelques exemples montrant comment l'utiliser pour créer des scripts callback. 
+</DD>
+  <DT><br><b>namespace current</b>
+</DT><DD>Renvoie le nom pleinement qualifié pour le namespace courant. Le nom actuel du namespace global est &quot;&quot; (ex., une chaîne vide), mais cette commande retourne <b>::</b> pour le namespace global par convénience pour les programmeurs. 
+</DD>
+  <DT><br><b>namespace delete </b>?<i>namespace namespace ...</i>?
+</DT><DD>Chaque namespace <i>namespace</i> est effacé et toutes variables, fonctions, et namespaces enfants contenus dans le namespace sont effacés. Si une fonction est en cours d'exécution dans le namespace, le namespace sera maintenu jusqu'a ce que la fonction retourne; néanmoins, le namespace est marqué pour empêcher tout autre code de le rechercher par son nom. Si un namespace n'existe pas, cette commande retourne une erreur. Si aucuns noms de namespace ne sont donnés, cette commande ne fait rien. 
+</DD>
+  <DT><br><b>namespace eval</b> <i>namespace arg</i> ?<i>arg ...</i>?
+</DT><DD>Active un namespace appelé <i>namespace</i> et évalue tout code dans ce contexte. Si le namespace n'existe pas déjà, il est créé. Si plus d'un argument <i>arg</i> est spécifié, les arguments sont concaténés, séparés par des espaces de la même façon qu'avec la commande<A HREF="104.htm"><b> eval</b></A>, et le résultat est évalué.
+<br>Si <i>namespace</i> a des qualificateurs namespace en tête et que les namespaces en tête n'existent pas, ils sont automatiquement créés. 
+</DD>
+  <DT><br><b>namespace export </b>?-<b>clear</b>? ?<i>pattern pattern ...</i>?
+</DT><DD>Spécifie quelles commandes sont exportées par un namespace. Le commandes exportées sont celles qui peuvent être plus tard importées dans un autre namespace en utilisant une commande<b> namespace import</b>. L'ensembles des commandes définies dans un namespace et des commandes que le namespace a précedemment importé peut être exporté par un namespace. La commandes n'ont pas à être définies à l'instant où la commande <b>namespace export</b> est exécutée. Chaque <i>pattern</i> peut contenir des caractères spéciaux glob-style, mais il ne peut pas inclure quelconque qualificateurs namespace. Ainsi, le modèle peut seulement spécifier des commandes dans le namespace courant (exportant). Chaque <i>pattern</i> est ajouté à la liste de modèles d'export du namespace. Si le flag -<b>clear</b> est donné, la liste de modèles d'export du namespace est réinitialisée en chaîne vide avant que quelconques <i>pattern</i> arguments soient ajoutés. Si aucuns <i>pattern</i>s ne sont donnés et que le flag -<b>clear</b> n'est pas fourni, cette commande retourne la liste d'export du namespace courant.
+</DD>
+  <DT><br><b>namespace forget </b>?<i>pattern pattern ...</i>?
+</DT><DD>Redéplace les commandes précedemment importées d'un namespace. Chaque <i>pattern</i> est un nom qualifié tel que <b>foo::x</b> ou <b>a::b::p*</b>. Les noms qualifiés contiennent des <b>::</b>s et qualifient un nom avec le nom d'un ou plusieurs namespaces. Chaque <i>pattern</i> est qualifié avec le nom d'un namespace exportant et peut avoir des caractères spéciaux glob-style dans le nom de commande à la fin du nom qualifié. Les caractères glob ne peuvent pas apparaitre dans un nom de namespace. Cette commande trouve en premier les commandes exportées correspondantes. Elle vérifie ensuite si une ou plusieurs de ces commandes ont été précedemment importées par le namespace courant. Si c'est le cas, cette commande efface les commandes importées correspondantes. Ceci annule effectivement l'action d'une commande<b> namespace import</b>.
+</DD>
+  <DT><br><b>namespace import </b>?<b>-force</b>? ?<i>pattern</i> <i>pattern ...</i>?
+</DT><DD>Importe des commandes dans un namespace. Chaque <i>pattern</i> est un nom qualifié comme <b>foo::x</b> ou <b>a::p*</b>. Ainsi, elle inclut le nom d'un namespace exportant et peut avoir des caractères spéciaux <i>glob-style </i>dans le nom de commande à la fin du nom qualifié. Les caractères <i>glob</i> ne peuvent pas apparaitre dans un nom de namespace. Toutes les commandes qui correspondent à une chaîne <i>pattern</i> et qui sont couramment exportées de leurs namespace sont ajoutées au namespace courant. Ceci est fait par création d'une nouvelle commande dans le namespace courant qui pointe vers la commande exportée dans son namespace original; quand la nouvelle commande importée est appelée, elle appelle la commande exportée. Cette commande normalement retourne une erreur si une commande importée rentre en conflit avec une commande existante. Néanmoins, si l'option -<b>force</b> est donnée, les commandes importées remplaceront silencieusement les commandes existantes. La commande <b>namespace import</b> a une sémantique photographique: ainsi, seulement les commandes requises couramment définies dans le namespace exportant sont importées. En d'autres mots, vous pouvez importer seulement les commandes qui sont dans un namespace à l'instant où la commande <b>namespace import</b> est exécutée. Si une autre commande est définie et exportée dans ce namespace plus tard, elle ne sera pas importée.
+</DD>
+  <DT><br><b>namespace inscope</b> <i>namespace arg</i> ?<i>arg ...</i>?
+</DT><DD>Execute un script dans le contexte d'un namespace particulier. Cette commande n'est pas sensée être utilisé directement par les programmeurs; des appels sont générés implicitement quand les applications utilisent la commande <b>namespace code</b> pour créer scripts callback que l'applications alors enregistre avec, par ex., des widgets Tk. La commande <b>namespace inscope</b> ressemble plus à la commande <b>namespace eval</b> excepté qu'elle a une sémantique <A HREF="128.htm"><b>lappend</b></A> et que le namespace doit déjà exister. Elle traite le premier argument comme une liste, et ajoute tout argument après le premier jusqu'à la fin comme des éléments de liste correcte. <b>namespace inscope ::foo a x y z</b> est équivalent à <b>namespace eval ::foo &#91;concat a &#91;list x y z]]</b> Cette sémantique <A HREF="128.htm"><b>lappend</b></A> est importante parce que de nombreux scripts callback sont actuellement des préfixes. 
+</DD>
+  <DT><br><b>namespace origin </b><i>command</i>
+</DT><DD>Renvoie le nom pleinement qualifié de la commande originale à laquelle la commande importée <i>command</i> se réfère. Quand une commande est importée dans un namespace, une nouvelle commande est créée dans ce namespace qui pointe vers la commande actuelle dans le namespace exportant. Si une commande est importée dans une séquence de namespaces <i>a, b,...,n</i> où chaque namespace successif importe juste la commande du précedent namespace, cette commande retourne le nom pleinement qualifié de la commande originale dans le premier namespace, <i>a</i>. Si <i>command</i> ne se refère pas à une commande importée, le propre nom pleinement qualifié de la commande est renvoyé. 
+</DD>
+  <DT><br><b>namespace parent</b> ?<i>namespace</i>?
+</DT><DD>Renvoie le nom pleinement qualifié du namespace parent de <i>namespace</i>. Si <i>namespace</i> n'est pas spécifié, le nom pleinement qualifié du parent du namespace courant est renvoyé.
+</DD>
+  <DT><br><b>namespace qualifiers</b> <i>string</i>
+</DT><DD>Renvoie tous les qualificateurs namespace en tête de <i>string</i>. Les qualificateurs sont les noms de namespace séparées par <b>::</b>. Pour la <i>string</i> <b>::foo::bar::x</b>, cette commande retourne <b>::foo::bar</b>, et pour <b>::</b> elle retourne une chaîne vide. Cette commande est le complément de la commande<b> namespace tail</b>. Notez qu'elle ne vérifie pas si les noms de namespace sont, en fait, les noms des namespaces couramment définis.
+</DD>
+  <DT><br><b>namespace tail</b> <i>string</i>
+</DT><DD>Renvoie le simple nom à la fin d'une chaîne qualifiée. Les qualificateurs sont les noms de namespace séparées par <b>::</b>. Pour la <i>string</i> <b>::foo::bar::x</b>, cette commande retourne <b>x</b>, et for <b>::</b> elle retourne une chaîne vide. Cette commande est le complement de la commande<b> namespace qualifiers</b>. Elle ne vérifie pas si les noms de namespace sont, en fait, les noms des namespaces couramment définis. 
+</DD>
+  <DT><br><b>namespace which</b> ?-<b>command</b>? ?-<b>variable</b>? <i>name</i>
+</DT><DD>Recherche <i>name</i> soit comme commande ou variable et retourne son nom pleinement qualifié. Par exemple, si <i>name</i> n'existe pas dans le namespace courant mais existe dans le namespace global, cette commande retourne un nom pleinement qualifié dans le namespace global. Si la commande ou variable n'existe pas, cette commande retourne une chaîne vide. Si la variable a été créée mais non définie, tel qu'avec la commande <A HREF="179.htm"><b>variable</b></A> ou au travers d'une <A HREF="173.htm"><b>trace</b></A> sur la variable, cette commande renverra le nom pleinement qualifié de la variable. Si aucun flag n'est donné, <i>name</i> est traité comme un nom de commande. Voir la section <b>RESOLUTION</b> <b>DE</b> <b>NOM </b>ci-dessous pour une explication des règles concernant la résolution de nom.
+</DD>
+</DL>
+</div> <br>
+<div><b>QU'EST CE QU'UN NAMESPACE?</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Un namespace est une collection de commandes et de variables. Il encapsule les commandes et variables pour s'assurer qu'elles ne vont pas interférer avec les commandes et variables des autres namespaces. Tcl a toujours eu une telle collection, à laquelle nous nous réfèrerons comme le <i>namespace global</i>. Le namespace global contient toutes les variables globales et commandes. La commande <b>namespace eval</b> vous permet de créer de nouveaux namespaces. Par exemple, </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">
+<b>namespace eval Counter &#123;<br>
+</b><b>namespace export bump<br>
+</b><b>variable num 0<br>
+</b><b><br>
+</b><b>proc bump &#123;} &#123;<br>
+</b><b>variable num<br>
+</b><b>incr num<br>
+</b><b>}<br>
+</b><b>}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">crée un nouveau namespace contenant la variable <b>num</b> et la fonction <b>bump</b>. Les commandes et les variables dans ce namespace sont séparées des autres commandes et variables dans le même programme. S'il y a une commande nommée <b>bump</b> dans le namespace global , par exemple, elle sera différente de la commande <b>bump</b> dans le namespace<b> Counter</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les variables namespace ressemblent aux variables globales en Tcl. Elles existent en dehors des fonctions dans un namespace mais peuvent être accédées dans une fonction via la commande<A HREF="179.htm"><b> variable</b></A>, comme montré dans l'exemple ci-dessus.</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les namespaces sont dynamiques. Vous pouvez ajouter et effacer des commandes et des variables à tout instant, et vous pouvez construire le contenu d'un namespace au fur et à mesure en utilisant une série de commandes<b> namespace eval</b>. Par exemple, les séries suivantes de commandes ont le même effet que les définitions namespace montrées plus haut: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">
+<b>namespace eval Counter &#123;<br>
+</b><b>variable num 0<br>
+</b><b>proc bump &#123;} &#123;<br>
+</b><b>variable num<br>
+</b><b>return &#91;incr num]<br>
+</b><b>}<br>
+</b><b>}<br>
+</b><b>namespace eval Counter &#123;<br>
+</b><b>proc test &#123;args} &#123;<br>
+</b><b>return &#36;args<br>
+</b><b>}<br>
+</b><b>}<br>
+</b><b>namespace eval Counter &#123;<br>
+</b><b>rename test &quot;&quot;<br>
+</b><b>}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Notez que la fonction <b>test</b> est ajoutée au namespace<b> Counter</b>, et enlevée plus tard via la commande<A HREF="155.htm"><b> rename</b></A>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les namespaces peuvent contenir d'autres namespaces, donc être imbriqués hiérarchiquement. Un namespace imbriqué est encapsulé dans son namespace parent et ne peut pas interférer avec d'autres namespaces. <br>
+</div><br>
+<div><b>NOMS QUALIFIES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Chaque namespace a un nom textuel tel que <A HREF="121.htm"><b>history</b></A> ou <b>::safe::interp</b>. Comme les namespaces peuvent s'imbriquer, les noms qualifiés sont utilisés pour se référer à des commandes, variables, et namespaces enfants contenus dans les namespaces. Les noms qualifiés sont semblables aux noms de chemin hiérarchique des fichiers Unix ou des widgets Tk, excepté que <b>::</b> est utilisé comme séparateur au lieu de '<b>/</b>' ou '<b>.</b>'. Le namespace global a pour nom &quot;&quot; (ex., une chaîne vide), bien que <b>::</b> soit un synonyme. Comme exemple, le nom <b>::safe::interp::create</b> se réfère à la commande <b>create</b> dans le namespace <A HREF="126.htm"><b>interp</b></A> qui est un enfant du namespace <b>::safe</b>, qui à son tour est un enfant du namespace global <b>::</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si vous voulez à acceder aux commandes et variables à partir d'un autre namespace, vous devez utiliser une syntaxe supplémentaire. Les noms doivent être qualifiés par les namespace qui les contiennent. A partir du namespace global , nous accèderions à la fonction <b>Counter</b> comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><br>
+<b>Counter::bump 5<br>
+</b><b>Counter::Reset</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Nous accèderions au compte courant comme ceci: </div><br>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>puts &quot;count = &#36;Counter::num&quot;</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Quand un namespace en contient un autre, vous pouvez avoir besoin de plus d'un qualificateur pour atteindre ses éléments. Si nous avions un namespace <b>Foo</b> qui contenait le namespace <b>Counter</b>, vous pourriez appeller sa fonction <b>bump</b> à partir du namespace global comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>Foo::Counter::bump 3</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Vous pouvez aussi utiliser les noms qualifiés quand vous créez et renommez des commandes. Par exemple, vous pouvez ajouter une fonction au namespace <b>Foo</b> comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>proc Foo::Test &#123;args} &#123;return &#36;args}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Et vous pourriez déplacer la même fonction vers un autre namespace comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>rename Foo::Test Bar::Test</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Il y a quelques points restants au sujet des noms qualifiés que nous devons couvrir. Les namespaces ont des noms non-vides excepté le namespace global . '<b>::</b>' est interdit dans une simple commande, variable, et les noms de namespace excepté comme séparateur namespace. Les '<b>:</b>' supplémentaires dans un nom qualifié sont ignorés; ainsi, deux ou plus '<b>:</b>' sont traités comme séparateur namespace. Deux '<b>::</b>' à la fin d'une variable qualifiée ou d'un nom de commande se réfèrent à une variable ou commande nommée &#123;}. Néanmoins, <b>::</b> à la fin d'un nom de namespace qualifié est ignoré.
+</div> <br>
+<div><b>RESOLUTION DE NOM</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">En général, toute commande Tcl qui attend des noms de variable et de commande supporte les noms qualifiés. Ceci signifie que vous pouvez donner des noms qualifiés à des commandes comme <A HREF="161.htm"><b>set</b></A>, <A HREF="147.htm"><b>proc</b></A>, <A HREF="155.htm"><b>rename</b></A>, et <b>interp alias</b>. Si vous fournissez un nom pleinement qualifié qui commence avec <b>::</b>, il n'y a pas d'ambiguité sur le sens de la commande, la variable, ou le namespace. Néanmoins, si le nom ne commence pas avec <b>::</b> (ex., est <i>relatif</i>), Tcl suit une règle précise pour la recherche: Les noms de commandes et nom de variables sont toujours résolus en cherchant en premier dans le namespace courant, et ensuite dans le namespace global . Les noms de namespace, d'un autre point de vue, sont toujours résolus en recherchant seulement dans le namespace courant. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans les exemples suivants, </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>set traceLevel 0<br>
+</b><b>namespace eval Debug &#123;<br>
+</b><b>printTrace &#36;traceLevel<br>
+</b><b>}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Tcl recherche <b>traceLevel</b> dans le namespace <b>Debug</b> et ensuite dans le namespace global. Il recherche la commande <b>printTrace</b> de la même façon. Si un nom de variable ou de commande n'est pas trouvé dans ce contexte, le nom est indéfini. Pour rendre ce point tout à fait clair, examinez les exemples suivants: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>set traceLevel 0<br>
+</b><b>namespace eval Foo &#123;<br>
+</b><b>variable traceLevel 3<br>
+</b><b><br>
+</b><b>namespace eval Debug &#123;<br>
+</b><b>printTrace &#36;traceLevel<br>
+</b><b>}<br>
+</b><b>}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Ici, Tcl recherche <b>traceLevel</b> en premier dans le namespace <b>Foo::Debug</b>. Comme il n'est pas trouvé là, Tcl le recherche alors dans le namespace global . La variable <b>Foo::traceLevel</b> est complètement ignorée pendant le processus de résolution de nom. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Vous pouvez utiliser la commande <b>namespace which</b> pour repondre aux questions au sujet de la résolution de nom. Par exemple, la commande: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace eval Foo::Debug &#123;namespace which-variable traceLevel}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">retourne <b>::traceLevel</b>. d'une autre manière, la commande, </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace eval Foo &#123;namespace which-variable traceLevel}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">retourne <b>::Foo::traceLevel</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Comme mentionné plus haut, les noms de namespace sont recherchés différemment des noms de variables et commandes. Les noms de namespace sont toujours résolus dans le namespace courant. Ceci signifie que, par exemple, une commande <b>namespace eval</b> qui crée un nouveau namespace crée toujours un enfant du namespace courant à moins que le nouveau nom de namespace commence avec un <b>::</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Tcl n'a pas de contrôle pour limiter quelles variables, commandes, ou namespaces vous pouvez référencer. Si vous fournissez un nom qualifié qui resolve un élément par les règles de résolution de nom plus haut, vous pouvez accéder à l'élément. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Vous pouvez accéder à une variable namespace à partir d'une fonction dans le même namespace en utilisant la commande<A HREF="179.htm"><b> variable</b></A>. Comme la commande<A HREF="120.htm"><b> global</b></A>, elle crée un lien local vers une variable namespace. Si nécessaire, elle crée aussi la variable dans le namespace courant et l'initialise. Notez que la commande <A HREF="120.htm"><b>global</b></A> crée seulement des liens vers les variables dans le namespace global . Il n'est pas nécessaire d'utiliser une commande <A HREF="179.htm"><b>variable</b></A> si vous vous referez toujours à une variable namespace en utilisant un nom qualifié approprié. 
+</div><br>
+<div><b>IMPORTATION DE COMMANDES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les namespaces sont souvent utilisés pour représenter des bibliothèques. Certaines commandes de bibliothèque sont utilisées si souvent que c'est une corvée de taper leurs noms qualifiés. Par exemple, supposez que toutes les commandes dans un package comme BLT soient contenues dans un namespace appelé <b>Blt</b>. Ensuite vous accèderez à ces commandes comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>Blt::graph .g-background red<br>
+</b><b>Blt::table . .g 0,0</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si vous utilisez les commandes <b>graph</b> et <b>table</b> fréquemment, vous pouvez vouloir y acceder sans le préfixe<b> Blt::</b>. Vous pouvez faire cela en important les commandes dans le namespace courant, comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace import Blt::*</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Ceci ajoute toutes les commandes exportées du namespace <b>Blt</b> dans le contexte du namespace courant, donc vous pouvez écrire du code comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>graph .g-background red<br>
+</b><b>table . .g 0,0</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>namespace import</b> importe seulement des commandes d'un namespace exporté avec une commande <b>namespace export</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Importer <i>toutes</i> les commandes d'un namespace est généralement une mauvaise idée car vous ne savez pas ce que vous récupérez. Il vaut mieux importer juste les commandes spécifiques dont vous avez besoin. Par exemple, la commande </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace import Blt::graph Blt::table</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">importe seulement les commandes <b>graph</b> et <b>table</b> dans le contexte courant. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si vous essayez d'importer une commande qui existe déjà, vous aurez une erreur. Ceci vous empêche d'importer la même commande à partir de deux packages différent. Mais de temps en temps (peut-être en debuggant), vous pouvez vouloir contourner cette restriction. Vous pouvez vouloir relancer la commande <b>namespace import</b> pour profiter de nouvelles commandes qui ont apparu dans un namespace. Dans ce cas, vous pouvez utiliser l'option<b> </b><b>-force</b>, et les commandes existantes seront ecrasées silencieusement: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace import-force Blt::graph Blt::table</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si pour quelque raison, vous voulez cesser d'utiliser les commandes importées, vous pouvez les enlever avec une commande<b> namespace forget</b>, comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace forget Blt::*</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Ceci recherche dans le namespace courant toutes commandes importées de <b>Blt</b>. Si elle en trouve une, elle l'enlève. Autrement, elle ne fait rien. Après cela, les commandes <b>Blt</b> doivent être accédées avec le préfixe<b> Blt::</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Quand vous effacez une commande du namespace exportant comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>rename Blt::graph &quot;&quot;</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">la commande est automatiquement enlevée de tous les namespaces qui l'importaient. 
+</div><br>
+<div><b>EXPORTATION DE COMMANDES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Vous pouvez exporter des commandes d'un namespace comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace eval Counter &#123;<br>
+</b><b>namespace export bump reset<br>
+</b><b>variable Num 0<br>
+</b><b>variable Max 100<br>
+</b><b><br>
+</b><b>proc bump &#123;&#123;by 1}} &#123;<br>
+</b><b>variable Num<br>
+</b><b>incr Num &#36;by<br>
+</b><b>Check<br>
+</b><b>return &#36;Num<br>
+</b><b>}<br>
+</b><b>proc reset &#123;} &#123;<br>
+</b><b>variable Num<br>
+</b><b>set Num 0<br>
+</b><b>}<br>
+</b><b>proc Check &#123;} &#123;<br>
+</b><b>variable Num<br>
+</b><b>variable Max<br>
+</b><b>if &#123;&#36;Num &gt; &#36;Max} &#123;<br>
+</b><b>error &quot;too high!&quot;<br>
+</b><b>}<br>
+</b><b>}<br>
+</b><b>}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les fonctions <b>bump</b> et <b>reset</b> sont exportées, donc elles sont inclues quand vous importez du namespace<b> Counter</b>, comme ceci: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>namespace import Counter::*</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Néanmoins, la fonction <b>Check</b> n'est pas exportée, donc elle est ignorée par les opérations d'import. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>namespace import</b> importe seulement les commandes qui ont été declarés comme exportées par leurs namespace. La commande <b>namespace export</b> spécifie quelles commandes peuvent être importées par d'autres namespaces. Si une commande <b>namespace </b><b>import</b> spécifie une commande qui n'est pas exportée, la commande n'est pas importée.
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="179.htm">variable</A>(n) </div><br>
+<div>Dernière révision: 8.0</div><br>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="140.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="142.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

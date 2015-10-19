@@ -1,0 +1,31 @@
+Аналоги клавиш для bind в WINDOWS
+
+a ocircumflex
+b egrave
+c ntilde
+d acircumflex
+e oacute
+f agrave
+g idiaeresis
+h eth
+i oslash
+j icircumflex
+k ediaeresis
+l adiaeresis
+m udiaeresis
+n ograve
+o ugrave
+p ccedilla
+q eacute
+r ecircumflex
+s ucircumflex
+t aring
+u atilde
+v igrave
+w odiaeresis
+x division
+y iacute
+z ydiaeresis
+comma aacute
+period thorn
+

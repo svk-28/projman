@@ -1,0 +1,11 @@
+#########################################################
+#                Tcl/Tk Project Manager
+# Copyright (c) "CONERO lab", 2001, http://conero.lrn.ru
+# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru
+#########################################################
+
+1. Install Tcl/Tk, BWidget first
+3. Run install.tcl script for copying files, or use RedHat Package Manager
+3. Type from the command line 'projman' and enjoy
+
+

@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>tk_messageBox</title>
+  </head>
+  <body>
+    <h1>tk_messageBox</h1>
+
+    <p>Выводит окно сообщения и ждет ответа пользователя.</p>
+
+    <h2><a name="СИНТАКСИС"></a>СИНТАКСИС</h2>
+
+    <pre>
+      <strong>tk_messageBox</strong> ?<em>параметр значение...</em>?
+    </pre>
+
+    <h2><a name="ОПИСАНИЕ"></a>ОПИСАНИЕ</h2>
+
+    <p>Эта процедура создает и выводит на экран окно сообщения, в
+      котором находится определяемое приложением сообщение,
+      пиктограмма и набор кнопок. Каждая из кнопок в окне сообщения
+      отождествляется с уникальным символическим именем (см. параметры
+      <strong>-type</strong>). После появления окна сообщения команда
+      <strong>tk_messageBox</strong> ожидает, пока пользователь не
+      выберет одну из кнопок. После того, как выбор сделан, команда
+      возвращает символическое имя выбранной кнопки. Команда
+      поддерживает следующие пары <em>параметр-значение</em>:</p>
+
+    <dl>
+      <dt><strong>-default</strong> <em>имя</em></dt>
+
+      <dd>Параметр <em>имя</em> задает символическое имя кнопки по
+	умолчанию для окна сообщения ('ok', 'cancel' и т.п.). Список
+	возможных символических имен см. в описании параметра
+	<strong>-type</strong>. Если в окне сообщения лишь одна
+	кнопка, то она автоматически делается кнопкой по умолчанию;
+	если же кнопок несколько, а параметр <strong>-default</strong>
+	не задан, то кнопки по умолчанию не будет.</dd>
+
+      <dt> <strong>-icon</strong> <em>изобрПикт</em> </dt>
+
+      <dd>Задает выводимую пиктограмму. Параметр <em>изобрПикт</em>
+	может иметь одно из следующих значений:
+	<strong>error</strong>, <strong>info</strong>,
+	<strong>question</strong> или <strong>warning</strong>. Если
+	параметр не указан, то пиктограмма не выводится.</dd>
+
+      <dt> <strong>-message</strong> <em>строка</em></dt>
+
+      <dd>Задает сообщение, выводимое в окне сообщений.</dd>
+
+      <dt><strong>-parent</strong> <em>окно</em></dt>
+
+      <dd>Делает <em>окно</em> логическим родителем окна
+	сообщений. Окно сообщения выводится поверх своего родительского
+	окна.</dd>
+
+      <dt> <strong>-title</strong> <em>строкаЗаголовка</em></dt>
+
+      <dd>Задает текстовую строку, которая выводится в качестве
+	заголовка в окне сообщения. Значением параметра по умолчанию
+	является пустая строка.</dd>
+
+      <dt> <strong>-type</strong> <em>предопределенныйТип</em></dt>
+
+      <dd>Устанавливает предопределенный набор кнопок в окне. Параметр
+	<em>предопределенныйТип</em> может иметь следующие
+	значения:
+
+	<dl>
+	  <dt> <strong>abortretryignore</strong> </dt>
+
+	  <dd> Выводит три кнопки с символическими именами
+	    <strong>abort</strong>, <strong>retry</strong> и
+	    <strong>ignore</strong>.</dd>
+
+	  <dt><strong>ok</strong></dt>
+	  
+	  <dd>Выводит одну кнопку с символическим именем
+	    <strong>ok</strong>.</dd>
+	  
+	  <dt><strong>okcancel</strong></dt>
+	
+	  <dd>Выводит две кнопки с символическими именами
+	    <strong>ok</strong> и <strong>cancel</strong>.</dd>
+	  
+	  <dt> <strong>retrycancel</strong></dt>
+	  
+	  <dd>Выводит две кнопки с символическими именами
+	    <strong>retry</strong> и <strong>cancel</strong>.</dd>
+
+	  <dt><strong>yesno</strong></dt>
+	  
+	  <dd>Выводит две кнопки с символическими именами
+	    <strong>yes</strong> и <strong>no</strong>.</dd>
+
+	  <dt> <strong>yesnocancel</strong></dt>
+
+	  <dd>Выводит три кнопки с символическими именами
+	    <strong>yes</strong>, <strong>no</strong> и
+	    <strong>cancel</strong>.
+	  </dd>
+	</dl>
+      </dd>
+    </dl>
+
+    <h2><a name="ПРИМЕР"></a>ПРИМЕР</h2>
+
+    <pre>
+      set answer [tk_messageBox -message &quot;Really quit?&quot; -type yesno -icon question]
+      case $answer {
+        yes exit
+        no {tk_messageBox -message &quot;I know you like this application!&quot; -type ok}
+      }
+    </pre>
+  </body>
+</html>
+
+
+

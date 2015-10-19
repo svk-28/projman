@@ -1,0 +1,23 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>list&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">liste - Crée une liste 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>list </b>?<i>arg arg ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande renvoie une liste comprenant tout les <i>arg</i>s, ou une chaîne vide si aucun <i>arg</i>s n'est spécifié. Les accolades et backslashes sont ajoutés comme nécessaire, ainsi la commande <b>index</b> peut être employée sur le résultat pour réextraire les arguments originaux, et <A HREF="104.htm"><b>eval</b></A> peut être aussi employée pour exécuter la liste résultante, avec <i>arg1</i> comme nom de la commande et les autres <i>arg</i>s comme arguments. <b>List</b> produit des résultats légèrement différents de <A HREF="98.htm"><b>concat</b></A> ; <A HREF="98.htm"><b>concat</b></A> enlève un niveau de regroupement avant de former la liste, alors que <b>list</b> fonctionne directement à partir des arguments originaux. Par exemple, la commande </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>list a b &#123;c d e} &#123;f &#123;g h}}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">renverra </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>a b &#123;c d e} &#123;f &#123;g h}}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">alors que <A HREF="98.htm"><b>concat</b></A> avec les mêmes arguments renverra </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>a b c d e f &#123;g h}</b></div>
+<div> </div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="131.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="133.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

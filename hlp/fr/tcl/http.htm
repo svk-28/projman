@@ -1,0 +1,261 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>Http&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Http - Implémentation client du protocole HTTP/1.0. 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>package require http ?2.3?</b> <br>
+<b>::http::config </b><i>?options?</i> <br>
+<b>::http::geturl </b><i>url ?options?</i> <br>
+<b>::http::formatQuery </b><i>list</i> <br>
+<b>::http::reset </b><i>token</i><br>
+<b>::http::wait </b><i>token</i> 
+<b>::http::status </b><i>token</i><br>
+<b>::http::size </b><i>token</i><br>
+<b>::http::code </b><i>token</i><br>
+<b>::http::ncode </b><i>token</i><br>
+<b>::http::data </b><i>token</i><br>
+<b>::http::error </b><i>token</i><br>
+<b>::http::cleanup </b><i>token</i><br>
+<b>::http::register </b><i>proto port command</i> <br>
+<b>::http::unregister </b><i>proto</i>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le paquetage <b>http</b> fournit la partie client du protocole HTTP/1.0. Le paquetage implémente les opérations GET, POST, et HEAD de HTTP/1.0. Il permet la configuration d'un 
+proxy pour traverser les firewalls Le paquetage est compatible avec la politique de sécurité<b> Safesock</b>, donc il peut être utilisé par un applet non vérifié pour récupérer des URL à partir d'un ensemble restreint d'hôtes. Ce paquetage peut être étendu pour supporter d'autres protocoles de transport HTTP, tel que HTTPS, en fournissant une commande<A><b> socket </b></A>utilisateur, via <b>http::register</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La fonction<b> ::http::geturl</b> effectue une transaction HTTP. Ses <i>options&nbsp; </i> determinent si une transaction GET, POST, ou HEAD est effectuée&nbsp; La valeur de retour de <b>::http::geturl</b> est un jeton pour la transaction. La valeur est aussi le nom d'un tableau dans le ::http namespace qui contient information d'état concernant la transaction Les éléments de ce tableau sont décrits dans la section TABLEAU D'ETAT. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si l'option <b>-command</b> est spécifiée, alors l'opération HTTP est faite en arrière-plan. <b>::http::geturl</b> retourne immédiatement après la génération&nbsp; de la requête HTTP et le callback est appelé quand la transaction se termine Pour que cela fonctionne, la boucle d'évènement Tcl doit être active Dans les applications Tk c'est toujours vrai Pour les applications purement Tcl, l'appelant peut utiliser <b>::http::wait</b> après l'appel de <b>::http::geturl</b> pour lancer la boucle d'évènement.
+</div> <br>
+<div><b>COMMANDES</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">
+<DL>
+  <DT><br><b>::http::config</b> ?<i>options</i>?</DT><DD>La commande<b>::http::config</b> est utilisé pour fixer et consulter le nom et le port du serveur proxy, et le nom de l'Agent Utilisateur utilisé dans les requêtes HTTP Si aucunes options ne sont spécifiées, alors la configuration courante est renvoyée Si un seul argument est spécifié, alors il doit être un des flags décrits ci-dessous Dans ce cas la valeur courante de ce paramètre est renvoyée Autrement, les options seront un ensemble de flags et de valeurs qui definissent la configuration: 
+<DL>
+  <DT><br><b>-accept</b> <i>mimetypes</i>
+</DT><DD>L'en-tête Accept de la requête La valeur par défaut est */*, ce qui signifie que qui tout types de documents sont acceptés Autrement vous pouvez donner une&nbsp; liste séparée par des virgules de types mime que vous souhaitez recevoir  recevoir Par exemple, &quot;image/gif, image/jpeg, text/*&quot;. 
+</DD>
+  <DT><br><b>-proxyhost</b> <i>hostname</i>
+</DT><DD>Le nom du proxy, s'il existe. Si cette valeur est la chaîne vide, l'URL est contacté directement. 
+</DD>
+  <DT><br><b>-proxyport</b> <i>number</i>
+</DT><DD>Le numéro de port du proxy. 
+</DD>
+  <DT><br><b>-proxyfilter</b> <i>command</i>
+</DT><DD>La commande est un callback qui est appelé pendant <b>::http::geturl</b> pour determiner si un proxy est requis pour un host donné Un argument, un nom de machine, est ajouté à <i>command</i> quand elle est appelée Si un proxy est requis, le callback renverra une liste de deux élément contenant le serveur proxy et le port proxy Autrement le filtre renverra une liste vide Le filtre par défaut retourne les valeurs des paramètres <b>-proxyhost</b> et <b>-proxyport</b> si ils sont non-vides. 
+</DD>
+  <DT><br><b>-useragent</b> <i>string</i>
+</DT><DD>La valeur de l'en-tête Agent Utilisateur dans la requête HTTP Par défaut <b>&quot;Tcl http client package 2.2.&quot;</b> 
+</DD>
+</DL>
+</DD>
+  <DT><br><b>::http::geturl</b> <i>url</i> ?<i>options</i>? 
+
+</DT><DD>La commande<b>::http::geturl</b> est la fonction principale dans le paquetage. L'option <b>-</b> <b>query </b>provoque une opération POST et l'option <b>-validate</b> provoque une opération HEAD; autrement, une opération GET est effectuée La commande<b>::http::geturl</b> retourne une valeur <i>token </i>qui peut être utilisée pour obtenir l'information concernant la transaction Voir les sections TABLEAU D'ETAT et ERRORS pour les détails La commande<b>::http::geturl</b> bloque jusqu'a ce que l'opération se termine, à moins que l'option <b>-command</b> spécifie un callback appelé quand la transaction HTTP se termine. <b>::http::geturl</b> accepte plusieurs options: 
+<DL>
+  <DT><br><b>-blocksize</b> <i>size</i></DT><DD>La taille de bloc utilisée en lisant l'URL. Au plus <i>size</i> octets sont lus en une fois. Après chaque bloc, un appel à <b>-progress</b> est fait (si cette option est spécifiée). 
+</DD>
+  <DT><br><b>-channel</b> <i>name</i>
+</DT><DD>Copie l'URL contenu dans le canal <i>name</i> au lieu de le sauvegarder dans <b>state(body)</b>. 
+</DD>
+  <DT><br><b>-command</b> <i>callback</i>
+</DT><DD>Appelle <i>callback</i> après la fin de la transaction HTTP. Cette option cause le retour immédiat de <b>::http::geturl</b>. Le <i>callback</i> recoit un argument supplémentaire qui est le <i>token </i>renvoyé par <b>::http::geturl</b>. Ce jeton est le nom d'un tableau qui est décrit dans la section TABLEAU D'ETAT.Voici un modèle pour le callback: 
+<br>proc httpCallback &#123;token} &#123;
+<br>&nbsp;&nbsp;&nbsp; upvar #0 &#36;token state
+<br>&nbsp;&nbsp;&nbsp; # Accède au tableau d'état Tcl
+<br>}
+</DD>
+  <DT><br><b>-handler</b> <i>callback</i>
+</DT><DD>Appelle <i>callback</i> chaque fois que des données HTTP sont disponibles; si présent, rien d'autre ne sera fait avec les données HTTP. Cette fonction attend deux arguments supplémentaire: la socket pour les données HTTP et le <i>token </i>renvoyé par <b>::http::geturl</b>. Le jeton est le nom d'un tableau global qui est décrit dans la section TABLEAU D'ETAT. La fonction est censée renvoyer le nombre d'octets lus de la socket. Voici un modèle pour le callback: 
+<br>proc httpHandlerCallback &#123;socket token } &#123;
+<br>&nbsp;&nbsp;&nbsp; upvar #0 &#36;token state
+<br>&nbsp;&nbsp;&nbsp; # Accède la socket, et au tableau d'état Tcl
+<br>&nbsp;&nbsp;&nbsp; ...
+(exemple: set data &#91;read &#36;socket 1000];set nbytes &#91;string length &#36;data])<br>&nbsp;&nbsp;&nbsp; ..&nbsp;&nbsp; return nbytes
+<br>}
+</DD>
+  <DT><br><b>-headers</b> <i>keyvaluelist</i>
+</DT><DD>Cette option est utilisée pour ajouter des en-têtes à la requête HTTP. L'argument <i>keyvaluelist</i> doit être une liste avec le même nombre d'éléments alternant entre clés et valeurs. Les clés deviennent les en-tête des champ noms. Les sauts de lignes sont enlevés des valeurs pour que l'en-tête ne puisse être corrompu. Par exemple, si <i>keyvaluelist</i> est <b>Pragma no-cache</b> alors l'en-tête suivant est inclus dans la requête HTTP: <br>
+Pragma: no-cache
+</DD>
+  <DT><br><b>-progress</b> <i>callback</i>
+</DT><DD>Le <i>callback</i> est appelé après chaque transfert de données de l'URL. Le callback attend trois arguments additionels: le <i>token </i>de <b>::http::geturl</b>, la taille totale attendue des meta-données contenues dans <b>Content-Length</b>, et le nombre courant d'octets transférés effectivement. La taille totale attendue peut être inconnue, auquel cas zéro est transmis au callback. Voici un modèle pour le callback progress:<br>
+proc httpProgress &#123;token total current} &#123;<br>
+&nbsp;&nbsp;&nbsp; upvar #0 &#36;token state<br>
+}
+</DD>
+  <DT><br><b>-query </b><i>query</i>
+</DT><DD>Ce flag fait effectuer à <b>::http::geturl</b> une requête POST qui transmet la <i>query</i> au serveur. La <i>query</i> doit être une demande formatée x-url-encoding La fonction<b>::http::formatQuery</b> peut être utilisée pour le formatage. 
+</DD>
+  <DT><br><b>-queryblocksize</b> <i>size</i>
+</DT><DD>La taille de bloc utilisée en postant des données query à l'URL. Au plus <i>size</i> octets sont écrits à la fois. Après chaque bloc, un appel à <b>-queryprogress</b> callback est fait (si cette option est spécifiée). 
+</DD>
+  <DT><br><b>-querychannel</b> <i>channelID</i>
+</DT><DD>Ce flag fait effectuer à <b>::http::geturl</b> une requête POST qui passe les données contenues dans <i>channelID</i> au serveur. Les données contenue dans <i>channelID</i> doivent être une demande formatée x-url-encoding à moins que l'option <b>-type</b> soit utilisée. Si un en-tête Content-Length n'est pas spécifié via l'option<b> -headers</b>, <b>::http::geturl</b> tente de déterminer la taille des données post dans l'ordre de création de l'en-tête. Si elle est incapable de determiner la taille, elle retourne une erreur. 
+</DD>
+  <DT><br><b>-queryprogress</b> <i>callback</i>
+</DT><DD>Le <i>callback</i> est faite après chaque transfert de données à URL (ex. POST) et agit exactement comme l'option <b>-progress</b> (le format de callback est le même). 
+</DD>
+  <DT><br><b>-timeout</b> <i>millisecondes</i>
+</DT><DD>Si <i>millisecondes</i> est différent de zéro, alors <b>::http::geturl</b> programme un timeout après le nombre spécifié de millisecondes. Un timeout provoque un appel de <b>::http::reset</b> et un callback<b> -command</b>, si spécifié. La valeur de retour de <b>::http::status</b> est <b>timeout</b> après un timeout. 
+</DD>
+  <DT><br><b>-type</b> <i>mime-type</i></DT><DD>Utilisez <i>mime-type</i> comme la valeur<b> Content-Type</b>, au lieu de de la valeur par défaut (<b>application/x-www-form-urlencoded</b>) pendant une opération POST.
+</DD>
+  <DT><br><b>-validate</b> <i>boolean</i>
+</DT><DD>Si <i>boolean</i> est différent de zéro, alors <b>::http::geturl</b> does un HTTP HEAD requête. Cette requête retourne la meta information concernant l'URL, mais le contenu n'est pas renvoyé. La meta information est disponible dans la variable <b>state(meta)</b> après la transaction. Voir la section TABLEAU D'ETAT pour les détails. 
+</DD>
+</DL>
+</DD>
+  <DT><br><b>::http::formatQuery</b> <i>key value</i> ?<i>key value</i> ...?
+</DT><DD>Cette fonction opère un x-url-encodage des données consultées. Elle attend un même nombre d'arguments qui sont les clés et valeurs de la requête. Elle encode les clés et valeurs, et génère une chaîne avec les séparateurs corrects (&amp; et =). Le résultat est convenable pour la valeur <b>-query </b>transmise à <b>::http::geturl</b>. 
+</DD>
+  <DT><b>::http::reset</b> <i>token</i>?<i>why</i>?<br>
+</DT><DD>Cette commande réinitialise la transaction HTTP identifiée par <i>token</i>, si elle existe. Ceci fixe la valeur <b>state(status)</b> à <i>why</i>, qui est par défaut de <b>reset</b>, et alors appelle le callback declaré par <b>-command</b>.
+</DD>
+  <DT><br><b>::http::wait</b> <i>token</i>
+</DT><DD>Ceci est une fonction utilitaire qui bloque et attend que la transaction soit complétée.  Elle fonctionne seulement avec du code de confiance parcequ'elle utilise <A HREF="180.htm"><b>vwait</b></A>. D'autre part, elle n'est pas utile pour les cas où <b>::http::geturl</b> est appelée <i>sans</i> l'option <b>-command</b> parce que dans ce cas l'appel à<b>::http::geturl</b> ne retourne pas jusqu'a ce que la transaction HTTP soit complète, et donc qu'il n'y a rien à attendre. 
+</DD>
+  <DT><br><b>::http::data</b> <i>token</i>
+</DT><DD>Ceci est une fonction utilitaire qui retourne l'élément <b>body</b> (ex., l'URL donnée) du tableau d'état.
+</DD>
+  <DT><br><b>::http::error</b> <i>token</i></DT><DD>Ceci est une fonction utilitaire qui retourne l'élément<A HREF="103.htm"><b> error</b></A> du tableau d'état. 
+</DD>
+  <DT><br><b>::http::status</b> <i>token</i>
+</DT><DD>Ceci est une fonction utilitaire qui retourne l'élément<b> status</b> du tableau d'état. 
+</DD>
+  <DT><br><b>::http::code</b> <i>token</i>
+</DT><DD>Ceci est une fonction utilitaire qui retourne l'élément<b> http</b> du tableau d'état.
+</DD>
+  <DT><br><b>::http::ncode</b> <i>token</i></DT><DD>Ceci est une fonction utilitaire qui retourne juste le code numérique de retour (200, 404, etc.) de l'élément <b>http</b> du tableau d'état.
+</DD>
+  <DT><br><b>::http::size</b> <i>token</i>
+</DT><DD>Ceci est une fonction utilitaire qui retourne l'élément <b>currentsize</b> du tableau d'état, qui représente le nombre d'octets reçus de l' URL dans l'appel à <b>::http::geturl</b>.
+</DD>
+  <DT><br><b>::http::cleanup</b> <i>token</i>
+</DT><DD>Cette fonction nettoye l'état associé à la connection identifiée par <i>token</i> Après cet appel, les fonctions comme <b>::http::data</b> ne peuvent pas être utilisées pour obtenir l'information concernant l'opération Il est <i>fortement</i> recommandé que vous appeliez cette fonction après avoir fini avec une requête HTTP Ne pas le faire proquera la non-libération de la mémoire, et si votre appli appelle <b>::http::geturl</b> plusieurs fois, la fuite mémoire pourrait provoquer un pic de performance...ou bien pire. 
+</DD>
+  <DT><br><b>::http::register</b> <i>proto port command</i>
+</DT><DD>Cette fonction permet de fournir des types de transport HTTP tel que HTTPS, en enregistrant un préfixe, le port par défaut, et la commande à exécuter pour créer le <b>channel</b> Tcl. Ex.: <br>
+<br>package require http
+<br>package require tls
+<br>http::register https 443 ::tls::socket
+<br>set token &#91;http::geturl https://my.secure.site/]
+</DD>
+  <DT><br><b>::http::unregister</b> <i>proto</i>
+</DT><DD>Cette fonction libère un gestionnaire de protocole précedemment declaré via <b>http::register</b> 
+</DD>
+</DL>
+</div><br>
+<div><b>ERREURS</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La fonction <b>http::geturl</b> lèvera des erreurs dans les cas suivants: options de ligne de commande invalides, URL invalide, une URL sur une machine inexistante, ou une URL à un mauvais port sur une machine existante. Ces erreurs signifient que la transaction réseau n'a même pas&nbsp; démarré. Elle lève aussi une erreur si elle recoit une erreur I/O pendant l'écriture de l'en-tête de la requête HTTP. Pour les appels<b>::http::geturl</b> synchrones (où <b>-command</b> n'est pas spécifiée), elle lèvera une erreur si elle recoit une erreur I /O en lisant l'en-têtes ou les données de la réponse HTTP parce que <b>::http::geturl</b> ne retourne pas de jeton dans ces cas, elle fait tout le nettoyage requis et il n'y a pas de nécessité pour votre appli d'appeler <b>::http::cleanup</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Pour les appels asynchrones de <b>::http::geturl</b>, toutes les situations d'erreur précédentes s'appliquent, excepté que si s'il y a une erreur pendant&nbsp; la lecture de l'en-têtes ou les données de la réponse HTTP, aucune exception n'est lévèe Ceci parcequ'après l'écriture des en-têtes HTTP, <b>::http::geturl</b> retourne, et le reste de la transaction HTTP se produit en arrière-plan La commande callback peut verifier si l'erreur s'est produite pendant la lecture en appelant <b>::http::status</b> pour vérifier le statut et si c'est <i>error</i>, appeller <b>::http::error</b> pour obtenir le message d'erreur. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Alternativement, si le flux du programme principal atteint un point ou il a besoin de connaitre le résultat de la requête HTTP asynchrone, il peut appeller <b>::http::wait</b> et alors verifier les statut et erreur, comme le callback le fait. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans tous les cas, vous devez toujours appeller <b>http::cleanup</b> pour effacer le tableau d'état quand vous avez fini. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les autres résultats possibles de la transaction HTTP déterminés par l'examen du statut à partir de <b>http::status</b> sont décrit ci-dessous. 
+
+<DL>
+  <DT><br>ok
+</DT><DD>Si la transaction HTTP se termine entièrement, alors le statut sera <b>ok</b>. Néanmoins, vous pouvez toujours vérifier la valeur <b>http::code</b> pour obtenir le statut HTTP La fonction <b>http::ncode</b> fournit just l'erreur numérique (ex., 200, 404 ou 500) alors que&nbsp; la fonction <b>http::code</b> retourne une valeur comme &quot;HTTP 404 File not found&quot;. 
+</DD>
+  <DT><br>eof
+</DT><DD>Si le serveur ferme la socket sans réponse, alors aucune erreur n'est levée, mais le statut de la transaction sera <A HREF="102.htm"><b>eof</b></A>.
+</DD>
+  <DT><br>error
+</DT><DD>Le message d'erreur sera aussi stocké dans l'élément<A HREF="103.htm"><b> error</b></A> du tableau d'état, accessible via <b>::http::error</b>.
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une autre possibilité d'erreur est que <b>http::geturl</b> soit incapable d'écrire toutes les données post sur le serveur avant que le serveur réponde et ferme la socket. Le message d'erreur est sauvegardé dans&nbsp; l'élément <b>posterror</b> du tableau d'état et alors&nbsp; <b>http::geturl</b> tente de finaliser la transaction. Si elle peut lire la réponse du serveur elle finira avec un statut<b> ok</b>, autrement elle aura un statut<A HREF="102.htm"><b> eof</b></A> <br>
+</div><br>
+<div><b>TABLEAU D'ETAT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La fonction<b>::http::geturl</b> retourne un <i>token </i>qui peut être utilisé pour obtenir l'état de la transaction HTTP sous la forme d'un tableau Tcl. Utilisez cette construction pour créer une variable tableau facile à utiliser: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">upvar #0 &#36;token state</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une fois que les données associées à l'url ne sont plus nécessaires, le tableau d'état sera détruit pour libérer la mémoire. La fonction <b>http::cleanup</b> est fournie à cet usage. Les éléments suivants du tableau sont supportés: 
+<DL>
+  <DT><br><b>body</b>
+</DT><DD>Le contenu de l'URL. Sera vide si l'option <b>-channel</b> a été spécifiée Cette valeur est renvoyéee par la commande<b>::http::data</b>. 
+</DD>
+  <DT><br><b>currentsize</b>
+</DT><DD>Le nombre courant d'octets récupéré de l'URL. Cette valeur est renvoyée par la commande<b>::http::size</b>.
+</DD>
+  <DT><br><b>error</b>
+</DT><DD>Si défini, c'est la chaîne d'erreur vue quand la transaction HTTP est avortée. 
+</DD>
+  <DT><br><b>http</b>
+</DT><DD>Le statut de la réponse HTTP du serveur Cette valeur est renvoyée par la commande<b>::http::code</b> Le format de cette valeur est: 
+<br><i>HTTP/1.0 code string</i>
+Le <i>code</i> est un nombre de trois-digit défini dans le standard HTTP. Un code de 200 est OK Les codes commençant avec 4 ou 5 indiquent des erreurs. Les codes commençant avec 3 sont des erreurs de redirection Dans ce cas la meta-donnée <b>Location</b> spécifie une nouvelle URL qui contient l'information requise. 
+</DD>
+  <DT><br><b>meta</b>
+</DT><DD>Le protocole HTTP retourne les meta-données qui décrivent les contenus de l'URL. L'élément <b>meta</b> du tableau d'état est une liste de clés et valeurs des meta-données Ceci dans un format utile pour l'initialisation d'un tableau qui contient les meta-données:
+array set meta &#36;state(meta)
+Certaines des clés meta-données sont listées ci-dessous, mais le standard HTTP en définit plus, et les serveurs sont libres d'ajouter les leurs. 
+<DL>
+  <DT><br><b>Content-Type</b>
+</DT><DD>Le type de contenus de l'URL Les exemples inclutnt <b>text/html</b>, <b>image/gif,</b> <b>application/postscript</b> et <b>application/x-tcl</b>. </DD>
+  <DT><br><b>Content-Length</b>
+</DT><DD>La taille déclarée des contenus La taille obtenue par <b>::http::geturl</b> est disponibles comme <b>state(size)</b>. 
+</DD>
+  <DT><br><b>Location</b>
+</DT><DD>Une URL alternative qui contient les données requises.</DD>
+</DL>
+</DD>
+  <DT><br><b>posterror</b>
+</DT><DD>L'erreur, si elle existe, qui s'est produite pendant l'écriture du post des données sur le serveur. 
+</DD>
+  <DT><br><b>status</b>
+</DT><DD>Soit <b>ok</b>, en cas de succès, <b>reset</b> si réinitialisé par l'utilisateur, <b>timeout</b> si un timeout s'est produit avant que la transaction soit complète, ou <A HREF="103.htm"><b>error</b></A> pour une condition d'erreur Durant la transaction cette valeur est une chaîne vide. 
+</DD>
+  <DT><br><b>totalsize</b>
+</DT><DD>Un copie de la valeur<b> </b>des<b> </b>meta-données<b> Content-Length</b>. 
+</DD>
+  <DT><br><b>type</b>
+</DT><DD>Une copie de la valeur<b> </b>des<b> </b>meta-données<b> Content-Type</b>. 
+</DD>
+  <DT><br><b>url</b>
+</DT><DD>L'URL requise. 
+</DD>
+</DL>
+</div><br>
+<div><b>EXEMPLE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 102px;"># Copie une URL dans un fichier et affiche les meta-données<br>
+proc ::http::copy &#123; url file &#123;chunk 4096} } &#123;<br>
+&nbsp;&nbsp;&nbsp; set out &#91;open &#36;file w]<br>
+ set token &#91;geturl &#36;url -canal &#36;out -progress ::http::Progress &#92;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-blocksize &#36;chunk]<br>
+&nbsp;&nbsp;&nbsp; close &#36;out<br>
+&nbsp;&nbsp;&nbsp; # Ceci finit la ligne lancé par http::Progress<br>
+&nbsp;&nbsp;&nbsp; puts stderr &quot;&quot;<br>
+&nbsp;&nbsp;&nbsp; upvar #0 &#36;token state<br>
+ set max 0<br>
+&nbsp;&nbsp;&nbsp; foreach &#123;name value} &#36;state (meta) &#123;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if &#123;&#91;string longueur &#36;name] &gt; &#36;max} &#123;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; set max &#91;string longueur &#36;name]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if &#123;&#91;regexp -nocase ^location&#36; &#36;name]} &#123;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # Gère la redirection d'URL <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; puts stderr &quot;Location:&#36;value &quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return &#91;copy &#91;string trim &#36;value] &#36;file &#36;chunk]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp; incr max<br>
+&nbsp;&nbsp;&nbsp; foreach &#123;name value } &#36; state (meta) &#123;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;puts &#91;format &quot;%-*s %s&quot; &#36;max &#36;name: &#36;value]<br>
+&nbsp;&nbsp;&nbsp; }<br>
+<br>
+ return &#36;token<br>
+}<br>
+proc ::http::Progress &#123;args} &#123;<br>
+&nbsp;&nbsp;&nbsp; puts -nunwline stderr . ; flush stderr<br>
+}<br>
+
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">safe(n), <A HREF="162.htm">socket</A>(n), safesock(n) </div><br>
+<div>Dernière révision: 8.3</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="121.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="123.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

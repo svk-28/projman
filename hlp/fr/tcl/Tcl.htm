@@ -1,0 +1,47 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>Tcl&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Tcl - Sommaire de la syntaxe du langage Tcl.</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les règles suivantes definissent la syntaxe et la sémantique du langage Tcl:
+<DL>
+  <DT>&#91;1]</DT><DD>Un script Tcl est une chaîne contenant une ou plusieurs commandes. Les point-virgules et les sauts de lignes sont des séparateurs de commandes sauf placés entre guillemets comme décrit ci-dessous. Les crochets fermants sont des terminateurs de commande pendant la substitution de commande (voir ci-dessous) sauf placés entre guillemets. 
+</DD>
+  <DT><br>&#91;2]</DT><DD>Une commande est évaluée en deux étapes. D'abord, l'interpréteur Tcl divise la commande en <i>mots</i> et effectue les substitutions comme décrit ci-dessous. Ces substitutions sont effectuées de la même façon pour toutes les commandes. Le premier mot est utilisé pour localiser une  commande à exécuter, ensuite tous les mots de la commande sont transmis à la fonction de la commande. La fonction de la commande est libre d'interpréter chacun des mots à sa guise, tel un entier, un nom de variable, une liste, ou un script Tcl. Différentes commandes interprètent leurs mots différemment.</DD>
+  <DT><br>&#91;3]</DT><DD>Les mots d'une commande sont séparés par un espace (excepté les saut de lignes, qui sont des séparateurs de commandes). </DD>
+  <DT><br>&#91;4]</DT><DD>Si le premier caractère d'un mot est un guillemet double(&quot;) alors le mot est terminé par le guillemet double suivant. Si des points-virgules, crochets fermants, ou un espace (incluant les sauts de lignes) apparaissent entre les guillemets alors ils sont traités comme des caractères ordinaires et inclus dans le mot. Les substitution de commandes, substitution de variable , et la substitution backslash sont effectuées sur les caractères entre les guillemets comme décrit ci-dessous. Le double-guillemets ne sont pas retenus comme partie du mot.</DD>
+  <DT><br>&#91;5]</DT><DD>Si le premier caractère d'un mot est une accolade ouvrante (&#123;) alors le mot est terminé par l'accolade fermante correspondante (}). Si les accolades sont imbriquées dans le mot: pour chaque accolade ouverte supplémentaire il doit y avoir une accolade fermante supplémentaire (néanmoins, si une accolade ouvrante ou fermante dans le mot est précédée avec un antislash alors il n'est pas nécessaire de lui faire correspondre une accolade fermante). Aucune substitution n'est effectuée sur les caractères entre les accolades excepté pour les substitutions backslash-newline décrites ci-dessous, et les points-virgules, saut de lignes, crochets fermants, ou l'espace ne font l'objet d'une quelconque interprétation spéciale. Le mot consistera en exactement les caractères entre les accolades externes, non inclues les accolades elles-même.</DD>
+  <DT><br>&#91;6]</DT><DD>Si un mot contient un crochet ouvert (&quot;&#91;&quot;) alors Tcl effectue une <i>substitution de </i><i>commande</i>. Pour ceci il appelle l'interpréteur Tcl récursivement pour traiter les caractères suivants le crochet ouvert comme un script Tcl. Le script peut contiennent n'importe quel nombre de commandes et doit être terminé par un crochet fermé (&quot;]&quot;). Le résultat du script (i.e. le résultat de sa dernière commande) est substitué en un mot à la place des crochets et de tous les caractères entre eux. Il peut y avoir quelconque nombre de substitution de commandess dans un seul mot. La substitution de commandes n'est pas effectuée sur les mots entourés d'accolades.</DD>
+  <DT><br>&#91;7]</DT><DD>Si un mot contient un signe dollar (&quot;&#36;&quot;) alors Tcl effectue une <i>substitution de </i><i>variable</i>:&nbsp; le signe dollar et les caractères suivants sont remplacés dans le mot par les valeur d'une variable. La substitution de variable peut prendre quelconque des formes suivantes:<DL>
+  <DT><b>&#36;</b><i>name</i><br></DT><DD><i>Name</i> est le nom d'une variable scalaire; le nom est terminé par tout caractère qui n'est pas une lettre, un chiffre, ou un underscore.</DD>
+  <DT><b>&#36;</b><i>name</i><b>(</b><i>index</i><b>)</b><br></DT><DD><i>Name</i> donne le nom d'une variable tableau et <i>index</i> donne le nom d'un élément à l'intérieur du tableau. <i>Name</i> doit contenir seulement des lettres, chiffres, et underscores. La substitution de commandes, substitution de variables, et substitutions backslash sont effectuées sur les caractères de <i>index</i>.</DD>
+  <DT><b>&#36;&#123;</b><i>name</i><b>}</b><br></DT><DD><i>Name</i> est le nom d'une variable scalaire. Il peut contenir tous les caractères exceptés des accolades fermantes.</DD>
+</DL>
+Il peut y avoir n'importe quel nombre de substitution de variables dans un seul mot. La substitution de variables n'est pas effectuée sur les mots entourés d'accolades.</DD>
+  <DT><br>&#91;8]</DT><DD>Si un antislash (&quot;\&quot;) apparail à l'intérieur un mot alors une <i>substitution</i> <i>backslash </i>se produit. Dans tout les cas sauf ceux décrit ci-dessous le backslash est omis et le caractère suivant est traité comme un caractère ordinaire et inclus dans le mot. Ceci permet aux caractères tels que les double guillemets, crochets fermants, et signes dollar d'être inclus dans les mots sans déclencher de traitement spécial. La table suivante liste les sequences backslash qui sont gérées spécialement, avec la valeur qui remplace chaque séquence. <DL>
+  <DT>\<b>a</b><br></DT><DD>Bip (bell) (0x7). </DD>
+  <DT>\<b>b</b><br></DT><DD>Retour arrière (0x8). </DD>
+  <DT>\<b>f</b><br></DT><DD>Saut de page (0xc). </DD>
+  <DT>\<b>n</b><br></DT><DD>Saut de ligne (0xa).</DD>
+  <DT>\<b>r</b><br></DT><DD>Retour chariot (0xd). </DD>
+  <DT>\<b>t</b><br></DT><DD>Tabulation (0x9).</DD>
+  <DT>\<b>v</b><br></DT><DD>Tabulation verticale (0xb).</DD>
+  <DT>\<b>&lt;newline&gt;</b><i>whiteSpace</i><br></DT><DD>Un espace remplace les backslash, newline, et tout les espaces et tabulationss après le saut de ligne. Cette séquence backslash est unique dans le sens ou elle est remplacée dans un pre-traitement séparé avant que la commande soit analysée. Ceci signifie qu'elle sera remplacée même quand elle se produit entre accolades, et l'espace résultant sera traité comme un separateur de mot s'il n'est pas entre accolades ou guillemets.</DD>
+  <DT>\\<br></DT><DD>Backslash (&quot;\&quot;). </DD>
+  <DT>\<i>ooo</i> <br></DT><DD>Les chiffres <i>ooo</i> (un, deux, ou les trois ) donnent la valeur octale sur huit bits du caractère Unicode qui sera inséré. Les bits forts du caractère Unicode seront à 0. </DD>
+  <DT>\<b>x</b><i>hh</i> <br></DT><DD>Les chiffres hexadécimaux <i>hh</i> donnent la valeur hexadécimale sur huit bits du caractère Unicode qui sera inséré. N'importe quel nombre de chiffres hexadécimaux peuvent être présents; néanmoins, tout sauf les deux derniers sont ignorés (le résultat est toujours une quantité sur un octet). Les bits forts du caractère Unicode seront à 0.</DD>
+  <DT>\<b>u</b><i>hhhh</i> <br</DT><DD>Les chiffres hexadécimaux <i>hhhh</i> (un, deux, trois, ou les quatre) donnent la valeur hexadécimale sur seize bit du caractère Unicode qui sera inséré.</DD>
+</DL>
+La substitution backslash n'est pas effectuée sur les mots entourés d'accolades, excepté pour backslash-newline comme décrit plus haut.
+</DD>
+  <DT><br>&#91;9]</DT><DD>Si un caractère dièse (&quot;#&quot;) apparait à un point où Tcl attend le premier caractère du premier mot d'une commande, alors le caractère dièse et les caractères qui suivent, jusqu'au saut de ligne suivant, sont considérés comme des commentaires et ignorés. Le caractère commentaire a seulement une signification quand il apparait au début d'une commande.</DD>
+  <DT><br>&#91;10]</DT><DD>Chaque caractère est traité exactement une fois par l'interpréteur Tcl comme partie de la création des mots d'une commande. Par exemple, si une substitution de variable se produit alors aucune substitution suivante n'est effectuée sur la valeur de la variable; la valeur est insérée dans le mot texto. Si une substitution de commandes se produit alors la commande imbriquée est traitée entièrement par l'appel recursif de l'interpréteur Tcl; aucune substitution n'est effectuée avant l'appel recursif et aucune substitution supplémentaire n'est effectuée dans le résultat du script imbriqué.</DD>
+  <DT><br>&#91;11]</DT><DD>Les substitutions n'affectent pas les limites des mots d'une commande. Par exemple, pendant une substitution de variable la valeur totale de la variable devient une partie d'un simple mot, même si la valeur de la variable contient des espaces. </DD>
+</DL>
+</div>
+<div>Dernière révision: 8.1</div>
+</BODY></HTML>

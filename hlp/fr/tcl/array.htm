@@ -1,0 +1,42 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>array&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">array - Manipule les variables tableau
+</div> <br>
+<div><b>SYNTAXE</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>array </b><i>option arrayName</i> ?<i>arg arg ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande effectue une des opérations sur la variable donnée par <i>arrayName</i>. Sauf spécification contraire pour certaines commandes individuelles ci-dessous, <i>arrayName</i> doit être le nom d'une variable tableau existante. L'argument <i>option</i> détermine l'action effectuée par la commande. Les <i>options</i> légales (qui peuvent être abrégées) sont: 
+<DL>
+  <DT><b>array anymore </b><i>arrayName searchId</i><br></DT><DD>Renvoie 1 s'il reste au moins un élément à traiter pour une recherche dans le tableau, 0 si tous les éléments ont déjà été renvoyés. <i>SearchId</i> indique la recherche à vérifier dans <i>arrayName</i>, et doit avoir été la valeur de retour d'un précédent appel de <b>array startsearch</b>. Cette option est particulièrement utile si un tableau contient un élément avec un nom vide, parce que la valeur de retour de <b>array nextelement</b> n'indiquera pas si la recherche est terminée. 
+<br></DD>
+  <DT><br><b>array donesearch </b><i>arrayName searchId</i></DT><DD>Cette commande termine une recherche dans un tableau et détruit l'état associé à cette recherche.  <i>SearchId</i> indique quelle recherche détruire dans <i>arrayName</i>; et doit avoir été la valeur de retour d'un précédent appel de <b>array startsearch</b>. Renvoie une chaîne vide. 
+</DD>
+  <DT><br><b>array exists </b><i>arrayName</i>
+</DT><DD>Renvoie 1 si <i>arrayName</i> est une variable tableau, 0 s'il n'y a pas de variable de ce nom ou si c'est une variable scalaire. </DD>
+  <DT><br><b>array get </b><i>arrayName</i> ?<i>pattern</i>? </DT><DD>
+Renvoie une liste contenant des paires d'éléments. Le premier élément de chaque paire est le nom d'un élément de <i>arrayName</i> et le second élément de chaque paire est la valeur de l'élément de tableau. L'ordre des paires est indéfini. Si <i>pattern</i> n'est pas spécifié, alors tous les éléments du tableau sont inclus dans le résultat. Si <i>pattern</i> est spécifié, alors seuls les éléments dont les noms correspondent à <i>pattern</i> (en utilisant les règles de correspondances de <b>string match</b>) sont inclus. Si <i>arrayName</i> n'est pas le nom d'une variable tableau, ou si le tableau ne contient pas d'éléments, alors une liste vide est renvoyée.
+</DD>
+  <DT><br><b>array names </b><i>arrayName</i> ?<i>pattern</i>?<br></DT><DD>Renvoie une liste contenant le noms de tous les éléments dans le tableau qui correspondent à <i>pattern</i> (en utilisant les règles de correspondance de <b>string match</b>). Si <i>pattern</i> est omis alors la commande renvoie tous les noms des éléments dans le tableau. S'il n'y a pas d 'éléments (correspondants) dans le tableau, ou si <i>arrayName</i> n'est pas le nom d'une variable tableau, alors une chaîne vide est renvoyée. 
+</DD>
+  <DT><br><b>array nextelement </b><i>arrayName searchId</i><br></DT><DD>Renvoie le nom de l'élément suivant dans <i>arrayName</i>, ou une chaîne vide si tous les éléments de <i>arrayName</i> ont déjà étés renvoyé dans cette recherche. L'argument <i>searchId</i> identifie la recherche, et doit avoir été la valeur de retour d'une commande<b> array startsearch</b>. Attention: si des éléments sont ajoutés à ou effacés de ce tableau, alors toutes les recherches sont automatiquement terminées exactement comme si <b>array donesearch</b> avait été appelée; ceci causerait l'echec des opérations <b>array </b><b>nextelement</b> pour ces recherches. 
+</DD>
+  <DT><br><b>array set </b><i>arrayName list</i><br></DT><DD>Fixe les valeurs d'un ou plusieurs éléments de <i>arrayName</i>. <i>list</i> doit avoir une forme identique à celle renvoyée par <b>array get</b>, consistant d'un même nombre d'éléments. Chaque élément impair dans <i>list</i> est traité comme un nom d'élément dans <i>arrayName</i>, et les éléments suivants de <i>list</i> sont utilisés comme une nouvelle valeur pour cet élément de tableau. Si la variable <i>arrayName</i> n'existe pas déjà et que <i>list</i> est vide, <i>arrayName</i> est créée avec une valeur tableau vide. 
+</DD>
+  <DT><br><b>array size </b><i>arrayName</i><br></DT><DD>Renvoie une chaîne décimale donnant le nombre d'éléments dans le tableau. Si <i>arrayName</i> n'est pas le nom d'un tableau alors 0 est renvoyé. 
+</DD>
+  <DT><br><b>array startsearch </b><i>arrayName</i><br></DT><DD>Cette commande initialise une recherche élément-par-élément dans le tableau désigné par <i>arrayName</i>, dont les appels de la commande <b>array </b><b>nextelement</b> renverront les noms des éléments individuels dans le tableau. Quand la recherche est terminée, la commande tableau<b> donesearch</b> sera appelée. La valeur de retour est un identificateur de recherche qui doit être utilisé dans les commandes<b> array nextelement</b> et <b>array </b><b>donesearch</b>; il permet à de multiples recherches d'être menées simultanément sur le même tableau. 
+</DD>
+  <DT><br><b>array unset </b><i>arrayName</i> ?<i>pattern</i>?
+</DT><DD>Efface tous les éléments du tableau qui correspondent à <i>pattern</i> (en utilisant les règles correspondantes de <b>string match</b>). Si <i>arrayName</i> n'est pas le nom d'une variable tableau ou qu'il n'y a pas d'éléments correspondant dans le tableau, alors une chaîne vide est renvoyée. Si <i>pattern</i> est omis et que c'est une variable tableau, alors la commande efface le tableau entier.</DD>
+</DL></div><br>
+<div>Dernière révision: 8.3</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="88.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="90.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

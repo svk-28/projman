@@ -1,0 +1,81 @@
+<title>VisualREGEXP</title>
+<center><h1>VisualREGEXP</h1>
+<p>Copyright (c) 2000-2001 Laurent Riesterer
+<br>Latest version 2.2</center>
+
+<p><b>ABOUT</b>
+<p>VisualREGEXP helps you to design, debug or more generally work with regular
+expression. As it is often difficult to write the right regexp at the first
+try, this tool will show you the effect of your regexp on a sample you can
+choose.
+<p><b>REQUIREMENTS</b>
+<p>This program requires Tcl/Tk 8.3.0 or later.
+<p><b>HOW TO USE</b>
+
+<p><b>Launching the program</b>
+<p>On Unix, use 'chmod +x ...' to make the program executable. You can then
+integrate it with your Window Manager or put it into an executable path.
+<br>On Windows, create a shortcut and invoke the script with 'wish.exe'
+
+<p><b>Design of regexps</b>
+<p>To design regexp, just type the expression in the top text widget.
+Press the 'Go' button to highlight the matched part of the text in the sample
+text widget.
+
+<p>To get a quickref of the regexp syntax use the menu 'View/Show regexp help'.
+
+<p>You can specify some options using the checkboxes (please read Tcl help to
+learn the meaning of these options).
+
+<p><b>Recursive design of regexps</b>
+
+<p>Sometimes you will need more than one step to extract the information you want
+from the sample. For example, imagine you want to retrieve information from
+an HTML table inside an another HTML table :
+
+	'<html><body>
+	<table border=1>
+	  <tr><td>
+	    <table bgcolor="#FFFF00" border=1>
+	      <tr> <td>One</td> <td>1</td> </tr>
+	      <tr> <td>Two</td> <td>2</td> </tr>
+	    </table>
+	  <tr> <td>Foo</td> <td>Bar</td> </tr>
+	</table>
+	</body></html>'
+
+<p>You cannot use one global regexp to extract the two lines "One 1" and "Two 2".
+You have to use a first regexp to narrow the processed region.
+Type the following regexp '<table bg[^>]*?>(.*?)<table>' and press 'Go'.
+You see now that the interessing area is shown in blue. Press the Match '1'
+button which will extract the blue text (the regexp to use to get this text
+is then printed on the console).
+Now use '<td>(.*?)</td>.*?<td>(.*?)</td>' to get the information you need.
+
+<p><b>Optimization of regexps</b>
+
+<p>When you need to match a list of words, use the menu
+'Insert regexp/Make regexp' to design an optimized version of the word list.
+
+<p>For example, the list 'aa aab ab ad' is optimized into 'a(ab?|b|d)'.
+
+<p><b>Processing the sample text</b>
+
+<p>Use can use VisualREGEXP to perform modification of a text.
+Just use the menu 'Select mode/Use replace'. You can now design a regexp to
+match what you want. Then use the replace text widget to enter the substitution
+you want to apply (use \0, \1, \2, ... to match the subregexp, use the color
+to map the number with the matched sub-expressions).
+
+<p>After the substitution, you can save the new text using the 'File/Save ...'
+menu. You can let the program choose the end-of-line format or force them for
+a specific environment (Unix, Windows, Mac).
+
+<p><b>CONTACT</b>
+
+<p>Send your bug reports, suggestions or any feedback to:
+<dir>
+<p><a href="mailto:laurent.riesterer@free.fr">laurent.riesterer@free.fr</a><br>
+<a href="http://laurent.riesterer.free.fr">http://laurent.riesterer.free.fr</a>
+</dir>
+

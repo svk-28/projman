@@ -1,0 +1,65 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>fcopy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">fcopy - Copie des données d'un canal à un autre.
+</div> <br>
+<div><b>SYNTAXE</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>fcopy </b><i>inchan</i> <i>outchan</i> ?<b>-size </b><i>size</i>? ?<b>-command </b><i>callback</i>? 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>fcopy</b> copie données d'un canal I/O, <i>inchan</i> à un autre canal I/O, <i>outchan</i>. La commande <b>fcopy</b> force la mise en tampon dans le système I/O Tcl pour éviter une copie supplémentaire et pour éviter la mise en tampon de trop de données en mémoire pendant la copie de gros fichiers vers des destinations lentes comme les sockets réseau. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>fcopy</b> transfère les données de <i>inchan</i> jusqu'a la fin du fichier ou bien que <i>size</i> octets aient été transférés. Si aucun argument <b>-size</b> n'est donné, alors la copie va jusqu'a la fin du fichier. Toute les données lues à partir de <i>inchan</i> sont copiées vers <i>outchan</i>. Sans l'option<b> -command</b>, <b>fcopy</b> bloque jusqu'a ce que la copie soit complète et retourne le nombre d'octets écrits dans <i>outchan</i>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">L'argument <b>-command</b> fait travailler <b>fcopy</b> en arrière-plan. Dans ce cas elle retourne immédiatement et le <i>callback</i> est appelé plus tard quand la copie se termine. Le <i>callback</i> est appelé avec un ou deux arguments supplémentaire qui indique combien d'octets ont été écrits dans <i>outchan</i>. Si une erreur s'est produite pendant la copie en arrière-plan, le second argument est la chaîne associée à l'erreur. Avec une copie en arrière-plan, it n'est pas nécessaire de mettre <i>inchan</i> ou <i>outchan</i> dans un mode non-bloquant; la commande <b>fcopy</b> en prend soin de automatiquement. Néanmoins, il est nécessaire d'entrer dans la boucle d'évènement en utilisant la commande <A HREF="180.htm"><b>vwait</b></A> ou en utilisant Tk. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Vous n'ètes pas autorisés à faire d'autre opérations I/O avec <i>inchan</i> ou <i>outchan</i> pendant une <b>fcopy</b> en arrière-plan. Si soit <i>inchan</i> soit <i>outchan</i> est fermé pendant la copie est en cours, la copie courante est stoppée et le callback n'est <i>pas</i> fait. Si <i>inchan</i> est fermé, alors toutes les données déjà en file pour <i>outchan</i> sont écrites. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Notez que <i>inchan</i> peut devenir lisible pendant une copie en arrière-plan. Vous devez arrêter quelconque gestionnaires <A HREF="112.htm"><b>fileevent</b></A> pendant une copie en arrière-plan ainsi ces gestionnaires n' interfèreront pas avec la copie. N'importe quel I/O tenté par un gestionnaire <A HREF="112.htm"><b>fileevent</b></A> aura une erreur &quot; canal busy&quot;. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>Fcopy</b> traduit les séquences de fin de ligne de <i>inchan</i> et <i>outchan</i> en accord avec l'option <b>-translation</b> pour ces canaux. Voir la page de manuel de <A HREF="109.htm"><b>fconfigure</b></A> pour des détails sur l'option<b> -translation</b>. Les traductions signifient que le nombre d'octets lus de <i>inchan</i> peut être différent du nombre d'octets écrits à <i>outchan</i>. Seul le nombre d'octets écrits sur <i>outchan</i> est rapporté, soit comme la valeur de retour d'un <b>fcopy</b> synchrone ou comme l'argument du callback pour un <b>fcopy</b> asynchrone. <br>
+</div>
+<div><b>EXEMPLE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Ce premier exemple montre comment le callback récupère le nombre d'octets transféré. Il aussi utilise vwait pour placer l'application dans la boucle d'évènement. Bien sur, cet exemple simplifié pourrait être fait sans la commande callback. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">proc Cleanup &#123;in out bytes &#123;error &#123;}}} &#123;<br>
+ global total<br>
+ set total &#36;bytes<br>
+ close &#36;in<br>
+ close &#36;out<br>
+ if &#123;&#91;string length &#36;error] != 0} &#123;<br>
+# l'erreur s'est produite pendant la copie<br>
+ }<br>
+}<br>
+set in &#91;open &#36;file1]<br>
+set out &#91;socket &#36;serveur &#36;port]<br>
+fcopy &#36;in &#36;out -command &#91;liste Cleanup &#36;in &#36;out]<br>
+vwait total<br>
+<br>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le second exemple copie par tranches et teste la fin de fichier dans la commande callback </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">proc CopyMore &#123;in out chunk bytes &#123;error &#123;}}} &#123;<br>
+ global total done<br>
+ incr total &#36; bytes<br>
+ if &#123;(&#91;string length &#36;error] != 0) || &#91;eof &#36;in] &#123;<br>
+set done &#36;total<br>
+close &#36;in<br>
+close &#36;out<br>
+ } else &#123;<br>
+fcopy &#36;in &#36;out -command &#91;list CopyMore &#36;in &#36;out &#36;chunk] &#92;<br>
+ -size &#36;chunk<br>
+ }<br>
+}<br>
+set in &#91;open &#36;file1]<br>
+set out &#91;socket &#36;serveur &#36;port]<br>
+set chunk 1024<br>
+set total 0<br>
+fcopy &#36;in &#36;out -command &#91;list CopyMore &#36;in &#36;out &#36;chunk] -size &#36;chunk<br>
+vwait done<br>
+<br>
+</div>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="102.htm">eof</A>(n), <A HREF="108.htm">fblocked</A>(n), <A HREF="109.htm">fconfigure</A>(n) </div><br>
+<div>Dernière révision: 8.0</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="109.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="111.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

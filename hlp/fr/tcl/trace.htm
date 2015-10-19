@@ -1,0 +1,44 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>trace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">trace - suivre l'accès aux variables</div>
+<div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>trace </b><i>option</i> ?<i>arg arg ...</i>?&nbsp; 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande provoque l'exécution de certaines commandes Tcl quand certaines opérations sont appelées. Actuellement, seule la trace de variables est mise en place. Les <i>options</i> valides (qui peuvent être abrégées) sont: 
+<DL>
+  <DT><b>trace variable </b><i>name ops command</i></DT><DD>Provoque l'éxécution de la commande <i>command</i> à chaque fois que la variable <i>name</i> est accédée par un des moyens indiqué par <i>ops</i>. <i>Name</i> peut faire référence à une variable simple, un élément d'un tableau , ou un tableau dans son entier (c'est à dire que&nbsp; <i>name</i> peut juste être le nom d'un tableau, sans parenthèses d'index). Si <i>name</i> se réfère à un tableau entier, alors <i>command</i> est appelée pour chaque manipulation d'un élément du tableau. Si la variable n'existe pas, elle sera créée mais n'aura pas de valeur, donc elle sera visible par les requêtes <b>namespace which</b>, mais pas par les requêtes <b>info exists</b>.<br> 
+<i>Ops </i>indique quelles opérations sont suivies, et comprend une ou plusieurs des lettres suivantes:
+<DL>
+  <DT><b>r</b></DT><DD>Appelle <i>command </i>à chaque fois que la variable est lue.</DD>
+  <DT><b>w</b></DT><DD>Appelle <i>command</i> à chaque fois que la variable est écrite.
+</DD>
+  <DT><b>u</b></DT><DD>Appelle <i>command</i> à chaque fois que la variable est annulée. Les variables peuvent être annulées explicitement avec la commande <b><u>unset</u></b>, ou implicitement à la fin des procédures (toutes leurs variables locales sont annulées). Les variables sont aussi annulées quand des interpréteurs sont détruits, mais les commandes de trace ne seront pas appelées parce qu'il n'y aura pas d'interpréteur pour les éxécuter.
+</DD>
+</DL><br> 
+Quand la trace se déclenche, trois arguments sont ajoutés à la fin de <i>command</i> , de telle sorte que la commande est réellement appelée comme suit:<br> 
+<i>command name1 name2 op</i><br> 
+<i>Name1</i> et <i>name2</i> donnent le(s) nom(s) pour la variable accédée: si la variable est scalaire, alors <i>name1</i> donne le nom de la variable et <i>name2</i> est une chaîne vide; si la variable est un élément de tableau, <i>name1</i> donne le nom du tableau et <i>name2</i> l'index dans le tableau; si un tableau entier est détruit et que la trace était enregistrée sur la totalité du tableau et non sur un seul élément, alors <i>name1</i> donnera le nom du tableau et <i>name2</i> une chaîne vide. <i>Name1</i> et <i>name2</i> ne sont pas nécessairement les mêmes noms que celui utilisé dans la commande <b>trace variable</b>: la commande <b><u>upvar</u></b> permet à une procédure de référencer une variable sous un nom différent. <i>Op</i> indique quelle opération est effectuée sur la variable, et est l'une des trois lettres <b>r</b>, <b>w</b> ou <b>u</b> qui sont définies plus haut.<br> 
+<i>Command </i>s'éxécute dans le même contexte que le code qui a appelé l'opération tracée: si la variable était accédée comme partie d'une procédure Tcl, alors <i>command</i> aura accès aux mêmes variables locales que le code de la procédure. Ce contexte peut être différent de celui dans lequel la trace a été créée. Si <i>command</i> appelle une procédure (ce qui est le cas normal) alors la procédure devra utiliser <b><u>upvar</u></b> ou <b><u>uplevel</u></b> si elle souhaite accéder à la variable tracée.&nbsp; Noter aussi que <i>name1</i> n'est pas nécessairement le même que le nom utilisé pour définir la trace sur la variable; des différences peuvent se produire si l'accès est fait au travers d'une variable définie par la commande <b><u>upvar</u></b>.<br> 
+Pour les traces en lecture et en écriture, <i>command</i> peut changer la variable pour modifier le résultat de l'opération tracée. Si <i>command</i> modifie la valeur de la variable pendant une trace en lecture ou en écriture, alors la nouvelle valeur sera retournée comme étant le résultat de l'opération tracée. La valeur de retour de <i>command</i> est ignorée sauf dans le cas où elle retourne une erreur quelconque; dans ce cas l'opération tracée renvoie aussi une erreur avec le même message d'erreur que celui renvoyé par la commande appelée par trace (ce mécanisme peut être utilisé pour mettre en place des variables en lecture seule, par exemple). Pour les traces en écriture, <i>command</i> est appelée après que la valeur de la variable ait été changée; elle peut écrire une nouvelle valeur dans la variable pour forcer la valeur produite par l'opération d'écriture. Pour mettre en place des variables en lecture seule, <i>command</i> aura à charge de&nbsp; remettre l'ancienne valeur dans la variable. <br> 
+Pendant que <i>command</i> s'éxécute durant une trace en lecture ou en écriture, les traces sur la variable sont temporairement désactivées. Cela signifie que les lectures ou les écritures appelées par <i>command</i> se produiront directement, sans invoquer <i>command</i>&nbsp; (ni aucune autre trace) une nouvelle fois. Cependant, si <i>command</i> annule la variable, les traces d'annulation seront appelées. <br> 
+Quand une trace d'annulation est appelée, la variable a déjà été détruite: elle apparaîtra comme indéfinie et ne possédant pas de traces. Si une annulation de variable se produit à cause d'une fin de procédure, la trace sera appelée dans le contexte de variables de la procédure appelante: le contexte de pile de la procédure qui s'est finie n'existera plus. Les traces ne seront pas désactivées pendant les traces d'annulation, donc si une commande de trace d'annulation crée une nouvelle trace et accède à la variable correspondante, cette commande de trace sera appelée. Les erreurs dans les traces d'annulation sont ignorées.<br> 
+S'il y a plusieurs traces sur une variable elles seront appelées selon leur ordre de création, les plus récentes en premier. Si une trace renvoie une erreur, les traces suivantes portant sur la même variable ne seront pas appelées. Si un élément de tableau a une trace positionnée, et qu'il y a aussi une trace positionnée sur le tableau dans son ensemble, la trace globale est appelée avant celle qui porte sur l'élément seul.<br> 
+Une fois créée, la trace reste en effet jusqu'à ce qu'elle soit retirée au moyen de la commande <b>trace vdelete</b> décrite ci-dessous, ou bien jusqu'à ce que la variable soit annulée, ou bien jusqu'à ce que l'interpréteur soit détruit. L'annulation de l'élément d'un tableau retirera toutes les traces sur cet élément, mais ne retirera pas les traces sur l'ensemble du tableau.<br>
+Cette commande retourne une chaîne vide.
+</DD>
+  <DT><br><b>trace vdelete </b><i>name ops command</i></DT><DD>S'il existe une trace positionnée sur la variable <i>name</i> avec les opérations <i>ops</i> et la commande <i>command</i>, alors la trace est supprimée, de telle sorte que <i>command</i> ne sera plus jamais appelée. Retourne une chaîne vide.</DD>
+  <DT><br><b>trace vinfo</b> <i>name</i></DT><DD>
+Retourne une liste contenant un élément pour chaque trace positionnée sur la variable name. Chaque élément de la liste est lui-même une liste contenant deux éléments, qui sont les <i>ops</i> et <i>command</i> associées à la trace. Si <i>name</i> n'existe pas ou n'a aucune trace positionnée, le résultat de la commande sera une chaîne vide.
+</DD>
+</DL>
+</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="172.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="174.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

@@ -1,0 +1,178 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>binary&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">binary - Insère et extrait des champs à partir de chaînes binaires 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>binary format </b><i>formatString </i>?<i>arg arg ...</i>? <br>
+<b>binary scan </b><i>string formatString </i>?<i>varName varName ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande fournit des facilités pour la manipulation de données binaires. La première forme, <b>binary format</b>, crée une chaîne binaire à partir de valeurs Tcl standards. Par exemple, en partant des valeurs 16 et 22, elle produira une chaîne binaire de 8 octets constituée de deux entiers de 4 octets, un pour chacun des nombres. La seconde forme de la commande, <b>binary scan</b>, fait le contraire: elle extrait les données à partir d'une chaîne binaire et les renvoie comme des valeur chaînes Tcl ordinaire. 
+</div><br>
+<div><b>BINARY FORMAT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>binary format</b> génère une chaîne binaire dont le format est spécifié par le <i>formatString</i> et dont le contenu provient des arguments supplémentaires.&nbsp; La valeur binaire résultante est renvoyée. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le <i>formatString</i> est constitué d'une séquence de zéro ou plus de spécificateurs de champs séparés par zéro ou plusieurs espaces. Chaque spécificateur de champ est un simple caractère suivi par un nombre optionnel <i>compte</i>. La plupart des spécificateurs de champs attendent un argument pour formater la valeur. Le caractère spécifie comment la valeur est formatée. Le nombre <i>compte</i> indique combien d'items du type spécifié sont présents dans la valeur. Si présent, <i>compte</i> est un entier décimal non-négatif ou <A HREF="24.htm"><b>*</b></A>, qui indique normalement que tous les éléments de la valeur doivent être utilisés. Si le nombre d'arguments ne correspond&nbsp; pas au nombre de champs dans le format chaîne qui attend les arguments, alors une erreur est générée. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Chaque paire type-compte déplace un curseur imaginaire au travers des données binaires, en stockant les octets à la position courante et avancant le curseur juste après le dernier octet stocké.&nbsp; Le curseur est initialement à la position 0 au début des données. Le type peut être l'un des caractères suivants: </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">
+<DL>
+  <DT><b>a</b></DT><DD>Stocke une chaîne de caractères de longueur <i>compte</i> dans la chaîne de sortie. Si <i>arg</i> a moins d'octets que <i>compte</i>, alors des octets supplémentaire nuls sont utilisés pour remplir le champ. Si <i>arg</i> est plus long que la longueur spécifiée, les caractères supplémentaires sont ignorés. Si <i>compte</i> est <b>*</b></A>, alors tous les octets de <i>arg</i> sont formatés. Si <i>compte</i> est omis, alors un caractère est formaté. Par exemple, 
+<b>binary format a7a* alpha bravo charlie</b>
+renverra une chaîne équivalente à <b>alpha&#92;000&#92;000bravoc</b>. 
+</DD>
+  <DT><b>A</b></DT><DD>Cette forme est la même que <b>a</b> excepté que des espaces sont utilisés pour le remplissage au lieu de nuls. Par exemple, 
+<b>binary format A6A*A alpha bravo charlie</b>
+renverra <b>alpha bravoc</b>. 
+</DD>
+  <DT><b>b</b></DT><DD>Stocke une chaîne de <i>compte</i> chiffres binaires en ordre croissant dans chaque octet de la chaîne de sortie. <i>Arg</i> doit contenir une séquence de <b>1</b> et de <b>0</b>. Les octets résultants sont emis du premier au dernier&nbsp; avec les bits formatés de bas en haut dans chaque octet. Si <i>arg</i> a moins de chiffres que <i>compte</i>, alors des zéros seront utilisés pour les bits restant. Si <i>arg</i> a plus de chiffres que le nombre spécifiés, les chiffres supplémentaires sont ignorés.&nbsp; Si <i>compte</i> est <b>*</b></A>, alors tous les chiffres de <i>arg</i> sont formatés. Si <i>compte</i> est omis, alors un digit est formaté. Si le nombre de bits formatés ne finit pas à un&nbsp; une limite d'octet, les bits restants du dernier octet seront des zéros. Par exemple, 
+<b>binary format b5b* 11100 111000011010</b>
+renverra une chaîne équivalentee à <b>&#92;x07&#92;x87&#92;x05</b>.</DD>
+  <DT><b>B</b></DT><DD>Cette forme est la même que <b>b</b> excepté que le bits sont stockés dans l'ordre descendant dans chaque octet. Par exemple, 
+<b>binary format B5B* 11100 111000011010</b>
+renverra une chaîne équivalentee à <b>&#92;xe0&#92;xe1&#92;xa0</b>. 
+</DD>
+  <DT><b>h</b></DT><DD>Stocke une chaîne de <i>compte</i> chiffres hexadécimaux de bas en haut dans chaque octet de la chaîne de sortie.&nbsp; <i>Arg</i> doit contenir une séquence de caractères comprise dans ``0123456789abcdefABCDEF''. Les octets résultants sont émis du premier au dernier avec les chiffres hexa formatés de bas en haut dans chaque octet.&nbsp; Si <i>arg</i> a moins de chiffres que <i>compte</i>, alors des zéros sont utilisés pour les chiffres restants. Si <i>arg</i> a plus de chiffres que le nombre spécifiés, les chiffres supplémentaires seront ignorés.&nbsp; Si <i>compte</i> est <b>*</b>, alors tous les chiffres de <i>arg</i> seront formatés.&nbsp; Si <i>compte</i> est omis, alors un digit est formaté.&nbsp; Si le nombre de chiffres formatée ne finit pas à une limite d'octet, les bits restants du dernier octet seront des zéros. Par exemple,
+<b>binary format h3h* AB def</b>
+renverra une chaîne équivalente à <b>&#92;xba&#92;x00&#92;xed&#92;x0f</b>. 
+</DD>
+  <DT><b>H</b></DT><DD>Cette forme est la même que <b>h</b> excepté que le chiffres sont stockés de&nbsp; haut en bas dans chaque octet.&nbsp; Par exemple, 
+<b>binary format H3H* ab DEF</b>
+renverra une chaîne équivalente à <b>&#92;xab&#92;x00&#92;xde&#92;xf0</b>. 
+</DD>
+  <DT><b>c</b></DT><DD>Stocke une ou plusieurs valeur entières 8-bit dans la chaîne de sortie.&nbsp; Si aucun <i>compte</i> n'est spécifié, alors <i>arg</i> doit être une valeur entière; autrement <i>arg</i> doit être une liste contenant au moins <i>compte</i> éléments entiers.&nbsp; Les 8 bits de poids faible de chaque entier sont stockés comme une valeur d'un octet à la position du curseur.&nbsp; Si <i>compte</i> est <b>*</b>, alors tous les entiers de la liste sont formatés.&nbsp; Si le nombre d'éléments dans la liste est inférieur à <i>compte</i>, alors une erreur est générée.&nbsp; Si le nombre d'éléments dans la liste est supérieur à <i>compte</i>, alors les éléments supplémentaires sont ignorés.&nbsp; Par exemple,
+<b>binary format c3cc* &#123;3 -3 128 1} 260 &#123;2 5}</b>
+renverra une chaîne équivalente à <b>&#92;x03&#92;xfd&#92;x80&#92;x04&#92;x02&#92;x05</b>, alors que 
+<b>binary format c &#123;2 5}</b>
+générera une erreur. 
+</DD>
+  <DT><b>s</b></DT><DD>Cette forme est la même que <b>c</b> excepté qu'elle stocke un ou plusieurs entiers 16-bit en ordre little-endian dans la chaîne de sortie. Les 16 bits de poids faible de chaque entier sont stockés comme une valeur de deux-octet à la position du curseur avec l'octet de poids faible stocké en premier.&nbsp; Par exemple, 
+<b>binary format s3 &#123;3 -3 258 1}</b>
+renverra une chaîne équivalente à&nbsp; <b>&#92;x03&#92;x00&#92;xfd&#92;xff&#92;x02&#92;x01</b>. 
+</DD>
+  <DT><b>S</b></DT><DD>Cette forme est la même que <b>s</b> excepté qu'elle stocke un ou plusieurs entiers 16-bit en ordre big-endianx dans la chaîne de sortie.&nbsp; Par exemple, 
+<b>binary format S3 &#123;3 -3 258 1}</b>
+renverra une chaîne équivalente à&nbsp; <b>&#92;x00&#92;x03&#92;xff&#92;xfd&#92;x01&#92;x02</b>. 
+</DD>
+  <DT><b>i</b></DT><DD>Cette forme est la même que <b>c</b> excepté qu'elle stocke un ou plusieurs entiers 32-bit en ordre little-endian dans la chaîne de sortie. Les 32 bits de poids faible de chaque entier sont stockés comme une valeur de quatre-octet à la position du curseur avec l'octet de poids faible stocké en premier.Par exemple, 
+<b>binary format i3 &#123;3 -3 65536 1}</b>
+renverra une chaîne équivalente à <b>&#92;x03&#92;x00&#92;x00&#92;x00&#92;xfd&#92;xff&#92;xff&#92;xff&#92;x00&#92;x00&#92;x01&#92;x00</b> 
+</DD>
+  <DT><b>I</b></DT><DD>Cette forme est la même que <b>i</b> excepté qu'elle stocke un ou plusieurs 32-bit entiers en ordre big-endian dans la chaîne de sortie. Par exemple, 
+<b>binary format I3 &#123;3 -3 65536 1}</b>
+renverra une chaîne équivalente à <b>&#92;x00&#92;x00&#92;x00&#92;x03&#92;xff&#92;xff&#92;xff&#92;xfd&#92;x00&#92;x01&#92;x00&#92;x00</b> 
+</DD>
+  <DT><b>f</b></DT><DD>Cette forme est la même que <b>c</b> excepté qu'elle stocke un ou plusieurs flottants simple precision dans la représentation native de la machine dans la chaîne de sortie. Cette représentation n'est pas portable, donc elle ne doit pas être utilisée pour communiquer des nombres flottants sur le réseau. La taille d'un nombre flottant peut varier selon les architectures, donc le nombre d'octets générés peut varier.Si la valeur deborde de la représentation native de la machine, alors la valeur de FLT_MAX définie par le système sera utilisée.Parce que Tcl utilise des nombres flottants double-precision en interne, il peut y avoir une certaine perte de precision dans la conversion en simple-precision. Par exemple, sur un système Windows s'exécutant sur un processeur Pentium Intel, 
+<b>binary format f2 &#123;1.6 3.4}</b>
+renverra une chaîne équivalente à<b>&#92;xcd&#92;xcc&#92;xcc&#92;x3f&#92;x9a&#92;x99&#92;x59&#92;x40</b>. 
+</DD>
+  <DT><b>d</b></DT><DD>Cette forme est la même que <b>f</b> excepté qu'elle stocke un ou plusieurs flottants double-precision dans la représentation native de la machine dans la chaîne de sortie.&nbsp; Par exemple, sur un système Windows s'exécutant sur un processeur Pentium Intel, 
+<b>binary format d1 &#123;1.6}</b>
+renverra une chaîne équivalente à <b>&#92;x9a&#92;x99&#92;x99&#92;x99&#92;x99&#92;x99&#92;xf9&#92;x3f</b>. 
+</DD>
+  <DT><b>x</b></DT><DD>Stocke <i>compte</i> octet nuls dans la chaîne de sortie. Si <i>compte</i> n'est pas spécifié, elle stocke un octet null.&nbsp; Si <i>compte</i> est <b>*</b>, elle génère une erreur. Ce type n'attend pas d'argument.Par exemple, 
+<b>binary format a3xa3x2a3 abc def ghi</b>
+renverra une chaîne équivalente à <b>abc&#92;000def&#92;000&#92;000ghi</b>. 
+</DD>
+  <DT><b>X</b></DT><DD>Déplace le curseur en arrière de <i>compte</i> octets dans la chaîne de sortie.&nbsp; Si <i>compte</i> est <b>*</b>ou est supérieur à la position courante du curseur, alors le curseur est positionné à l'emplacement 0 ainsi l'octet suivant stocké sera le premier octet dans la chaîne résultat. Si <i>compte</i> est omis alors le curseur est déplacé d'un octet vers l'arrière. Ce type n'attend pas d'argument.Par exemple,
+<b>binary format a3X*a3X2a3 abc def ghi</b>
+renverra <b>dghi</b>.
+</DD>
+  <DT><b>@</b></DT><DD>Déplace le curseur à l'emplacement absolu spécifié par <i>compte</i> dans la chaîne de sortie.&nbsp; La position 0 correspond au premier octet dans la chaîne de sortie.&nbsp; Si <i>compte</i> correspond à&nbsp; une position au-dela du dernier octet stocké, alors des octet nuls seront&nbsp; placés aux emplacements non initalisés et le curseur sera placé à l'emplacement spécifié.&nbsp; Si <i>compte</i> est <b>*</b>, alors le curseur est déplacé à la fin de la chaîne de sortie actuelle.&nbsp; Si <i>compte</i> est omis, alors une erreur est générée. Ce type n'attend pas d'argument. Par exemple,
+<b>binary format a5@2a1@*a3@10a1 abcde f ghi j</b>
+renverra <b>abfdeghi&#92;000&#92;000j</b>. <br>
+</DD>
+</DL>
+</div>
+
+<div><b>BINARY SCAN</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>binary scan</b> analyse les champs d'une chaîne binaire, retournant le nombre de conversions effectuées.&nbsp; <i>String</i> donne l'entrée à analyser et <i>formatString</i> indique comment l'analyser. Chaque <i>varName</i> donne le nom d'une variable; quand un champ de <i>string</i> est analysé le résultat est assigné à la variable correspondante. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Comme avec <b>binary format</b>, le <i>formatString</i> est constitué d'une séquence de zéro ou plusieurs spécificateurs de champs séparées par zéro ou plusieurs espaces.&nbsp; Chaque spécificateur de champ est un simple caractère suivi par un nombre optionnel <i>compte</i>.&nbsp; La plupart des spécificateurs de champs utilisent un argument pour obtenir la variable dans laquelle les valeurs seront placées.&nbsp; Le caractère spécifie comment les données binaires sont interprétées.&nbsp; Le <i>compte</i> indique typiquement combien d'examplaires du type spécifié sont extraits des données.&nbsp; Si présent, <i>compte</i> est un entier décimal non-négatif ou <b>*</b>, qui indique normalement que tous les items restant dans les données doivent être utilisés. S'il n'y a pas assez d'octets après la position courante du curseur pour satisfaire le spécificateur de champ courant, alors la variable correspondante est inchangée et <b>binary scan</b> retourne immédiatement avec le nombre de variables qui ont été de'finies. S'il n'y a pas assez d'arguments pour tous les champs de la chaîne format nécessitant des arguments, alors une erreur est générée. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Il est <b>important</b> de noter que les <b>c</b>, <b>s</b>, et <b>S</b> (et <b>i</b> et <b>I</b> sur les systèmes 64bit) extraient les données dans des entiers de type long.&nbsp; Ce faisant, les entiers qui ont leurs bit haut&nbsp; positionné (0x80 pour chars, 0x8000 pour shorts, 0x80000000 pour ints), seront signées.Ainsi : </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>set signShort &#91;binary format s1 0x8000]</b><br>
+<b>binary scan &#36;signShort s1 val;</b><i># val == 0xFFFF8000</i></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si vous voulez produire une valeur non signée, vous pouvez masquer la valeur de retour à la taille désirée.&nbsp; Par exemple, pour produire un entier court non signée: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>set val &#91;expr &#123;&#36;val &amp; 0xFFFF}];</b><i># val == 0x8000</i></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Chaque paire type-compte déplace un curseur imaginaire le long des données binaires, en lisant les octets à la position courante.&nbsp; Initialement le curseur est à la position 0 au début des données. Le type peut être l'un des caractères suivants: 
+<DL>
+  <DT><b>a</b></DT><DD>Les données sont une chaîne de caractères de longueur <i>compte</i>.&nbsp; Si <i>compte</i> est <b>*</b>, alors tous les octets restants dans <i>string</i> seront scannés dans la variable.&nbsp; Si <i>compte</i> est omis, alors un caractère sera scanné. Par exemple, 
+<b>binary scan abcde&#92;000fghi a6a10 var1 var2</b>
+retournera <b>1</b> avec la chaîne équivalente à <b>abcde&#92;000</b> stockée dans <b>var1</b> et <b>var2</b> inchangée. 
+</DD>
+  <DT><b>A</b></DT><DD>Cette forme est la même que <b>a</b>, excepté que les espaces et les nulls sont enlevés de la valeur scannée avant d'être stocké dans la variable.&nbsp; Par exemple, 
+<b>binary scan &quot;abc efghi   &#92;000&quot; A* var1</b>
+renverra <b>1</b> avec <b>abc efghi</b> stocké dans&nbsp; <b>var1</b>. 
+</DD>
+  <DT><b>b</b></DT><DD>Les données sont transformées en une chaîne de <i>compte</i> chiffres binaires de bas en haut representés comme une séquence de caractères &quot;1&quot; et &quot;0&quot;. Les octets de données sont scannées du premier au dernier avec les bits rangés de bas en haut pour chaque octet. Les bits supplémentaires dans le dernier octet sont ignor&eacutes;. Si <i>compte</i> est <b>*</b>, alors tous les bits restant dans <A HREF="165.htm"><b>string</b></A> seront scannés. Si <i>compte</i> est omis, alors un bit sera scanné.Par exemple, 
+<b>binary scan&#92;x07&#92;x87&#92;x05 b5b* var1 var2</b>
+renverra <b>2</b> avec <b>11100</b> stocké dans <b>var1</b> et <b>1110000110100000</b> stocké dans <b>var2</b>. 
+</DD>
+  <DT><b>B</b></DT><DD>Cette forme est la même que <b>b</b>, excepté que les bits sont stockés dans l'ordre descendant dans chaque octet. Par exemple, 
+<b>binary scan&#92;x70&#92;x87&#92;x05 B5B* var1 var2</b>
+renverra <b>2</b> avec <b>01110</b> stocké dans&nbsp; <b>var1</b> et <b>1000011100000101</b> stocké dans <b>var2</b>. 
+</DD>
+  <DT><b>h</b></DT><DD>Les données sont transformées en une chaîne de <i>compte</i> chiffres hexadécimaux dans l'ordre de bas en haut representés par une séquence de caractères de &quot;0123456789abcdef&quot;. Les octets de données sont scannés du premier au dernier avec les chiffres hexa extraits de bas en haut dans chaque octet. Les bits supplémentaires dans le dernier octet sont ignorés. Si <i>compte</i> est <b>*</b>, alors tous les chiffres hexa restant dans <A HREF="165.htm"><b>string</b></A> sont scannés. Si <i>compte</i> est omis, alors un digit hexa sera scanné. Par exemple,
+<b>binary scan&#92;x07&#92;x86&#92;x05 h3h* var1 var2</b>
+renverra <b>2</b> avec <b>706</b> stocké dans <b>var1</b> et <b>50</b> stocké dans <b>var2</b>. 
+</DD>
+  <DT><b>H</b></DT><DD>Cette forme est la même que <b>h</b>, excepté que les chiffres sont extraits de haut en bas dans chaque octet. Par exemple, 
+<b>binary scan&#92;x07&#92;x86&#92;x05 H3H* var1 var2</b>
+renverra <b>2</b> avec <b>078</b> stocké dans <b>var1</b> et <b>05</b> stocké dans <b>var2</b>. 
+</DD>
+  <DT><b>c</b></DT><DD>Les données sont transformées en <i>compte</i> entiers signés 8-bit et stockées dans la variable correspondante sous forme de liste. Si <i>compte</i> est <b>*</b>, alors tous les octets restant de <A HREF="165.htm"><b>string</b></A> seront scannés. Si <i>compte</i> est omis, alors un entier 8-bit sera scanné. Par exemple, 
+<b>binary scan&#92;x07&#92;x86&#92;x05 c2c* var1 var2</b>
+renverra <b>2</b> avec <b>7 -122</b> stocké dans <b>var1</b> et <b>5</b> stocké dans <b>var2</b>. Notez que les entiers renvoyés sont signés, mais ils peuvent être convertis en entiers 8-bit non signées en utilisant une expression telle que: 
+<b>expr ( &#36;num + 0x100 ) % 0x100</b>
+</DD>
+  <DT><b>s</b></DT><DD>Les données sont interprétées comme <i>compte</i> entiers signés 16-bit representé en little-endian.&nbsp; Les entiers sont stockés dans la variable correspondante sous forme de liste. Si <i>compte</i> est <b>*</b>, alors tous les octets restants de <A HREF="165.htm"><b>string</b></A> seront scannés. Si <i>compte</i> est omis, alors un entier 16-bit sera scanné. Par exemple, 
+<b>binary scan&#92;x05&#92;x00&#92;x07&#92;x00&#92;xf0&#92;xff s2s* var1 var2</b>
+renverra <b>2</b> avec <b>5 7</b> stocké dans <b>var1</b> et <b>-16</b> stocké dans <b>var2</b>.Notez que les entiers renvoyés sont signés, mais ils peuvent être convertis en entiers 16-bit non signées en utilisant une expression telle que: 
+<b>expr ( &#36;num + 0x10000 ) % 0x10000</b>
+</DD>
+  <DT><b>S</b></DT><DD>Cette forme est la même que <b>s</b> excepté que les données sont interprétées comme <i>compte</i> entiers 16-bit signés representé en big-endian.&nbsp; Par exemple, 
+<b>binary scan&#92;x00&#92;x05&#92;x00&#92;x07&#92;xff&#92;xf0 S2S* var1 var2</b>
+renverra <b>2</b> avec <b>5 7</b> stocké dans <b>var1</b> et <b>-16</b> stocké dans <b>var2</b>. 
+</DD>
+  <DT><b>i</b></DT><DD>Les données sont interprétées comme <i>compte</i> entiers 32-bit signés representés en little-endian. Les entiers sont stockés dans la variable correspondante sous forme de liste. Si <i>compte</i> est <b>*</b>, alors tous octets restants de <A HREF="165.htm"><b>string</b></A> seront scannés. Si <i>compte</i> est omis, alors un entier 32-bit sera scanné. Par exemple, 
+<b>binary scan&#92;x05&#92;x00&#92;x00&#92;x00&#92;x07&#92;x00&#92;x00&#92;x00&#92;xf0&#92;xff&#92;xff&#92;xff </b><b>i2i* var1 var2</b>
+renverra <b>2</b> avec <b>5 7</b> stocké dans <b>var1</b> et <b>-16</b> stocké dans <b>var2</b>. Notez que les entiers renvoyés sont signés et ne peuvent pas être representés par Tcl comme valeurs non signées. 
+</DD>
+  <DT><b>I</b></DT><DD>Cette forme est la même que <b>i</b> excepté que les données sont&nbsp; interprétées comme <i>compte</i> entiers 32-bit signés representé en big-endian.&nbsp; Par exemple, 
+<b>binary&#92;x00&#92;x00&#92;x00&#92;x05&#92;x00&#92;x00&#92;x00&#92;x07&#92;xff&#92;xff&#92;xff&#92;xf0 I2I* </b><b>var1 var2</b>
+renverra <b>2</b> avec <b>5 7</b> stocké dans <b>var1</b> et <b>-16</b> stocké dans <b>var2</b>.
+</DD>
+  <DT><b>f</b></DT><DD>Les données sont interprétées comme <i>compte</i> nombre flottants simple-précision dans la représentation native de la machine.&nbsp; Les nombres flottants sont stockés dans la variable correspondante sous forme de liste.&nbsp; Si <i>compte</i> est <b>*</b>, alors tous les octets restants de <A HREF="165.htm"><b>string</b></A> seront scannés. Si <i>compte</i> est omis, alors un nombre flottant simple-précision sera scanné. La taille d'un nombre flottant peut varier selon les architectures, donc le nombre d'octets scannés peut varier. Si les données ne représentent pas un nombre flottant valide, la valeur résultante est indéfinie et dépend du compilateur. Par exemple, sur un système Windows s'exécutant sur un processeur Pentium Intel, 
+<b>binary scan&#92;x3f&#92;xcc&#92;xcc&#92;xcd f var1</b>
+>renverra <b>1</b> avec <b>1.6000000238418579</b> stocké dans <b>var1</b>. 
+</DD>
+  <DT><b>d</b></DT><DD>Cette forme est la même que <b>f</b> excepté que les données sont interprétées comme <i>compte</i> nombre flottants double-precision dans la représentation native de la machine. Par exemple, , sur un système Windows s'exécutant sur un processeur Pentium Intel, 
+<b>binary scan&#92;x9a&#92;x99&#92;x99&#92;x99&#92;x99&#92;x99&#92;xf9&#92;x3f d var1</b>
+renverra <b>1</b> avec <b>1.6000000000000001</b> stocké dans <b>var1</b>. 
+</DD>
+  <DT><b>x</b></DT><DD>Déplace le curseur en avant de <i>compte</i> octets dans <i>string</i>. Si <i>compte</i> est <b>*</b> ou est supèrieur au nombre d'octets après la position courante du curseur, alors le curseur est positionné après le dernier octet de <i>string</i>.&nbsp; Si <i>compte</i> est omis, alors le curseur est déplacé en avant d'un octet. Notez que ce type n'attend pas d'argument. Par exemple, 
+<b>binary scan&#92;x01&#92;x02&#92;x03&#92;x04 x2H* var1</b>
+renverra <b>1</b> avec <b>0304</b> stocké dans <b>var1</b>.
+</DD>
+  <DT><b>X</b></DT><DD>Déplace le curseur en arrière de&nbsp; <i>compte</i> octets dans <i>string</i>. Si <i>compte</i> est <b>*</b> ou est supérieur à la position courante du curseur, alors le curseur est positionné à la position 0 de telle sorte que le prochain octet scanné sera le premier octet de <i>string</i>. Si <i>compte</i> est omis alors le curseur est déplacé en arrière d'un octet.&nbsp; Notez que ce type n'attend pas d'argument.&nbsp; Par exemple, 
+<b>binary scan&#92;x01&#92;x02&#92;x03&#92;x04 c2XH* var1 var2</b>
+renverra <b>2</b> avec <b>1 2</b> stocké dans <b>var1</b> et <b>020304</b> stocké dans <b>var2</b>.
+</DD>
+  <DT><b>@</b></DT><DD>Déplace le curseur à la position absolu de la chaîne spécifiée par <i>compte</i>. Notez que la position 0 correspondante au premier octet de <i>string</i>. Si <i>compte</i> correspond à une position au-dela de la fin de <i>string</i>, alors le curseur est positionné après le dernier octet. Si <i>compte</i> est omis, alors une erreur est générée. Par exemple, 
+<b>binary scan&#92;x01&#92;x02&#92;x03&#92;x04 c2@1H* var1 var2</b>
+renverra <b>2</b> avec <b>1 2</b> stocké dans <b>var1</b> et <b>020304</b> stocké dans <b>var2</b>.<br>
+</DD>
+</DL>
+</div>
+<div><b>PLATFORM ISSUES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Il est parfois souhaitable de formater ou scanner des valeur entières dans l'ordre natif des octets de la machine. Référez vous à l'élément <b>byteOrder</b> du tableau <b>tcl_platform</b> pour connaître le caractère à utiliser pour formater ou scanner des entiers.
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="117.htm">format</A>, <A HREF="159.htm">scan</A>, <A HREF="170.htm">tclvars</A> </div>
+<div>Dernière révision: 8.0</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="90.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="92.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

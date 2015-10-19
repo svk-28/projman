@@ -1,0 +1,19 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>source&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">source - Evalue un fichier ou resource en tant que script Tcl <br>
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>source </b><i>fileName</i> <br>
+<b>source</b> <b>-rsrc </b><i>resourceName </i>?<i>fileName</i>? <br>
+<b>source</b> <b>-rsrcid </b><i>resourceId </i>?<i>fileName</i>?&nbsp; <br>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande prend le contenu du fichier ou resource spécifié et le transmet à l'interpréteur Tcl comme un texte de script. La valeur de retour de <b>source</b> est la valeur de retour de la dernière commande exécutée dans le script. Si une erreur se produit pendant l'évalualuation du contenu du script alors la commande <b>source</b> renverra cette erreur. Si une commande <A HREF="157.htm"><b>return</b></A> est appelée à l'intérieur du script alors le restant du fichier sera sauté et la commande <b>source</b> retournera normalement avec le résultat de la commande<A HREF="157.htm"><b> return</b></A>. Les formes <i>-rsrc</i> et <i>-rsrcid</i> de cette commande sont seulement disponibles sur les ordinateurs Macintosh. Ces versions de la commande vous autorisent à sourcer un script en partant d'une resource<b> TEXT</b>. Vous pouvez spécifier quelle resource <b>TEXT</b> sourcer soit par nom soit par id. Par défaut Tcl recherche tout fichier resources ouvert, incluant l'application courante et toute extension C chargée. Alternativement, vous pouvez spécifier le <i>fileName</i> où la resource <b>TEXT</b> peut être trouvée. </div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="162.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="164.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

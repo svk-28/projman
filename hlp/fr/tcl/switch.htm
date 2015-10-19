@@ -1,0 +1,61 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>switch&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">switch - Evalue un parmi plusieurs scripts, dépendant d'une valeur donnée 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>switch </b>?<i>options</i>?<i> string pattern body </i>?<i>pattern body </i>...? <br>
+<b>switch </b>?<i>options</i>?<i> string </i>&#123;<i>pattern body </i>?<i>pattern body </i>...?}&nbsp; <br>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>switch</b> compare son argument <i>string</i> à chacun des arguments <i>pattern</i> dans l'ordre. Dès qu'elle trouve un <i>pattern</i> qui correspond à <i>string</i> elle évalue les argument <i>body</i> suivants en les transmettant récursivement à l'interpréteur Tcl et retourne le résultat de cette évaluation . Si le dernier argument <i>pattern</i> est <b>default</b> alors il correspond à tout. Si aucun argument <i>pattern</i> correspond à <i>string</i> et qu'aucun défaut n'est donné, alors <b>switch</b> retourne une chaîne vide. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si les arguments initiaux de <b>switch</b> commencent avec <b>-</b> alors ils sont traités comme des options Les options suivantes sont couramment supportées:
+<DL>
+  <DT><b>-exact</b></DT><DD>Utilise la correspondance exacte pendant la comparaison de <i>string</i> à un modèle C'est le défaut. 
+</DD>
+  <DT><br><b>-glob</b>
+</DT><DD>Pendant la comparaison de <i>string</i> aux modèles, utilise une correspondance glob-style (ex. la même qu'implémentée par la commande<b> string match</b>). 
+</DD>
+  <DT><br><b>-regexp</b>
+</DT><DD>Pendant la comparaison de <i>string</i> aux modèles, utilise la correspondance expression rationelle (comme décrit dans la page de référence<A HREF="150.htm"><b> re_syntax</b></A>). 
+</DD>
+  <DT><br><b>--</b>
+</DT><DD>Marque la fin des options L'argument suivant sera traité comme <i>string</i> même s'il commence avec un <b>-</b>. 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Deux syntaxes sont fournie pour les arguments<i> pattern</i> et <i>body</i>. Le premier utilise un argument séparé pour chacun des modèles et commandes; cette forme est pratique si des substitutions sont désirées sur un modèle ou une commande. La seconde forme place tous les modèles et les commandes ensemble dans un seul argument; l'argument doit avoir une structure de liste correcte, avec les éléments de la liste étant les modèles et les commandes. La seconde forme facilite la construction de commandes switch multi-ligne, puisque les accolades entourant la liste rendent inutile l'inclusion d'un antislash à la fin de chaque ligne. Comme les arguments <i>pattern</i> sont dans accolades dans la seconde forme, aucunes substitutions de commande ou de variable ne sont effectuée sur ceux-ci; cela rend le comportement de la seconde forme différent de la première forme dans certains cas. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si un <i>body</i> est spécifié comme &quot;<b>-</b>&quot; cela signifie que le <i>body</i> du modèle suivant doit être aussi utilisé comme le corps pour ce modèle (si le modèle suivant a aussi un corps de &quot;<b>-</b>&quot; alors le corps qui est utilisé après, et ainsi de suite). Cette fonctionnalité rend possible de partager une seul <i>body</i> entre plusieurs modèles. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Attention à l'emplacement des commentaires dans les commandes<b> switch</b> Ils devront être placés seulement <b>dans</b> l'exécution du corps d'un des modèles, et pas mélangés avec les modèles. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Voici quelques exemples de commandes<b> switch</b>: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>switch&nbsp;&nbsp; abc&nbsp;&nbsp; a&nbsp;&nbsp; -&nbsp;&nbsp; b&nbsp;&nbsp; &#123;format 1}&nbsp;&nbsp; abc&nbsp;&nbsp; &#123;format 2}&nbsp;&nbsp; default&nbsp;&nbsp; &#123;format 3}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">renverra <b>2</b>,&nbsp; </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>switch&nbsp;&nbsp; -</b><A HREF="152.htm"><b>regexp</b></A><b>&nbsp;&nbsp; aaab &#123;<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^a.*b&#36;&nbsp;&nbsp; -<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp; &#123;format 1}<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><A HREF="129.htm"><b>a*</b></A><b>&nbsp;&nbsp; &#123;format 2.htm}<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;&nbsp; &#123;format 3}<br>
+</b><b>}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">renverra <b>1</b>, et </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>switch&nbsp;&nbsp; xyz &#123;<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#123;<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Placement Correct du Commentaire<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;format 1<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><A HREF="129.htm"><b>a*</b></A><b><br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#123;format 2}<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#123;format 3}<br>
+</b><b>}</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">renverra <b>3</b> </div><br>
+<div>Dernière révision: 7.0</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="166.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="168.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

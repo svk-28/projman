@@ -1,0 +1,23 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>gets&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">gets - Lit une ligne à partir d'un canal 
+</div> <br>
+<div><b>SYNTAXE</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>gets </b><i>channelId</i> ?<i>varName</i>?
+</div> <br>
+<div><b>DESCRIPTION</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande lit la ligne suivante à partir <i>channelId</i>, retourne toute la ligne jusqu'a (non inclus) le(s) caractère(s) fin de ligne et écarte le(s) caractère(s) fin de ligne. Si <i>varName</i> est omise la ligne est renvoyée comme résultat de la commande. Si <i>varName</i> est spécifié alors la ligne est placée dans la variable sous son nom et la valeur de retour&nbsp; est un compte du nombre de caractères renvoyés. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si une fin de fichier se produit pendant la recherche d'une fin de ligne, la commande retourne toute entrée disponible jusqu'a la fin du fichier. Si <i>channelId</i> est en mode non bloquant et qu'il n'y a pas une ligne complète disponible, la commande retourne une chaîne vide et ne consomme plus aucune entrée. Si <i>varName</i> est spécifié et qu'une chaîne vide est renvoyée dans <i>varName</i> parce que la fin-de-fichier est atteinte ou à cause de données insuffisantes en mode non bloquant, alors le compte retourné est -1. Notez que si <i>varName</i> n'est pas spécifiée alors les cas de fin-de-fichier et de pas-de-ligne-complète-disponible peuvent produire les mêmes résultats que si on avait entré une ligne consistant seulement du caractère fin de ligne. Les commandes <A HREF="102.htm"><b>eof</b></A> et <A HREF="108.htm"><b>fblocked</b></A> peuvent être utilisées pour distinguer ces trois cas
+</div> <br>
+<div><b>VOIR EGALEMENT</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="102.htm">eof</A>(n), <A HREF="108.htm">fblocked</A>(n)&nbsp; </div> <br>
+<div>Dernière révision: 7.5</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="117.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="119.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

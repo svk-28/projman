@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>package</title>
+  </head>
+
+  <body>
+    <h1>package</h1>
+
+    <p>Команда загрузки пакетов библиотек и контроля версий.</p>
+
+    <h2>СИНТАКСИС</h2>
+
+    <pre>
+      <a href="#forget"><strong>package</strong> <strong>forget</strong></a> <em>package</em>
+
+      <a href="#ifneeded"><strong>package</strong> <strong>ifneeded</strong></a> <em>package</em> <em>version</em> ?<em>script</em>?
+
+      <a href="#names"><strong>package</strong> <strong>names</strong></a>
+
+      <a href="#provide"><strong>package</strong> <strong>provide</strong></a> <em>package</em> ?<em>version</em>?
+
+      <a href="#require"><strong>package</strong> <strong>require</strong> ?<strong>-exact</strong>?</a> <em>package</em> ?<em>version</em>?
+
+      <a href="#unknown"><strong>package</strong> <strong>unknown</strong></a> ?<em>command</em>?
+
+      <a href="#vcompare"><strong>package</strong> <strong>vcompare</strong></a> <em>version1</em> <em>version2</em>
+
+      <a href="#versions"><strong>package</strong> <strong>versions</strong></a> <em>package</em>
+    
+      <a href="#vsatisfies"><strong>package</strong> <strong>vsatisfies</strong></a> <em>version1</em> <em>version2</em>
+    </pre>
+
+
+    <h2>ОПИСАНИЕ</h2>
+
+    <p>Команда поддерживает простую базу данных со сведениями о том,
+      какие пакеты библиотечных функций доступны для использования в
+      данном интерпретаторе, и как их загрузить в интерпретатор. Она
+      поддерживает многоверсионность пакетов и гарантирует загрузку в
+      приложение необходимой версии пакета.  При этом она обеспечивает
+      контроль непротиворечивости версий.  Обычно в Tcl-скриптах
+      достаточно использовать команды <strong>package</strong> <strong>require</strong> и
+      <strong>package</strong> <strong>provide</strong>. Остальные команды предназначены в
+      первую очередь для системных скриптов, которые поддерживают базу
+      данных пакетов.</p>
+
+    <p>Поведение команды <strong>package</strong> определяется ее первым
+      аргументом. Ниже описаны возможные формы команды.</p>
+
+    <dl>
+      <dt><a name="forget"></a><strong>package</strong> <strong>forget</strong>
+      <em>package</em></dt>
+
+      <dd>Удаляет информацию о пакете из интерпретатора, включая как
+        информацию, возвращаемую командой <strong>package</strong>
+        <strong>ifneeded</strong>, так и информацию, возвращаемую командой
+        <strong>package</strong> <strong>provide</strong>.</dd>
+
+      <dt><a name="ifneeded"></a><strong>package</strong>
+	<strong>ifneeded</strong> <em>package</em> <em>version</em> ?<em>script</em>?</dt>
+
+      <dd>Команда используется в системных скриптах. Если указана
+        конкретная версия и скрипт, заносит в базу данных информацию о
+        том, что соответствующая версия пакета доступна и может быть
+        загружена в интерпретатор с помощью скрипта
+        <em>script</em>. Если в базе данных уже хранится информация о
+        скрипте, она обновляется. Если скрипт не указан, возвращается
+        текущий скрипт.</dd>
+      
+      <dt><a name="names"></a><strong>package</strong> <strong>names</strong></dt>
+
+      <dd>Возвращает список всех пакетов в интерпретаторе, для которых
+        известна доступная версия (заданная с помощью команды
+        <strong>package</strong> <strong>provide</strong>) или скрипт загрузки (заданный
+        командой <strong>package</strong> <strong>ifneeded</strong>).</dd>
+      
+      <dt><a name="provide"></a><strong>package</strong> <strong>provide</strong>
+	<em>package</em> ?<em>version</em>?</dt>
+
+      <dd>Команда используется для того, чтобы указать, что версия
+        <em>version</em> пакета <em>package</em> загружена в
+        интерпретатор. Если ранее была загружена другая версия,
+        возвращает ошибку. Если версия не указана, возвращает
+        загруженную версию.</dd>
+      
+      <dt><a name="require"></a><strong>package</strong> <strong>require</strong>
+	  ?<strong>-exact</strong>? <em>package</em> ?<em>version</em>?</dt>
+
+      <dd><p>Команда используется, если для выполнения дальнейшего
+        кода необходим библиотечный пакет <em>package</em> версии <em>
+        version</em>. Команда возвращает номер загруженной версии или
+        ошибку. Если присутствуют оба аргумента <strong>-exact</strong> и
+        <em>version</em>, то команда загружает именно указанную версию
+        (или выдает ошибку, если эта версия недоступна). Если
+        присутствует номер версии, а <strong>-exact</strong> опущено, то команда
+        загружает указанную версию или более позднюю, но с тем же
+        старшим номером версии (2.7, но не 3.1, когда указана версия
+        2.5).</p>
+
+        <p>Если база данных не содержит необходимой версии, а в
+	  интерпретаторе определена команда для <strong>packageunknown</strong>
+	  (см. ниже), то она исполняется, после чего повторно
+	  проверяется доступность необходимой версии. Если версия
+	  по-прежнему недоступна, команда возвращает ошибку.</p>
+      </dd>
+
+      <dt><a name="unknown"></a><strong>package</strong> <strong>unknown</strong>
+	?<em>command</em>?</dt>
+
+      <dd><p>Команда <em>последней надежды</em> при поиске необходимой
+	  версии пакета. Если аргумент <em>command</em> указан, то он
+	  дополняется именем пакета и версии и полученный скрипт
+	  выполняется. Если версия не указана, подставляется пустая
+	  строка.</p>
+
+        <p>Если аргумент <em>command</em> не указан, возвращает текущий
+	  скрипт, заданный для команды <strong>package</strong>
+	  <strong>unknown</strong>.</p>
+      </dd>
+
+      <dt><a name="vcompare"></a><strong>package</strong>
+	<strong>vcompare</strong> <em>version1</em> <em>version2</em></dt>
+
+      <dd>Команда сравнения версий. Возвращает <strong>-1</strong>, если
+        <em>version1</em> более ранняя версия, чем <em>version2</em>,
+        <strong>1</strong> - в противном случае, и <strong>0</strong>, если они
+        равны.</dd>
+      
+      <dt><a name="versions"></a><strong>package</strong>
+	<strong>versions</strong> <em>package</em></dt>
+
+      <dd>Возвращает список всех доступных версий пакета (информация о
+        которых занесена в базу данных с помощью команды
+        <strong>package</strong> <strong>ifneeded</strong>).</dd>
+      
+      <dt><a name="vsatisfies"></a><strong>package</strong>
+      <strong>vsatisfies</strong> <em>version1</em> <em>version2</em></dt>
+
+      <dd>возвращает <strong>1</strong>, если у <em>version1</em> и
+        <em>version2</em> совпадают старшие номера, а младший номер у
+        version1 не меньше, чем у <em>version2</em>, и <strong>0</strong> - в
+        противном случае.</dd>
+    </dl>
+
+    <h2><a name="ИНДЕКСЫ ПАКЕТОВ"></a>ИНДЕКСЫ ПАКЕТОВ</h2>
+
+    <p>Рекомендованный способ работы с пакетами в Tcl состоит в том,
+      чтобы включать в скрипты команды <a
+      href="#require"><strong>package</strong> <strong>require</strong></a> и <a
+      href="#provide"><strong>package</strong>
+      <strong>provide</strong></a> и использовать процедуру <strong><a
+      href="pkg_mkIndex.html">pkg_mkIndex</a></strong> (см.
+      соответствующие пункты) для создания индексных файлов для
+      пакетов. Это обеспечивает автоматическую загрузку необходимых
+      пакетов.</p>
+
+    <p>См.также <a href="close.html"><strong>close</strong></a>(n), <a
+	href="filename.html"><strong>filename</strong></a>(n), <a href=
+	"gets.html"><strong>gets</strong></a>(n), <a
+	href="read.html"><strong>read</strong></a>(n), <a
+	href="puts.html"><strong>puts</strong></a>(n), <a
+	href="exec.html"><strong>exec</strong></a>(n).</p>
+
+  </body>
+</html>
+

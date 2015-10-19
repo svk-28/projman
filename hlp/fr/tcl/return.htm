@@ -1,0 +1,45 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>return&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">return - Retourne d'une fonction 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>retourne </b>?<b>-code </b><i>code</i>? ?<b>-errorinfo </b><i>info</i>? ?<b>-errorcode</b><i> code</i>? ?<i>string</i>?&nbsp; <br>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Retourne immédiatement de la fonction courante (ou d'une commande d'avant plan ou d'une commande<A HREF="163.htm"><b> source</b></A>), avec <i>string</i> comme valeur de retour. Si <i>string</i> n'est pas spécifiée alors une chaîne vide sera renvoyée comme résultat <br>
+</div><br>
+<div><b>RETOURS EXCEPTIONNELS </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans le cas normal où l'option <b>-code</b> n'est pas spécifiée la fonction renverra normalement (son code de retour sera TCL_OK). Néanmoins, l'option <b>-code</b> peut être employée pour générer un retour exceptionnel de la fonction. <i>Code</i> peut avoir une des valeurs suivantes: 
+<DL>
+  <DT><b>ok</b>
+</DT><DD>Retour normal: idem que si l'option est omise. 
+</DD>
+  <DT><br><b>error</b>
+</DT><DD>Retour d'erreur: idem que si la commande <A HREF="103.htm"><b>error</b></A> avait été utilisée pour terminer la fonction, excepté pour la gestion des variables <b>errorInfo</b> et <b>errorCode</b> (voir ci-dessous).
+</DD>
+  <DT><br><b>return</b>
+</DT><DD>La fonction courante renvoie un code de retour de TCL_RETURN, ainsi que la fonction qui l'a appelée. 
+</DD>
+  <DT><br><b>break</b>
+</DT><DD>La fonction courante renvoie un code de retour de TCL_BREAK, qui terminera la boucle la plus imbriquée dans le code qui a appelé la fonction courante.
+</DD>
+  <DT><br><b>continue</b>
+</DT><DD>La fonction courante renvoie un code de retour de TCL_CONTINUE, qui terminera l'itération courante de la boucle la plus imbriquée dans le code qui appelée la fonction courante.
+</DD>
+  <DT><br><i>value</i>
+</DT><DD><i>Value</i> doit être un entier, il sera renvoyé comme code de retour de la fonction courante. 
+</DD>
+</DL></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">L'option <b>-code</b> est rarement utilisée. Elle est fournie pour que les fonctions qui implémentent de nouvelles structures de contrôle puissent refléter les conditions exceptionnelle à leurs appelants. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Deux options supplémentaires, <b>-errorinfo</b> et <b>-errorcode</b>, peuvent être employées pour fournir une information supplémentaire pendant le retour d'erreur. Ces options sont ignorées à moins que <i>code</i> soit <A HREF="103.htm"><b>error</b></A>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">L'option <b>-errorinfo</b> spécifie une trace initiale de la pile pour la variable<b> errorInfo</b>;&nbsp; si elle n'est pas spécifiée alors la trace de la pile transmise à <b>errorInfo</b> inclutra l'appel à la fonction et les niveaux supérieurs sur la pile mais n'inclutra pas d'information concernant le contexte de l'erreur à l'intérieur de la fonction. Typiquement la valeur <i>info</i> est fournie en partant de la valeur transmise à <b>errorInfo</b> après qu'une commande <A HREF="94.htm"><b>catch</b></A> ait intercepté une erreur à l'intérieur de la fonction. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si l'option <b>-errorcode</b> est spécifiée alors <i>code</i> fournit une valeur pour la variable<b> errorCode</b>. Si l'option n'est pas spécifiée alors <b>errorCode</b> sera par défaut de <b>NONE</b> </div><br>
+<div>Dernière révision: 7.0</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="156.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="158.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

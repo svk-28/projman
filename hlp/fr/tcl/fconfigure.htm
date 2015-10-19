@@ -1,0 +1,56 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>fconfigure&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">fconfigure - Fixe et lit les options d'un canal 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>fconfigure </b><i>channelId</i><br>
+<b>fconfigure </b><i>channelId</i> <i>name</i><br>
+<b>fconfigure </b><i>channelId</i> <i>name value </i>?<i>name value ...</i>?<br>
+ <br>
+</div>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>fconfigure</b> fixe et lit les options des canaux. <i>ChannelId</i> identifie le canal pour lequel fixer ou consulter une option. Si aucun arguments <i>name</i> ou <i>value</i> ne sont fournis, la commande retourne une liste contenant des options alternées de noms et de valeurs pour le canal. Si <i>name</i> est fourni mais pas <i>value</i> alors la commande retourne la valeur courante de l 'option donnée. Si une ou plusieurs paires de <i>name</i> et <i>value</i> sont fournies, la commande fixe chacune des options désignées à la <i>value</i> correspondante; dans ce cas la valeur de retour est une chaîne vide. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le options décrites ci-dessous sont supportées par tous les canaux. De plus, chaque type de canal peut ajouter les options qu'il est seul à supporter. Voir la page de manuel pour la commande qui crée chaque type de canaux pour les options que ce type de canal spécifique supporte. Par exemple, voyez la page de manuel de la commande <A HREF="162.htm"><b>socket</b></A> pour ses options supplémentaires. 
+<DL>
+  <DT><b>-blocking</b> <i>boolean</i><br></DT><DD>L'option <b>-blocking</b> détermine si les opérations I/O sur le canal peuvent provoquer le bloquage du processus. La valeur de l'option doit ê tre une valeur booléenne correcte. Les canaux sont normalement en mode bloquant; si un canal est placé en mode non bloquant ceci affectera l'opération des commandes <A HREF="118.htm"><b>gets</b></A>, <A HREF="151.htm"><b>read</b></A>, <A HREF="148.htm"><b>puts</b></A>, <A HREF="114.htm"><b>flush</b></A>, et <A HREF="97.htm"><b>close</b></A>; voyez la documentation de ces commandes pour les détails. Pour que le mode non bloquant fonctionne correctement, l'application doit utiliser la boucle d'évènement Tcl (ex. en appelant <A HREF="29.htm"><b>Tcl_DoOneEvent</b></A> ou la commande<A HREF="180.htm"><b> </b><b>vwait</b></A>). 
+</DD>
+  <DT><b>-buffering</b> <i>newValue</i><br></DT><DD>Si <i>newValue</i> est <b>full</b> alors le système I /O mettra la sortie en tampon jusqu'a ce que son tampon interne soit plein ou jusqu'a ce que la commande <A HREF="114.htm"><b>flush</b></A> soit appelée. Si <i>newValue</i> est <b>line</b>, alors le système I/O <i>flushera</i> automatiquement la sortie pour le canal chaque fois que un caractère newline est émis. Si <i>newValue</i> est <b>none</b>, le système I/O <i>flushera</i> automatiquement après tout opération de sortie. La valeur par défaut de <b>-buffering</b> est fixée à <b>full</b> excepté pour les canaux qui se connectent à des périphériques terminal-like; pour ces canaux la valeur initiale est <b>line</b>. De plus, <b>stdin</b> et <b>stdout</b> sont initialement fixés à <b>line</b>, et <b>stderr</b> est fixé à <b>none</b>. 
+</DD>
+  <DT><b>-buffersize</b> <i>newSize</i><br></DT><DD><i>Newvalue</i> doit être un entier; sa valeur est utilisée pour fixer la taille, en octets, du tampon alloué pour ce canal pour stocker l'entrée ou la sortie. <i>Newvalue</i> doit être entre dix et un million, permettant des tampons d'une taille de dix à un million octets. 
+</DD>
+  <DT><b>-encoding</b> <i>name</i></DT><DD>Cette option est utilisée pour specifier l'encodage du canal, ainsi les données peuvent être converties de et à partir d'Unicode pour être utilisées en Tcl. Par exemple, pour permettre à Tcl de lire des caractères d'un fichier Japonais en <b>shiftjis</b> et d'en traiter et d'afficher correctement le contenu, l'encodage devra être fixé à <b>shiftjis</b>. Ainsi, en lisant à partir du canal, les octets du fichier Japonais seront convertis en Unicode au fur et à mesure de leur lecture. L'écriture est aussi supportée – quand les chaînes Tcl seront écrites dans le canal elles seront automatiquement converties en l'encodage spécifié pour la sortie. 
+Si un fichier contient des données binaires pures (par exemple, une image JPEG), l'encodage du canal sera configuré en <A HREF="91.htm"><b>binary</b></A>. Tcl alors n'assignera aucune interprétation aux données dans le fichier et simplement lira ou ecrira des octets. La commande Tcl <A HREF="91.htm"><b>binary</b></A> peut être utilisée pour manipuler ces données orientées-octet.
+L'encodage par défaut pour les canaux nouvellement ouverts est le même que le système d'encodage utilisé pour l 'interface avec le système d'exploitation.
+</DD>
+  <DT><b>-eofchar</b> <i>char</i><br></DT><DD></DD>
+  <DT><b>-eofchar</b> <b>&#123;</b><i>inChar outChar</i><b>}</b></DT><DD>Cette option supporte le système de fichiers DOS qui utilise Control-z (&#92;x1a) comme marqueur de fin de fichier. Si <i>char</i> n'est pas une chaîne vide, alors ce caractère signale fin-de-fichier quand il est rencontré pendant l'entrée. Pour la sortie, le caractère fin-de-fichier est émis quand le canal est fermé. Si <i>char</i> est la chaîne vide, alors il n'y a pas de caractère spécial marqueur de fin de fichier. Pour les canaux en lecture-écriture, une liste à deux-élément spécifie le marqueur de fin de fichier pour l'entrée et la sortie, respectivement. Comme convénience, quand vous fixez le caractère de fin-de-fichier pour un canal en lecture-écriture vous pouvez specifier une simple valeur qui s'appliquera à la fois à la lecture et à l'écriture. Quand vous interrogez le caractère de fin-de-fichier d'un canal en lecture-écriture, une liste à deux-éléments sera toujours renvoyée.  La valeur par défaut de <b>-eofchar</b> est la chaîne vide dans tout les cas excepté pour les fichiers sous Windows. Dans ce cas, <b>-eofchar</b> est Control-z (&#92;x1a) pour la lecture et la chaîne vide pour l'écriture. 
+</DD>
+  <DT><b>-translation</b> <i>mode</i></DT><DD></DD>
+  <DT><b>-translation</b> <b>&#123;</b><i>inMode outMode</i><b>}</b></DT><DD>Dans les scripts Tcl la fin d'une ligne est toujours representée en utilisant un simple caractère newline (&#92;n). Néanmoins, dans les fichiers et périphériques la fin d'une ligne peut être representée différemment sur différentes plateformes, ou même pour différents périphériques sur la même plateforme. Par exemple, sous UNIX les saut de lignes sont utilisés dans les fichiers, alors que les séquences retour-chariot/linefeed sont normalement utilisées dans les connections réseau. En entrée (ex., avec <A HREF="118.htm"><b>gets</b></A> et <A HREF="151.htm"><b>read</b></A>) le système I/O Tcl traduit automatiquement traduit la représentation fin-de-ligne externe en caractères newline. En sortie (ex., avec <A HREF="148.htm"><b>puts</b></A>), le système I/O traduit le saut de lignes en représentation externe fin-de-ligne. Le mode de traduction par défaut, <b>auto</b>, gère tout les cas communs automatiquement, mais l'option <b>-translation</b> fournit un contrôle explicite des traductions de fin de ligne. 
+La valeur associée à <b>-translation</b> est un simple item pour les canaux lecture-seule et écriture-seule. La valeur est une liste à deux-élément pour les canaux en lecture-écriture; le mode de traduction de lecture est le premier élément de la liste, et le mode de traduction d'écriture est le second élément. Comme convenience, quand vous fixez le mode de traduction pour un canal en lecture-écriture vous pouvez specifier une seule valeur qui s'appliquera autant à la lecture qu'à l'écriture. Quand vous demandez le mode de traduction d'un canal lecture-écriture, une liste à deux-éléments sera toujours renvoyée. Les valeurs suivantes sont couramment supportées: 
+<DL>
+  <DT><b>auto</b><br></DT><DD>Comme mode traduction d'entrée, <b>auto</b> traite newline (<b>lf</b>), retour chariot (<b>cr</b>), ou retour chariot suivi par une newline (<b>crlf</b>) comme la représentation de fin de ligne. La représentation de fin de ligne peut même changer d'une ligne à l'autre, et tout les cas sont traduits en <i>newline</i>. Comme mode de traduction de sortie, <b>auto</b> choisit une représentation spécifique à la plateforme; pour les sockets sur toutes les plateformes Tcl choisit <b>crlf</b>, pour tous les Unix, il choisit <b>lf</b>, pour la plateforme Macintosh il choisit <b>cr</b> et pour les différentes versions de Windows il choisit <b>crlf</b>. La valeur par défaut de <b>-translation</b> est <b>auto</b> pour l'entrée et la sortie. 
+</DD>
+  <DT><b>binary</b> <br></DT><DD>Aucunes traductions fin de ligne ne sont effectuées. Ceci est presque identique au mode <b>lf</b>, excepté qu'en plus le mode <A HREF="91.htm"><b>binary</b></A> fixe aussi le caractère fin-de-fichier à la chaîne vide (qui le désactive) et fixe l'encodage à <A HREF="91.htm"><b>binary</b></A> (qui désactive le fitrage par l'encodage). Voir la description de <b>-eofchar</b> et <b>-</b><A HREF="101.htm"><b>encoding</b></A> pour plus d'information.
+</DD>
+  <DT><b>cr</b></DT><DD>La fin d'une ligne dans le fichier ou périphérique sous-jacent est representée par un simple caractère retour chariot. Comme mode de traduction d'entrée, le mode <b>cr</b> convertit les retours chariot en caractères newline. Comme le mode de traduction de sortie, le mode <b>cr</b> traduit les caractères newline en retour chariot. Ce mode est typiquement utilisé sur les plateformes Macintosh. 
+</DD>
+  <DT><b>crlf</b></DT><DD>La fin d'une ligne dans le fichier ou périphérique sous-jacent est representée par un caractère retour chariot suivi par un caractère linefeed. Comme mode de traduction d'entrée,le mode <b>crlf</b> convertit le séquences retour chariot /linefeed en caractères newline. Comme mode de traduction de sortie, le mode <b>crlf</b> traduit caractères newline en séquences retour chariot /linefeed. Ce mode est principalement utilisé sur les plateformes Windows et pour les connections réseau. 
+</DD>
+  <DT><b>lf</b></DT><DD>la fin d'une ligne dans le fichier ou périphérique sous-jacent est représentée par un seul caractère newline; Dans ce mode, aucune traduction ne se fait pendant soit l'entrée soit la sortie. Ce mode est utilisé principalement sur les plateformes UNIX.</DD>
+</DL>
+</DD>
+</DL>
+</div>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="97.htm">close</A>(n), <A HREF="114.htm">flush</A>(n), <A HREF="118.htm">gets</A>(n), <A HREF="148.htm">puts</A>(n), <A HREF="151.htm">read</A>(n), <A HREF="162.htm">socket</A>(n) </div><br>
+<div>Dernière révision: 8.1</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="108.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="110.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

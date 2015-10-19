@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>array</title>
+  </head>
+  <body>
+    <h1>array</h1>
+     
+    <pre>
+      <strong>array</strong> <em>option</em> <em>arrayName</em> ?<em>arg</em> <em>arg</em>...?
+      <a href="#anymore"><strong>array</strong> <strong>anymore</strong></a> <em>arrayName</em> <em>searchId</em>
+      <a href="#donesearch"><strong>array</strong> <strong>donesearch</strong></a> <em>arrayName</em> <em>searchId</em>
+      <a href="#exists"><strong>array</strong> <strong>exists</strong></a> <em>arrayName</em>
+      <a href="#get"><strong>array</strong> <strong>get</strong></a> <em>arrayName</em> ?<em>pattern</em>?
+      <a href="#names"><strong>array</strong> <strong>names</strong></a> <em>arrayName</em> ?<em>pattern</em>?
+      <a href="#nextelement"><strong>array</strong> <strong>nextelement</strong></a> <em>arrayName</em> <em>searchId</em>
+      <a href="#set"><strong>array</strong> <strong>set</strong></a> <em>arrayName</em> <em>list</em>
+      <a href="#size"><strong>array</strong> <strong>size</strong></a> <em>arrayName</em>
+      <a href="#startsearch"><strong>array</strong> <strong>startsearch</strong></a> <em>arrayName</em>
+    </pre>
+
+    <h2>ОПИСАНИЕ</h2> 
+
+    <p> Эта команда предназначена для выполнения перечисленных ниже
+      операций с массивами. Если иное не оговорено специально,
+      <em>arrayName</em> должно быть именем существующего массива.
+      Аргумент <em>option</em> определяет конкретную операцию. Для
+      команды определены перечисленные ниже опции.</p>
+    <dl>
+      <dt><a name="anymore"></a><strong>array</strong> <strong>anymore</strong>
+	<em>arrayName</em> <em>searchId</em></dt>
+
+      <dd> Возвращает <strong>1</strong> если при выполнении команды поиска (см.
+        ниже) остались невыбранные элементы массива, и <strong>0</strong> в
+        противном случае. <em>SearchId</em> указывает операцию поиска,
+        информация о которой запрашивается (величина <em> searchId</em>
+        возвращается при выполнении команды <a
+        href="#startsearch"><strong>array</strong> <strong>startsearch</strong></a>). Эта
+        опция особенно удобна, если массив содержит элемент с пустым
+        именем, поскольку команда <a href="#nextelement"><strong>array</strong>
+        <strong>nextelement</strong></a> не позволяет в таком случае определить,
+        закончен ли поиск.
+      </dd>
+
+      <dt><a name="donesearch"></a><strong>array</strong>
+	<strong>donesearch</strong> <em>arrayName</em> <em>searchId</em></dt>
+
+      <dd> Команда прерывает поиск элементов массива и удаляет всю
+        связанную с поиском информацию. <em>SearchId</em> указывает
+        операцию поиска, информация о которой удаляется (величина
+        <em>searchId</em> возвращается при выполнении команды <a
+        href="#startsearch"><strong>array</strong>
+        <strong>startsearch</strong></a>).  Команда возвращает пустую строку.
+      </dd>
+
+      <dt><a name="exists"></a><strong>array</strong> <strong>exists</strong>
+	<em>arrayName</em> </dt>
+
+      <dd> Возвращает <strong>1</strong>, если <em>arrayName</em> есть имя
+        массива, и <strong>0</strong>, если такой переменной не существует
+        или она является скалярной переменной.
+      </dd>
+      
+      <dt><a name="get"></a><strong>array</strong> <strong>get</strong>
+	<em>arrayName</em> ?<em>pattern</em>?</dt>
+
+      <dd> Возвращает список, содержащий пары элементов. Первый
+        элемент пары - имя элемента массива <em>arrayName</em>, второй
+        элемент пары - значение этого элемента. Порядок пар не
+        определен. Если шаблон не задан, то все элементы массива будут
+        включены в результат. Если шаблон задан, то в результат будут
+        включены только те элементы, чьи имена соответствуют шаблону
+        (используя те же правила, что и в команде <a
+        href="glob.html"><strong>glob</strong></a>). Если <em>arrayName</em>
+        не является переменной массива или массив не содержит
+        элементов, то возвращается пустой список.
+      </dd>
+      
+      <dt><a name="names"></a><strong>array</strong> <strong>names</strong>
+	<em>arrayName</em> ?<em>pattern</em>? </dt>
+
+      <dd> Возвращает список, содержащий имена всех элементов массива,
+        соответствующих шаблону (используя те же правила, что и в
+        команде <a href="glob.html"><strong>glob</strong></a>). Если шаблона
+        нет, то команда возвращает имена всех элементов массива. Если
+        в массиве нет элементов, соответствующих шаблону или
+        <em>arrayName</em> не является именем переменной массива, то
+        возвращается пустая строка.
+      </dd>
+
+      <dt><a name="nextelement"></a><strong>array</strong>
+	<strong>nextelement</strong> <em>arrayName</em> <em>searchId</em></dt>
+
+      <dd> Возвращает имя следующего элемента массива
+	<em>arrayName</em>, или пустую строку, если все элементы массива
+	уже возвращены. <em>SearchId</em> указывает операцию поиска,
+	(величина <em>searchId</em> возвращается при выполнении команды
+	<a href="#startsearch"><strong>array</strong>
+	<strong>startsearch</strong></a>). Предупреждение: если в массив внесен
+	новый элемент или из массива удален один из элементов, то все
+	операции поиска в этом массиве автоматически заканчиваются,
+	как если бы была выполнена команда <a
+	href="#donesearch"><strong>array</strong> <strong>donesearch</strong></a>.
+	Соответственно, попытка выполнить после этого команду array
+	nextelement приведет к ошибке.
+      </dd>
+
+      <dt><a name="set"></a><strong>array</strong> <strong>set</strong>
+	<em>arrayName</em> <em>list</em> </dt>
+
+      <dd> Устанавливает значение одного или нескольких элементов
+        массива <em>arrayName</em>. Список <em>list</em> должен иметь
+        такую же структуру, как список, возвращаемый командой <a
+        href="#get"><strong>array</strong> <strong>get</strong></a>, то есть
+        состоять из четного числа элементов. Все нечетные элементы
+        списка рассматриваются как имена элементов массива
+	<em>arrayName</em>, а следующие за ними четные элементы - как новые
+        значения соответствующих элементов.
+      </dd>
+
+      <dt><a name="size"></a><strong>array</strong> <strong>size</strong>
+	<em>arrayName</em> </dt>
+
+      <dd> Возвращает строку, содержащую десятичное число, равное
+        количеству элементов указанного массива. Если
+	<em>arrayName</em> не является именем массива, возвращается
+        <strong>0</strong>.
+      </dd>
+
+      <dt><a name="startsearch"></a><strong>array</strong>
+	<strong>startsearch</strong> <em>arrayName</em></dt>
+
+      <dd> Эта команда инициализирует процесс поиска элементов
+        указанного массива. После этого имя каждого следующего
+        элемента массива можно получить с помощью команды <a
+        href="#nextelement"><strong>array</strong> <strong>nextelement</strong></a>. По
+        завершении поиска необходимо выполнить команду <a
+        href="#donesearch"> <strong>array</strong>
+        <strong>donesearch</strong></a>. Команда <a href=
+        "#startsearch"><strong>array</strong> <strong>startsearch</strong></a> возвращает
+        идентификатор процесса поиска, который должен использоваться в
+        командах <a href="#nextelement"><strong>array</strong>
+        <strong>nextelement</strong></a> и <a href="#donesearch"><strong>array</strong>
+        <strong>donesearch</strong></a>.  Благодаря этому механизму возможно
+        проведение нескольких процессов поиска элементов одного и того
+        же массива одновременно.
+      </dd>
+    </dl>
+  </body>
+</html>

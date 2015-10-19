@@ -1,0 +1,399 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>re_syntax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">re_syntax – Syntaxe des expressions rationelles Tcl 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une <i>regular expression</i> (expression rationelle) décrit des chaînes de caractères. C'est un modèle qui correspond à certaines chaînes et ne correspond pas à d'autres 
+</div><br>
+<div><b>DIFFERENTES SORTES DE REs</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les expressions rationelles (&quot;RE&quot;s), comme défini par POSIX, existent de deux sortes: <i>étendue</i> REs (&quot;EREs&quot;) et <i>basiques</i> REs (&quot;BREs&quot;). Les EREs sont celles du <i>egrep</i> traditionel, alors que BREs sont celles du <i>ed</i> traditionel. Cette implémentation ajoute une troisième sorte, <i>advanced</i> REs (&quot;AREs&quot;), EREs avec quelques extensions significatives. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette page de manueluel décrit d'abord les AREs. Les BREs existent principalement pour compatibilité ascendante avec quelques anciens programmes; elles seront vues à la fin. Les EREs POSIX sont presque un sous ensemble exact des AREs. Les fonctionnalités des AREs qui ne sont pas présentes dans les EREs seront indiquées <br>
+</div><br>
+<div><b>SYNTAXE DES EXPRESSIONS RATIONELLES </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les expressions Tcl rationelles sont implémentées en utilisant le package écrit par Henry Spencer, basé sur les spec 1003.2 et quelques unes (pas toutes) des extensions Perl5 (thanks, Henry!) la plus grande partie de la description des expressions rationelles ci-dessous est copiée texto de sa page de manuel. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une ARE est composée d'une ou plusieurs <i>branches</i>, séparées par `<b>|</b>', égales à tout ce qui correspond à quelconque des <i>branches</i>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une <i>branche</i> est zéro ou plusieurs <i>contraintes</i> ou <i>atomes quantifié</i>, concaténés. C'est une correspondance au premier, suivi par une correspondance au second, etc; une <i>branche </i>vide correspond à la chaîne vide. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Un <i>atome quantifié</i> est un <i>atome</i> eventuellement suivi d'un <i>quantificateur</i>. Sans <i>quantificateur</i>, c'est une correspondance à <i>l'atome</i>. Les <i>quantificateurs</i>, et leur <i>atome</i> correspondant, sont: </div>
+<div ALIGN="LEFT" style="margin-left: 120px;">
+<DL>
+  <DT><b>*</b></DT><DD>une séquence de 0 ou plus correspondances à <i>l'atome</i> 
+</DD>
+  <DT><br><b>+</b>
+</DT><DD>une séquence de 1 ou plus correspondances à <i>l'atome</i>
+</DD>
+  <DT><br><b>?</b>
+</DT><DD>une séquence de 0 ou 1 correspondance à <i>l'atome</i>
+</DD>
+  <DT><br><b>&#123;</b><i>m</i><b>}</b>
+</DT><DD>une séquence de exactement <i>m</i> correspondances à <i>l'atome</i>
+</DD>
+  <DT><br><b>&#123;</b><i>m</i><b>,}</b>
+</DT><DD>une séquence de <i>m</i> ou plus correspondances à <i>l'atome</i>
+</DD>
+  <DT><br><b>&#123;</b><i>m</i><b>,</b><i>n</i><b>}</b>
+</DT><DD>une séquence de <i>m</i> à <i>n</i> (incluses) correspondances à <i>l'atome</i>; <i>m</i> inférieur à <i>n</i> 
+</DD>
+  <DT><br><b>*?&nbsp; +?&nbsp; ??&nbsp; &#123;</b><i>m</i><b>}?&nbsp; &#123;</b><i>m</i><b>,}?&nbsp; &#123;</b><i>m</i><b>,</b><i>n</i><b>}?</b>
+</DT><DD><i>quantificateurs non-greedy</i>, qui correspondent au même possibilités, mais se refèrent au plus petit nombre plutôt qu'au plus grand nombre de correspondances (voir CORRESPONDANCES) 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les formes utilisant <b>&#123;</b> et <b>}</b> sont appelées <i>limites</i>. Les nombres <i>m</i> et <i>n</i> sont des entiers décimaux non signés avec des valeurs autorisées de 0 à 255 inclus. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Un <i>atome</i> est l'un de: </div>
+<div ALIGN="LEFT" style="margin-left: 120px;">
+<DL>
+  <DT><b>(</b><i>re</i><b>)</b></DT><DD>(où <i>re</i> est toute expression rationelle) correspond une correspondance à <i>re</i>, avec la correspondance marquée pour rapport
+</DD>
+  <DT><br><b>(?:</b><i>re</i><b>)</b>
+</DT><DD>comme précedent, mais sans reporting (une &quot;non-capturing&quot; ensemble de parenthèses) 
+</DD>
+  <DT><br><b>()</b>
+</DT><DD>correspond à une chaîne vide, marquée pour rapport.
+</DD>
+  <DT><br><b>(?:)</b>
+</DT><DD>correspond à une chaîne vide, sans rapport
+</DD>
+  <DT><br><b>&#91;</b><i>chars</i><b>]</b>
+</DT><DD>une <i>bracket expression</i>, correspondante à un quelconque <i>chars</i> (voir BRACKET EXPRESSIONS pour plus de détail) 
+</DD>
+  <DT><br><b>.</b>
+</DT><DD>correspond à un seul caractère quelconque
+</DD>
+  <DT><br><b>&#92;</b><i>k</i>
+</DT><DD>(où <i>k</i> est un caractère non-alphanumérique) correspond au caractère interprété comme un caractère ordinaire, e.x &#92;&#92; correspond un caractère antislash
+</DD>
+  <DT><br><b>&#92;</b><i>c</i>
+</DT><DD>où <i>c</i> est alphanumérique (éventuellement suivi par autre caractères), un <i>escape</i> (AREs seulement), voir ESCAPES ci-dessous 
+</DD>
+  <DT><br><b>&#123;</b>
+</DT><DD>quand suivi par un caractère autre qu'un chiffre, correspond à l'accolade ouvrante `<b>&#123;</b>'; quand suivi par un chiffre, c'est le début d'un <i>intervalle</i> (voir plus haut) 
+</DD>
+<DT><br><i>x</i>
+</DT><DD>où <i>x</i> est un simple caractère sans autre signification, correspond à ce caractère. 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une <i>contrainte</i> correspond à une chaîne vide quand des conditions spécifique sont rencontrées. Une <i>contrainte</i> ne peut pas être suivie par un <i>quantificateur</i>. Les <i>contraintes</i> simples sont comme suit; quelques autres sont décrite plus tard, sous ESCAPES. </div>
+<div ALIGN="LEFT" style="margin-left: 120px;">
+<DL>
+  <DT><b>^</b></DT><DD>correspond au début d'une ligne
+</DD>
+  <DT><br><b>&#36;</b>
+</DT><DD>correspond à la fin d'une ligne 
+</DD>
+  <DT><br><b>(?=</b><i>re</i><b>)</b>
+</DT><DD><i>positive lookahead</i> (AREs seulement), correspond au point quelconque où une sous chaîne correspondante à <i>re</i> commence 
+</DD>
+  <DT><br><b>(?!</b><i>re</i><b>)</b>
+</DT><DD><i>negative lookahead</i> (AREs seulement), correspond au point quelconque où aucune sous chaîne correspondante à <i>re</i> ne commence</DD>
+</DL>
+ </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les <i>contraintes</i> <i>lookahead</i> ne peuvent pas contenir de références arriéres (voir plus loin), et toutes parenthèses à l'intérieur sont considerées non-capturantes. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une RE ne peut pas finir avec `<b>&#92;</b>' 
+</div><br>
+<div><b>BRACKET EXPRESSIONS</b> (EXPRESSIONS CROCHETS)</div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une <i>expression crochets </i> est une liste de caractères entourée de `<b>&#91;]</b>'. Elle correspond normalement à tout caractère de la liste (mais voir ci-dessous). Si la liste commence avec `<b>^</b>', elle correspond à tout caractère (mais voir ci-dessous) <i>non inclus</i> dans la liste. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si deux caractères de la liste sont séparés par `<b>-</b>', c'est un raccourci pour l'<i>intervalle </i> complet des caractères entre les deux (inclus) dans la séquence ordonnée, ex. <b>&#91;0-9]</b> en ASCII correspond à tout chiffre décimal. Deux intervalles ne peuvent pas partager une limite, donc par ex. <b>a-c-e</b> est illégal. Les intervalles sont très dépendant de l'ordre de tri, et les programmes portables ne peuvent s'appuyer dessus. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Pour inclure un <b>]</b> ou <b>-</b> literal dans la liste, la méthode la plus simple est de l'entourer de <b>&#91;.</b> et <b>.]</b> pour en faire un&nbsp; élément d'assemblage (voir ci-dessous). Alternativement, placez le en premier (suivant un `<b>^</b>' eventuel), ou (AREs seulement) faites le preceder de `<b>&#92;</b>'. Alternativement, pour `<b>-</b>', faites en le dernier caractère, ou le second point d'un intervalle. Pour utiliser un <b>-</b> literal comme le premier point d'un intervalle, faites en un élément d'assemblage ou (AREs seulement) faites le preceder de `<b>&#92;</b>'. A l'exception de ceux-ci, de toutes combinaisons utilisant <b>&#91;</b> (voir paragraphes suivant), et les echappements, tout autres des caractères spéciaux perdent leur signification spéciale à l'intérieur d'une expression crochet. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans une expression crochet, un élément d'assemblage (un caractère, une séquence multi-caractère qui est assemblée comme si c'etait un simple caractère, ou un nom de séquence d'assemblage pour les deux) entouré de <b>&#91;.</b> et <b>.]</b> équivaut à la séquence de caractères de cet élément d'assemblage. La séquence est un seul élément de liste de l'expression crochet. Une expression crochet dans une locale qui a des éléments d'assemblages multi-caractère peut donc correspondre à plus d'un caractère. Ainsi (insidieusement), une expression crochet qui commence avec <b>^</b> peut correspond à des élément d'assemblages multi-caractère même si aucun d'eux n'apparait dans l'expression crochet! (<i>Note:</i> Tcl n'a pas d'élément d'assemblages multi-caractère. Cette information est seulement présente pour&nbsp; illustration.) </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Par exemple, supposez une séquence d'assemblage incluant un élément d'assemblage<b> ch</b> multi-caractère. Ensuite la RE <b>&#91;&#91;.ch.]]*c</b> (zéro ou plus <b>ch</b>'s suivi par <b>c</b>) correspond les cinq premiers caractères de `<b>chchcc</b>'. Egalement, la RE <b>&#91;^c]b</b> correspond à tout de `<b>chb</b>' (parce que <b>&#91;^c]</b> correspond au multi-caractère <b>ch</b>). </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans une expression crochet, un élément d'assemblage entouré de <b>&#91;=</b> et <b>=]</b> est une classe d'équivalence, remplaçant la séquence de caractères de tout élément d'assemblage équivalent à celui-ci, incluant lui-même. (Si il n'y a pas d'autre élément d'assemblage équivalent, le traitement est le même que si les délimiteurs&nbsp; étaient `<b>&#91;.</b>' et `<b>.]</b>'.) Par exemple, si <b>o</b> et <b>ô</b> sont les membres d'une classe d'équivalence, alors `<b>&#91;&#91;=o=]]</b>', `<b>&#91;&#91;=ô=]]</b>', et `<b>&#91;oô]</b>' sont tous synonymes. Une classe d'équivalence ne peut pas être le point final d'un intervalle. (<i>Note:</i>&nbsp; Tcl implémente seulement la locale Unicode. Il ne definit aucune classes d'équivalence. Les exemples précédents sont juste des illustrations.) </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans une expression crochet, le nom d'une <i>character class</i> entourée de <b>&#91;:</b> et <b>:]</b> équivaut à la liste de tous les caractères (pas tous les éléments d'assemblage!) appartenant à cette classe. Les classes standard de caractères sont: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">
+<FONT FACE="Times New Roman, Times, Serif" SIZE="-5"><TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0" WIDTH="100%">
+  <TR>
+    <TD>
+    <b>alpha</b>  
+    </TD>
+    <TD>
+   Une lettre. 
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>upper</b>   
+    </TD>
+    <TD>
+    Une lettre majuscule. 
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+   <A HREF="290.htm"><b>lower</b></A>   
+    </TD>
+    <TD>
+    Une lettre minuscule. 
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>digit</b>  
+    </TD>
+    <TD>
+    Un chiffre décimal.
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>xdigit</b>  
+    </TD>
+    <TD>
+    Un chiffre hexadécimal. 
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>alnum</b>  
+    </TD>
+    <TD>
+    Un caractère alphanumérique (lettre ou chiffre). 
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>print</b>  
+    </TD>
+    <TD>
+    Un caractère alphanumérique (même que <b>alnum</b>).
+
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>blank</b> 
+
+    </TD>
+    <TD>
+     Un espace ou tabulation.>
+    </TD>
+  </TR>
+  <TR>
+    <TD>
+   <b>space</b>  
+    </TD>
+    <TD>
+    Un caractère produisant un espace dans du texte affiché.
+     </TD>
+  </TR>
+  <TR>
+    <TD>
+   <b>punct</b>   
+    </TD>
+    <TD>
+    Un caractère de ponctuation.    
+	</TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>graph</b>   
+
+    </TD>
+    <TD>
+    Un caractère avec une représentation visible.    </TD>
+  </TR>
+  <TR>
+    <TD>
+    <b>cntrl</b>   
+    </TD>
+    <TD>
+    Un caractère de contrôle.    </TD>
+  </TR>
+</TABLE>
+</FONT>
+</div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une locale peut en fournir d'autres. (Notez que l'implémentation Tcl courante a seulement une locale: la locale Unicode.) Une classe de caractère ne peut pas être utilisée comme point final d'un intervalle. </div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Il y a deux cas spéciaux d'expressions crochet: les expressions crochet <b>&#91;&#91;:&lt;:]]</b> et <b>&#91;&#91;:&gt;:]]</b> sont des contraintes, correspondant à des chaîne vides respectivement au début et à la fin d'un mot. Un mot est défini comme une séquence de mots caractères qui est ni précédée&nbsp; ni suivie par des mots caractères. Un mot caractère est un caractère <i>alnum</i> ou un underscore (<b>_</b>). Ces expressions crochet spéciales sont obsolètes; les utilisateurs d'AREs devraient utiliser les contraintes échappement à la place (voir ci-dessous). 
+</div><br>
+<div><b>ECHAPPEMENTS</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les echappements (AREs seulement), qui commencent avec un <b>&#92;</b> suivi d'un caractère alphanumérique, existent de plusieurs sortes: entrée caractère, classe, constraint escapes, et back références. Un <b>&#92;</b> suivi par un caractère alphanumérique mais ne constituant pas un echappement valide est illégal dans une ARE. Dans les EREs, il n'y a pas d'echappements: en dehors d'une expression crochet, un <b>&#92;</b> suivi par un caractère alphanumérique équivaut simplement à cecaractère comme un caractère ordinaire, et dans une expression crochet, <b>&#92;</b> est un caractère ordinaire. (Le dernier est une incompatibilité entre les EREs et les AREs.) </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les echappements entrée caractère (AREs seulement) existent pour faciliter la spécification de caractères non imprimables et autrement inutilisables dans REs: </div>
+<div ALIGN="LEFT" style="margin-left: 120px;">
+<DL>
+  <DT><b>&#92;a</b>
+</DT><DD>caractère bip (bell), comme en C 
+</DD>
+  <DT><b>&#92;b</b></DT><DD>backspace, comme en C 
+</DD>
+  <DT><b>&#92;B</b>
+</DT><DD>synonyme pour <b>&#92;</b> reduire la répétition des backslash dans quelques applications ou il y a des niveaux multiples de traitement des backslash 
+</DD>
+  <DT><b>&#92;c</b><i>X</i>
+</DT><DD>(où X est un caractère quelconque) le caractère dont les 5 bits de poids faible sont les même que ceux de <i>X</i>, et dont les autres bits sont tous à zéro 
+</DD>
+  <DT><b>&#92;e</b>
+</DT><DD>caractère dont le nom de séquence d'assemblage est `<b>ESC</b>', ou le caractère avec une valeur octale de 033 
+</DD>
+  <DT><b>&#92;f</b>
+</DT><DD>formfeed, comme en C 
+</DD>
+  <DT><b>&#92;n</b>
+</DT><DD>newline, comme en C 
+</DD>
+  <DT><b>&#92;r</b>
+</DT><DD>retour chariot, comme en C 
+</DD>
+  <DT><b>&#92;t</b>
+</DT><DD>tabulation horizontale, comme en C 
+</DD>
+  <DT><b>&#92;u</b><i>wxyz</i>
+</DT><DD>(où <i>wxyz</i> est exactement quatre chiffres hexadécimaux) le caractère Unicode <b>U+</b><i>wxyz</i> dans l' ordre d'octet local 
+</DD>
+  <DT><b>&#92;U</b><i>stuvwxyz</i>
+</DT><DD>(où <i>stuvwxyz</i> est exactement huit chiffres hexadécimaux) reservé pour une extension Unicode hypothétiquel à 32 bits 
+</DD>
+  <DT><b>&#92;v</b>
+</DT><DD>tabulation verticale, comme en C. 
+</DD>
+  <DT><b>&#92;x</b><i>hhh</i>
+</DT><DD>(où <i>hhh</i> est une séquence quelconque de chiffres hexadécimaux) le caractère dont la valeur hexadécimale est <b>0x</b><i>hhh</i> (un simple caractère sans tenir compte de combien de chiffres hexadécimaux sont utilisés). 
+</DD>
+  <DT><b>&#92;0</b>
+</DT><DD>le caractère dont la valeur est <b>0</b> 
+</DD>
+  <DT><b>&#92;</b><i>xy</i></DT><DD>(où <i>xy</i> est exactement deux chiffres octal, et n'est pas une <i>back reference</i> (voir ci-dessous)) le caractère dont la valeur octale est <b>0</b><i>xy</i>
+</DD>
+  <DT><b>&#92;</b><i>xyz</i></DT><DD>(où <i>xyz</i> est exactement trois chiffres octaux, et n'est pas une back référence (voir ci-dessous)) le caractère dont la valeur octale est <b>0</b><i>xyz</i>
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les chiffres Hexadecimaux sont `<b>0</b>'-`<b>9</b>', `<b>a</b>-`<b>f</b>', et `<b>A</b>'-`<b>F</b>'. Les chiffres Octaux sont `<b>0</b>'-`<b>7</b>'. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les echappements caractère-entrée sont toujours interprétés comme des caractères ordinaires. Par exemple, <b>&#92;135</b> est <b>]</b> en ASCII, mais <b>&#92;135</b> ne peut terminer une expression crochet. Attention, néanmoins, que quelque application (ex.,un compilateur C) n'interprète ces séquences elle-même avant le package regular-expression, qui peut exiger le doublage (quadruplage, etc.) du `<b>&#92;</b>'. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les echappements Class-shorthand (AREs seulement) fournissent des raccourcis pour certaines classes de caractère communément utilisées: </div>
+<div ALIGN="LEFT" style="margin-left: 120px;">
+<DL>
+  <DT><b>&#92;d</b></DT><DD><b>&#91;&#91;:digit:]]</b> </DD>
+  <DT><b>&#92;s</b></DT><DD><b>&#91;&#91;:space:]]</b>
+</DD>
+  <DT><b>&#92;w</b>
+</DT><DD><b>&#91;&#91;:alnum:]_]</b> (notez l'underscore) 
+</DD>
+  <DT><b>&#92;D</b>
+</DT><DD><b>&#91;^&#91;:digit:]]</b> </DD>
+  <DT><b>&#92;S</b>
+</DT><DD><b>&#91;^&#91;:space:]]</b> 
+</DD>
+  <DT><b>&#92;W</b>
+</DT><DD><b>&#91;^&#91;:alnum:]_]</b> (notez l'underscore) 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans les expressions crochets, `<b>&#92;d</b>', `<b>&#92;s</b>', et `<b>&#92;w</b>' perdent leurs crochets externes, et `<b>&#92;D</b>', `<b>&#92;S</b>', et `<b>&#92;W</b>' sont illégaux. (Ainsi, par exemple, <b>&#91;a-c&#92;d]</b> est équivalent à <b>&#91;a-c&#91;:digit:]]</b>. Egalement, <b>&#91;a-c&#92;D]</b>, qui est équivalent à <b>&#91;a-c^&#91;:digit:]]</b>, est illegal.) </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Un constraint escape (AREs seulement) est une contrainte, correspondant à la chaîne vide si des conditions spécifiques sont rencontrées, écrite comme un echappement: </div>
+<div ALIGN="LEFT" style="margin-left: 120px;">
+<DL>
+  <DT><b>&#92;A</b>
+</DT><DD>correspond seulement au début de la chaîne (voir CORRESPONDANCES, ci-dessous, pour comment ceci diffère de `<b>^</b>') 
+</DD>
+  <DT><b>&#92;m</b>
+</DT><DD>correspond seulement au début d'un mot 
+</DD>
+  <DT><b>&#92;M</b>
+</DT><DD>correspond seulement à la fin d'un mot
+</DD>
+  <DT><b>&#92;y</b>
+</DT><DD>correspond seulement au début ou à la fin d'un mot
+</DD>
+  <DT><b>&#92;Y</b>
+</DT><DD>correspond seulement à un point qui n'est pas le début ou la fin d'un mot
+</DD>
+  <DT><b>&#92;Z</b>
+</DT><DD>correspond seulement à la fin de la chaîne (voir CORRESPONDANCES, ci-dessous, pour comment ceci diffère de `<b>&#36;</b>') 
+</DD>
+  <DT><b>&#92;</b><i>m</i>
+</DT><DD>(où <i>m</i> est un chiffre non nul) une <i>back reference</i>, voir ci-dessous 
+</DD>
+  <DT><b>&#92;</b><i>mnn</i>
+</DT><DD>(où <i>m</i> est un chiffre non nul, et <i>nn</i> sont d'autres chiffres, et la valeur décimale <i>mnn</i> n'est pas supérieure au nombre de parenthèses fermantes) une <i>back reference</i>, voir ci-dessous 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Un mot est défini comme dans la spécification de&nbsp; <b>&#91;&#91;:&lt;:]]</b> et <b>&#91;&#91;:&gt;:]]</b> plus haut. Constraint escapes sont illégales dans les expressions crochets. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une back référence (AREs seulement) correspond à la même chaîne que celle qui correspond aux sous expressions entre parenthèses spécifié par les nombres, ainsi <b>(&#91;bc])&#92;1</b> correspond <b>bb</b> ou <b>cc</b> mais pas `<b>bc</b>'. La sous expression doit entièrement précéder la back référence dans la RE. Les sous expressions sont numérotées dans l'ordre de leur premières parenthèses. Les parenthèses non-capturantes ne définissent pas de sous expressions. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Il y a une ambiguité inhérente historique entre les échappements caractère-entrée octal et les back références, qui est résolue par heuristique, comme dévoilé plus haut. Un zéro en tête indique toujours un échappement octal. Un seul chiffre différent de zéro, non suivi par un autre chiffre, est toujours interprété comme une back référence. Une séquence multi-chiffre ne commençant pas avec un zéro est interprétée comme une back référence si elle est située après une sous expression convenable (ex. le nombre est dans l'intervalle légal pour une back référence), et autrement est interprétée comme octale. </div><br>
+<div><b>METASYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">En plus de la syntaxe principale décrite plus haut, il y a quelques formes spéciales et diverses facilités syntaxiques disponibles. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Normalement la sorte de RE utilisée est spécifiée par l'application. Néanmoins, ceci peut être modifié par un <i>director</i>. Si un RE d'une sorte quelconque commence avec `<b>***:</b>', le reste de la RE est une ARE. Si une RE d'une sorte quelconque commence avec `<b>***=</b>', le reste de la RE est pris comme une chaîne littérale, avec tous les caractères considerés comme des caractères ordinaires. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une ARE peut commencer avec des <i>contenue options</i>: une séquence <b>(?</b><i>xyz</i><b>)</b> (où <i>xyz</i> est un ou plusieurs caractères alphabétiques) spécifie les options affectant le reste de la RE. Ceci vient en supplément, et peut modifier toute option spécifiée par l'application. Le lettres d'option disponibles sont: </div>
+<div ALIGN="LEFT" style="margin-left: 120px;">
+<DL>
+  <DT><b>b</b>
+</DT><DD>le reste de la RE est une BRE 
+</DD>
+  <DT><b>c</b>
+</DT><DD>correspondance sensible à la casse (par défaut) 
+</DD>
+  <DT><b>e</b>
+</DT><DD>le reste de la RE est une ERE 
+</DD>
+  <DT><b>i</b>
+</DT><DD>correspondance insensible à la casse (voir CORRESPONDANCES, ci-dessous) 
+</DD>
+  <DT><b>m</b>
+</DT><DD>synonyme historique de <b>n</b>
+</DD>
+  <DT><b>n</b>
+</DT><DD>correspondance sensible au saut de ligne(voir CORRESPONDANCES, ci-dessous) 
+</DD>
+  <DT><b>p</b>
+</DT><DD>correspondance partiellement sensible au saut de ligne (voir CORRESPONDANCES, ci-dessous) 
+</DD>
+  <DT><b>q</b>
+</DT><DD>le reste de la RE est une chaîne littérale (&quot;entre guillemets&quot;), toute de caractères ordinaires 
+</DD>
+  <DT><b>s</b>
+</DT><DD>correspondance insensible au saut de ligne (par défaut) 
+</DD>
+  <DT><b>t</b>
+</DT><DD>syntaxe sérrée (par défaut; voir ci-dessous) 
+</DD>
+  <DT><b>w</b>
+</DT><DD>correspondance inverse partiellement sensible au saut de ligne (&quot;weird&quot;) (voir CORRESPONDANCES, ci-dessous) 
+</DD>
+  <DT><b>x</b></DT><DD>syntaxe expansée (voir ci-dessous)</DD>
+</DL>
+ </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les options incluses prennent effet à la <b>)</b> terminant la séquence. Elles sont disponibles seulement au début d'une ARE, et ne peuvent pas être utilisées plus loin. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">En plus de la syntaxe usuelle (<i>tight</i>) RE, dans laquelle tous les caractères sont signifiants, il y a une syntaxe <i>expansée</i>, disponible dans toutes les sortes de RE avec le switch<b> -expanded</b>, ou dans les&nbsp; AREs avec l'option <b>x</b>. Dans la syntaxe expansée, les espaces sont ignorés et tout caractère entre un <b>#</b> et les newline suivantes (ou la fin de la RE) sont ignoré, permettant de paragrapher et de commenter une RE complexe. Il y a trois exceptions à cette régle de base: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">un espace ou un `<b>#</b>' précédés&nbsp; par `<b>&#92;</b>' est retenu </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">un espace ou un `<b>#</b>' à l'intérieur d'une expression crochet est retenu </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">un espace et des commentaires sont illégaux dans les symboles multi-caractères comme le `<b>(?:</b>' ARE ou le `<b>&#92;(</b> ' BRE</div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les caractères espace de la syntaxe expansée sont le blank, tab, newline, et tout caractère qui appartient à la classe de caractère<i> space</i>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Finalement, dans une ARE, en dehors des expressions crochet, la séquence `<b>(?#</b><i>ttt</i><b>)</b>' (où <i>ttt</i> est un texte quelconque ne contenant pas de `<b>)</b>') est un commentaire, complètement ignoré. De même, ceci n'est pas autorisé entre les caractères de symboles multi-caractère comme `<b>(?:</b>'. Ces commentaires sont plus un artefact historique que une utile facilité, et leur usage est obsolète; utilisez plutot la syntaxe expansée de. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;"><i>Aucune</i> de ces extensions de métasyntaxe ne sont disponibles si l'application (ou un director initial <b>***=</b>) a spécifié que les entrées de l'utilisateur doivent être traitées comme une chaîne littérale plutôt que comme une RE. 
+</div><br>
+<div><b>CORRESPONDANCES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans l'évènement où une RE peut correspondre à plus d'une sous chaîne d'une chaîne donnée, la RE correspond à la première occurence dans la chaîne. Si la RE peut correspondre à plus d'une sous chaîne commençant à ce point, le choix est déterminé par sa <i>préférence</i>: soit la plus longue sous chaîne, soit la plus courte. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La plupart des atomes, et toutes les contraintes, n'ont pas de préférence. Une RE entre parenthèses a la même préférence (éventuellement aucune) que la RE. Un atome quantifié avec <b>&#123;</b><i>m</i><b>}</b> ou <b>&#123;</b><i>m</i><b>}?</b> a la même préférence (éventuellement aucune)que l'atome lui-même. Un atome quantifié avec d'autres quantificateurs normaux (incluant <b>&#123;</b><i>m</i><b>,</b><i>n</i><b>}</b> avec <i>m</i> égal à <i>n</i>) prefère la correspondance la plus longue. Un atome quantifié avec d'autre quantificateurs non-greedy (incluant <b>&#123;</b><i>m</i><b>,</b><i>n</i><b>}?</b> avec <i>m</i> égal à <i>n</i>) prefère la correspondance la plus courte. Une branche a la même préférence que le premier atome quantifié inclus qui a une préférence. Une RE consistant de deux branches ou plus connectées par l'opérateur <b>|</b> préfère la correspondance la plus longue.</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Sujettes aux contraintes imposées par les règles de correspondance à la totalité de la RE, les sous-expressions correspondent au sous-chaînes les plus longues ou les plus courtes possible, basées sur leurs preferences, avec les sous-expressions commençant en premier dans la RE prioritaires sur celles commençant plus loin. Notez que les sous-expressions prennent le pas sur leurs sous-expressions internes. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Notez que les quantificateurs <b>&#123;1,1}</b> et <b>&#123;1,1}?</b> peuvent être utilisés pour forcer la préférence, sur une sous-expression ou une RE complète. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les longueurs des correpondances sont mesurées en caractères, pas en éléments d'assemblage. Une chaîne vide est considerée plus longue qu'aucune correspondance. Par exemple, <b>bb*</b> correspond aux trois caractères cebtraux de `<b>abbbc</b>', <b>(week|wee)(night|knights)</b> correspond aux dix caractères de `<b>weeknights</b>', quand <b>(.*).*</b> est comparé à <b>abc</b> la sous-expression entre parenthèses correspond aux trois caractères, et quand <b>(a*)*</b> est comparé à <b>bc</b> à la fois la RE complète et la sous-expression entre parenthèses correspond à une chaîne vide. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si une correspondance indépendante de la casse est spécifiée, l'effet est le même que si toute distinction de casse avait disparu de l'alphabet. Quand un caractère qui existe dans les deux casses apparait comme un caractère ordinaire en dehors d'une expression crochet, il est effectivement transforme en une expression crochet contenant les deux casses, ainsi <b>x</b> devient `<b>&#91;xX]</b>'. Quand il apparait dans une expression crochet, toute contrepartie de sa casse est&nbsp; ajoutée à l'expression crochet, ainsi <b>&#91;x]</b> devient <b>&#91;xX]</b> et <b>&#91;^x]</b> devient `<b>&#91;^xX]</b>'. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si une correspondance sensible au saut de ligne est spécifiée, les expressions <b>.</b> et crochets utilisant <b>^</b> ne correspondront&nbsp; jamais au caractère newline (ainsi la correspondance ne traverse jamais les saut de lignes à moins que la RE le demande explicitement ) et <b>^</b> et <b>&#36;</b> correspondront à la chaîne vide respectivement après et avant un saut de ligne, en plus de correspondre respectivement au début et à la fin d'une chaîne. Les <b>&#92;A</b> et <b>&#92;Z</b> ARE continuent à correspondre au début et à la fin d'une chaîne<i> seulement</i>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si une correspondance sensible au saut de ligne partielle est spécifiée, elle affecte les expressions <b>.</b> et crochets comme la correspondance sensible au saut de ligne, mais pas <b>^</b> et `<b>&#36;</b>'. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si une correspondance sensible au saut de ligne partielle inverse est spécifiée, elle affecte <b>^</b> et <b>&#36;</b> comme la correspondance sensible au saut de ligne, mais pas les expressions <b>.</b> et crochets. Ceci n'est pas trés utile mais est fourni pour la symétrie 
+</div><br>
+<div><b>LIMITES ET COMPATIBILITE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Aucune limite particulière n'est imposée à la longueur des REs. Les programmes conçue pour être hautement portables ne devront pas employer de REs plus longues que 256 octets, car une implémentation POSIX-compatible peut les refuser. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La seule fonctionnalité des AREs actuellement incompatible avec les EREs POSIX est que <b>&#92;</b> ne perd pas sa signification spéciale à l'intérieur des expression crochets. Toutes les autres fonctionnalités ARE utilisent une syntaxe qui est illégale ou a des effets indéfinis ou non specifiés dans les EREs POSIX; la syntaxe <A HREF="24.htm"><b>***</b></A> des directors est de même en dehors de la syntaxe POSIX pour les BREs et les EREs. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Beaucoup des extensions ARE sont extraites de Perl, mais quelques unes ont été nettoyées, et quelques extensions Perl ne sont pas présentes. Les incompatibilités inclutnt `<b>&#92;b</b>', `<b>&#92;B</b>', l'absence de traitement spécial pour un newline à la fin, l'addition d'expression crochets pour les cas affectés par la correspondance sensible au saut de ligne, les restrictions sur les parenthèses et les back références dans les contraintes avant, et la sémantique des correspondances plus long/plus court (plutôt que premier-trouvé). </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les règles de correspondance pour les REs contenant à la fois des quantificateurs normaux et non-greedy ont changé depuis les premières versions beta-test de ce package. (Les nouvelles règles sont plus simples et plus propre, mais ne travaillent pas trop dur pour deviner les intentions réelles de l'utilisateur.) </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le package original <i>regexp</i> de 1986 par Henry Spencer, toujours largement utilisé (ex., dans les  pre-8.1 releases de Tcl), implémentait une première version des EREs d'aujourd'hui. Il y a quatre incompatibilités entre les <i>regexp</i>&nbsp; proches des EREs (`RREs') et les AREs. Dans un ordre croissant de signification: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">Dans les AREs, <b>&#92;</b> suivi d'un caractère alphanumérique est soit un échappement soit une erreur, alors que dans les RREs, c'était juste un autre moyen d'écrire l'alphanumérique. Ceci ne sera pas une problème parce que il n'y a pas de raison d'écrire une séquence pareille dans les RREs. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">Un<b> &#123;</b> suivi d'un chiffre dans un ARE est le début d'un intervalle, alors que dans les RREs, <b>&#123;</b> a toujours été un caractère ordinaire. De telles séquences seront rares, et donneront souvent une erreur parce que les caractères suivants ne ressembleront pas à un intervalle valide. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">Dans les AREs, <b>&#92;</b> introduit un caractère spécial dans `<b>&#91;]</b>', donc un <b>&#92;</b> littéral dans <b>&#91;]</b> doit être écrit `<b>&#92;&#92;</b>'. <b>&#92;&#92;</b> donne aussi un <b>&#92;</b> littéral dans <b>&#91;]</b> dans les RREs, mais seuls les programmeurs vraiment parano&iuml;aques doublent le backslash par routine. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">AREs rapporte la plus longue/plus courte correspondance de la RE, plutôt que le premier trouvé dans l'ordre de recherche spécifié. Ceci peut affecter quelque RREs qui aurait été écrites dans l'hypothèse où la première correspondance serait rapportée. (La rédaction soigneuse des RREs pour optimiser l'ordre de recherche pour une comparaison rapide est obsolète (les AREs examinent toutes les correspondances possible en parallèle, et leurs performances sont largement insensible à leur complexité) mais les cas où l'ordre de recherche a été exploité pour trouver delibérément une correspondance qui n'est pas la plus longue/plus courte devront être réécrits.)
+</div><br>
+<div><b>BASIC REGULAR EXPRESSIONS</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les BREs diffèrent des EREs sous plusieurs aspects `<b>|</b>', `<b>+</b>', et <b>?</b> sont des caractères ordinaires et il n'y a pas d'équivalent à leurs fonctionalité. Les délimiteurs des intervalles sont <b>&#92;&#123;</b> et `<b>&#92;}</b>', avec les <b>&#123;</b> et <b>}</b> interprétées seules comme des caractères ordinaires. Les parenthèses des sous expressions imbriquées sont <b>&#92;(</b> et `<b>&#92;)</b>', avec les <b>(</b> et <b>)</b> interprétées seules comme des caractères ordinaires. <b>^</b> est un caractère ordinaire excepté au début de la RE ou au début d'une sous expressions entre parenthèses, <b>&#36;</b> est un caractère ordinaire excepté à la fin de la RE ou la fin d'une sous expressions entre parenthèses, et <A HREF="24.htm"><b>*</b></A> est un caractère ordinaire s'il apparait au début de la RE ou au début d'une sous-expression entre parenthèses (après un `<b>^</b>'possible en tête). Finalement, les back références à un seul chiffre sont disponibles, et <b>&#92;&lt;</b> et <b>&#92;&gt;</b> sont des synonymes de <b>&#91;&#91;:&lt;:]]</b> et <b>&#91;&#91;:&gt;:]]</b> respectivement; aucun autre echappement ne sont disponibles 
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">RegExp(3.htm), <A HREF="152.htm">regexp</A>(n), <A HREF="154.htm">regsub</A>(n), <A HREF="137.htm">lsearch</A>(n), <A HREF="167.htm">switch</A>(n), text(n) </div><br>
+<div>Dernière révision: 8.1</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="149.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="151.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

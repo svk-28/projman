@@ -1,0 +1,48 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>tclsh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tcl Applications</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">tclsh - Simple shell contenant un Interpréteur Tcl 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>tclsh</b> ?<i>fileName arg arg ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>Tclsh</b> est une application shell-like qui lit les commandes Tcl à partir de son entrée standard ou à partir d'un fichier et les évalue. Si appelée sans arguments alors s'exécute interactivement, en lisant les commandes Tcl de l'entrée standard et affichant les résultats et les message d'erreurs sur la sortie standard. Elle s'exécute jusqu'à ce que la commande <A HREF="106.htm"><b>exit</b></A> soit appelée ou jusqu'à ce que la fin-de-fichier soit atteinte sur son entrée standard. S'il existe un fichier <b>.tclshrc</b> (ou <b>tclshrc.tcl</b> sur les plateformes Windows) dans le répertoire home de l'utilisateur, <b>tclsh</b> évalue le fichier comme script Tcl juste avant de lire la première commande sur l'entrée standard 
+</div><br>
+<div><b>FICHIERS SCRIPT </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si <b>tclsh</b> est appelé avec des arguments alors le premier argument est le nom d'un script et tous les arguments supplémentaires sont rendus disponibles au script comme variables (voir ci-dessous). Au lieu de lire les commandes à partir de l'entrée standard <b>tclsh</b> lira les commandes Tcl du fichier indiqué;&nbsp; <b>tclsh</b> finira quand il atteint la fin du fichier. Il n'y a pas d'évaluation automatique de <b>.tclshrc</b> dans ce cas, mais le script peut toujours le <A HREF="163.htm"><b>source</b></A>r si désiré. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si vous créer un script Tcl dans un fichier dont première ligne est </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>#!/usr/local/bin/tclsh</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">alors vous pouvez appeller le script directement à partir de votre shell si vous rendez le fichier exécutable. Ceci suppose qui <b>tclsh</b> aura été installé dans l'emplacement par défaut dans /usr/local/bin;&nbsp; s'il est installé ailleurs vous aurez à modifier la ligne plus haut. De nombreux systèmes UNIX n'autorisent pas la ligne <b>#!</b> à dépasser 30 caractères, donc soyez s&ucirc;rs que l'exécutable <b>tclsh</b> peut être accédé avec un nom de chemin court. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Une meilleure approche est de commencer vos fichiers script avec les trois lignes suivantes: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>#!/bin/sh</b> <b><br>
+</b><b># la ligne suivante lance tclsh&#92;<br>
+</b><b>exec tclsh &quot;&#36;0&quot; &quot;&#36;@&quot;</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette approche a trois avantages sur l'approche précedente. Premièrement, l'emplacement du binaire <b>tclsh</b> n'a pas d'être codé en dur dans le script: il peut être n'importe où dans votre chemin de recherche shell. Deuxièmement, elle resout la limite de 30 caractères pour le nom de chemin dans la précedente approche. Troisièmement, cette approche fonctionnera même si <b>tclsh</b> est lui-même un shell script (c'est fait sur quelques systèmes de manière à gérer de multiples architectures ou systèmes d'exploitations: le script <b>tclsh</b> selectionne un parmi plusieurs binaire à exécuter) Les trois lignes mettent en cause à la fois <b>sh</b> et <b>tclsh</b> pour traiter le script, mais <A HREF="105.htm"><b>exec</b></A> est seulement exécuté par <b>sh</b>. <b>sh</b> traite le script en premier; il traite la seconde ligne comme un commentaire et exécute la troisième ligne. L'instruction <A HREF="105.htm"><b>exec</b></A> provoque l'arrêt du traitement par le shell et le démarrage de <b>tclsh</b> pour traiter le script entier. Quand <b>tclsh</b> démarre, it traite les trois lignes comme des commentaires, car le backslash à la fin de la second ligne cause l'interprétation de la troisième ligne comme suite du commentaire sur la seconde ligne <br>
+</div><br>
+<div><b>VARIABLES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>Tclsh</b> fixe les variables Tcl suivantes: 
+<DL>
+  <DT><b>argc</b></DT><DD>Contient un compte du nombre des arguments <i>arg</i> (0 si aucun), non inclus le nom du fichier script. 
+</DD>
+  <DT><br><b>argv</b>
+</DT><DD>Contient une liste Tcl dont les éléments sont les arguments<i> arg</i>, dans l'ordre, ou une chaîne vide si il n'y a pas d'arguments<i> arg</i>. 
+</DD>
+  <DT><br><b>argv0</b>
+</DT><DD>Contient <i>fileName</i> si il a été spécifié. Autrement, contient le nom par lequel <b>tclsh</b> a été appelé. 
+</DD>
+  <DT><br><b>tcl_interactive</b>
+</DT><DD>Contient 1 si <b>tclsh</b> s'exécute interactivement (aucun <i>fileName</i> n'a été spécifié et l'entrée standard est un périphérique terminal-like), 0 autrement.
+</DD>
+</DL>
+
+</div><br>
+<div><b>PROMPTS</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Quand <b>tclsh</b> est appelé interactivement il attend normalement chaque commande avec &quot;<b>%</b>&quot; Vous pouvez changer le prompt en fixant les variables <b>tcl_prompt1</b> et <b>tcl_prompt2</b> Si la variable <b>tcl_prompt1</b> existe alors elle doit consister en un script Tcl pour produire un prompt;&nbsp; au lieu de produire un prompt <b>tclsh</b> evaluera le script dans <b>tcl_prompt1</b>. La variable <b>tcl_prompt2</b> est utilisée d'une manière analogue quand un saut de ligne est tapé mais que la commande courante n'est pas encore complète; si <b>tcl_prompt2</b> n'est pas fixé alors aucun prompt ne s'affiche pour les commandes incomplètes </div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="167.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="169.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

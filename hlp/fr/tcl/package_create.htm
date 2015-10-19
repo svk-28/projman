@@ -1,0 +1,30 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>pkg::create&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">pkg::create – Construit une commande <b>package ifneeded</b> appropriée pour un package donné
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>::pkg::create </b><i>-name packageName</i> <i>-version packageVersion</i> ?<i>-load filespec</i>? ... ?<i>-source </i><i>filespec</i>? ... 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>::pkg::create</b> est une fonction utilitaire qui fait partie de la bibliothèque standard Tcl. Elle est utilisée pour créer une commande <b>package ifneeded</b> appropriée pour une spécification de package donnée. Elle peut être utilisée pour construire un fichier <b>pkgIndex.tcl</b> utilisé avec le mécanisme<A HREF="143.htm"><b> package</b></A>. 
+</div><br>
+<div><b>OPTIONS</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les paramètres supportés sont: 
+<DL>
+  <DT><b>-name</b> <i>packageName</i></DT><DD>Ce paramètre spécifie le nom du package. Il est requis. </DD>
+  <DT><b>-version</b> <i>packageVersion</i></DT><DD>Ce paramètre spécifie la version du package. Il est requis. </DD>
+  <DT><b>-load</b> <i>filespec</i><br></DT><DD>Ce paramètre spécifie une bibliothèque binaire qui doit être chargé avec la commande <A HREF="134.htm"><b>-load</b></A>. <i>filespec</i> est une liste de deux éléments. Le premier élément est le nom du fichier à charger. Le second, l'élément optionnel est une liste de commandes fournies en chargeant ce fichier. Si la liste des fonctions est vide ou omise, <b>::pkg::create</b> prépare la bibliothèque à un chargement direct (voir <A HREF="146.htm"><b>pkg_mkIndex</b></A>). N'importe quel nombre de paramètres <A HREF="134.htm"><b>-load</b></A> peut être spécifié. 
+</DD>
+  <DT><b>-source</b> <i>filespec</i><br></DT><DD>Ce paramètre est semblable au paramètre <A HREF="134.htm"><b>-load </b></A>, excepté qu'il spécifie une bibliothèque Tcl qui doit être chargée avec la commande<A HREF="163.htm"><b> source</b></A>. N'importe quel nombre de paramètres <A HREF="163.htm"><b>-source</b></A> peut être spécifié. </DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Au moins un paramètre<A HREF="134.htm"><b>-load</b></A> ou <A HREF="163.htm"><b>-source</b></A> doit être donné. </div><br>
+<div>Dernière révision: 8.3</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="143.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="145.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

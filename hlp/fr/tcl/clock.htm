@@ -1,0 +1,90 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD<BODY>
+<div><H3><b>clock&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">clock- Obtient et manipule l'heure 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>clock </b><i>option</i> ?<i>arg arg ...</i> <br>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande effectue l'une des opérations qui permettent d'obtenir ou de manipuler des chaînes ou des valeurs qui représentent une notion de temps. L'argument <i>option</i> détermine l'action effectuée par la commande.  Les <i>options</i> légales (qui peuvent être abrégées) sont: 
+<DL>
+  <DT><b>clock clicks</b> ?<b>-milliseconds</b>?<br></DT><DD>Retourne une valeur haute-résolution de l'heure en tant que valeur entière dependante du système. L'unité de valeur dépend du système mais est la plus haute résolution d'horloge disponible sur le système tel un cycle CPU. Si <b>-milliseconds</b> est spécifié, alors on a la garantie que la valeur a une granularité de la milliseconde. Cette valeur ne doit être utilisée que pour la mesure relative du temps écoulé. 
+</DD>
+  <DT><br>
+<b>clock format </b><i>clockValue</i> ?<b>-format </b><i>string</i>? ?<b>-gmt </b><i>boolean</i>?</DT><DD>Convertit un entier représentant un temps, typiquement renvoyé par <b>clock </b><b>seconds</b>, <b>clock scan</b>, ou les options <b>atime</b>, <b>mtime</b>, ou <b>ctime</b> de la commande<A HREF="111.htm"><b> file</b></A>, en une forme compréhensible.  Si l'argument      <b>-</b><A HREF="117.htm"><b>format</b></A> est présent l'argument suivant est une chaîne qui décrit comment date et l'heure doivent être formatés. Les descripteurs de champs sont constitués d'un <b>%</b> suivi par un caractère descripteur de champ.  Tous les autre caractères sont copiés dans résultat. Les descripteurs de champs valides sont:
+<UL>
+  <LI><b>%%</b>      Insère un %. </LI>
+  <LI><b>%a</b>      Nom abrégé d'un jour de la semaine (Mon, Tue, etc.). 
+</LI>
+  <LI><b>%A</b>      Nom complet d'un jour de la semaine (Monday, Tuesday, etc.). 
+</LI>
+  <LI><b>%b</b>      Nom abrégé d'un mois (Jan, Feb, etc.). </LI>
+  <LI><b>%B</b>      Nom complet d'un mois</LI>
+  <LI><b>%c</b>      Date et heure Locale spécifique. </LI>
+  <LI><b>%d</b>      Jour du mois (01 - 31). </LI>
+  <LI><b>%H</b>      Heure en format 24-heure (00 - 23). </LI>
+  <LI><b>%I</b>      Heure en format 12-heure (00 - 12). </LI>
+  <LI><b>%j</b>      Jour de l'année (001 - 366). </LI>
+  <LI><b>%m</b>      Numero du mois (01 - 12). </LI>
+  <LI><b>%M</b>      Minute (00 - 59).</LI>
+  <LI><b>%p</b>      indicateur AM/PM. </LI>
+  <LI><b>%S</b>      Secondes (00 - 59).</LI>
+  <LI><b>%U</b>      Semaine de l 'année (00 - 52), Dimanche est le premier jour de la semaine. 
+</LI>
+  <LI><b>%w</b>      Numero du jour de la semaine. (Dimanche = 0). </LI>
+  <LI><b>%W</b>      Semaine de l 'année (00 - 52), Lundi est le premier jour de la semaine
+</LI>
+  <LI><b>%x</b>      Format de Date Locale. </LI>
+  <LI><b>%X</b>      Format d'Heure Locale. </LI>
+  <LI><b>%y</b>      Année sans siècle (00 - 99). </LI>
+  <LI><b>%Y</b>      Année avec siècle (ex. 1990) </LI>
+  <LI><b>%Z</b>      Nom de Time zone. <br></LI>
+ De plus, les descripteurs de champs suivants peuvent être supportés sur quelque systèmes (ex. Unix mais pas Windows): 
+
+  <LI><b>%D</b>      Date comme %m/%d/%y. </LI>
+  <LI><b>%e</b>      Jour du mois (1 - 31), sans le zéro complémentaire. </LI>
+  <LI><b>%h</b>      Nom abrégé d'un mois. </LI>
+  <LI><b>%n</b>      Insère un saut de ligne. </LI>
+  <LI><b>%r</b>      Heure comme %I:%M:%S %p. </LI>
+  <LI><b>%R</b>      Heure comme %H:%M. </LI>
+  <LI><b>%t</b>      Insère une tabulation.</LI>
+  <LI><b>%T</b>      Heure comme %H:%M:%S. <br></LI>
+</UL>
+Si l'argument <b>-</b> <A HREF="117.htm"><b>format</b></A> n'est pas spécifié, la chaîne de formatage "<b>%a %b %d </b><b>%H:%M:%S %Z %Y</b>" est utilisée.  Si l'argument <b>-gmt</b> est présent il doit être suivi d'un booléen qui s'il est vrai spécifie que l'heure doit être formatée comme une heure Greenwich Mean Time. S'il est faux, la timezone locale définie par l'environnement d'exploitation est utilisée. 
+</DD>
+  <DT><br><b>clock scan </b><i>dateString</i> ?<b>-base </b><i>clockVal</i>? ?<b>-gmt </b><i>boolean</i>?
+</DT><DD>Convertit  <i>dateString</i> en une valeur d'horloge entière (voir <b>clock seconds</b>). Cette commande peut virtuellement analyser et convertir toute chaîne de date et/ou d'heure standard, qui peut inclure des mnémoniques timezone standards.  Si une heure est spécifiée seule, la date courante est supposée.  Si la chaîne ne contient pas de mnémoniques timezone, la timezone locale est supposée, à moins que l'argument <b>-gmt</b> soit vrai, auquel cas la valeur horloge est calculée en présumant que l'heure spécifiée est relative à Greenwich Mean Time. <b>-gmt</b>, si spécifié, affecte seulement la valeur de l'heure calculée; elle n'influe pas sur l'interprétation de <b>-base</b>. <br>
+Si le flag <b>-base</b> est spécifié, l'argument suivant doit contenir une valeur horloge entière.  Seule la date de cette valeur est utilisée, pas l'heure.  Ceci est utile pour déterminer l'heure d'un jour spécifique ou faire d'autres conversions relatives à la date. <br>
+La <i>dateString</i> est constitué de zéro ou plus éléments de la forme suivante: 
+<br><br><UL>
+  <LI><i>time</i> L'heure du jour, qui est de la forme: <i>hh</i>?<i>:mm</i>?<i>:ss</i>??  ?<i>meridian</i>? ?<i>zone</i>? ou <i>hhmm </i>?<i>meridian</i>?  ?<i>zone</i>?. Si méridien n'est spécifié, <i>hh</i> est interprété sur une horloge 24-heures. 
+</LI>
+  <LI><i>date</i> Une date mois et jour spécifique avec l'année optionnelle.  Les formats acceptables sont <i>mm/dd</i>?<i>/yy</i>?, <i>monthname dd</i> ?, <i>yy</i>?, <i>dd </i><i>monthname </i>?<i>yy</i>?, <i>day, dd monthname yy</i>, <i>?CC?yymmdd</i>, <i>?CC?yy-mm-dd</i>, <i>dd-monthname-?CC?yy</i>. L'année par défaut est l'année courante.  Si l'année est inférieure à 100, les années 00-68 seront interprétées 2000-2068 et les années 69-99 comme 1969-1999. Toutes les plateformes ne savent pas représenter les années 38-70, aussi l'utilisation de ces années peut entrainer une erreur. 
+</LI>
+  <LI><i>ISO 8601 point-in-time</i>
+ Une spécification ISO 8601, telle que <i>CCyymmddThhmmss</i>, ou T est le literal T, <i>CCyymmdd hhmmss</i>, ou  <i>CCyymmddThh:mm:ss</i>. 
+</LI>
+  <LI><i>relative time</i>
+ Une spécification relative à l'heure courante.  Le format est <i>number unit</i> , les unités acceptables sont <b>year</b>, <b>fortnight</b>, <b>month</b>, <b>week</b>, <b>day</b>, <b>hour</b>, <b>minute</b> (ou <b>min</b>), et <b>second</b> (ou <b>sec</b>).  L'unité peut être donnée au singulier ou au pluriel, comme dans <b>3 weeks</b>. Ces modificateurs peuvent aussi être: <b>tomorrow</b>, <b>yesterday</b>, <b>today</b>, <b>now</b>, <b>last</b>, <b>this</b>, <b>next</b>, <b>ago</b>. <br>
+</LI>
+</UL><br>
+La date actuelle est calculée selon les étapes suivantes. D'abord, toute date et/ou temps absolu est traitée et convertie. Partant de cet instant comme base, les spécifications du jour de la semaine sont ajoutées. Ensuite, des spécifications relatives sont utilisées.  Si une date ou un jour est spécifié, et qu'aucune heure absolue ou relative n'est donnée, minuit est utilisé.  Finalement, une correction est appliquée ainsi l'heure du jour correcte est produite après les rectifications pour l'heure d'été et la date correcte est donnée au passage de la fin d'un  mois long à un mois court. <br>
+La correction d'heure d'été est appliquée seulement quand l'heure relative est spécifiée dans les unités de jour ou plus, c.a.d., jours, semaines, quinzaines, mois ou années.  Ceci signifie que quand on change d'heure, des résultats différents seront donnés pour <b>clock scan &quot;1 day&quot;</b> et <b>clock </b><b>scan &quot;24 hours&quot;</b>:
+<b>% clock scan &quot;1 day&quot; -base &#91;clock scan 1999-10-31]<br>
+</b><b>941443200<br>
+</b><b>% clock scan &quot;24 hours&quot; -base &#91;clock scan 1999-10-31]<br>
+</b><b>941439600</b>
+</DD>
+<DT><br><b>clock seconds</b><br></DT><DD>Retourne  l'heure et la date courante comme valeur entière dépendante du système . L'unité de valeur est la seconde, lui permettant d'être utilisée pour les calculs de temps relatif.  La valeur est usuellement définie comme le temps total écoulé depuis un &#147;epoch&#148;. Vous ne pouvez présumer la valeur de l'epoch. 
+</DD>
+</DL>
+</div>
+<div>Dernière révision: 8.3</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="95.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="97.htm"><b>Suivant</b></A></div>
+
+</BODY></HTML>

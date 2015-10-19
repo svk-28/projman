@@ -1,0 +1,117 @@
+<HTML><HEAD><TITLE>msgcat</TITLE>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><b><H3>msgcat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</H3></b></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">msgcat - catalogue de messages Tcl 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>::msgcat::mc </b><i>src-string</i> <br>
+<b>::msgcat::mclocale </b>?<i>newLocale</i>? <br>
+<b>::msgcat::mcpreferences</b> <br>
+<b>::msgcat::mcload </b><i>dirname</i> <br>
+<b>::msgcat::mcset </b><i>locale src-string </i>?<i>translate-string</i>? <br>
+<b>::msgcat::mcunknown </b><i>locale src-string</i> 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le package <b>msgcat</b> fournit un ensemble de fonctions qui peuvent être utilisées pour gérer des interfaces utilisateur multi-linguales. Les chaînes de texte sont définies dans un &quot;catalogue de messages&quot; qui est indépendant de l'application, et qui peut être edité ou localisé sans modifier le code source de l'application. Les nouvelles langues ou locales sont fournies en ajoutant un nouveau fichier au catalogue de messages. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">L'usage du catalogue de messages est optionnel pour quelconque application ou package, mais est encouragé si l'application ou package souhaite être prêt pour les applications multi-langues.
+</div><br>
+<div><b>COMMANDES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">
+<DL>
+  <DT><b>::msgcat::mc </b><i>src-string</i> ?<i>arg arg ...</i>?
+</DT><DD>Renvoie une traduction de <i>src-string</i> en accord avec la locale de l'utilisateur courant. Si des arguments supplémentaire après <i>src-string</i> sont donnés, la commande <A HREF="117.htm"><b>format</b></A> est utilisée pour substituer les arguments supplémentaires dans la traduction de <i>src-string</i> <b>::msgcat::mc</b> recherchera les messages définis dans le namespace courant pour une traduction de <i>src-string</i>; si aucun n'est trouvé, il recherchera dans le parent du namespace courant, et ainsi de suite jusqu'a ce qu'il atteigne le namespace global.  Si aucune chaîne de traduction n'existe, <b>::msgcat::mcunknown</b> est appelé et la chaîne renvoyée par <b>::msgcat::mcunknown</b> est renvoyée. 
+<br><b>::msgcat::mc</b> est la fonction principale utilisée pour localiser une application. Au lieu d'utiliser une chaîne Anglaise directement, une application peut passer la chaîne Anglaise au travers de <b>::msgcat::mc</b> et utiliser le résultat. Si une application est écrite pour une seule langue de cette façon, il est facile d'ajouter un support pour des langues supplémentaires plus tard simplement en définissant une nouvelle entrée de catalogue de messages.
+</DD>
+  <DT><br><b>::msgcat::mclocale </b>?<i>newLocale</i>?
+</DT><DD>Cette fonction fixe locale à <i>newLocale</i> Si <i>newLocale</i> est omise, la locale courante est renvoyée, autrement la locale courante est fixée à <i>newLocale</i>. La locale initiale est par défaut la locale spécifiée dans l'environnement utilisateur. Voir <b>SPECIFICATIONS LOCALE ET SUBLOCALE </b>ci-dessous pour une description du format chaîne locale. 
+</DD>
+  <DT><br><b>::msgcat::mcpreferences</b>
+</DT><DD>Renvoie une liste ordonnée des locales preférées des utilisateurs, basée sur la spécification de langue de l'utilisateur. La liste est ordonnée de la preference la plus spécifique à la moins spécifique. Si l'utilisateur a spécifié LANG=en_US_funky, cette fonction retournera &#123;en_US_funky en_US en}.
+</DD>
+  <DT><br><b>::msgcat::mcload </b><i>dirname</i>
+</DT><DD>Recherche dans le répertoire spécifié les fichiers qui correspondent au spécifications de langue renvoyées par <b>::msgcat::mcpreferences</b>. Chaque fichier trouvé est &quot;sourcé&quot;. L'extension de fichier est &quot;.msg&quot;. Le nombre de fichiers message qui satisfont la spécification et ont été chargés est renvoyé.</DD>
+  <DT><br><b>::msgcat::mcset </b><i>locale src-string </i>?<i>translate-string</i>?
+</DT><DD>Fixe la traduction de <i>src-string</i> en <i>translate-string</i> dans la <i>locale</i> spécifiée Si <i>translate-string</i> n'est pas spécifiée, <i>src-string</i> est utilisé pour les deux La fonction retourne <i>translate-string</i>. 
+</DD>
+  <DT><br><b>::msgcat::mcunknown </b><i>locale src-string</i>
+</DT><DD>Cette routine est appelée par <b>::msgcat::mc</b> dans le cas où une traduction de <i>src-string</i> n'est pas définie dans la locale courante L'action par défaut est de renvoyer <i>src-string</i> Cette fonction peut être redéfinie par les applications, par exemple pour mettre dans un journal de message d'erreurs chaque chaîne inconnue. La fonction<b>::msgcat::mcunknown</b> est appelée dans le même contexte de pile que l'appel de <b>::msgcat::mc</b> La valeur de retour de <b>::msgcat::mcunknown</b> est utilisée comme la valeur de retour de l'appel de <b>::msgcat::mc</b>.
+</DD>
+</DL>
+</div>
+<br>
+<div><b>SPECIFICATIONS LOCALE ET SUBLOCALE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La locale est spécifiée par une chaîne locale. La chaîne locale consiste en un code de langue, un code optionnel de pays, et un code optionnel spécifique au système, chacun séparés par &quot;_&quot;. Les codes de pays et de langue sont spécifié dans les standards ISO-639 et ISO-3166. Par exemple, la locale &quot;en&quot; spécifie Anglais et &quot;en_US&quot; spécifie Anglais U.S.. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La locale prend la valeur par défaut de <b>env(LANG)</b> à l'instant où le package <b>msgcat</b> est chargé.  Si <b>env(LANG)</b> n'est pas défini, alors la locale prend la valeur par défaut de &quot;C&quot;. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Quand une locale est spécifiée par les utilisateurs, une recherche &quot;meilleure correspondance&quot; est effectuée pendant la traduction de la chaîne Par exemple, si un utilisateur spécifie en_UK_Funky, les locales &quot;en_UK_Funky&quot;, &quot;en_UK&quot;, et &quot;en&quot; sont recherchées dans l'ordre jusqu'a ce qu'une chaîne de traduction correspondante soit trouvée Si aucune chaîne traduction n'est disponible, alors <b>::msgcat::unknown</b> est appelé 
+</div><br>
+<div><b>NAMESPACES ET CATALOGUES DE MESSAGES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les chaînes stockées dans le catalogue de messages sont stockées relativement au namespace auquel elles ont été ajoutées. Ceci permet à de multiple packages d'utiliser les même chaînes sans craindre de collisions avec d'autre packages. Cela permet aussi à la chaîne source d'être plus courte et moins sujette aux fautes de frappes. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Par exemple, l'exécution du code </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">mcset en hello &quot;hello from ::&quot;<br>
+namespace eval foo &#123;mcset en hello &quot;hello from ::foo&quot;}<br>
+puts &#91;mc hello]<br>
+namespace eval foo &#123;puts &#91;mc hello]}</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">affichera </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">hello from ::<br>
+hello from ::foo</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Quand il cherche la traduction d'un message, le catalogue de messages recherchera en premier dans le namespace courant, ensuite le parent du namespace courant, et ainsi de suite jusqu'a ce que le namespace global&nbsp; soit atteint Ceci permet aux namespaces enfants d'hériter les messages de leurs namespace parents. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Par exemple, l'exécution du code </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">mcset en m1 &quot;:: message1&quot;<br>
+mcset en m2 &quot;:: message2&quot;<br>
+mcset en m3 &quot;:: message3&quot;<br>
+namespace eval ::foo &#123;<br>
+&nbsp;&nbsp;&nbsp; mcset en m2 &quot;::foo message2&quot;<br>
+&nbsp;&nbsp;&nbsp; mcset en m3 &quot;::foo message3&quot;<br>
+}<br>
+namespace eval ::foo::bar &#123;<br>
+&nbsp;&nbsp;&nbsp; mcset en m3 &quot;::foo::bar message3&quot;<br>
+}<br>
+puts &quot;&#91;mc m1]; &#91;mc m2]; &#91;mc m3]&quot;<br>
+namespace eval ::foo &#123;puts &quot;&#91;mc m1]; &#91;mc m2]; &#91;mc m3]&quot;}<br>
+namespace eval ::foo::bar &#123;puts &quot;&#91;mc m1]; &#91;mc m2]; &#91;mc m3]&quot;}</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">affichera</div>
+<div ALIGN="LEFT" style="margin-left: 102px;">:: message1; :: message2; :: message3<br>
+:: message1; ::foo message2; ::foo message3<br>
+:: message1; ::foo message2; ::foo::bar message3</div>
+<div ALIGN="LEFT" style="margin-left: 51px;"> 
+</div><br>
+<div><b>EMPLACEMENT ET FORMAT DES FICHIERS DE MESSAGE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les fichiers message peuvent être situés dans n'importe quel répertoire, soumis aux conditions suivantes: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&#91;1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tous les fichiers message d'un package sont dans le même répertoire. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&#91;2]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Le nom de chemin du message est un spécificateur de locale suivi par &quot;.msg&quot; Par exemple: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;es.msg&nbsp;&nbsp;&nbsp; -- spanish<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;en_UK.msg -- UK English</div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&#91;3]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Le fichier contient une series d'appels à mcset, qui fixent les chaînes de traduction nécessaires pour la langue. Par exemple: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::msgcat::mcset es &quot;Free Beer!&quot; &quot;Cerveza Gracias!&quot;</div>
+<div ALIGN="LEFT" style="margin-left: 51px;"> 
+</div><br>
+<div><b>PARAMETRAGE DES MESSAGES DANS LES PACKAGES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si un package est installé dans un sous répertoire de&nbsp; <b>tcl_pkgPath</b> et chargé via <b>package </b><b>require</b>, les procédures suivantes sont recommandées. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&#91;1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Durant l'installation du package, créer un sous répertoire <b>msgs</b> sous votre répertoire de package. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&#91;2]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copiez vos fichiers *.msg dans ce répertoire. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&#91;3]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ajoutez les commandes suivantes à votre script d'initialisation de package: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# charge les fichiers de langue, stockés dans le sous répertoire msgs<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;::msgcat::mcload &#91;file join &#91;file dirname &#91;info script]] msgs]</div>
+<br>
+<div><b>CODES DE POSITION POUR LES COMMANDES FORMAT ET SCAN</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Il est possible qu'un message chaîne utilisé comme argument à <A HREF="format.htm"><b>format</b></A> ait des paramètres dépendants de la position qui auraient besoin d'être repositionnés. Par exemple, il pourra être syntaxiquement désirable de réarranger la structure de cette phrase à la traduction. </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">format &quot;Nous produisons %d unités sur le site %s&quot; &#36;num &#36;city<br>
+format &quot;Sur le site %s nous produisons %d unités&quot; &#36;city &#36;num</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Ceci peut être géré en utilisant les paramètres positionels: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">format &quot; Nous produisons %1&#92;&#36;d unités sur le site %2&#92;&#36;s&quot; &#36;num &#36;city<br>
+format &quot; Sur le site %2&#92;&#36;s nous produisons %1&#92;&#36;d unités&quot; &#36;num &#36;city</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">De même, les paramètres positionels peuvent être utilisés avec <A HREF="scan.htm"><b>scan</b></A> pour extraire des valeurs à partir de chaînes internationalisées <br>
+</div><br>
+<div><b>CREDITS</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le code du catalogue de messages a été developpé par Mark Harrison 
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="format.htm">format</A>(n), <A HREF="scan.htm">scan</A>(n), <A HREF="namespace.htm">namespace</A>(n), <A HREF="package.htm">package</A>(n) </div><br>
+<div>Dernière révision: 8.1</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="memory.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="namespace.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

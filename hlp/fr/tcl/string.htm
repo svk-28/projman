@@ -1,0 +1,131 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">string - Manipulation des chaînes <br>
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>string </b><i>option arg </i>?<i>arg ...?</i>&nbsp; <br>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Réalise une parmi plusieurs opérations sur les chaînes, dépendant d' <i>option</i>. Les <i>option</i>s légales (qui peuvent être abrégées) sont: 
+<DL>
+  <DT><b>string bytelength </b><i>string</i>
+</DT><DD>Renvoie une chaîne décimale donnant le nombre d'octets utilisés pour représenter <i>string</i> en mémoire. Comme UTF-8 utilise de un à trois octets pour représenter les caractères Unicode, la longueur en octets ne sera pas la même en général que la longueur des caractères. Les cas où un script gère la longueur en octets sont rares. Dans presque tous les cas, vous devrez utiliser l'opération<b> string length</b>. Referez-vous à la page de manuel <A HREF="85.htm"><b>Tcl_NumUtfChars</b></A> pour plus de détails sur la représentation UTF-8. 
+</DD>
+  <DT><br><b>string compare</b> ?<b>-nocase</b>? ?<b>-length int</b>? <i>string1 string2</i>
+</DT><DD>Réalise une comparaison caractère-par-caractère des chaînes <i>string1</i> et <i>string2</i>. Renvoie -1, 0, ou 1, dépendant de si <i>string1</i> est lexicographiquement inférieure à, égale à, ou supérieure à <i>string2</i>. Si <b>-length</b> est spécifiée, alors seulement les <i>length</i> premiers caractères sont utilisés dans la comparaison. Si <b>-length</b> est négatif, elle est ignorée. Si <b>-nocase</b> est spécifié, alors les chaînes sont comparées sans tenir compte de la casse. 
+</DD>
+  <DT><br><b>string equal</b> ?<b>-nocase</b>? ?<b>-length int</b>? <i>string1 string2</i>
+</DT><DD>Réalise une comparaison caractère-par-caractère des chaînes <i>string1</i> et <i>string2</i>. Renvoie 1 si <i>string1</i> et <i>string2</i> sont identiques, ou 0 sinon. Si <b>-length</b> est spécifiée, alors seulement les <i>length</i> premiers caractères sont utilisés dans la comparaison Si <b>-length</b> est négatif, elle est ignorée Si <b>-nocase</b> est spécifié, alors la chaînes sont comparées sans tenir compte de la casse.
+</DD>
+  <DT><br><b>string first </b><i>string1 string2</i> ?<i>startIndex</i>?
+</DT><DD>Recherche dans <i>string2</i> la séquence de caractères qui correspond exactement au caractères de <i>string1</i>. Si trouvé, retourne l' index du premier caractère de la première correspondance dans <i>string2</i>. Sinon, retourne -1. Si <i>startIndex</i> est spécifié (dans toutes formes acceptées par la méthode <b>index</b>), alors la recherche est forcée de commencer avec le caractère de <i>string2</i> spécifié par l'index. Par exemple, 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>string first a 0a23456789abcdef 5</b>
+<br>renverra <b>10</b>, mais 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>string first a 0123456789abcdef 11</b>
+<br>renverra <b>-1</b>. 
+</DD>
+  <DT><br><b>string index </b><i>string charIndex</i></DT><DD>Renvoie le <i>charIndex</i> ième caractère de l'argument<i> string</i> Un <i>charIndex</i> de 0 corresponds au premier caractère de la chaîne <i>charIndex</i> peut être spécifié comme suit: 
+<br>&nbsp;&nbsp;&nbsp;<i>integer</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Le caractère spécifié à cet index intégral <br>&nbsp;&nbsp;&nbsp;<b>end</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Le dernier caractère de la chaîne. 
+<br>&nbsp;&nbsp;<b>end-</b><i>integer</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Le dernier caractère de la chaîne moins l'offset entier spécifié (ex. <b>end-1</b> se refère à &quot;c&quot; dans &quot;abcd&quot;). 
+<br>Si <i>charIndex</i> est inférieur à 0 ou supérieur à ou égal à la longueur de la chaîne alors une chaîne vide est renvoyée. 
+</DD>
+  <DT><br><b>string is </b><i>class</i> ?<b>-strict</b>? ?<b>-failindex </b><i>varname</i>? <i>string</i>
+</DT><DD>Renvoie 1 si <i>string</i> est un membre valide de la classe de caractère spécifiée, retourne 0 autrement Si <b>-strict</b> est spécifié, alors une chaîne vide retourne 0, autrement une chaîne vide renverra 1 avec toute classe. Si <b>-failindex</b> est spécifié, alors si la fonction retourne 0, l'index dans la chaîne où la classe n'est plus valide sera stocké dans la variable désignée par <i>varname</i>. <i>varname</i> ne sera pas fixée si la fonction retourne 1. Les classes de caractère suivantes sont reconnues (le nom de classe peut être abrégé):</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 150px;"><b>alnum</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère alphabétique ou chiffre Unicode. 
+<br><b>alpha</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère alphabétique Unicode. 
+<br><b>ascii</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère avec une valeur inférieure à &#92;u0080 (ceux qui sont dans l'intervalle ascii 7-bit). 
+<br><b>boolean</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quelle des formes autorisées par <A HREF="42.htm"><b>Tcl_GetBoolean</b></A>. 
+<br><b>control</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère de contrôle Unicode.
+<br><b>digit</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel chiffre Unicode. Notez que ceci inclut les caractères en dehors de l'intervalle &#91;0-9].
+<br><b>double</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quelle des formes valides pour un double en Tcl, eventuellement entouré d'espaces. En cas de sous/ débordement, 0 est renvoyé et <i>varname</i> contiendra -1. 
+<br><b>false</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quelle forme autorisée par <A HREF="42.htm"><b>Tcl_GetBoolean</b></A> où la valeur est false. 
+<br><b>graph</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère Unicode imprimable, excepté l'espace. 
+<br><b>integer</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quelle des formes valides pour un entier en Tcl, eventuellement entouré d'espaces. En cas de sous/débordement, 0 est renvoyé et <i>varname</i> contiendra -1. 
+<br><A HREF="290.htm"><b>lower</b></A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère alphabétique Unicode minuscule.
+<br><b>print</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère Unicode imprimable, incluant l'espace. 
+<br><b>punct</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère de ponctuation Unicode. 
+<br><b>space</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère espace Unicode . 
+<br><b>true</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quelle forme autorisée par <A HREF="42.htm"><b>Tcl_GetBoolean</b></A> où la valeur est true. 
+<br><b>upper</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère alphabétique Unicode majuscule. 
+<br><b>wordchar</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère d'un mot Unicode. Donc tout caractère alphanumérique, et tout caractères connecteur ou de ponctuation Unicode (ex. underscore).
+<br><b>xdigit</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N'importe quel caractère chiffre hexadécimal (&#91;0-9A-Fa-f]). 
+</div>
+</div>
+
+<div ALIGN="LEFT" style="margin-left: 100px;">Dans le cas de <b>boolean</b>, <b>true</b> et <b>false</b>, si la fonction renvoie 0, alors le <i>varname</i> sera toujours fixé à 0, ceci etant d&ucirc; à la nature variée d'une valeur booléenne valide. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">
+<DL>
+  <DT><br><b>string last </b><i>string1 string2</i> ?<i>startIndex</i>?
+</DT><DD>Recherche dans <i>string2</i> la séquence de caractères qui correspond exactement au caractères de <i>string1</i>. Si trouvé, retourne l'index du premier caractère de la dernière correspondance dans <i>string2</i>. S'il n'y a pas de correspondance, alors retourne -1. Si <i>startIndex</i> est spécifié (dans une des formes acceptées par la méthode <b>index</b>), alors seulement les caractères dans <i>string2</i> à ou avant le <i>startIndex</i> spécifié  seront pris en compte dans la recherche. Par exemple, 
+<br><b>string last a 0a23456789abcdef 15</b>
+<br>renverra <b>10</b>, mais
+<br><b>string last a 0a23456789abcdef 9</b>
+<br>renverra <b>1</b>. 
+</DD>
+  <DT><br><br><b>string length </b><i>string</i>
+</DT><DD>Renvoie une chaîne décimale donnant le nombre de caractères dans <i>string</i>. Notez que ce n'est pas nécéssairement le même que le nombre d'octets utilisé pour stocker la chaîne. 
+</DD>
+  <DT><br><b>string map</b> ?<b>-nocase</b>? <i>charMap string</i>
+</DT><DD>Remplace les caractères dans <i>string</i> basés sur les paires clé-valeur dans <i>charMap</i> <i>charMap</i> est une liste de <i>key value key value</i> ... comme sous la forme renvoyée par <b>array get</b>. Chaque instance d'une clé dans la chaîne sera remplacée par sa valeur correspondante. Si <b>-nocase</b> est spécifié, alors la correspondance est établie sans tenir compte de la casse. L'ensemble <i>key</i> et <i>value</i> peut être de multiples caractères. Le remplacement est fait d'une manière ordonnée, donc la clé apparaissant en premier dans la liste sera vérifiée en premier, et ainsi de suite <i>string</i> est parcourue un seule fois, donc les premiers remplacements de clé n'affecteront pas les correspondances suivantes. Par exemple, 
+<br><b>string map &#123;abc 1 ab 2 a 3 1 0} 1abcaababcabababc</b>
+<br>renverra la chaîne <b>01321221</b>.
+</DD>
+  <DT><br><b>string match</b> ?<b>-nocase</b>? <i>pattern</i> <i>string</i>
+</DT><DD>Teste si <i>pattern</i> correspond à <i>string</i>; retourne 1 si oui, 0 sinon. Si <b>-nocase</b> est spécifié, alors le modèle est comparé à la chaîne sans tenir compte de la casse. Pour que deux chaînes correspondent, leurs contenus doivent être identiques excepté que les séquences spéciales suivantes peuvent apparaitre dans <i>pattern</i>: 
+<DL>
+  <DT><b>*</b></DT><DD>Correspond à toute séquence de caractères dans <i>string</i>, incluant une chaîne vide. 
+</DD>
+  <DT><b>?</b></DT><DD>Correspond à quelconque caractère unique dans <i>string</i>. 
+</DD>
+  <DT><b>&#91;</b><i>chars</i><b>]</b></DT><DD>Correspond à tout caractère de l'ensemble indiqué par <i>chars</i>. Si une séquence de la forme <i>x</i><b>-</b><i>y</i> apparait dans <i>chars</i>, alors tout caractère entre <i>x</i> et <i>y</i>, inclus, correspondra. Quand utilisé avec <b>-nocase</b>, les points extrèmes de l'intervalle sont convertis en minuscule en premier. En considérant que &#123;&#91;A-z]} correspond à '_' quand la correspondance est sensible à la casse ('_' est entre 'Z' et 'a'), avec <b>-nocase</b> c'est consideré comme &#123;&#91;A-Za-z]} (et probablement ce qui etait exprimé précedemment). 
+</DD>
+  <DT><b>&#92;</b><i>x</i></DT><DD>Correspond au caractère unique <i>x</i>. Ceci fournit un moyen d'éviter l'interprétation spéciale des caractères <b>*?&#91;]&#92;</b> dans <i>pattern</i>.
+</DD>
+</DL>
+</DD>
+  <DT><br><b>string range </b><i>string first last</i>
+</DT><DD>Renvoie un intervalle de caractères consécutifs de <i>string</i>, en commençant par le caractère dont l'index est <i>first</i> et finissant par le caractère dont l'index est <i>last</i>. Un index de 0 se réfère au premier caractère de la chaîne. <i>first</i> et <i>last</i> peuvent être spécifiés comme dans la méthode <b>index</b>. Si <i>first</i> est inférieur à zéro alors il est traité comme si c'était zéro, et si <i>last</i> est supérieur à ou égal à longueur de la chaîne alors il est traité comme si c'était <b>end</b>. Si <i>first</i> est supérieur à <i>last</i> alors une chaîne vide est renvoyée. 
+</DD>
+  <DT><br><b>string repeat </b><i>string count</i>
+</DT><DD>Renvoie <i>string</i> répétée <i>count</i> fois.
+</DD>
+  <DT><br><b>string replace </b><i>string first last</i> ?<i>newstring</i>?
+</DT><DD>Supprime un intervalle de caractères consecutifs de <i>string</i>, commençant avec le caractère dont l'index est <i>first</i> et finissant avec le caractère dont l'index est <i>last.</i> Un index de 0 se réfère au premier caractère de la chaîne <i>First</i> et <i>last</i> peuvent être spécifiés comme dans la méthode <b>index</b>. Si <i>newstring</i> est spécifiée, alors elle est placée dans l'intervalle des caractères supprimés. Si <i>first</i> est inférieur à zéro alors il est traité comme si c'était zéro, et si <i>last</i> est supérieur ou égal à la longueur de la chaîne alors il est traité comme si c'était <b>end</b>. Si <i>first</i> est supérieur à <i>last</i> ou la longueur de la chaîne initiale, ou <i>last</i> inférieur à 0, alors la chaîne initiale est renvoyé inchangée.
+</DD>
+  <DT><br><b>string tolower </b><i>string</i> ?<i>first</i>? ?<i>last</i>?
+</DT><DD>Renvoie une valeur égale à <i>string</i> excepté que toute lettre en majuscule (ou titre) aura été convertie en minuscule. Si <i>first</i> est spécifié, il se réfère à l'index du premier caractère dans la chaîne ou commencer les modifications. Si <i>last</i> est spécifié, il se réfère à l'index du caractère dans la chaîne ou arrêter (inclus) <i>first</i> et <i>last</i> peuvent être spécifiés comme dans la méthode <b>index</b>.
+</DD>
+  <DT><br><b>string totitle </b><i>string</i> ?<i>first</i>? ?<i>last</i>?
+</DT><DD>Renvoie une valeur égale à <i>string</i> excepté que le premier caractère de <i>string</i> est converti en sa variante Unicode titre (ou majuscule s'il n'y a pas de variante titre) et le reste de la chaîne est converti en minuscule. Si <i>first</i> est spécifié, il se réfère à l'index du premier caractère dans la chaîne ou commencer les modifications. Si <i>last</i> est spécifié, il se réfère à l'index du caractère dans la chaîne ou arrêter (inclus). <i>first</i> et <i>last</i> peuvent être spécifiés comme dans la méthode <b>index</b>. 
+</DD>
+  <DT><br><b>string toupper </b><i>string</i> ?<i>first</i>? ?<i>last</i>?
+</DT><DD>Renvoie une valeur égale à <i>string</i> excepté que toute lettre minuscule (ou titre) aura été convertie en majuscule. Si <i>first</i> est spécifié, il se réfère à l'index du premier caractère dans la chaîne ou commencer les modifications. Si <i>last</i> est spécifié, il se réfère à l'index du caractère dans la chaîne ou arrêter (inclus). <i>first</i> et <i>last</i> peuvent être spécifiés comme dans la méthode <b>index</b>.
+</DD>
+  <DT><br><b>string trim </b><i>string</i> ?<i>chars</i>?
+</DT><DD>Renvoie une valeur égale à <i>string</i> excepté que tous les caractères en tête ou à la fin de l'ensemble indiqué par <i>chars</i> sont enlevés. Si <i>chars</i> n'est pas spécifié alors tous les espaces sont enlevés (les espaces, tabulations, saut de lignes, et retour chariot).
+</DD>
+  <DT><br><b>string trimleft </b><i>string</i> ?<i>chars</i>?
+</DT><DD>Renvoie une valeur égale à <i>string</i> excepté que tous les caractères en tête de l'ensemble indiqué par <i>chars</i> sont enlevés. Si <i>chars</i> n'est pas spécifié alors tous les espaces sont enlevés (les espaces, tabulations, saut de lignes, et retour chariot).
+</DD>
+  <DT><br><b>string trimright </b><i>string</i> ?<i>chars</i>?
+</DT><DD>Renvoie une valeur égale à <i>string</i> excepté que tous les caractères à la fin de l'ensemble indiqué par <i>chars</i> sont enlevés. Si <i>chars</i> n'est pas spécifié alors tous les espaces sont enlevés (les espaces, tabulations, saut de lignes, et retour chariot).
+</DD>
+  <DT><br><b>string wordend </b><i>string charIndex</i>
+</DT><DD>Renvoie l'index du caractère juste après le dernier dans le mot contenant le caractère <i>charIndex</i> de <i>string</i>. <i>charIndex</i> peut être spécifié comme dans la méthode <b>index</b>. Un mot est consideré comme tout intervalle contigu de caractères alphanumeriques (lettres Unicode ou chiffres décimaux ) ou underscore (connecteur de ponctuation Unicode), ou tout caractère unique autre que ceux-ci.
+</DD>
+<DT><br><b>string wordstart </b><i>string charIndex</i>
+</DT><DD>Renvoie l'index du premier caractère dans le mot contenant le caractère <i>charIndex</i> de <i>string</i> <i>charIndex</i> peut être spécifié comme dans la méthode <b>index</b>. Un mot est consideré comme tout intervalle contigu de caractères alphanumeriques (lettres Unicode ou chiffres décimaux ) ou underscore (connecteur de ponctuation Unicode), ou tout caractère unique autre que ceux-ci. 
+</DD>
+</DL>
+</div><br>
+<div>Dernière révision: 8.1</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="164.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="166.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

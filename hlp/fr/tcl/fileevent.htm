@@ -1,0 +1,33 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>fileevent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">fileevent - Exécute un script quand un canal devient lisible ou inscriptible 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>fileevent </b><i>channelId </i><b>readable </b>?<i>script</i>? <br>
+<b>fileevent </b><i>channelId </i><b>writable </b>?<i>script</i>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande est utilisée pour créer des <i>file event handlers</i> Un gestionnaire d'évènement de fichier est une liaison entre un canal et un script, Ainsi le script est évalué chaque fois que le canal devient lisible ou inscriptible. Les gestionnaires d'évènement de fichier sont plus couramment utilisés pour autoriser les données à être reçues d'un autre processus sur une base pilotée par évènement, permettant au récepteur de continuer à interagir avec l'utilisateur en attendant que les données arrivent. Si une application appelle <A HREF="118.htm"><b>gets</b></A> ou <A HREF="151.htm"><b>read</b></A> sur un canal bloquant quand il n'y a pas de données entrantes disponibles, le processus bloquera; jusqu'a ce que les données entrantes arrivent, il ne sera pas capable de prendre en charge d'autres évènements, donc il apparaitra à l'utilisateur &quot;gelé&quot; Avec <b>fileevent</b>, le processus peut savoir quand les données sont présentes et appeller seulement <A HREF="118.htm"><b>gets</b></A> ou <A HREF="151.htm"><b>read</b></A> quand elles ne bloqueront pas. </div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">L'argument <i>channelId</i> à <b>fileevent</b> se refère à un canal ouvert, tel que la valeur de retour d'une précédente commande <A HREF="142.htm"><b>open</b></A> ou <A HREF="162.htm"><b>socket</b></A>. Si l'argument <i>script</i> est spécifié, alors <b>fileevent</b> crée un nouveau gestionnaire d'évènement <i>script</i> qui sera évalué chaque fois que le canal devient lisible ou inscriptible (dépendant du second argument de <b>fileevent</b>). Dans ce cas <b>fileevent</b> retourne une chaîne vide. Les gestionnaires d'évènements <b>readable</b> et <b>writable</b> sont indépendants, et peuvent être créés et effacés séparément. Néanmoins, il peut y avoir au plus un gestionnaire <b>readable</b> et <b>writable</b> pour un fichier à 
+un instant donné dans un interpréteur donné. Si <b>fileevent</b> est appelé quand le gestionnaire spécifié existe déjà dans l'interpréteur d'appel, le nouveau script remplace l'ancien. </div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si l'argument <i>script</i> n'est pas spécifié, <b>fileevent</b> retourne le script courant de <i>channelId</i>, ou une chaîne vide s'il n'y en a aucun. Si l'argument <i>script</i> est spécifié comme chaîne vide alors le gestionnaire d'évènement est effacé, ainsi aucun script ne sera appelé. Un gestionnaire d'évènement de fichier est aussi effacé automatiquement chaque fois que son canal est fermé ou son interpréteur effacé. </div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Un canal est consideré lisible si il y a des données non lues disponibles sur le périphérique sous-jacent. Un canal est aussi consideré lisible si il y a des données non lues dans un tampon d'entrée, excepté dans le cas spécial où la plus récente tentative de lire à partir du canal comme un appel à <A HREF="118.htm"><b>gets</b></A> qui n'a pas pu trouver une ligne complète dans le tampon d'entrée. Cette fonctionnalité permet à un fichier d'être lu une ligne à la fois en mode non bloquant en utilisant les évènements. Un canal est aussi consideré lisible si une fin de fichier ou une condition d'erreur est présente sur le fichier ou le périphérique sous-jacent. Il est important pour le <i>script</i> de vérifier ces conditions et de les gérer opportunément par exemple, s'il n'y a pas de verification spéciale pour la fin du fichier, une boucle infinie peut se produire si le <i>script</i> ne lit pas de données, retourne, et est immédiatement appelé de nouveau. </div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Un canal est consideré inscriptible si au moins un octet de données peut être écrit sur le fichier ou périphérique sous-jacent sans bloquer, ou si une condition d'erreur est présente sur le fichier ou périphérique sous-jacent. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les I/O pilotées par évènements fonctionnent mieux avec les canaux placés en mode non bloquant avec la commande<A HREF="109.htm"><b> fconfigure</b></A>. En mode bloquant, une commande <A HREF="148.htm"><b>puts</b></A> peut bloquer si vous lui donnez plus de données que le fichier ou périphérique sous-jacent peut accepter, et une commande <A HREF="118.htm"><b>gets</b></A> ou <A HREF="151.htm"><b>read</b></A> bloquera si vous tentez de lire plus de données que prètes aucun événement ne sera traité pendant que les commandes bloquent. En mode non bloquant <A HREF="148.htm"><b>puts</b></A>, <A HREF="151.htm"><b>read</b></A>, et <A HREF="118.htm"><b>gets</b></A> ne bloquent jamais. Voir la documentation de ces commandes individuelles pour plus d'informations sur comment elles gèrent les canaux bloquants et non bloquants. </div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le script pour un évènement fichier est exécuté au niveau global (en dehors du contexte de quelconque fonction Tcl) dans l'interpréteur dans lequel la commande <b>fileevent</b> a été appelée. Si une erreur se produit pendant l'exécution du script alors le mécanisme <A HREF="90.htm"><b>bgerror</b></A> est utilisé pour rapporter l'erreur. De plus, le gestionnaire d'évènement fichier est effacé si jamais il retourne une erreur, c'est fait de manière à empêcher les boucles infinies dues aux gestionnaires bogués 
+</div><br>
+<div><b>CREDITS</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>fileevent</b> est basée sur la commande <b>addinput</b> créée par Mark Diekhans 
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="90.htm">bgerror</A>, <A HREF="109.htm">fconfigure</A>, <A HREF="118.htm">gets</A>, <A HREF="148.htm">puts</A>, <A HREF="151.htm">read</A> </div><br>
+<div>Dernière révision: 7.5</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="111.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="113.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

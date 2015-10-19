@@ -1,0 +1,47 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>foreach&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">foreach - Itère sur tout leséléments d'une ou plusieurs listes 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>foreach </b><i>varname list body</i> <br>
+<b>foreach </b><i>varlist1 list1</i> ?<i>varlist2 list2 ...</i>? <i>body</i>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>foreach</b> implémente une boucle ou la ou les variable(s) de boucle&nbsp; tirent leur valeurs d'une ou de plusieurs listes. Dans le cas le plus simple il y a une variable de boucle, <i>varname</i>, et une liste, <i>list</i>, qui est une liste de valeurs a assigner à&nbsp; <i>varname</i>. L'argument <i>body</i> est un script Tcl. Pour chaque élément de&nbsp; <i>list</i> (dans l'ordre du premier au dernier), <b>foreach</b> assigne le contenu de l'élément à <i>varname</i> comme si la commande <A HREF="130.htm"><b>lindex</b></A> avait été utilisée pour extraire l'élément, ensuite elle appelle l'interpréteur Tcl pour exécuter <i>body</i>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Dans le cas general il peut y avoir plus d'une liste de valeurs (ex., <i>list1</i> et <i>list2</i>), et chaque liste de valeurs peut être associée à une liste de variables de boucle (ex., <i>varlist1</i> et <i>varlist2</i>). Durant chaque iteration de la boucle, aux variables de chaque <i>varlist</i> sont assignés les valeurs consecutive de la&nbsp; correspondante <i>list</i>. Les valeurs de chaque <i>list</i> sont utilisées dans l'ordre du premier to dernier, et chaque valeur est utilisée une seule fois. Le nombre total d'itérations est suffisant pour utiliser toutes les valeurs à partir de toutes les listes de valeurs. Si une liste de valeurs ne contient pas assez d'éléments pour chacune de&nbsp; ses variables de boucle à chaque iteration, des valeurs vides sont utilisées pour les éléments manquants. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les instructions <A HREF="92.htm"><b>break</b></A> et <A HREF="99.htm"><b>continue</b></A> peuvent être appelées dans <i>body</i>, avec le même effet que dans la commande<A HREF="115.htm"><b> for</b></A>. <b>Foreach</b> retourne une chaîne vide. 
+</div><br>
+<div><b>EXEMPLES</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La boucle suivante utilise i et j comme variables de boucle pour itérer sur des paires d'éléments d'une simple liste. </div><br>
+<div ALIGN="LEFT" style="margin-left: 102px;">set x &#123;}<br>
+foreach &#123;i j} &#123;a b c d e f} &#123;<br>
+&nbsp;&nbsp;&nbsp; lappend x &#36;j &#36;i<br>
+}<br>
+# La valeur de x est &quot;b a d c f e&quot;<br>
+# Il y a 3 iterations de boucle.
+</div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La boucle suivante utilise i et j pour itérer sur deux listes en parallèle. </div><br>
+<div ALIGN="LEFT" style="margin-left: 102px;">set x &#123;}<br>
+foreach i &#123;a b c} j &#123;d e f g} &#123;<br>
+ lappend x &#36;i &#36;j<br>
+}<br>
+# La valeur de x est &quot;a d b e c f &#123;} g&quot;<br>
+# Il y a 4 iterations de boucle.<br>
+</div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les deux formes sont combinées dans le suivant exemple.</div><br> 
+<div ALIGN="LEFT" style="margin-left: 102px;">set x &#123;}<br>
+foreach i &#123;a b c} &#123;j k} &#123;d e f g} &#123;<br>
+ lappend x &#36;i &#36;j &#36;k<br>
+}<br>
+# La valeur de x est &quot;a d e b f g c &#123;} &#123;}&quot;<br>
+# Il y a 3 iterations de boucle.
+</div><br>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="115.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="117.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

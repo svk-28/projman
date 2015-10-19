@@ -1,0 +1,21 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>update&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">update - Traite les évènements en attente et les callbacks inactifs 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>update</b> ?<b>idletasks</b>?&
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande est utilisée pour mettre l'application &quot;up to date&quot; en entrant dans la boucle d'évènement répétitivement jusqu'a ce que tout évènement en attente (incluant les callbacks inactifs ) ait été traité. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si le mot-clé <b>idletasks</b> est spécifié comme argument à la commande, alors aucun nouveaux évènements ou erreurs ne sont traités seuls les callbacks inactifs sont appelés. Ceci cause le traitement immédiat des opérations qui sont normalement différées, tel que les rafraichissement de l'écran et les calculs de fenêtrage. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>update idletasks</b> est utile dans les scripts où les changements d'état de l'application ont été effectués et que vous voulez que ces changements apparaissent immédiatement, plutôt que d'attendre que le script soit complété. La plupart des rafraichissement de l'écran sont effectuée comme callbacks inactifs , donc <b>update idletasks</b> provoquera leur exécution. Néanmoins, il y a des mises à jour qui se produisent seulement en réponse aux évènements, tels que ceux déclenché par les changements de taille de fenêtre; ces mises à jour ne se produiront pas dans <b>update idletasks</b>. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>update</b> sans options est utile dans les scripts où vous effectuez de longs calculs mais où vous désirez que l'application réponde aux évènements tels que les interactions avec l'utilisateur. Si vous appellez occasionellement <b>update</b> alors l'entrée utilisateur sera traitée pendant l'appel suivant de <b>update</b> </div><br>
+<div>Dernière révision: 7.5</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="175.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="177.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

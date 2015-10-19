@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>if</title>
+  </head>
+
+  <body>
+    <h1>if</h1>
+
+    <p> Команда <strong>if</strong> проверяет соблюдение условия в ходе
+      выполнения скрипта.  </p>
+
+    <h2>СИНТАКСИС</h2> 
+
+    <pre>
+      <strong>if</strong> <em>expr1</em> ?<strong>then</strong>? <em>body1</em> <strong>elseif</strong> <em>expr2</em> ?<strong>then</strong>? <em>body2</em> <strong>elseif</strong> ... 
+      ?<strong>else</strong>? ?<em>bodyN</em>?
+    </pre>
+
+    <h2>ОПИСАНИЕ</h2> 
+
+    <p> Команда вычисляет значение выражения <em>expr1</em>(Точно так,
+      как это делает команда <a href="expr.html">
+      <strong>expr</strong></a>). Это и все остальные выражения <em>expr</em>
+      должны быть булева типа (то есть это должна быть числовая
+      величина, причем 0 соответствует <strong>false</strong>, а все остальные
+      значения - <strong>true</strong>, либо строка со значениями <strong>true</strong>
+      или <strong>yes</strong> для <em>true</em> и <strong>false</strong> или <strong>no</strong> для
+      <em>false</em>). Если выражение равно <em>true</em>, то скрипт
+      <em>body1</em> передается на выполнение интерпретатору Tcl. Если
+      нет, то вычисляется значение выражения <em>expr2</em>, и если оно
+      равно <strong>true</strong>, то исполняется <em>body2</em>, и так
+      далее. Если ни одно из выражений не равно <strong>true</strong>, тогда
+      выполняется <em>bodyN</em>.</p>
+
+    <p>Слова <strong>then</strong> и <strong>else</strong> необязательны и используются
+      только для простоты понимания команды. Аргумент
+      <em>bodyN</em>также может отсутствовать, если отсутствует
+      <strong>else</strong>.</p>
+
+    <p>Команда возвращает значение выполненного скрипта или пустую
+      строку, если ни одно из выражений не было равно <em>true</em>, и
+      <em>bodyN</em> отсутствовал.</p>
+  </body>
+</html>

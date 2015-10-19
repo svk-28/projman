@@ -1,0 +1,18 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>lreplace&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">lreplace - Remplace les éléments d'une liste avec de nouveaux éléments 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>lreplace </b><i>list first last </i>?<i>element element ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>lreplace</b> retourne une nouvelle liste formée en remplaçant un ou plusieurs éléments de <i>list</i> avec les arguments<i> element</i>. <i>first</i> et <i>last</i> spécifient le premier et dernier index de l'intervalle d'éléments à remplacer 0 se réfère au premier élément de la liste, et <b>end</b> (ou toutes ses abréviations) peut être employé pour se référer au dernier élément de la liste. Si <i>list</i> est vide, alors <i>first</i> et <i>last</i> sont ignorés. Si <i>first</i> est inférieur à zéro, il est consideré se référer au premier élément de la liste. Pour les listes non-vides, l'élément indiqué par <i>first</i> doit exister. Si <i>last</i> est inférieur à zéro mais supérieur à <i>first</i>, alors tout élément spécifié sera ajouté à la liste. Si <i>last</i> est inférieur à <i>first</i> alors aucun éléments ne sont effacés; les nouveaux éléments sont simplement insérés avant <i>first</i>. Les arguments <i>element</i> spécifient zéro ou plusieurs nouveaux arguments à ajouter à la liste à la place de ceux qui ont été effacés. Chaque argument <i>element</i> deviendra un élément séparé de la liste. Si aucun argument <i>element</i> n'est spécifié, alors les éléments entre <i>first</i> et <i>last</i> sont simplement effacés. Si <i>list</i> est vide, tous les arguments <i>element</i> sont ajoutés à fin de la liste. </div><br>
+<div>Dernière révision: 7.4</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="135.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="137.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

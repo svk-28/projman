@@ -1,0 +1,79 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>resource&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">resource - Manipule les <i>resources</i> Macintosh 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>resource </b><i>option</i> ?<i>arg arg ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>resource</b> fournit des opérations génériques pour la gestion des <i>resources</i> Macintosh Cette commande est supportée seulement sur la plateforme Macintosh. Chaque fichier Macintosh consiste en deux <i>forks</i>: une fork <i>data</i> et une fork<i> resource</i>. Vous utilisez les commandes normales <b>open</b>, <b>puts</b>, <b>close</b>, etc. pour manipuler les fork <i>data</i>. Vous devez utiliser cette commande, néanmoins, pour interagir avec le fork <i>resource</i> <i>Option</i> indique quelle commande resource effectuer. N'importe quel abréviation unique pour <i>option</i> est acceptable Les options valides sont:
+<DL>
+  <DT><b>resource close </b><i>rsrcRef</i>
+</DT><DD>Ferme la référence resource donnée (obtenue par <b>resource</b><A HREF="142.htm"><b>open</b></A>) Les resources de ce fichier resource ne seront plus disponibles. 
+</DD>
+  <DT><br><b>resource delete</b> ?<i>options</i>? <i>resourceType</i>
+</DT><DD>Cette commande effacera la resource spécifiée par <i>options</i> et le type <i>resourceType</i> (voir TYPES DE RESOURCES ci-dessous) Les options vous donnent plusieurs façons de spécifier l'effacement de la resource. 
+<DL>
+  <DT><b>-id</b> <i>resourceId</i>
+</DT><DD>Si l'option <b>-id</b> est donnée l'id <i>resourceId</i> (voir IDS DE RESOURCE ci-dessous) est utilisé pour spécifier la resource à effacer L'id doit&nbsp; être un nombre - pour spécifier un nom utiliser l'option<b> -name</b>. 
+</DD>
+  <DT><b>-name</b> <i>resourceName</i>
+</DT><DD>Si <b>-name</b> est spécifié, la resource nommée <i>resourceName</i> sera effacée. Si <b>-id</b> est aussi fournie, alors il doit exister une resource avec A LA FOIS ce nom et cet id. Si aucun nom n'est fourni, alors l'id sera utilisé indépendemment du nom de la resource. 
+</DD>
+  <DT><b>-file</b> <i>resourceRef</i>
+</DT><DD>Si l'option <b>-file</b> est spécifiée alors la resource sera effacée du fichier pointé par <i>resourceRef</i> Autrement la première resource avec le <i>resourceName</i> donné et ou <i>resourceId</i> qui est trouvé dans le chemin du fichier resource sera&nbsp; effacé. Pour inspecter le chemin du fichier, utiliser la commande<i> </i><i>resource files</i>.
+</DD>
+</DL>
+</DD>
+  <DT><br><b>resource files ?</b><i>resourceRef</i>?
+</DT><DD>Si <i>resourceRef</i> n'est pas fournie, cette commande retourne une liste Tcl des références de resource pour tous les fichiers resources couramment ouverts. La liste est dans l'ordre de recherche normal Macintosh pour les resources. Si <i>resourceRef</i> est spécifié, la commande renverra le chemin vers le fichier dont le fork resource est representé par ce jeton. 
+</DD>
+  <DT><br><b>resource list </b><i>resourceType</i>?<i>resourceRef</i>?
+</DT><DD>Liste tous les ids resources de type <i>resourceType</i> (voir TYPES DE RESOURCE ci-dessous) Si <i>resourceRef</i> est spécifié alors la commande limitera la recherche à ce fichier resource particulier. Autrement, tout fichier resource couramment ouvert par l'application sera recherché. Une liste Tcl de soit le nom soit l'id de resource des resources trouvées sera renvoyée. Voir la section IDS DE RESOURCE ci-dessous pour plus de détails au sujet de ce qu'est un id de resource. 
+</DD>
+  <DT><br><b>resource open </b><i>fileName</i> ?<i>access</i>?
+</DT><DD>Ouvre la resource pour le fichier <i>fileName</i>. Les permissions d'accès fichier standard peuvent aussi être spécifiées (voyez la page de manuel de <A HREF="142.htm"><b>open</b></A> pour les détails). Une référence de resource (<i>resourceRef</i>) est renvoyée qui peut être utilisée par les autres commandes resource. Une erreur peut se produire si le fichier n'existe pas ou si le fichier n'a pas de fork resource. Néanmoins, si vous ouvrez le fichier avec des permissions d'écriture le fichier et/ou le fork resource sera créé au lieu de générer une erreur. 
+</DD>
+  <DT><br><b>resource read </b><i>resourceType</i> <i>resourceId</i> ?<i>resourceRef</i>?
+</DT><DD>Lit la totalité de la resource de type <i>resourceType</i> (voir TYPES DE RESOURCE ci-dessous) et le nom ou l'id of <i>resourceId</i> (voir IDS DE RESOURCE ci-dessous) en mémoire et retourne le résultat. Si <i>resourceRef</i> est spécifié, la recherche sera limitée au fichier resource, autrement on recherchera tous les forks resource ouverts dans l'application. Il est important de noter que la plupart des resource Macintosh utilisent un format binaire et les données renvoyé par cette commande peuventt contenir des NULLs ou d'autres données non-ASCII. 
+</DD>
+  <DT><br><b>resource types ?</b><i>resourceRef</i>?
+</DT><DD>Cette commande retourne une liste Tcl de tous les types de resource (voir TYPES DE RESOURCE ci-dessous) trouvés dans le fichier resource pointé par <i>resourceRef</i>. Si <i>resourceRef</i> n'est pas spécifié elle renverra tout les types de resource trouvés dans tous les fichiers resource couramment ouverts par l'application.
+</DD>
+  <DT><br><b>resource write</b> ?<i>options</i>? <i>resourceType</i> <i>data</i>
+</DT><DD>Cette commande écrit les <i>data</i> transmises en tant qu'une nouvelle resource de type <i>resourceType</i> (voir TYPES DE RESOURCE ci-dessous). Plusieurs options sont disponibles qui decrivent où et comment la resource est stockée. 
+<DL>
+  <DT><b>-id</b> <i>resourceId</i></DT><DD>Si l'option <b>-id</b> est donnée, l'id <i>resourceId</i> (voir IDS DE RESOURCE ci-dessous) est utilisé pour la nouvelle resource, autrement un id unique sera généré qui n'entrera pas en conflit avec une resource existante. Néanmoins, l'id doit être un nombre - pour spécifier un nom utiliser l'option<b> </b><b>-name</b>. 
+</DD>
+  <DT><b>-name</b> <i>resourceName</i>
+</DT><DD>Si <b>-name</b> est spécifié le resource sera nommée <i>resourceName</i>, autrement elle aura pour nom la chaîne vide. 
+</DD>
+  <DT><b>-file</b> <i>resourceRef</i>
+</DT><DD>Si l'option <b>-file</b> est spécifiée alors la resource sera écrite dans le fichier pointé par <i>resourceRef</i>, autrement la resource la plus recemment ouverte sera utilisée.
+</DD>
+  <DT><b>-force</b>
+</DT><DD>Si la resource cible existe déjà, alors par défaut Tcl ne l'écrasera pas, mais lèvera une erreur. Utilisez le flag -force pour forcer l'écrasement de la resource existante 
+</DD>
+</DL>
+</DD>
+</DL>
+</div><br>
+<div><b>TYPES DE RESOURCE </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Les types de resource sont définis comme une chaîne de quatre caractère qui est alors mappée à un id sous-jacent Par exemple, <b>TEXT</b> se réfère au type de resource Macintosh pour le texte. Le type <b>STR#</b> est une liste de chaînes indexée. Toutes les resources Macintosh doivent avoir un type. Voir la documentation Macintosh pour une liste plus complète des types de resource qui sont communément utilisés. 
+</div><br>
+<div><b>IDS DE RESOURCE </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Pour cette commande la notion d'un id de resource se refère à deux idées sur les resources Macintosh. Partout où vous pouvez utiliser un Id de resource, vous pouvez utiliser soit le nom de resource ou un numéro de resource. Les noms sont toujours recherchés ou renvoyés de préférence aux numéros. Par exemple, la commande <b>resource list</b> renverra les noms s'ils existent ou les numéros si le nom est NULL.
+</div><br>
+<div><b>PROBLEMES DE PORTABILITE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <i>resource</i> est seulement disponible sur Macintosh. </div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="142.htm">open</A></div><br>
+<div>Dernière révision: 8.0</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="155.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="157.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

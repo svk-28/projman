@@ -1,0 +1,85 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>registry&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div><HR ALIGN="center"><br>
+<div><b>NOM</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">registry - Manipule la base de registre Windows 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><br>
+<b>package require registry 1.0</b> <br>
+<b>registry </b><i>option</i> <i>keyName</i> ?<i>arg arg ...</i>?
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le package <b>registry</b> fournit un ensemble général d'opérations pour manipuler la base de registre Windows Le package implémente la commande Tcl<b> registry</b>. Cette commande est supportée seulement sur la plateforme Windows. Attention: cette commande sera utilisée avec précaution car une base de registre corrompue peut rendre votre système inutilisable. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;"><i>KeyName</i> est le nom d'une clé de registre. Les clés doivent avoir une des formes suivantes: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>&#92;&#92;</b><i>hostname</i><b>&#92;</b><i>rootname</i><b>&#92;</b><i>keypath</i> </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><i>rootname</i><b>&#92;</b><i>keypath</i> </div>
+<div ALIGN="LEFT" style="margin-left: 102px;"><i>rootname</i> </div>
+<div ALIGN="LEFT" style="margin-left: 51px;"><i>Hostname</i> spécifie le nom d'une machine Windows quelconque qui exporte sa base de registre. Le composant <i>rootname</i> doit être un d'entre <b>HKEY_LOCAL_MACHINE</b>, <b>HKEY_USERS</b>, <b>HKEY_CLASSES_ROOT</b>, <b>HKEY_CURRENT_USER</b>, <b>HKEY_CURRENT_CONFIG</b>, <b>HKEY_PERFORMANCE_DATA</b>, ou <b>HKEY_DYN_DATA</b>. Le <i>keypath</i> peut être un ou plusieurs noms de clé de registre séparées par des caractères backslash (<b>&#92;</b>). </div>
+<div ALIGN="LEFT" style="margin-left: 51px;"><i>Option</i> indique que faire avec le nom de clé de registre. N'importe quelle abréviation unique pour <i>option</i> est acceptable. Les options valides sont: 
+<DL>
+  <DT><b>registry delete </b><i>keyName</i> ?<i>valueName</i>?
+</DT><DD>Si l'argument optionnel <i>valueName</i> est présent, la valeur spécifiée sous <i>keyName</i> sera effacée de la base de registre. Si l'optionnelle <i>valueName</i> est omise, la clé spécifiée et toute sous-clé ou valeurs en dessous dans la hiérarchie de la base de registre seront effacées. Si la clé n'a pu être effacée alors une erreur est générée. Si la clé n'existe pas, la commande n'a pas d'effet. 
+</DD>
+  <DT><br>
+<b>registry get </b><i>keyName valueName</i>
+</DT><DD>Renvoie les données associées à la valeur <i>valueName</i> sous la clé <i>keyName</i>. Si la clé ou la valeur n'existe pas, alors une erreur est générée. Pour plus details sur le format des données renvoyées, voir TYPES SUPPORTES, ci-dessous. 
+</DD>
+  <DT><br>
+<b>registry keys </b><i>keyName</i> ?<i>pattern</i>?
+</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de noms de tout les sous-clés de <i>keyName</i> Si <i>pattern</i> est spécifié, seulement les noms correspondants à <i>pattern</i> sont retournés La correspondance est déterminée en utilisant le même règles que pour <A HREF="165.htm"><b>string</b></A> <b>match</b>. Si le <i>keyName</i> spécifié n'existe pas, alors une erreur est générée. 
+</DD>
+  <DT><br><b>registry set </b><i>keyName</i> ?<i>valueName data </i>?<i>type</i>??
+</DT><DD>
+Si <i>valueName</i> n'est pas spécifié, crée la clé <i>keyName</i> si elle n'existe pas déjà. Si <i>valueName</i> est spécifié, crée la clé <i>keyName</i> et la valeur <i>valueName</i> si nécessaire Le contenu de <i>valueName</i> est fixé à <i>data</i> avec le type indiquée par <i>type</i>. Si <i>type</i> n'est pas spécifié, le type <b>sz</b> est supposé. Pour plus details sur les types de données et d'arguments , voir TYPES SUPPORTES ci-dessous. 
+</DD>
+  <DT><br><b>registry type </b><i>keyName valueName</i>
+</DT><DD>
+Renvoie le type de la valeur <i>valueName</i> dans la clé <i>keyName</i>. Pour plus ample information sur les types possibles, voir TYPES SUPPORTES, ci-dessous. 
+</DD>
+  <DT><br>
+<b>registry values </b><i>keyName</i> ?<i>pattern</i>?
+</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de noms de toutes les valeurs de <i>keyName</i>. Si <i>pattern</i> est spécifié, seulement les noms correspondants à <i>pattern</i> sont renvoyés. La correspondance est déterminée en utilisant les même règles que pour <A HREF="165.htm"><b>string</b></A> <b>match</b> 
+</DD>
+</DL>
+</div><br>
+<div><b>TYPES SUPPORTES </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Chaque valeur sous une clé dans la base de registre contient des données d'un type particulier dans une représentation spécifique. La commande <b>registry</b> convertit entre cette représentation interne et celle qui peut être manipulée par les scripts Tcl. Dans la plupart des cas, les données sont simplement renvoyées comme chaînes Tcl. Le type indique pour quel usage sont conçues les données, mais ne change pas la représentation. Pour certains types, la commande <b>registry</b> retourne les données sous une forme différente pour en faciliter la manipulation. Les types suivant sont reconnus par la commande <b>registry</b>: 
+<DL>
+  <DT><b>binary</b></DT><DD>La valeur du registre contient des données binaires arbitraires. Les données sont representées exactement enTcl, incluant tous les nulls contenus. 
+</DD>
+  <DT><br><b>none</b>
+</DT><DD>La valeur du registre contient des données binaires arbitraires sans type défini. Les données sont representées exactement en Tcl, incluant tous les nulls contenus. 
+</DD>
+  <DT><br><b>sz</b>
+</DT><DD>La valeur du registre contient une chaîne à zéro terminal. Les données sont representées en Tcl comme chaînes. 
+</DD>
+  <DT><br><b>expand_sz</b>
+</DT><DD>La valeur du registre contient une chaîne à zéro terminal qui contient des références non expansées aux variables d'environnements dans le style Windows normal (par exemple, &quot;%PATH%&quot;) Les données sont representées en Tcl comme chaîne. 
+</DD>
+  <DT></DT><DD></DD>
+  <DT><br><b>dword</b>
+</DT><DD>La valeur du registre contient un nombre 32-bit little-endian. Les données sont representées en Tcl comme une chaîne décimale. 
+</DD>
+  <DT><br><b>dword_big_endian</b>
+</DT><DD>La valeur du registre contient un nombre 32-bit big-endian. Les données sont representées en Tcl comme une chaîne décimale. 
+</DD>
+  <DT><br><b>link</b>
+</DT><DD>La valeur du registre contient un lien symbolique. Les données sont representées exactement en Tcl, incluant tous les nulls contenus. 
+</DD>
+<DT><br><b>multi_sz</b>
+</DT><DD>La valeur du registre contient un tableau chaînes à zéro terminal. Les données sont representées en Tcl comme une liste de chaînes. 
+</DD>
+<DT><br><b>resource_list</b>
+</DT><DD>La valeur du registre contient une liste de pilotes de périphériques. Les données sont representées exactement en Tcl, incluant tous les nulls contenus. 
+</DD>
+</DL></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">En plus des noms de types symboliques listés plus haut, les types inconnus sont identifiés en utilisant un entier 32-bit qui correspond au code de type renvoyé par les interfaces système. Dans ce cas, les données sont representées exactement en Tcl, incluant tous les nulls contenus. 
+</div><br>
+<div><b>PROBLEMES DE PORTABILITE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande registry est seulement disponible sous Windows </div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="152.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="154.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

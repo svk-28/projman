@@ -1,0 +1,101 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>exec&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="left">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">exec - Appelle un ou des sous-processus
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>exec </b>?<i>switches</i>? <i>arg </i>?<i>arg ...</i>? 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande traite ses arguments comme la spécification d'exécution d'un ou plusieurs sous-processus. Les arguments prennent la forme d'un pipeline shell standard où chaque <i>arg</i> devient un mot d'une commande, et chaque commande distincte devient un sous-processus. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si les arguments initiaux à <b>exec</b> commencent avec un tiret<b> </b>alors ils sont traités comme des commutateurs de ligne de commande et ne font pas partie du pipeline. Les commutateurs suivants sont couramment supportés:
+<DL>
+  <DT><b>-keepnewline</b><br></DT><DD>Insère un saut de ligne dans la sortie de pipeline. Normalement le saut de ligne sera effacé. 
+</DD>
+  <DT><b>--</b><br></DT><DD>Marque la fin des commutateurs. L'argument suivant sera traité comme le premier <i>arg</i> même s'il commence avec un tiret. 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si un <i>arg</i> (ou paire d'<i>args</i>) a une des formes décrites ci-dessous alors il est utilisé par <b>exec</b> pour contrôler les flux d'entrée et de sortie dans le(s) sous-processus. Ces arguments ne seront pas transmis au(x) sous-processus. Sous les formes telles que &quot;&lt; <i>fileName</i>&quot;, <i>fileName</i> peut soit être dans un argument séparé de &quot;&lt;&quot; ou dans le même argument sans espace (ex. &quot;&lt;<i>fileName</i>&quot;). 
+<DL>
+  <DT>|</DT><DD>Sépare des commandes distinctes dans le pipeline. La sortie standard de la commande précédente sera injectée dans l'entrée standard de la commande suivante. 
+</DD>
+  <DT><br>|&amp;</DT><DD>Sépare des commandes distinctes dans le pipeline. L'ensemble sortie standard et erreur standard de la précédante commande sera injectée dans l'entrée standard de la commande suivante. Cette forme de redirection surcharge les formes telles que 2&gt; et &gt;&amp;. 
+</DD>
+  <DT><br>&lt; <i>fileName</i></DT><DD>Le fichier designé par <i>fileName</i> est ouvert et utilisé comme l'entrée standard pour le première commande dans le pipeline. 
+</DD>
+  <DT><br>&lt;@ <i>fileId</i></DT><DD><i>FileId</i> doit être l'identificateur pour un fichier ouvert, tel que la valeur de retour d'un précédent appel de <A HREF="142.htm"><b>open</b></A>. Il est utilisé comme l'entrée standard de la première commande dans le pipeline. <i>FileId</i> doit avoir été ouvert en lecture. 
+</DD>
+  <DT><br>&lt;&lt; <i>value</i><br></DT><DD><i>Value</i> est transmise à la première commande comme son entrée standard. 
+</DD>
+  <DT><br>&gt; <i>fileName</i></DT><DD>La sortie standard de la dernière commande est redirigée sur un fichier nommé <i>fileName</i>, en écrasant son précedent contenu. 
+</DD>
+  <DT><br>2&gt; <i>fileName</i></DT><DD>L'erreur standard de toute commande dans le pipeline est redirigée sur un fichier nommé <i>fileName</i>, en écrasant son précedent contenu. 
+</DD>
+  <DT><br>&gt;&amp; <i>fileName</i></DT><DD>L'ensemble sortie standard de la dernière commande et erreur standard de toute commande sont redirigée sur un fichier nommé <i>fileName</i>, en écrasant son contenu précédent .
+</DD>
+  <DT><br>&gt;&gt; <i>fileName</i></DT><DD>La sortie standard de la dernière commande est redirigée et ajoutée à la fin d'un fichier nommé <i>fileName</i>. 
+</DD>
+  <DT><br>2&gt;&gt; <i>fileName</i></DT><DD>L'erreur standard de toute commande dans le pipeline est redirigée et ajoutée à la fin d'un fichier nommé <i>fileName</i>. 
+</DD>
+  <DT><br>&gt;&gt;&amp; <i>fileName</i></DT><DD>L'ensemble sortie standard de la dernière commande et erreur standard de toute commande sont redirigées et ajoutées à la fin d'un fichier nommé <i>fileName</i>. 
+</DD>
+  <DT><br>&gt;@ <i>fileId</i></DT><DD><i>FileId</i> doit être l'identificateur d'un fichier ouvert, tel que la valeur de retour d'un précédent appel de <A HREF="142.htm"><b>open</b></A>. La sortie standard de la dernière commande est redirigée vers le fichier<i> </i><i>fileId</i>'s, qui doit avoir été ouvert en écriture. 
+</DD>
+  <DT><br>2&gt;@ <i>fileId</i></DT><DD><i>FileId</i> doit être l'identificateur d'un fichier ouvert, tel que la valeur de retour d'un précédent appel de <A HREF="142.htm"><b>open</b></A>. L'erreur standard de toute commande dans le pipeline est redirigée vers le fichier<i> fileId</i>. Le fichier doit avoir été ouvert en écriture. 
+</DD>
+  <DT><br>&gt;&amp;@ <i>fileId</i></DT><DD><i>FileId</i> doit être l'identificateur pour un fichier ouvert, tel que la valeur de retour d'un précédent appel de <A HREF="142.htm"><b>open</b></A>. L'ensemble sortie standard de la dernière commande et erreur standard from toute commande sont redirigée vers le fichier<i> fileId</i>. Le fichier doit avoir été ouvert en écriture. 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si la sortie standard n'a pas été redirigée alors la commande <b>exec</b> retourne la sortie standard de la dernière commande dans le pipeline. Si une des commandes dans le pipeline finit anormalement ou est <i>killed</i> ou suspendue, alors <b>exec</b> renverra une erreur et le message d'erreur inclura la sortie du pipeline suivi par le message d'erreur décrivant la terminaison anormale; la variable <b>errorCode</b> contiendra des informations supplémentaires concernant la dernière terminaison anormale rencontrée. Si une des commandes ecrit vers son fichier standard d'erreur et que cette erreur standard n'est pas redirigée, alors <b>exec</b> renverra une erreur; le message d'erreur inclura la sortie standard du pipeline, suivi par les messages au sujet de la terminaison anormale (si elle existe), suivi par la sortie d'erreur standard . </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si le dernier caractère du résultat ou du message d'erreur est un saut de ligne alors ce caractère est normalement effacé du résultat ou du message d'erreur. Ceci est cohérent par rapport aux autres valeurs de retour Tcl, qui ne finisssent normalement pas avec des sauts de ligne. Néanmoins, si <b>-keepnewline</b> est spécifié alors le saut de ligne est ajouté. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si l'entrée standard n'est pas redirigée avec &quot;&lt;&quot; ou &quot;&lt;&lt;&quot; ou &quot;&lt;@&quot; alors l'entrée standard pour la première commande dans le pipeline est prise de l'entrée standard de l'application courante. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si le dernier <i>arg</i> est &quot;&amp;&quot; alors le pipeline sera exécuté en arrière-plan. Dans ce cas la commande <b>exec</b> renverra une liste dont les éléments sont les identificateurs de processus pour tous les sous-processus dans le pipeline. La sortie standard de la dernière commande dans le pipeline ira dans la sortie standard de l'application si elle n'a pas été redirigée, et la sortie d'erreur de toutes les commandes dans le pipeline ira vers le fichier standard d'erreur de l'application sauf si elle est redirigée. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Le premier mot de chaque commande est interprété comme le nom de la commande; la substitution tilde est effectuée, et si le résultat ne contient pas de slashes alors les répertoires dans la variable d'environnement PATH sont recherchés pour un exécutable donnés. Si le nom contient un slash alors il doit se référer à un exécutable accessible du répertoire courant. Aucune expansion &quot;glob&quot; ou autre substitutions shell-like ne sont effectuées sur les arguments des commandes. <br>
+</div><br>
+<div><b>NOTES DE PORTABILITE </b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">
+<DL>
+  <DT><b>Windows</b> (toutes versions)</DT><DD>Lire ou écrire une socket, en 
+utilisant la notation &quot;<b>@ </b><i>fileId</i>&quot;, ne fonctionne pas. En essayant de lire une socket, une application DOS 16-bit se plantera et une application 32-bit retournera immédiatement avec fin-de-fichier. Quand ces deux types d'application ecrivent une socket, l'information est en fait envoyée à la console, si une est présente, ou est éliminée. <br>
+La console texte Tk ne fournit pas de possibilités IO standard. Sous Tk, quand on redirige depuis l'entrée standard, toutes les applications verront une fin-de-fichier immédiate; l'information redirigée vers la sortie standard ou l'erreur standard sera éliminée. <br>
+Les slashes ou anti slashes sont acceptés comme séparateurs de chemin pour les arguments des commandes Tcl. A l'exécution d'une application, le nom de chemin spécifié pour l'application peut aussi contenir des slashes ou des anti slashes comme séparateurs de chemin. Ayez à l'esprit, néanmoins, que la plupart des applications Windows acceptent des arguments avec seulement des slashes comme délimiteurs d'option et seulement des backslashes dans les chemins. N'importe quels arguments à une application qui spécifie un nom de chemin avec des slashes ne seront pas automatiquement convertis en caractères backslash. Si un argument contient des slashes comme séparateur de chemin, il peut ou ne peut pas être reconnu comme un nom de chemin, dépendant du programme. <br>
+De plus, à l'appel d'une application 16-bit DOS ou Windows 3.X, tout les noms de chemin doivent utiliser le format de chemin court(ex, en utilisant &quot;applba~1.def&quot; au lieu de of &quot;applbakery.default&quot;). <br>
+Deux slashes ou backslashes ou plus dans un chemin se refèrent à un chemin réseau. Par exemple, une simple concatenation du répertoire racine <b>c:/</b> avec un sous répertoire <b>/windows/system</b> donnera <b>c://windows/system</b> (deux slashes ensemble), qui se réfère à un point de montage appelé <b>system</b> sur la machine appelé <b>windows</b> (et le <b>c:/</b> est ignoré), et n'est pas équivalent à <b>c:/windows/system</b>, qui décrit un répertoire sur l'ordinateur courant . La commande <b>file join</b> sera utilisée pour concaténer les composants de chemin.</DD>
+  <DT><br><b>Windows NT</b></DT><DD>Quand il tente d'exécuter une application, <b>exec</b> recherche en premier le nom comme il a été spécifié. Ensuite, dans l'ordre, <b>.com</b>, <b>.exe</b>, et <b>.bat</b> sont ajoutés à la fin du nom spécifié et il recherche le nom plus l'extension. Si un nom de répertoire n'a pas été spécifié comme partie du nom de l'application, les répertoires suivants sont automatiquement recherchés dans l'ordre pour tenter de localiser l'application: <br>
+<div ALIGN="LEFT" style="margin-left: 110px;">Le répertoire duquel l'exécutable Tcl a été chargé. <br>
+Le répertoire courant. <br>
+Le répertoire système Windows NT 32-bit. <br>
+Le répertoire système Windows NT 16-bit. <br>
+Le répertoire home Windows NT. <br>
+Les répertoires listés dans le chemin.</div> <br>
+De manière à exécuter les commandes shell internes comme <b>dir</b> et <b>copy</b>, l'appelant doit ajouter en tête de la commande &quot;<b>cmd.exe /c </b>&quot;. 
+</DD>
+  <DT><br><b>Windows 95</b></DT><DD>Quand il tente d'exécuter une application, <b>exec</b> recherche en premier le nom comme il a été spécifié. Ensuite, dans l'ordre, <b>.com</b>, <b>.exe</b>, et <b>.bat</b> sont ajouté à la fin du nom spécifié et il recherche le nom plus l'extension. Si un nom de répertoire n'a pas été spécifié comme partie du nom de l'application, les répertoires suivants sont automatiquement recherchés dans l'ordre pour tenter de localiser l'application: <br>
+<div ALIGN="LEFT" style="margin-left: 110px;">Le répertoire duquel l'exécutable Tcl a été chargé. <br>
+Le répertoire courant. <br>
+Le répertoire système Windows 95. <br>
+Le répertoire home Windows 95. <br>
+Les répertoires listés dans le chemin. </div><br>
+De manière à exécuter les commandes shell internes comme <b>dir</b> et <b>copy</b>, l'appelant doit ajouter en tête de la commande &quot;<b>command.com /c </b>&quot;<br>
+Une fois qu'une application DOS 16-bit a lu l'entrée standard d'une console et quitté, toutes les applications DOS 16-bit exécutées ensuite verront l'entrée standard comme déjà fermée. Les applications 32-bit n'ont pas ce problème et s'exécuteront correctement, même après une application DOS 16-bit qui pense que l'entrée standard est fermée. Il n'y a pas de correction connue de ce bug à ce jour . La redirection entre le périphérique <b>NUL:</b> et une application 16-bit ne fonctionne pas toujours. Quand on redirige de <b>NUL:</b>, certaines applications se planteront, d'autres emmetront un flux infini d'octets &quot;0x01&quot;, et d'autres obtiendront correctement une fin-de-fichier immédiate; ce comportement semble dépendre de quelque chose compilé dans l'application elle-même. Quand la redirection vers <b>NUL:</b> est supérieure à 4K , quelques applications se planteront. Les problèmes précédents ne se produisent pas avec les applications 32-bit. <br>
+Toutes les applications DOS 16-bit sont exécutées de manière synchrone. Toute entrée standard d'un pipe vers une application DOS 16-bit est collecté dans un fichier temporaire; l'autre extrémité du pipe doit être fermée avant que l'application DOS 16-bit commence l'exécution. Toute sortie ou erreur standard d'une application DOS 16-bit vers un pipe est collectée dans des fichiers temporaires; l'application doit se terminer avant que les fichiers temporaires soient redirigés à l'étape suivante du pipeline. Ceci est du à une correction d'un bug de Windows 95 dans l'implémentation des pipes, et est la manière standard du shell DOS sous Windows 95 de gérer les pipes. <br>
+Certaines applications, tel que <b>command.com</b>, ne seront pas exécutées interactivement. Les applications qui accèdent directement à la fenêtre Dos, au lieu de lire depuis leur entrée standard et d'écrire sur leur sortie standard peut échouer, planter Tcl, ou même planter le système si leur propre console ne leur est pas disponible. 
+</DD>
+<DT><br><b>Macintosh</b></DT><DD>La commande <b>exec</b> n'est pas implémentée et n'existe pas sous Macintosh. </DD>
+<DT><br><b>Unix</b></DT><DD>La commande <b>exec</b> est pleinement fonctionnelle et fonctionne comme décrit. 
+</DD>
+</DL>
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="142.htm">open</A>(n) </div>
+<div>Dernière révision: 7.6</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="104.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="106.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

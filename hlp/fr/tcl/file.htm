@@ -1,0 +1,112 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">file - Manipule les noms et les attributs de fichier 
+</div><br>
+<div><b>SYNTHESE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>file </b><i>option</i> <i>name</i> ?<i>arg arg ...</i>? 
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande fournit plusieurs opérations sur un nom ou des attributs de fichier. <i>Name</i> est le nom d'un fichier; s'il commence avec un tilde, alors la substitution tilde est faite avant l'exécution de la commande (voyez la page de manuel de <A HREF="113.htm"><b>filename</b></A> pour les détails). <i>Option</i> indique que faire avec le nom de fichier. N'importe quelle abréviation unique pour <i>option</i> est acceptable. Les options valides sont: 
+<DL>
+  <DT><b>file atime </b><i>name</i> ?<b>time</b>?</DT><DD>Renvoie une chaîne décimale donnant la date du dernier accès au fichier <i>name</i>. Si <i>time</i> est spécifié, c'est pour fixer la date d'accès au fichier. Le temps est mesuré de la façon POSIX standard comme nombre de secondes depuis une date fixe (souvent January 1, 1970). Si le fichier n'existe pas ou que sa date d'accès ne peut être trouvée ou fixée alors une erreur est générée. Sous Windows, le système de fichiers FAT ne supporte pas la date d'accès (POSIX). 
+<br></DD>
+  <DT><br><b>file attributes </b><i>name</i></DT><DD></DD>
+  <DT><b>file attributes</b><i>name</i> ?<A HREF="296.htm"><b>option</b></A>? 
+</DT><DD></DD>
+  <DT><b>file attributes</b><i>name</i> ?<b>option value option value...</b>? 
+</DT><DD>Cette sous commande retourne ou fixe les valeurs spécifiques à la plateforme associées à un fichier. La première forme retourne une liste de flags spécifiques à la plateforme et leurs valeurs. La seconde forme retourne la valeur de l'option spécifique. Le troisième forme fixe une ou plusieurs des valeurs. La valeurs sont les suivantes: 
+Sous Unix, <b>-group</b> lit ou fixe le nom de groupe pour le fichier. Un group id peut être donné à la commande, mais elle retourne un nom de groupe. <b>-owner</b> gets ou fixe le nom de l'utilisateur propriétaire du fichier. La commande retourne le nom du propriétaire, mais l'id numérique peut être transmise quand on fixe le propriétaire. <b>-permissions</b> fixe ou lit le code octal que chmod(1) utilise. Cette commande a aussi un support limité pour fixer en utilisant les attributs symboliques pour chmod(1), de la forme &#91;ugo]?&#91;&#91;+-=]&#91;rwxst],&#91;...]], ou les attributs symboliques multiples peuvent être séparés par des virgules (exemple: <b>u+s,go-rw</b> ajoute sticky bit pour l'utilisateur, et enlève les permissions lecture et écriture pour le groupe et le reste du monde). Un style chaîne simplifié <b>ls</b>, de la forme rwxrwxrwx (doit être 9 caractères), est aussi supporté (exemple: <b>rwxr-xr-t</b> est équivalent à 01755). 
+Sous Windows, <b>-archive</b> donne la valeur ou bien fixe ou efface l'attribut archive du fichier. <b>-hidden</b> donne la valeur ou bien fixe ou efface l'attribut caché du fichier. <b>-longname</b> expanse chaque élément de chemin en sa version longue. Cet attribut ne peut pas être fixé. <b>-readonly</b> donne la valeur ou bien fixe ou efface l'attribut lecture seule du fichier. <b>-shortname</b> donne une chaîne ou tout élément de chemin est remplacé avec sa version courte (8.3). Cet attribut ne peut pas être fixé. <b>-system</b> donne ou bien fixe ou efface la valeur de l'attribut système du fichier. 
+Sous Macintosh, <b>-creator</b> donne ou fixe le type Finder createur du fichier. <b>-hidden</b> donne ou bien fixe ou efface l'attribut caché du fichier. <b>-readonly</b> donne ou bien fixe ou efface l'attribut lecture seule du fichier. Notez que les répertoires peuvent seulement être vérouillés si File Sharing est activé. <b>-type</b> donne ou fixe le type Finder du fichier. 
+</DD>
+  <DT><br><b>file channels ?</b><i>pattern</i>?</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de noms de tous les canaux declarés ouverts dans cet interpréteur. Si <i>pattern</i> est spécifié, seulement les noms correspondants à <i>pattern</i> sont renvoyés. La correspondance est déterminée en utilisant les mêmes règles que pour <b>string match</b>. </DD>
+  <DT><br><b>file copy </b>?<b>-force</b>? ?<b>--</b>? <i>source</i> <i>target</i>
+</DT><DD></DD>
+  <DT><b>file copy</b>?<b>-force</b>? ?<b>--</b>? <i>source</i> ?<i>source</i> ...? <i>targetDir</i> 
+</DT><DD></DD>
+  <DT></DT><DD>La première forme fait une copie du fichier ou répertoire <i>source</i> sous le nom de chemin <i>target</i>. Si <i>target</i> est un répertoire existant, alors la seconde forme est utilisée.  La seconde forme fait une copie dans <i>targetDir</i> de chaque fichier <i>source</i> listé. Si un répertoire est spécifié comme <i>source</i>, alors le contenu du répertoire sera récursivement copié dans <i>targetDir</i>. Les fichiers existants ne seront pas écrasés à moins que l'option <b>-force</b> soit spécifiée. Essayer d'écraser un répertoire non-vide, écraser un répertoire avec un fichier, ou un fichier avec un répertoire donnera des erreurs même si <i>-force</i> a été spécifié. Les arguments sont traités dans l'ordre spécifié, s'arrètant à la première erreur, si elle existe. Un <b>--</b> marque la fin des commutateurs; l'argument suivant le <b>--</b> sera traité comme un <i>source</i> même s'il commence avec un <b>-</b>. 
+</DD>
+  <DT><br><b>file delete </b>?<b>-force</b>? ?<b>--</b>? <i>pathname</i> ?<i>pathname</i> ... ?
+</DT><DD>Efface le fichier ou répertoire spécifié par chaque argument<i> pathname</i>. Les répertoires non-vide seront enlevés seulement si l'option <b>-force</b> est spécifiée. Essayer d'effacer un fichier non-existant n'est pas consideré comme une erreur. Essayer d'effacer un fichier lecture-seule provoquera l'effacement du fichier, même si le <b>-force</b> flags n'est pas spécifié. Les arguments sont traité dans l'ordre spécifié, s'arrètant à la première erreur, si elle existe. Un <b>--</b> marque la fin des commutateurs; l'argument suivant le <b>--</b> sera traité comme un <i>pathname</i> même s'il commence avec un <b>-</b>. 
+</DD>
+  <DT><b><br>file dirname </b><i>name</i></DT><DD>Renvoie un nom comportant tout les composants de chemin de <i>name</i> excluant le dernier élément. Si <i>name</i> est un nom de fichier relatif et contient seulement un élément de chemin, alors retourne &quot;<b>.</b>&quot; (ou &quot;<b>:</b>&quot; sur le Macintosh). Si <i>name</i> se refère à un répertoire racine, alors le répertoire racine est renvoyé. Par exemple, 
+<b>file dirname c:/</b>
+retourne <b>c:/</b>.
+Notez que la substitution tilde sera effectuée seulement si c'est nécessaire pour que la commande aboutisse. Par exemple, 
+<b>file dirname ~/src/foo.c</b>
+retourne <b>~/src</b>, alors que 
+<b>file dirname ~</b>
+retourne <b>/home</b> (ou quelque chose de similaire). 
+</DD>
+  <DT><br><b>file exécutable </b><i>name</i></DT><DD>Renvoie <b>1</b> si le fichier <i>name</i> est exécutable par l'utilisateur courant, <b>0</b> autrement. 
+</DD>
+  <DT><br><b>file exists </b><i>name</i></DT><DD>Renvoie <b>1</b> si fichier <i>name</i> existe et que l'utilisateur courant a les privileges de recherche pour les répertoires y menant, <b>0</b> autrement. 
+</DD>
+  <DT><br><b>file extension </b><i>name</i></DT><DD>Renvoie tous caractères de <i>name</i> après et incluant le dernier point dans le dernier élément de <i>name</i>. S'il n'y a pas point dans le dernier élément de <i>name</i> alors retourne la chaîne vide. 
+</DD>
+  <DT><br><b>file isdirectory </b><i>name</i></DT><DD>Renvoie <b>1</b> si le fichier <i>name</i> est un répertoire, <b>0</b> autrement. 
+<br></DD>
+  <DT><b>file isfile </b><i>name</i></DT><DD>Renvoie <b>1</b> si le fichier <i>name</i> est un fichier ordinaire, <b>0</b> autrement. 
+</DD>
+  <DT><br><b>file join </b><i>name</i> ?<i>name ...</i>?</DT><DD>Prend un ou plusieurs noms de fichiers et les combine, en utilisant le séparateur de chemin correct pour la plateforme courante. Si un <i>name</i> particulier est relatif, alors il sera joint au précedent argument nom de fichier. Autrement, tout argument precédent sera écarté, et la jointiure commencera à l'argument courant. Par exemple, 
+<b>file join a b /foo bar</b>
+retourne <b>/foo/bar</b>. 
+Notez que n'importe quel des noms peut contenir des séparateurs, et que le résultat est toujours canonique pour la plateforme courante : <b>/</b> pour Unix et Windows, et <b>:</b> pour Macintosh. 
+</DD>
+  <DT><br><b>file lstat </b><i>name varName</i></DT><DD>Identique à l'option <b>stat</b> (voir ci-dessous) excepté qu'elle utilise l' appel kernel <i>lstat</i> au lieu de <i>stat</i>. Ceci signifie que si <i>name</i> se refère à un lien symbolique l'information renvoyée dans <i>varName</i> concerne le lien plutôt que le fichier auquel il se refère. Sur les systèmes qui ne supportent pas les lien symboliques cette option se comporte exactement comme l'option<b> stat</b>.
+</DD>
+  <DT><br><b>file mkdir </b><i>dir</i> ?<i>dir</i> ...?</DT><DD><b>file mkdir </b><i>dir</i> ?<i>dir</i> ...?</DD>
+  <DT><b>file mkdir </b><i>dir</i> ?<i>dir</i> ...?</DT><DD></DD>
+  <DT><b>file mtime </b><i>name</i> ?<i>time</i>?</DT><DD>Renvoie une chaîne décimale donnant le temps auquel fichier <i>name</i> a été modifié pour la dernière fois. Si <i>time</i> est spécifié, c'est une pour fixer le temps pour le fichier (équivalent à <b>touch</b> sous Unix). Le temps est mesuré de la façon standard POSIX en tant que secondes depuis une date fixe (souvent 1 Janvier 1970). Si le fichier n'existe pas ou la date de modification ne peut être trouvée ou réglée, une erreur est générée. 
+</DD>
+  <DT><br><b>file nativename </b><i>name</i></DT><DD>Renvoie le nom du fichier spécique à la plate-forme. Ceci est utile si le nom de fichier est nécessaire à transmettre à un appel spécique à la plate-forme, tel que exec sous Windows ou AppleScript sur Macintosh. 
+<b>file owned </b><i>name</i>
+Renvoie <b>1</b> si fichier <i>name</i> appartient à l'utilisateur courant, <b>0</b> autrement. 
+</DD>
+  <DT><br><b>file pathtype </b><i>name</i><br></DT><DD>Renvoie un de <b>absolute</b>, <b>relative</b>, ou <b>volumerelative</b>. Si <i>name</i> se refère à un fichier spécifique sur un volume spécifique , le chemin type sera <b>absolute</b>. Si <i>name</i> se refère à un fichier relatif au répertoire de travail courant, alors le type du chemin sera <b>relative</b>. Si <i>name</i> se refère à un fichier relatif au répertoire de travail courant sur un volume spécifié, ou à un fichier spécifique sur le volume de travail courant, alors le type fichier est <b>volumerelative</b>. 
+</DD>
+  <DT><br><b>file readable </b><i>name</i></DT><DD>Renvoie <b>1</b> si le fichier <i>name</i> est lisible par l'utilisateur courant, <b>0</b> autrement. 
+</DD>
+  <DT><b>file readlink </b><i>name</i></DT><DD>Renvoie la valeur du lien symbolique désigné par <i>name</i> (ex. le nom du fichier vers lequel il pointe). Si <i>name</i> n'est pas un lien symbolique ou que sa valeur ne peut pas être lue, alors une erreur est générée. Sur les systèmes qui ne supportent pas les liens symboliques cette option est indéfinie. 
+</DD>
+  <DT><br><b>file rename</b>?<b>-force</b>? ?<b>--</b>? <i>source</i> <i>target</i> 
+</DT><DD></DD>
+  <DT><b>file rename</b>?<b>-force</b>? ?<b>--</b>? <i>source</i> ?<i>source</i> ...? <i>targetDir</i> 
+</DT><DD>La première forme prend le fichier ou le répertoire spécifié par le nom de chemin <i>source</i> et le renomme en <i>target</i>, en déplacant le fichier si le nom de chemin <i>target</i> spécifie un nom dans un répertoire différent. Si <i>target</i> est un répertoire existant, alors la seconde forme est utilisée. La seconde forme déplace chaque fichier ou répertoire <i>source</i> dans le répertoire <i>targetDir</i>. Les fichiers existants ne seront pas ecrasés à moins que l'option <b>-force</b> soit spécifiée. Essayer d'écraser un répertoire non-vide, écraser un répertoire avec un fichier, ou un fichier avec un répertoire generera des erreurs. Les arguments sont traités dans l'ordre spécifié, s'arrêtant à la première erreur, si elle existe. Un <b>--</b> marque la fin des commutateurs; l'argument suivant le <b>--</b> sera traité comme une <i>source</i> même s'il commence avec un <b>-</b>. 
+</DD>
+  <DT><br><b>file rootname </b><i>name</i></DT><DD>Renvoie tous les caractères dans <i>name</i> jusqu'a mais non inclus le dernier caractère &quot;.&quot; dans le dernier composant du nom. Si le dernier composant de <i>name</i> ne contient pas de point, alors retourne <i>name</i>. 
+</DD>
+  <DT><br><b>file size </b><i>name</i></DT><DD>Renvoie une chaîne décimale donnant la taille du fichier <i>name</i> en octets. Si le fichier n'existe pas ou si sa taille ne peut pas être obtenue alors une erreur est générée. 
+</DD>
+  <DT><br><b>file split </b><i>name</i></DT><DD>Renvoie une liste dont les éléments sont les composants de chemin in <i>name</i>. Le premier élément de la liste aura le même type chemin que <i>name</i>. Tous les autres éléments seront relatifs. Les séparateurs de chemin seront écartés à moins que ils soit nécessaires pour s'assurer qu'un élément est relatif sans ambiguité. Par exemple, sous Unix 
+<b>file split /foo/~bar/baz</b>
+retourne <b>/ foo ./~bar baz</b> pour s'assurer que les commandes suivantes qui utiliseront le troisième composant ne tentent pas d'effectuer une substitution de tilde. 
+</DD>
+<DT><br><b>file stat </b><i>name varName</i></DT><DD>Déclenche l'appel kernel <b>stat</b> sur <i>name</i>, et utilise la variable désignée par <i>varName</i> pour recevoir information renvoyée par l'appel kernel. <i>VarName</i> est traité comme une variable tableau, et les éléments suivants de cette variable sont fixes: <b>atime</b>, <b>ctime</b>, <b>dev</b>, <b>gid</b>, <b>ino</b>, <b>mode</b>, <b>mtime</b>, <b>nlink</b>, <b>size</b>, <b>type</b>, <b>uid</b>. Chaque élément excepté <b>type</b> est une chaîne décimale avec la valeur du champ correspondant de la <b>stat</b> structure de retour; voyez la page de manuel de <b>stat</b> pour des détails sur le sens des valeurs. L'élément <b>type</b> donne le type du fichier sous la même forme que celle renvoyée par la commande <b>file type</b>. Cette commande retourne une chaîne vide. 
+</DD>
+<DT><br><b>file tail </b><i>name</i></DT><DD>Renvoie tous les caractères dans <i>name</i> après le dernier séparateur de répertoire. Si <i>name</i> ne contient pas de séparateurs alors retourne <i>name</i>. 
+</DD>
+<DT><br><b>file type </b><i>name</i></DT><DD>Renvoie une chaîne donnant le type de fichier <i>name</i>, qui sera l'un de <b>file</b>, <b>directory</b>, <b>characterSpecial</b>, <b>blockSpecial</b>, <b>fifo</b>, <b>link</b>, ou <A HREF="162.htm"><b>socket</b></A>. 
+</DD>
+<DT><br><b>file volume</b><br></DT><DD>Renvoie le chemin absolu des volumes <i>montés</i> sur le système, comme liste Tcl correcte. Sur Macintosh, ce sera une liste des lecteurs <i>montés</i>, locaux ou réseaux. N.B. si deux lecteurs ont le même nom, ils apparairont tous deux sur la liste de volumes, mais il n'y a pas de façon, avec Tcl, d'acceder à un autre que le premier de ces lecteurs. Sous UNIX, la commande retournera toujours &quot;/&quot;, car tous les systèmes de fichier sont <i>montés</i> localement. Sous Windows, elle renverra une liste des lecteurs locaux disponibles (ex. &#123;a:/ c:/}).
+</DD>
+<DT><br><b>file writable </b><i>name</i></DT><DD>Renvoie <b>1</b> si le fichier <i>name</i> est inscriptible par l'utilisateur courant , <b>0</b> autrement. 
+</DD>
+</DL>
+</div><br> 
+<div><b>PROBLEMES DE PORTABILITE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 102px;"><b>Unix</b> <br>
+Cette commande opère toujours en utilisant les identificateurs réels d'utilisateur et de groupe, et non les identificateurs effectifs. 
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51 px;"><A HREF="113.htm">filename</A> </div><br>
+<div>Dernière révision: 8.3</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="110.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="112.htm"><b>Suivant</b></A>
+</div>
+</BODY></HTML>

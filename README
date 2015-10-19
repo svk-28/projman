@@ -1,0 +1,48 @@
+######################################################
+#              Tcl/Tk Project Manager                     #
+#              Distributed under GPL                     #
+# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru  #
+# Home page: http://conero.lrn.ru                     #
+######################################################
+
+ABOUT
+
+Tcl/Tk Project Manager is a full IDE for programming in TCL/Tk.
+It includes a project and file manager, a source editor with
+syntax highlighting and procedure navigation, a context-sensitive
+help system, and much more.
+Working an Unix (Linux tested) and Windows.
+
+INSTALLATION
+
+See INSTALL
+
+REQUIREMENTS
+
+For UNIX-like OS
+Tcl/Tk http://www.scriptics.com
+BWidget http://sourceforge.net/projects/tcllib
+CTags
+tcl-img - for image viewer
+
+For WINDOWS
+ActiveTcl http://tcl.activestate.com
+
+CREDITS
+
+Sergey Kalinin (aka Banzaj) - main project programmer and coordinator
+banzaj@lrn.ru
+http://conero.lrn.ru
+
+Laurent Riesterer - VisualREGEXP and TkDIFF+ parts
+laurent.riesterer@free.fr
+http://laurent.riesterer.free.fr
+
+Alexander Danilov - rewrite all documentation
+daapp@chat.ru
+
+Alexandr Dederer (aka Korwin) - many features and bugs fixed
+dederer-a@mail.ru
+
+
+

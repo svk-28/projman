@@ -1,0 +1,57 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>regexp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl
+</b></H3></div>
+<HR ALIGN="center"><br>
+<div><b>NOM</b></div>
+<div ALIGN="LEFT" style="margin-left: 51px;">regexp - Compare une expression rationelle à une chaîne
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>regexp </b>?<i>switches</i>? <i>exp string </i>?<i>matchVar</i>? ?<i>subMatchVar subMatchVar ...</i>?&nbsp; <br>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Determine si l'expression rationelle <i>exp</i> correspond à tout ou partie de <i>string</i> et retourne 1 si vrai, 0 si faux, à moins que <b>-inline</b> soit spécifié (voir ci-dessous). (la correspondance des expressions rationelles est décrite dans la page de référence de <A><b>re_syntax</b></A>.) </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si des arguments supplémentaires sont spécifiés après <i>string</i> alors ils sont traités comme les noms des variables dans lesquelles renvoyer l'information au sujet de la ou les parties de <i>string</i> correspondant à <i>exp</i>. <i>MatchVar</i> sera fixé à la partie de <i>string</i> correspondant à <i>exp</i> La première <i>subMatchVar</i> contiendra les caractères de <i>string</i> qui correspondent à la sous expression entre parenthèses la plus à gauche dans <i>exp</i>, la <i>subMatchVar</i> suivante contiendra les caractères qui correspondent à la sous expression entre parenthèses suivante à droite dans <i>exp</i>, et ainsi de suite. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Si les arguments initiaux à <b>regexp</b> commencent avec <b>-</b> alors ils sont traités comme des commutateurs. Les commutateurs suivants sont couramment supportés: </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">
+<DL>
+  <DT><b>-about</b><br></DT><DD>Au lieu de tenter de correspondre à une expression rationelle, retourne une liste contenant l'information concernant l'expression rationelle Le premier élément de la liste est un compte des sous expressions Le second élément est une liste de noms de propriété qui decrivent plusieurs attributs de l'expression rationelle. Ce switch est conçu dans un but de debugging. 
+</DD>
+  <DT><b>-expanded</b><br></DT><DD>Active l'usage de la syntaxe étendue des expressions rationelles où l'espace et les commentaires sont ignorés. Identique à la spécification de l'option <b>(?x)</b> (voir METASYNTAXE, ci-dessous).
+</DD>
+  <DT><b>-indices</b><br></DT><DD>Change ce qui est stocké dans les <i>subMatchVar</i>s Au lieu de stocker les caractères correspondants de <i>string</i>, chaque variable contiendra une liste de deux chaînes décimales donnant les indices dans <i>string</i> des premiers et derniers caractères dans l'intervalle correspondant des caractères. 
+</DD>
+  <DT><b>-line</b><br></DT><DD>Active la correspondance sensible au saut de ligne Par défaut, le saut de ligne est un caractère ordinaire sans signification spéciale Avec ce flag, l' expression crochets `&#91;^' et `.' ne correspond jamais à newline, `^' correspond à une chaîne vide après toute newline en plus de sa fonction normale, et `&#36;' correspond une chaîne vide avant toute newline en en plus de sa fonction normale Ce flag est équivalent à la spécification à la fois de&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>-linestop</b> et <b>-lineanchor</b>, ou de l'option <b>(?n)</b> (voir METASYNTAXE, ci-dessous). 
+</DD>
+  <DT><b>-linestop</b><br></DT><DD>Change le comportement de l'expression crochets `&#91;^' et `.' de façon à ce qu'elles s'arrètent aux saut de lignes Ceci est identique à la spécification de l'option <b>(?p)</b> (voir METASYNTAXE, ci-dessous). 
+</DD>
+  <DT><b>-lineanchor</b><br></DT><DD>Change le comportement de `^' et `&#36;' (les &quot;ancres&quot;) de façon à ce qu'ils correspondent au début et à la fin d'une ligne respectivement Ceci est identique à la spécification de l'option <b>(?w)</b> (voir METASYNTAXE, ci-dessous). 
+</DD>
+  <DT><b>-nocase</b><br></DT><DD>Cause l'interprétation des caractères majuscules de <i>string</i> comme minuscules pendant le traitement des correspondances. 
+</DD>
+  <DT><b>-all</b><br></DT><DD>Teste la correspondance de l'expression rationelle le plus grand nombre de fois possible dans la chaîne, retournant le nombre total de correspondances trouvées Si spécifié avec des variables de correspondance, ne contiendront l'information que pour la dernière correspondance.
+</DD>
+  <DT><b>-inline</b><br></DT><DD>Provoque le renvoi, comme liste, des données qui auraient été autrement placées dans des variables de correspondance Quand <b>–inline </b>est utilisée, les variables de correspondance ne peuvent pas être spécifiées Si utilisé avec <b>-all</b>, la liste sera concaténée à chaque itération, de ce fait une liste plate est toujours renvoyée Pour chaque itération, la commande ajoutera les correspondances supplémentaires aux données, plus un élément pour chaque sous expression dans l'expression rationelle. Exemples: <CODE><PRE>
+ regexp -inline -- &#123;&#92;w(&#92;w)} &quot; inlined &quot;<br>
+ =&gt; &#123;in n}<br>
+ regexp -all -inline -- &#123;&#92;w(&#92;w)} &quot; inlined &quot;<br>
+ =&gt; &#123;in n li i ne e}</CODE>
+  
+</PRE>
+</DD>
+  <DT><b>-start</b> <i>index</i><br></DT><DD>Spécifie un index de caractère dans une chaîne pour commencer la correspondance à une expression rationelle A l'utilisation de ce switch, `^' ne correspond plus au début de la ligne, et &#92;A correspond toujours au début de la chaîne à <i>index</i> Si <b>-indices</b> est spécifié, les indices seront indexés en partant du&nbsp; début de la chaîne d'entrée. <i>index</i> sera contraint au limites de la chaîne d'entrée. 
+</DD>
+  <DT><b>--</b><br></DT><DD>Marque la fin des commutateurs L'argument suivant ceci sera traité comme <i>exp</i> même s'il commence avec un <b>-</b>. 
+</DD>
+</DL>
+</div>
+<div ALIGN="LEFT" style="margin-left: 51px;">S'il y a plus de <i>subMatchVar</i> que de sous expressions entre parenthèses dans <i>exp</i>, ou si une sous expression particulière dans <i>exp</i> ne correspond pas à la chaîne (ex. parcequ'il etait dans une partie de l'expression qui n'a pas été trouvée), alors la <i>subMatchVar</i> correspondante sera fixée à &quot;<b>-1-1</b>&quot; si <b>-indices</b> a été spécifié ou à une chaîne vide autrement 
+</div><br>
+<div><b>VOIR EGALEMENT</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><A HREF="150.htm">re_syntax</A>(n)&nbsp; </div><br>
+<div>Dernière révision: 8.3</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="151.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="153.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

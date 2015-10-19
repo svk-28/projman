@@ -1,0 +1,77 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>info&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">info - Retourne l'information concernant l'état de l'interpréteur Tcl
+</div> <br>
+<div><b>SYNTAXE</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>info </b><i>option </i>?<i>arg arg ...</i>?
+</div> <br>
+<div><b>DESCRIPTION</b></div> <br>
+<div ALIGN="LEFT" style="margin-left: 51px;">Cette commande fournit des informations concernant les rouages de l'interpréteur Tcl. Les <i>options</i> légales (qui peuvent être abrégées) sont:
+<DL>
+  <DT><b>info args </b><i>procname</i></DT><DD>Renvoie une liste contenant les noms des arguments de la fonction <i>procname</i>, dans l'ordre <i>Procname</i> doit être le nom d'une fonction de commande Tcl. 
+</DD>
+  <DT><br><b>info body </b><i>procname</i>
+</DT><DD>Renvoie le corps de la fonction <i>procname</i> <i>Procname</i> doit être le nom d'une fonction Tcl . 
+</DD>
+  <DT><br><b>info cmdcount</b>
+</DT><DD>Renvoie un compte du nombre total de commandes qui ont été appelées dans cet interpréteur. 
+</DD>
+  <DT><br><b>info commands </b>?<i>pattern</i>?
+</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de noms de toutes les commandes Tcl dans le namespace courant, incluant à la fois les commandes interne écrites en C et les fonction de commandes définies en utilisant la commande<A HREF="147.htm"><b> proc</b></A>. Si <i>pattern</i> est spécifié, seulement les noms correspondants à <i>pattern</i> sont renvoyés. A correspondance est déterminée en utilisant les même règles que pour <b>string match</b>. <i>pattern</i> peut être un nom qualifié comme <b>Foo::print*</b>. Ainsi, il peut spécifier un namespace particulier en utilisant une séquence de noms de namespace séparés par <b>::</b>, et peut avoir un modèle correspondant à des caractères spéciaux à la fin pour spécifier un ensemble de commandes dans ce namespace. Si <i>pattern</i> est un nom qualifié, la liste résultante de noms de commande a chacun des noms qualifiés avec le nom du namespace spécifié . 
+</DD>
+  <DT><br><b>info complete </b><i>command</i>
+</DT><DD>Renvoie 1 si <i>command</i> est une commande complète Tcl dans le sens où elle n'a pas de guillemets, accolades, crochets ou noms élément de tableau non fermants, Si la commande n'apparait pas complète alors 0 est renvoyé. Cette commande est typiquement utilisée dans les environnements orientés ligne de commande pour autoriser les utilisateurs à saisir des commandes réparties sur plusieurs lignes;&nbsp; si la commande n'est pas complète, le script peut retarder l'évalualuation jusqu'a ce que des lignes supplémentaire ait été saisies pour compléter la commande. <
+<b>info default </b><i>procname arg varname</i><br>
+<i>Procname</i> doit être le nom d'une fonction de commande Tcl et <i>arg</i> doit être le nom d'un argument à cette fonction Si <i>arg</i> n'a pas de valeur par défaut alors la commande retourne <b>0</b>. Autrement elle retourne <b>1</b> et place la valeur par défaut de <i>arg</i> dans la variable <i>varname</i>. 
+</DD>
+  <DT><br><b>info exists </b><i>varName</i>
+</DT><DD>Renvoie <b>1</b> si le nom de variable <i>varName</i> existe dans le contexte courant (soit comme variable globale ou locale) et a été définie en lui donnant une valeur, retourne <b>0</b> autrement. 
+</DD>
+  <DT><br><b>info globals </b>?<i>pattern</i>?
+</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de tout les noms des variables globales couramment définies. Les variables globales sont des variables dans le namespace global . Si <i>pattern</i> est spécifié, seulement les noms correspondants à <i>pattern</i> sont renvoyés La correspondance est déterminée en utilisant les même règles que pour <b>string match</b>. 
+</DD>
+  <DT><br><b>info hostname</b>
+</DT><DD>Renvoie le nom de l'ordinateur sur lequel cet appel est exécuté. 
+</DD>
+  <DT><br><b>info level</b> ?<i>number</i>?
+</DT><DD>Si <i>number</i> n'est pas spécifié, cette commande retourne un nombre donnant le niveau dans la pile de la fonction appelée, ou 0 si la commande est appelée au premier plan Si <i>number</i> est spécifié, alors le résultat est une liste consistant des noms et arguments de la fonction appellée au niveau <i>number</i> sur la pile Si <i>number</i> est positif alors il désigne un niveau de pile particulier (1 se réfère à la fonction active, 2 à la fonction qu'elle a appelé, et ainsi de suite); autrement cela donne un niveau relatif au niveau courant (0.htm se réfère à la fonction courante, -1.htm à l'appelant, et ainsi de suite). Voir la commande <A HREF="177.htm"><b>uplevel</b></A> pour plus d'information sur la signification des niveaux de pile d'appel. 
+</DD>
+  <DT><br><b>info library</b>
+</DT><DD>Renvoie le nom du répertoire bibliothèque dans lequel les scripts Tcl standards sont stockés. Ceci est actuellement la valeur de la variable <b>tcl_library</b> et peut être changé en fixant <b>tcl_library</b>. Voir la page de manuel <A HREF="170.htm"><b>tclvars</b></A> pour plus d'information.
+</DD>
+  <DT><br><b>info loaded </b>?<i>interp</i>?</DT><DD>Renvoie une liste décrivant tous les packages qui ont été chargés dans <i>interp</i> avec la commande<A HREF="134.htm"><b> load</b></A>. Chaque élément de la liste est une sous-liste de deux éléments consistant du nom du fichier duquel le package a été chargé et du nom du package. Pour les packages statiquement chargés le nom de chemin sera une chaîne vide. Si <i>interp</i> est omis alors il'nformation est renvoyée pour tout packages chargé dans tout interpréteur du processus. Pour obtenir une liste des packages dans le courant interpréteur, Spécifiez une chaîne vide pour l'argument<i> interp</i>.
+</DD>
+  <DT><br><b>info locals </b>?<i>pattern</i>?
+</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de tout les noms des variables locales couramment-définies, incluant les arguments à la fonction courante, s'ils existent. Les variables définies avec les commandes <A HREF="120.htm"><b>global</b></A> et <A HREF="178.htm"><b>upvar</b></A> ne seront pas renvoyées. Si <i>pattern</i> est spécifié, seulement les noms correspondants à <i>pattern</i> sont renvoyés La correspondance est déterminée en utilisant les même règles que pour <b>string </b><b>match</b>. 
+</DD>
+  <DT><br><b>info nameofexecutable</b>
+</DT><DD>Renvoie le nom de chemin complet du fichier binaire duquel l'application a été appelée. Si Tcl a été incapable d'identifier le fichier, alors une chaîne vide est renvoyée. 
+</DD>
+  <DT><br><b>info patchlevel</b>
+</DT><DD>Renvoie la valeur de la variable globale <b>tcl_patchLevel</b>; voyez la page de manuel <A HREF="170.htm"><b>tclvars</b></A> pour plus d'information. 
+</DD>
+  <DT><br><b>info procs </b>?<i>pattern</i>?
+</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de tout les noms des fonctions Tcl dans le namespace courant. Si <i>pattern</i> est spécifié, seulement les noms de fonction dans le namespace&nbsp; courant correspondants à <i>pattern</i> sont renvoyés. La correspondance est déterminé en utilisant les même règles que pour <b>string match</b>. 
+</DD>
+  <DT><br><b>info script</b>
+</DT><DD>Si un fichier script Tcl est couramment évalué (ex. il y a un appel actif de <A HREF="34.htm"><b>Tcl_EvalFile</b></A> ou il y a un appel actif de la commande<A HREF="163.htm"><b> source</b></A>), alors cette commande retourne le nom du fichier traité Autrement la commande retourne une chaîne vide. 
+</DD>
+  <DT><br><b>info sharedlibextension</b>
+</DT><DD>Renvoie l'extension utilisée sur cette plateforme pour les noms des fichiers contenant des librairies partagées (par exemple, <b>.so</b> sous Solaris). Si les librairies partagées ne sont pas supportées sur cette plateforme alors une chaîne vide est renvoyée. 
+</DD>
+  <DT><br><b>info tclversion</b>
+</DT><DD>Renvoie la valeur de la variable globale <b>tcl_version</b>; voyez la page de manuel <A HREF="170.htm"><b>tclvars</b></A> pour plus d'information. </DD>
+  <DT><br><b>info vars</b> ?<i>pattern</i>?
+</DT><DD>Si <i>pattern</i> n'est pas spécifié, retourne une liste de tout les noms des variables (locales et globales incluses)couramment visibles. Si <i>pattern</i> est spécifié, seuls les noms correspondants à <i>pattern</i> sont renvoyés. La correspondance est déterminée en utilisant les même règles que pour <b>string match</b>. <i>pattern</i> peut être un nom qualifié comme <b>Foo::option*</b>. Ainsi, il peut spécifier un namespace particulier en utilisant une séquence de noms de namespace séparés par <b>::</b>, et peut avoir modèle correspondant à des caractères spéciaux à la fin pour spécifier un ensemble de variables dans ce namespace. Si <i>pattern</i> est un nom qualifié, la liste résultante de noms de variable contient chaque variable namespace correspondante qualifiée avec le nom de son namespace 
+</DD>
+</DL>
+<div><br>
+<div>Dernière révision: 7.5</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="124.htm"><b>Précédent</b></A>&nbsp;&nbsp;<A HREF="126.htm"><b>Suivant</b></A></div>
+</BODY></HTML>

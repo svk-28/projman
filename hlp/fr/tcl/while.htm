@@ -1,0 +1,23 @@
+<HTML><HEAD>
+<BASEFONT FACE="Times New Roman" SIZE="2" COLOR="#000000">
+</HEAD>
+<BODY>
+<div><H3><b>while&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Commandes Internes Tcl</b></H3></div>
+<HR ALIGN="center">
+<div><b>NOM</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">while - Execute un script répétitivement tant qu'une condition est rencontrée 
+</div><br>
+<div><b>SYNTAXE</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;"><b>while </b><i>test body</i>
+</div><br>
+<div><b>DESCRIPTION</b></div><br>
+<div ALIGN="LEFT" style="margin-left: 51px;">La commande <b>while</b> évalue <i>test</i> comme expression (de la même façon que <A HREF="107.htm"><b>expr</b></A> évalue ses arguments). La valeur de l'expression doit une valeur booléenne correcte; si c'est la valeur true alors <i>body</i> est exécuté par transmission à l'interpréteur Tcl. Une fois que <i>body</i> a été exécuté alors <i>test</i> est évalué de nouveau, et le processus recommence jusqu'a ce que éventuellement <i>test</i> évalue à une valeur booléenne false. Des commandes <b>continue</b> peuvent être exécutées à l'interieur de <i>body</i> pour terminer l'itération courante de la boucle, et des commandes <A HREF="92.htm"><b>break</b></A> peuvent être exécutées à l'interieur <i>body</i> pour provoquer la fin immédiate de la commande<i> </i><b>while</b>. La commande <b>while</b> retourne toujours une cha&icirc;ne vide. </div>
+<div ALIGN="LEFT" style="margin-left: 51px;">Note: <i>test</i> devra presque toujours être entourée d'accolades Sinon, les substitutions de variable seront faites avant que la commande <b>while</b> démarre l'exécution, ce qui signifie que le changement de la variable fait par le corps de la boucle ne sera pas consideré dans l'expression. Ceci donnera souvent une boucle infinie. Si <i>test</i> est entourée d'accolades, les substitutions de variables sont retardées jusqu'a ce que l'expression soit évaluée (avant chaque itération de boucle), donc les changements de la variables seront visible. Comme exemple, essayez le script suivant avec et sans accolades autour de <b>&#36;x&lt;10</b>: </div>
+<div ALIGN="LEFT" style="margin-left: 102px;">set x 0<br>
+while &#123;&#36;x&lt;10} &#123;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;puts &quot;x est &#36;x&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;incr x<br>
+}</div>
+<br>
+<br><div ALIGN="CENTER"><A HREF="index.htm"><b>Index</b></A>&nbsp;&nbsp;<A HREF="180.htm"><b>Précédent</b></A></div>
+</BODY></HTML>
