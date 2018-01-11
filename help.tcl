@@ -134,9 +134,6 @@ proc GetContent {file} {
     set file [open $file r]
     fconfigure $file -encoding binary
     while {[gets $file line]>=0} {
-#        if {$line == ""} {
-#            set html "<h1>æÁÊÌ $file ÎÅ ÓÏÄÅÒÖÉÔ ÄÁÎÎÙÈ</h1>"
-#        }
         set line [encoding convertfrom $sourceEncode $line]
         if {[regexp -nocase "<title>.+\</title>" $line a]} {
             if {[regexp ">.+\<" $a a]} {
@@ -336,6 +333,7 @@ proc TopLevelHelp {} {
 #GetTOC
 
 #GetContent $docDir/tcl.toc.html
+
 
 
 
