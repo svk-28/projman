@@ -10,6 +10,8 @@
 11/01/2018
 - Changes color setting dialog into "Setting"
 - Actualizing information into "About" dialog 
+- Corrected color settings for all widgets
+- Change default color scheme
 
 0.4.4
 
@@ -329,6 +331,8 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
+
 
 
 

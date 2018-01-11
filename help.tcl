@@ -123,7 +123,7 @@ proc SearchWord {word} {
 }
 ## GETTING CONTENT FROM FILES ##
 proc GetContent {file} {
-    global docDir hlpNoteBook fontNormal sourceEncode
+    global docDir hlpNoteBook fontNormal sourceEncode editor
     $hlpNoteBook raise [$hlpNoteBook page 0]
     set node [$hlpNoteBook raise]
     if {$node != ""} {
@@ -201,7 +201,7 @@ proc LinkCallback_ {w url} {
 ## MAIN HELP WINDOW ##
 proc TopLevelHelp {} {
     global fontNormal fontBold hlpTree hlpNoteBook nBookTree homeDir docDir lstSearch w frmSrchList
-    global imgDir
+    global imgDir color editor
     set w .help
     set w_exist [winfo exists $w]
     if !$w_exist  {
@@ -236,7 +236,7 @@ proc TopLevelHelp {} {
         $w.frmTool.btnRefresh configure -image imgRefresh
         $w.frmTool.btnPrint configure -image imgPrint
         pack $w.frmTool.btnBack $w.frmTool.btnForward $w.frmTool.btnRefresh $w.frmTool.btnPrint\
-                -side left -fill x
+        -side left -fill x
         
         
         set frmCat [frame $w.frmBody.frmCat -border 1 -relief sunken]
@@ -244,7 +244,7 @@ proc TopLevelHelp {} {
         set frmWork [frame $w.frmBody.frmWork -border 1 -relief sunken]
         pack $frmWork -side left -fill both -expand true
         
-        set nBookTree [NoteBook $frmCat.nBookTree -font $fontNormal]
+        set nBookTree [NoteBook $frmCat.nBookTree -font $fontNormal -bg $editor(bg) -fg $editor(fg)]
         pack $nBookTree -fill both -expand true -padx 2 -pady 2
         set frmTreeNb [$nBookTree insert end hlpTree -text "[::msgcat::mc "Contents"]"]
         set frmSearch [$nBookTree insert end hlpSearch -text "[::msgcat::mc "Search"]"]
@@ -253,64 +253,64 @@ proc TopLevelHelp {} {
         set frmScrlX [frame $frmTreeNb.frmScrlX -border 0 -relief sunken]
         set frmTree [frame $frmTreeNb.frmTree -border 1 -relief sunken]
         set hlpTree [Tree $frmTree.tree \
-                -relief sunken -borderwidth 1 -width 20 -highlightthickness 0\
-                -redraw 0 -dropenabled 1 -dragenabled 1 -dragevent 3 \
-                -yscrollcommand {.help.frmBody.frmCat.nBookTree.fhlpTree.frmTree.scrlY set} \
-                -xscrollcommand {.help.frmBody.frmCat.nBookTree.fhlpTree.frmScrlX.scrlX set} \
-                -background "#d3d3d3" -selectbackground "#55c4d1" \
-                -droptypes {
+        -relief sunken -borderwidth 1 -width 20 -highlightthickness 0\
+        -redraw 0 -dropenabled 1 -dragenabled 1 -dragevent 3 \
+        -yscrollcommand {.help.frmBody.frmCat.nBookTree.fhlpTree.frmTree.scrlY set} \
+        -xscrollcommand {.help.frmBody.frmCat.nBookTree.fhlpTree.frmScrlX.scrlX set} \
+        -selectbackground "#55c4d1" \
+        -droptypes {
             TREE_NODE    {copy {} move {} link {}}
             LISTBOX_ITEM {copy {} move {} link {}}
         } -opencmd   "" -closecmd  ""]
         
-            pack $frmTree -side top -fill y -expand true
-            pack $frmScrlX -side top -fill x
-            
-            scrollbar $frmTree.scrlY -command {$hlpTree yview} \
-                    -borderwidth {1} -width {10} -takefocus 0
-            pack $hlpTree $frmTree.scrlY -side left -fill y
-            
-            scrollbar $frmScrlX.scrlX -command {$hlpTree xview} \
-                    -orient horizontal -borderwidth {1} -width {10} -takefocus 0
-            pack $frmScrlX.scrlX -fill x -expand true
-            
-            set frmSrchList [frame $frmSearch.frmScrhList -border 0 -relief sunken]
-            set frmSrchEnt [frame $frmSearch.frmScrhEnt -border 0 -relief sunken]
-            set frmSrchScrollX [frame $frmSearch.frmScrhScrollX -border 0 -relief sunken]
-            pack $frmSrchEnt -side top -fill x
-            pack $frmSrchList -side top -fill both -expand true
-            pack $frmSrchScrollX -side top -fill x
-            
-            entry $frmSrchEnt.entSearch
-            set lstSearch [listbox $frmSrchList.lstSearch -font $fontNormal\
-                    -yscrollcommand\
-                    {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhList.scrListY set}\
-                    -xscrollcommand\
-                    {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhScrollX.scrListX set}\
-                    -selectmode single -selectbackground #55c4d1\
-                    -selectborderwidth 0]
-            scrollbar $frmSrchList.scrListY -command\
-                    {$frmSrchList.lstSearch yview} -borderwidth {1} -width {10} -takefocus 0
-            
-            pack $frmSrchEnt.entSearch -side top -fill x -expand true
-            
-            pack $frmSrchList.lstSearch -side left -fill both -expand true
-            pack $frmSrchList.scrListY -side left -fill y
-            
-            scrollbar $frmSrchScrollX.scrListX -orient horizontal -command\
-                    {$frmSrchList.lstSearch xview} -borderwidth {1} -width {10} -takefocus 0
-            pack $frmSrchScrollX.scrListX -fill x
-#            $hlpTree bindText <ButtonRelease-4> [puts %k]
-#            $hlpTree bindText <ButtonRelease-3> [puts %k]
-#            bind $frmTree <ButtonPress-4> {$frmSrchList.lstSearch xview}
-    #        $hlpTree bindText  <Double-ButtonPress-1> "HlpTreeDoubleClick [$hlpTree selection get]"
-    #        $hlpTree bindImage  <Double-ButtonPress-1> "HlpTreeDoubleClick [$hlpTree selection get]"
-            $hlpTree bindText  <ButtonPress-1> "HlpTreeOneClick [$hlpTree selection get]"
-            $hlpTree bindImage  <ButtonPress-1> "HlpTreeOneClick [$hlpTree selection get]"
-            bind .help <Escape> "destroy .help"
-
-#        bind $frmSrchEnt.entSearch <KeyRelease>\
-#                {SearchWord [Text .help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhEnt.entSearch]}
+        pack $frmTree -side top -fill y -expand true
+        pack $frmScrlX -side top -fill x
+        
+        scrollbar $frmTree.scrlY -command {$hlpTree yview} \
+        -borderwidth {1} -width {10} -takefocus 0
+        pack $hlpTree $frmTree.scrlY -side left -fill y
+        
+        scrollbar $frmScrlX.scrlX -command {$hlpTree xview} \
+        -orient horizontal -borderwidth {1} -width {10} -takefocus 0
+        pack $frmScrlX.scrlX -fill x -expand true
+        
+        set frmSrchList [frame $frmSearch.frmScrhList -border 0 -relief sunken]
+        set frmSrchEnt [frame $frmSearch.frmScrhEnt -border 0 -relief sunken]
+        set frmSrchScrollX [frame $frmSearch.frmScrhScrollX -border 0 -relief sunken]
+        pack $frmSrchEnt -side top -fill x
+        pack $frmSrchList -side top -fill both -expand true
+        pack $frmSrchScrollX -side top -fill x
+        
+        entry $frmSrchEnt.entSearch
+        set lstSearch [listbox $frmSrchList.lstSearch -font $fontNormal\
+        -yscrollcommand\
+        {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhList.scrListY set}\
+        -xscrollcommand\
+        {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhScrollX.scrListX set}\
+        -selectmode single -selectbackground #55c4d1\
+        -selectborderwidth 0]
+        scrollbar $frmSrchList.scrListY -command\
+        {$frmSrchList.lstSearch yview} -borderwidth {1} -width {10} -takefocus 0
+        
+        pack $frmSrchEnt.entSearch -side top -fill x -expand true
+        
+        pack $frmSrchList.lstSearch -side left -fill both -expand true
+        pack $frmSrchList.scrListY -side left -fill y
+        
+        scrollbar $frmSrchScrollX.scrListX -orient horizontal -command\
+        {$frmSrchList.lstSearch xview} -borderwidth {1} -width {10} -takefocus 0
+        pack $frmSrchScrollX.scrListX -fill x
+        #            $hlpTree bindText <ButtonRelease-4> [puts %k]
+        #            $hlpTree bindText <ButtonRelease-3> [puts %k]
+        #            bind $frmTree <ButtonPress-4> {$frmSrchList.lstSearch xview}
+        #        $hlpTree bindText  <Double-ButtonPress-1> "HlpTreeDoubleClick [$hlpTree selection get]"
+        #        $hlpTree bindImage  <Double-ButtonPress-1> "HlpTreeDoubleClick [$hlpTree selection get]"
+        $hlpTree bindText  <ButtonPress-1> "HlpTreeOneClick [$hlpTree selection get]"
+        $hlpTree bindImage  <ButtonPress-1> "HlpTreeOneClick [$hlpTree selection get]"
+        bind .help <Escape> "destroy .help"
+        
+        #        bind $frmSrchEnt.entSearch <KeyRelease>\
+        #                {SearchWord [Text .help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhEnt.entSearch]}
         
         #bind $w <Escape> exit
         #bind $frmTree <Down> {TreeClick [$hlpTree selection get]}
@@ -321,11 +321,11 @@ proc TopLevelHelp {} {
         bind $frmTree.tree.c <Shift-Button-4> "$hlpTree xview scroll -2 units"
         bind $frmTree.tree.c <Shift-Button-5> "$hlpTree xview scroll  2 units"
         
-        set hlpNoteBook [NoteBook $frmWork.hlpNoteBook -font $fontNormal]
+        set hlpNoteBook [NoteBook $frmWork.hlpNoteBook -font $fontNormal  -bg $editor(bg) -fg $editor(fg)]
         pack $hlpNoteBook -fill both -expand true -padx 2 -pady 2
         GetTOC
     }
-
+    
 }
 
 ##################################################
@@ -333,6 +333,10 @@ proc TopLevelHelp {} {
 #GetTOC
 
 #GetContent $docDir/tcl.toc.html
+
+
+
+
 
 
 

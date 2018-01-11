@@ -673,6 +673,8 @@ proc BraceHighLight {text} {
     #    _searchCloseBracket $text \{ \} insert end]
     
 }
+
+
 ## NOTEBOOK PAGE SWITCHER ##
 ## NOTEBOOK PAGE SWITCHER ##
 proc PageTab {key} {
@@ -932,7 +934,7 @@ proc EditFile {node fileName} {
     close $file
     $w.text mark set insert 0.0
     $w.text see insert
-    $w.text tag configure lightBracket -background #000000 -foreground #00feff
+    $w.text tag configure lightBracket -background #000000 -foreground #00ffff
     
     # key bindings #
     set text $w.text
@@ -1133,4 +1135,6 @@ proc SelectAll {text} {
 
 #################################### 
 GetOp
+
+
 

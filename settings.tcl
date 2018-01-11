@@ -23,15 +23,16 @@ proc Settings {} {
     #    wm resizable $w 0 0
     wm geometry $w 464x450+0+0
     wm transient $w .
-    frame $w.frmMain -borderwidth 1
+    frame $w.frmMain -borderwidth 1 -bg $editor(bg)
     pack $w.frmMain -side top -fill both -expand 1
-    frame $w.frmBtn -borderwidth 1
+    frame $w.frmBtn -borderwidth 1  -bg $editor(bg)
     pack $w.frmBtn -side top -fill x
     
-    set nb [NoteBook $w.frmMain.noteBook -font $fontBold -side top]
+    set nb [NoteBook $w.frmMain.noteBook -font $fontBold -side top -bg $editor(bg) -fg $editor(fg)]
     pack $nb -fill both -expand true -padx 2 -pady 2
     
-    button $w.frmBtn.btnFind -text [::msgcat::mc "Save"] -font $fontNormal -width 12 -relief groove\
+    button $w.frmBtn.btnFind -text [::msgcat::mc "Save"] -font $fontNormal -width 12 -relief groove \
+    -bg $editor(bg) -fg $editor(fg) \
     -command {
         file copy -force [file join $workDir projman.conf] [file join $workDir projman.conf.old]
         set file [open [file join $workDir projman.conf] w]
@@ -128,24 +129,24 @@ proc Settings {} {
         destroy .pref
     }
     button $w.frmBtn.btnCancel -text [::msgcat::mc "Close"] -relief groove -width 12\
-    -font $fontNormal -command "destroy $w"
+    -font $fontNormal -command "destroy $w" -bg $editor(bg) -fg $editor(fg)
     pack $w.frmBtn.btnFind $w.frmBtn.btnCancel -fill x -padx 2 -pady 2 -side left
     
     ##################  MAIN PREF ##########################
     set main [$nb insert end main -text "[::msgcat::mc "Main"]"]
     
-    set scrwin [ScrolledWindow $main.scrwin -relief groove -bd 2]
+    set scrwin [ScrolledWindow $main.scrwin -relief groove -bd 2 -bg $editor(bg)]
     #pack $scrwin -fill both -expand true
-    set scrfrm [ScrollableFrame $main.frm]
+    set scrfrm [ScrollableFrame $main.frm  -bg $editor(bg)]
     pack $scrwin -fill both -expand true
     pack $scrfrm -fill both -expand true
     
     $scrwin setwidget $scrfrm
     set main [$scrfrm getframe]
     
-    set frm_1 [frame $main.frmFontNormal]
+    set frm_1 [frame $main.frmFontNormal  -bg $editor(bg)]
     label $frm_1.lblFontNormal -text [::msgcat::mc "Font normal"] -width 30\
-    -anchor w -font $fontNormal
+    -anchor w -font $fontNormal -fg $editor(fg) -bg $editor(bg)
     entry $frm_1.txtFontNormal
     button $frm_1.btnFontNormal -borderwidth {1} -font $fontNormal \
     -command {SelectFontDlg $fontNormal $main.frmFontNormal.txtFontNormal} \
@@ -154,8 +155,9 @@ proc Settings {} {
     pack $frm_1.txtFontNormal -side left -fill x -expand true
     pack $frm_1.btnFontNormal -side left
     
-    set frm_2 [frame $main.frmFontBold]
-    label $frm_2.lblFontBold -text [::msgcat::mc "Font bold"] -width 30 -anchor w -font $fontNormal
+    set frm_2 [frame $main.frmFontBold -bg $editor(bg)]
+    label $frm_2.lblFontBold -text [::msgcat::mc "Font bold"] -width 30 -anchor w \
+    -font $fontNormal -fg $editor(fg) -bg $editor(bg)
     entry $frm_2.txtFontBold
     button $frm_2.btnFontBold -borderwidth {1} -font $fontNormal \
     -command {SelectFontDlg $fontBold $main.frmFontBold.txtFontBold} \
@@ -164,17 +166,19 @@ proc Settings {} {
     pack $frm_2.txtFontBold -side left -fill x -expand true
     pack $frm_2.btnFontBold -side left
     
-    set frm_3 [frame $main.frmToolBar]
-    label $frm_3.lblToolBar -text [::msgcat::mc "Toolbar"] -width 30 -anchor w -font $fontNormal
+    set frm_3 [frame $main.frmToolBar -bg $editor(bg)]
+    label $frm_3.lblToolBar -text [::msgcat::mc "Toolbar"] -width 30 -anchor w \
+    -font $fontNormal -fg $editor(fg) -bg $editor(bg)
     checkbutton $frm_3.chkToolBar -text "" -variable toolBar \
-    -font $fontNormal -onvalue true -offvalue false
+    -font $fontNormal -onvalue true -offvalue false -bg $editor(bg)
     pack $frm_3.lblToolBar -side left
     pack $frm_3.chkToolBar -side left
     
-    set frm_4 [frame $main.frmProjDir]
-    label $frm_4.lblProjDir -text [::msgcat::mc "Projects"] -width 30 -anchor w -font $fontNormal
-    entry $frm_4.txtProjDir
-    button $frm_4.btnProjDir -borderwidth {1} -font $fontNormal \
+    set frm_4 [frame $main.frmProjDir -bg $editor(bg)]
+    label $frm_4.lblProjDir -text [::msgcat::mc "Projects"] -width 30 -anchor w \
+    -font $fontNormal -fg $editor(fg) -bg $editor(bg)
+    entry $frm_4.txtProjDir -bg $editor(bg)
+    button $frm_4.btnProjDir -borderwidth {1} -font $fontNormal -bg $editor(bg)\
     -image [Bitmap::get [file join $imgDir folder.gif]]\
     -command {
         InsertEnt $main.frmProjDir.txtProjDir [SelectDir $projDir]
@@ -183,20 +187,21 @@ proc Settings {} {
     pack $frm_4.txtProjDir -side left -fill x -expand true
     pack $frm_4.btnProjDir -side left
     
-    set frm_5 [frame $main.frmLocale]
+    set frm_5 [frame $main.frmLocale -bg $editor(bg)]
     label $frm_5.lblLocale -text [::msgcat::mc "Interface language"]\
-    -width 30 -anchor w -font $fontNormal
-    set combo [ComboBox $frm_5.txtLocale\
+    -width 30 -anchor w -font $fontNormal -fg $editor(fg) -bg $editor(bg)
+    set combo [ComboBox $frm_5.txtLocale \
     -textvariable localeSet -command "puts 123"\
     -selectbackground "#55c4d1" -selectborderwidth 0\
     -values [GetLocale]]
     pack $frm_5.lblLocale -side left
     pack $frm_5.txtLocale -side left -fill x -expand true
     
-    set frm_6 [frame $main.frmRpmDir]
-    label $frm_6.lblRpmDir -text [::msgcat::mc "RPM dir"] -width 30 -anchor w -font $fontNormal
-    entry $frm_6.txtRpmDir
-    button $frm_6.btnRpmDir -borderwidth {1} -font $fontNormal \
+    set frm_6 [frame $main.frmRpmDir -bg $editor(bg)]
+    label $frm_6.lblRpmDir -text [::msgcat::mc "RPM dir"] -width 30 -anchor w \
+    -font $fontNormal -fg $editor(fg) -bg $editor(bg)
+    entry $frm_6.txtRpmDir -fg $editor(fg) -bg $editor(bg)
+    button $frm_6.btnRpmDir -borderwidth {1} -font $fontNormal -bg $editor(bg) \
     -image [Bitmap::get [file join $imgDir folder.gif]]\
     -command {
         InsertEnt $main.frmRpmDir.txtRpmDir [SelectDir $workDir]
@@ -205,8 +210,8 @@ proc Settings {} {
     pack $frm_6.txtRpmDir -side left -fill x -expand true
     pack $frm_6.btnRpmDir -side left
     
-    set frm_7 [frame $main.frmTgzDir]
-    label $frm_7.lblTgzDir -text [::msgcat::mc "TGZ dir"] -width 30 -anchor w -font $fontNormal
+    set frm_7 [frame $main.frmTgzDir -bg $editor(bg)]
+    label $frm_7.lblTgzDir -text [::msgcat::mc "TGZ dir"] -width 30 -anchor w -font $fontNormal -fg $editor(fg)
     entry $frm_7.txtTgzDir
     button $frm_7.btnTgzDir -borderwidth {1} -font $fontNormal \
     -image [Bitmap::get [file join $imgDir folder.gif]]\
@@ -217,39 +222,39 @@ proc Settings {} {
     pack $frm_7.txtTgzDir -side left -fill x -expand true
     pack $frm_7.btnTgzDir -side left
 
-    set frm_8 [frame $main.frmRpmNamed]
+    set frm_8 [frame $main.frmRpmNamed -bg $editor(bg)]
     label $frm_8.lblRpmNamed -text [::msgcat::mc "RPM file mask"] -width 30 -anchor w\
-            -font $fontNormal
-            entry $frm_8.txtRpmNamed
+    -font $fontNormal -fg $editor(fg)
+    entry $frm_8.txtRpmNamed
     pack $frm_8.lblRpmNamed -side left
     pack $frm_8.txtRpmNamed -side left -fill x -expand true
 
-    set frm_9 [frame $main.frmTgzNamed]
+    set frm_9 [frame $main.frmTgzNamed -bg $editor(bg)]
     label $frm_9.lblTgzNamed -text [::msgcat::mc "TGZ file mask"] -width 30 -anchor w\
-            -font $fontNormal
+    -font $fontNormal -fg $editor(fg)
     entry $frm_9.txtTgzNamed
     pack $frm_9.lblTgzNamed -side left
     pack $frm_9.txtTgzNamed -side left -fill x -expand true
 
-    set frm_10 [frame $main.frmBackUpCreate]
+    set frm_10 [frame $main.frmBackUpCreate -bg $editor(bg)]
     label $frm_10.lblBackUpCreate -text [::msgcat::mc "Create backup files"]\
-            -width 30 -anchor w -font $fontNormal
+            -width 30 -anchor w -font $fontNormal -fg $editor(fg)
     checkbutton $frm_10.chkBackUpCreate -text "" -variable backUpCreate \
             -font $fontNormal -onvalue true -offvalue false
     pack $frm_10.lblBackUpCreate -side left
     pack $frm_10.chkBackUpCreate -side left
 
-    set frm_11 [frame $main.frmBackUpShow]
+    set frm_11 [frame $main.frmBackUpShow -bg $editor(bg)]
     label $frm_11.lblBackUpShow -text [::msgcat::mc "Show backup files"]\
-            -width 30 -anchor w -font $fontNormal
+            -width 30 -anchor w -font $fontNormal -fg $editor(fg)
     checkbutton $frm_11.chkBackUpShow -text "" -variable backUpShow \
             -font $fontNormal -onvalue true -offvalue false
     pack $frm_11.lblBackUpShow -side left
     pack $frm_11.chkBackUpShow -side left
 
-    set frm_12 [frame $main.frmBackUpDel]
+    set frm_12 [frame $main.frmBackUpDel -bg $editor(bg)]
     label $frm_12.lblBackUpDel -text [::msgcat::mc "Delete backup files"]\
-            -width 30 -anchor w -font $fontNormal
+            -width 30 -anchor w -font $fontNormal -fg $editor(fg)
     checkbutton $frm_12.chkBackUpDel -text "" -variable backUpDel \
             -font $fontNormal -onvalue true -offvalue false
     pack $frm_12.lblBackUpDel -side left
@@ -261,15 +266,15 @@ proc Settings {} {
     #################### EDITOR PREF #########################
     set editFrm [$nb insert end editor -text "[::msgcat::mc "Editor"]"]
     
-    set scrwin [ScrolledWindow $editFrm.scrwin  -relief groove -bd 2]
-    set scrfrm [ScrollableFrame $editFrm.frm]
+    set scrwin [ScrolledWindow $editFrm.scrwin  -relief groove -bd 2 -bg $editor(bg)]
+    set scrfrm [ScrollableFrame $editFrm.frm -bg $editor(bg)]
     pack $scrwin -fill both -expand true
     pack $scrfrm -fill both -expand true
     $scrwin setwidget $scrfrm
     
     set editFrm [$scrfrm getframe]
     
-    set frm_13 [frame $editFrm.frmEditorFont]
+    set frm_13 [frame $editFrm.frmEditorFont -bg $editor(bg)]
     label $frm_13.lblEditorFont -text [::msgcat::mc "Editor font"] -width 30\
     -anchor w -font $fontNormal
     entry $frm_13.txtEditorFont
@@ -280,7 +285,7 @@ proc Settings {} {
     pack $frm_13.txtEditorFont -side left -fill x -expand true
     pack $frm_13.btnEditorFont -side left
     
-    set frm_14 [frame $editFrm.frmEditorFontBold]
+    set frm_14 [frame $editFrm.frmEditorFontBold -bg $editor(bg)]
     label $frm_14.lblEditorFontBold -text [::msgcat::mc "Editor font bold"]\          -width 30 -anchor w -font $fontNormal
     entry $frm_14.txtEditorFontBold
     button $frm_14.btnEditorFontBold -borderwidth {1} -font $fontNormal \
@@ -290,7 +295,7 @@ proc Settings {} {
     pack $frm_14.txtEditorFontBold -side left -fill x -expand true
     pack $frm_14.btnEditorFontBold -side left
     
-    set frm_21 [frame $editFrm.frmColorEditBG]
+    set frm_21 [frame $editFrm.frmColorEditBG -bg $editor(bg)]
     label $frm_21.lblColorEditBG -text [::msgcat::mc "Editor background"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_21.txtColorEditBG
@@ -304,7 +309,7 @@ proc Settings {} {
     pack $frm_21.txtColorEditBG -side left -fill x -expand true
     pack $frm_21.btnColorEditBG -side left
     
-    set frm_22 [frame $editFrm.frmColorEditFG]
+    set frm_22 [frame $editFrm.frmColorEditFG -bg $editor(bg)]
     label $frm_22.lblColorEditFG -text [::msgcat::mc "Editor foreground"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_22.txtColorEditFG
@@ -318,7 +323,7 @@ proc Settings {} {
     pack $frm_22.txtColorEditFG -side left -fill x -expand true
     pack $frm_22.btnColorEditFG -side left
 
-    set frm_15 [frame $editFrm.frmAutoFormat]
+    set frm_15 [frame $editFrm.frmAutoFormat -bg $editor(bg)]
     label $frm_15.lblAutoFormat -text [::msgcat::mc "Text autoformat"]\
             -width 30 -anchor w -font $fontNormal
     checkbutton $frm_15.chkAutoFormat -text "" -variable autoFormat \
@@ -328,7 +333,7 @@ proc Settings {} {
     
     set wrapList [list none word char]
     
-    set frm_28 [frame $editFrm.frmWrap]
+    set frm_28 [frame $editFrm.frmWrap -bg $editor(bg)]
     label $frm_28.lblWrap -text [::msgcat::mc "Word wrapping"]\
     -width 30 -anchor w -font $fontNormal
     set combo2 [ComboBox $frm_28.txtWrap\
@@ -338,7 +343,7 @@ proc Settings {} {
     pack $frm_28.lblWrap -side left
     pack $combo2 -side left
 
-    set frm_16 [frame $editFrm.frmColorProc]
+    set frm_16 [frame $editFrm.frmColorProc -bg $editor(bg)]
     label $frm_16.lblColorProc -text [::msgcat::mc "Procedure name"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_16.txtColorProc -background $editor(bg)
@@ -350,7 +355,7 @@ proc Settings {} {
     pack $frm_16.txtColorProc -side left -fill x -expand true
     pack $frm_16.btnColorProc -side left
     
-    set frm_17 [frame $editFrm.frmColorKeyWord]
+    set frm_17 [frame $editFrm.frmColorKeyWord -bg $editor(bg)]
     label $frm_17.lblColorKeyWord -text [::msgcat::mc "Operators"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_17.txtColorKeyWord -background $editor(bg)
@@ -362,7 +367,7 @@ proc Settings {} {
     pack $frm_17.txtColorKeyWord -side left -fill x -expand true
     pack $frm_17.btnColorKeyWord -side left
     
-    set frm_35 [frame $editFrm.frmColorParam]
+    set frm_35 [frame $editFrm.frmColorParam -bg $editor(bg)]
     label $frm_35.lblColorParam -text [::msgcat::mc "Parameters"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_35.txtColorParam -background $editor(bg)
@@ -374,7 +379,7 @@ proc Settings {} {
     pack $frm_35.txtColorParam -side left -fill x -expand true
     pack $frm_35.btnColorParam -side left
     
-    set frm_36 [frame $editFrm.frmColorSubParam]
+    set frm_36 [frame $editFrm.frmColorSubParam -bg $editor(bg)]
     label $frm_36.lblColorSubParam -text [::msgcat::mc "Subparameters"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_36.txtColorSubParam -background $editor(bg)
@@ -386,7 +391,7 @@ proc Settings {} {
     pack $frm_36.txtColorSubParam -side left -fill x -expand true
     pack $frm_36.btnColorSubParam -side left
     
-    set frm_18 [frame $editFrm.frmColorComments]
+    set frm_18 [frame $editFrm.frmColorComments -bg $editor(bg)]
     label $frm_18.lblColorComments -text [::msgcat::mc "Comments"]\
             -width 30 -anchor w -font $fontNormal
     entry $frm_18.txtColorComments -background $editor(bg)
@@ -398,7 +403,7 @@ proc Settings {} {
     pack $frm_18.txtColorComments -side left -fill x -expand true
     pack $frm_18.btnColorComments -side left
 
-    set frm_19 [frame $editFrm.frmColorVar]
+    set frm_19 [frame $editFrm.frmColorVar -bg $editor(bg)]
     label $frm_19.lblColorVar -text [::msgcat::mc "Variables"]\
             -width 30 -anchor w -font $fontNormal
     entry $frm_19.txtColorVar -background $editor(bg)
@@ -410,7 +415,7 @@ proc Settings {} {
     pack $frm_19.txtColorVar -side left -fill x -expand true
     pack $frm_19.btnColorVar -side left
     
-    set frm_20 [frame $editFrm.frmColorString]
+    set frm_20 [frame $editFrm.frmColorString -bg $editor(bg)]
     label $frm_20.lblColorString -text [::msgcat::mc "Quote string"]\
             -width 30 -anchor w -font $fontNormal
     entry $frm_20.txtColorString -background $editor(bg)
@@ -422,7 +427,7 @@ proc Settings {} {
     pack $frm_20.txtColorString -side left -fill x -expand true
     pack $frm_20.btnColorString -side left
     
-    set frm_23 [frame $editFrm.frmColorBrace]
+    set frm_23 [frame $editFrm.frmColorBrace -bg $editor(bg)]
     label $frm_23.lblColorBrace -text [::msgcat::mc "Braces"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_23.txtColorBrace -background $editor(bg)
@@ -434,7 +439,7 @@ proc Settings {} {
     pack $frm_23.txtColorBrace -side left -fill x -expand true
     pack $frm_23.btnColorBrace -side left
 
-    set frm_24 [frame $editFrm.frmColorBraceBG]
+    set frm_24 [frame $editFrm.frmColorBraceBG -bg $editor(bg)]
     label $frm_24.lblColorBraceBG -text [::msgcat::mc "Braces background"]\
             -width 30 -anchor w -font $fontNormal
     entry $frm_24.txtColorBraceBG -background $editor(bg)
@@ -449,7 +454,7 @@ proc Settings {} {
     pack $frm_24.txtColorBraceBG -side left -fill x -expand true
     pack $frm_24.btnColorBraceBG -side left
     
-    set frm_25 [frame $editFrm.frmColorBraceFG]
+    set frm_25 [frame $editFrm.frmColorBraceFG -bg $editor(bg)]
     label $frm_25.lblColorBraceFG -text [::msgcat::mc "Braces foreground"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_25.txtColorBraceFG -background $color(braceBG)
@@ -461,7 +466,7 @@ proc Settings {} {
     pack $frm_25.txtColorBraceFG -side left -fill x -expand true
     pack $frm_25.btnColorBraceFG -side left
 
-    set frm_26 [frame $editFrm.frmColorPercent]
+    set frm_26 [frame $editFrm.frmColorPercent -bg $editor(bg)]
     label $frm_26.lblColorPercent -text [::msgcat::mc "Percent \%"]\
             -width 30 -anchor w -font $fontNormal
     entry $frm_26.txtColorPercent -background $editor(bg)
@@ -473,7 +478,7 @@ proc Settings {} {
     pack $frm_26.txtColorPercent -side left -fill x -expand true
     pack $frm_26.btnColorPercent -side left
 
-    set frm_27 [frame $editFrm.frmColorBindKey]
+    set frm_27 [frame $editFrm.frmColorBindKey -bg $editor(bg)]
     label $frm_27.lblColorBindKey -text [::msgcat::mc "Key bindings <Key>"]\
             -width 30 -anchor w -font $fontNormal
     entry $frm_27.txtColorBindKey -background $editor(bg)
@@ -485,7 +490,7 @@ proc Settings {} {
     pack $frm_27.txtColorBindKey -side left -fill x -expand true
     pack $frm_27.btnColorBindKey -side left
     
-    set frm_32 [frame $editFrm.frmColorSelectBG]
+    set frm_32 [frame $editFrm.frmColorSelectBG -bg $editor(bg)]
     label $frm_32.lblColorSelectBG -text [::msgcat::mc "Selection color"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_32.txtColorSelectBG -background $editor(bg)
@@ -497,7 +502,7 @@ proc Settings {} {
     pack $frm_32.txtColorSelectBG -side left -fill x -expand true
     pack $frm_32.btnColorSelectBG -side left
     
-    set frm_33 [frame $editFrm.frmColorNbNormal]
+    set frm_33 [frame $editFrm.frmColorNbNormal -bg $editor(bg)]
     label $frm_33.lblColorNbNormal -text [::msgcat::mc "Title normal"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_33.txtColorNbNormal -background $editor(bg)
@@ -509,7 +514,7 @@ proc Settings {} {
     pack $frm_33.txtColorNbNormal -side left -fill x -expand true
     pack $frm_33.btnColorNbNormal -side left
     
-    set frm_34 [frame $editFrm.frmColorNbModify]
+    set frm_34 [frame $editFrm.frmColorNbModify -bg $editor(bg)]
     label $frm_34.lblColorNbModify -text [::msgcat::mc "Title modify"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_34.txtColorNbModify -background $editor(bg)
@@ -521,7 +526,7 @@ proc Settings {} {
     pack $frm_34.txtColorNbModify -side left -fill x -expand true
     pack $frm_34.btnColorNbModify -side left
     
-    set frm_37 [frame $editFrm.frmColorLabel]
+    set frm_37 [frame $editFrm.frmColorLabel -bg $editor(bg)]
     label $frm_37.lblColorLabel -text [::msgcat::mc "Label"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_37.txtColorLabel -background $editor(bg)
@@ -533,7 +538,7 @@ proc Settings {} {
     pack $frm_37.txtColorLabel -side left -fill x -expand true
     pack $frm_37.btnColorLabel -side left
 
-    set frm_38 [frame $editFrm.frmColorSixFG]
+    set frm_38 [frame $editFrm.frmColorSixFG -bg $editor(bg)]
     label $frm_38.lblColorSixFG -text [::msgcat::mc "Six pos. foreground"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_38.txtColorSixFG -background $editor(bg)
@@ -545,7 +550,7 @@ proc Settings {} {
     pack $frm_38.txtColorSixFG -side left -fill x -expand true
     pack $frm_38.btnColorSixFG -side left
     
-    set frm_39 [frame $editFrm.frmColorSixBG]
+    set frm_39 [frame $editFrm.frmColorSixBG -bg $editor(bg)]
     label $frm_39.lblColorSixBG -text [::msgcat::mc "Six pos. background"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_39.txtColorSixBG -background $editor(bg)
@@ -557,7 +562,7 @@ proc Settings {} {
     pack $frm_39.txtColorSixBG -side left -fill x -expand true
     pack $frm_39.btnColorSixBG -side left
     
-    set frm_40 [frame $editFrm.frmColorSQL]
+    set frm_40 [frame $editFrm.frmColorSQL -bg $editor(bg)]
     label $frm_40.lblColorSQL -text [::msgcat::mc "SQL commands"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_40.txtColorSQL -background $editor(bg)
@@ -569,7 +574,7 @@ proc Settings {} {
     pack $frm_40.txtColorSQL -side left -fill x -expand true
     pack $frm_40.btnColorSQL -side left
     
-    set frm_41 [frame $editFrm.frmColorBraceQuad]
+    set frm_41 [frame $editFrm.frmColorBraceQuad -bg $editor(bg)]
     label $frm_41.lblColorBraceQuad -text [::msgcat::mc "Quad braces"]\
     -width 30 -anchor w -font $fontNormal
     entry $frm_41.txtColorBraceQuad -background $editor(bg)
@@ -857,4 +862,6 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
+
+
 

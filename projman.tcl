@@ -97,8 +97,38 @@ foreach file [lsort [glob -nocomplain [file join $hlDir *.tcl]]] {
     puts "Loaded highlight module $file"
 }
 
-set editor(selectBorder) "0"
+#set editor(selectBorder) "0"
 
 #option add *tree.foreground red widgetDefault
+# Set colors for widgets
+option add *Frame.background $editor(bg) startupFile
+option add *Scrollableframe.background $editor(bg) startupFile
+option add *Scrolledwindow.background $editor(bg) startupFile
+option add *Button.foreground $editor(fg) startupFile
+option add *Button.background $editor(bg) startupFile
+option add *Entry.foreground $editor(fg) startupFile
+option add *Entry.background $editor(bg) startupFile
+option add *Label.foreground $editor(fg) startupFile
+option add *Label.background $editor(bg) interactive
+option add *Checkbox.foreground $editor(fg) startupFile
+option add *Checkbox.background $editor(bg) startupFile
+option add *Checkbutton.foreground $editor(fg) startupFile
+option add *Checkbutton.background $editor(bg) startupFile
+option add *Combobox.foreground $editor(fg) startupFile
+option add *Combobox.background $editor(bg) startupFile
+option add *Text.foreground $editor(fg) startupFile
+option add *Text.background $editor(bg) startupFile
+option add *Tree.background $editor(bg) startupFile
+option add *Tree.foreground $editor(fg) startupFile
+option add *scrollbar.background $editor(bg) startupFile
+option add *Canvas.background $editor(bg) startupFile
+option add *Canvas.foreground $editor(fg) startupFile
+option add *Node.foreground $editor(fg) startupFile
+option add *NoteBook.bg $editor(bg) startupFile
+option add *NoteBook.fg $editor(fg) startupFile
+option add *Listbox.foreground $editor(fg) startupFile
+option add *Listbox.background $editor(bg) startupFile
+option add *Scrollbar.background $editor(bg) startupFile
+
 
 
