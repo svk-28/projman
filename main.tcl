@@ -139,10 +139,10 @@ proc GetMenu {m} {
     $m add command -label [::msgcat::mc "Replace"] -command ReplaceDialog -font $fontNormal\
     -accelerator "Ctrl+R"
     $m add cascade -label [::msgcat::mc "Encode"] -menu $m.encode -font $fontNormal
-	set me [menu $m.encode  -bg $editor(bg) -fg $editor(fg)]
-	$me add command -label [::msgcat::mc "KOI8-R"] -command {TextEncode koi8-r} -font $fontNormal
-	$me add command -label [::msgcat::mc "CP1251"] -command {TextEncode cp1251} -font $fontNormal
-	$me add command -label [::msgcat::mc "CP866"] -command {TextEncode cp866} -font $fontNormal
+        set me [menu $m.encode  -bg $editor(bg) -fg $editor(fg)]
+        $me add command -label [::msgcat::mc "KOI8-R"] -command {TextEncode koi8-r} -font $fontNormal
+        $me add command -label [::msgcat::mc "CP1251"] -command {TextEncode cp1251} -font $fontNormal
+        $me add command -label [::msgcat::mc "CP866"] -command {TextEncode cp866} -font $fontNormal
 }
 GetMenu [menu .frmMenu.mnuEdit.m -bg $editor(bg) -fg $editor(fg)];# main edit menu
 GetMenu [menu .popMnuEdit -bg $editor(bg) -fg $editor(fg)] ;# pop-up edit menu
@@ -290,7 +290,7 @@ global tree noteBook
 set tree [Tree $frmTree.tree \
 -relief sunken -borderwidth 1 -width 5 -height 5 -highlightthickness 1\
 -redraw 0 -dropenabled 1 -dragenabled 1 -dragevent 3 \
--background $editor(bg) -selectbackground "#55c4d1" \
+-background $editor(bg) -selectbackground $editor(selectbg) -selectforeground white\
 -droptypes {
     TREE_NODE    {copy {} move {} link {}}
     LISTBOX_ITEM {copy {} move {} link {}}
@@ -355,8 +355,6 @@ proc PopupMenuTab {menu x y} {
     tk_popup $menu $x $y
 }
 
-
-
 bind $frmTree.tree.c <Button-3> {catch [PopupMenuTree %X %Y]}
 
 ######### DEDERER: bind Wheel Scroll ##################
@@ -386,26 +384,6 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

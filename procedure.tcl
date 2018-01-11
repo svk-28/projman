@@ -440,11 +440,11 @@ proc AboutDialog {} {
     
     frame $w.frmlbl -borderwidth 2 -relief ridge
     label $w.frmlbl.lblVersion -text "[::msgcat::mc Version] $ver"
-    label $w.frmlbl.lblCompany -text "Copyright: Sergey Kalinin, 2001-2015"
+    label $w.frmlbl.lblCompany -text "License: GPL"
     label $w.frmlbl.lblAuthorName -text "[::msgcat::mc Author]: Sergey Kalinin"
     label $w.frmlbl.lblEmail -text "[::msgcat::mc E-mail]: banzaj28@gmail.com"
     label $w.frmlbl.lblWWW  -fg black \
-    -text "[::msgcat::mc "Home page"]:"
+    -text "[::msgcat::mc "Home page"]: https://bitbucket.org/svk28/projman/ , https://nuk-svk.ru"
     
     pack $w.frmlbl.lblVersion $w.frmlbl.lblCompany $w.frmlbl.lblAuthorName \
     $w.frmlbl.lblEmail $w.frmlbl.lblWWW -side top -padx 5
@@ -471,15 +471,15 @@ proc AboutDialog {} {
     bind $w <Escape>  "$noteBook  delete about"
     bind $w <Return> {$noteBook  delete about}
     #
-    bind $w.frmlbl.lblWWW <Enter> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg blue -cursor hand1
-        LabelUpdate .frmStatus.frmHelp.lblHelp "Goto http://conero.lrn.ru"
-    }
-    bind $w.frmlbl.lblWWW <Leave> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg black
-        LabelUpdate .frmStatus.frmHelp.lblHelp ""
-    }
-    bind $w.frmlbl.lblWWW <ButtonRelease-1> {GoToURL "http://conero.lrn.ru"}
+    #bind $w.frmlbl.lblWWW <Enter> {
+    #    .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg blue -cursor hand1
+    #    LabelUpdate .frmStatus.frmHelp.lblHelp "Goto http://conero.lrn.ru"
+    #}
+    #bind $w.frmlbl.lblWWW <Leave> {
+    #    .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg black
+    #    LabelUpdate .frmStatus.frmHelp.lblHelp ""
+    #}
+    #bind $w.frmlbl.lblWWW <ButtonRelease-1> {GoToURL "http://conero.lrn.ru"}
     #
     bind $w.frmlbl.lblEmail <Enter> {
         .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg blue -cursor hand1
@@ -489,7 +489,7 @@ proc AboutDialog {} {
         .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg black
         LabelUpdate .frmStatus.frmHelp.lblHelp ""
     }
-    bind $w.frmlbl.lblEmail <ButtonRelease-1> {SendEmail "http://conero.lrn.ru"}
+    #bind $w.frmlbl.lblEmail <ButtonRelease-1> {SendEmail "http://conero.lrn.ru"}
 
 
     $noteBook  raise about
@@ -822,18 +822,14 @@ proc Modules {} {
     # TkDIFF loading
     foreach m {tkcvs tkdiff ctags tkregexp} {
         if {$tcl_platform(platform) == "unix"} {
+            if {$m == "tkregexp"} {
+                set module($m) "[file join $binDir tkregexp.tcl]"
+                break
+            }
             set string [exec whereis $m]
             scan $string "%s%s" v module($m)
             if {[info exists module($m)] &&  [file isdirectory $module($m)] == 0} {
                 puts "Find $module($m)"
-            } else {
-                set module($m) ""
-            }
-            } elseif {$tcl_platform(platform) == "mac"} {
-            set module($m) ""
-        } elseif {$tcl_platform(platform) == "windows"} {
-            if {$m == "tkregexp"} {
-                set module($m) "[file join $binDir tkregexp.tcl]"
             } else {
                 set module($m) ""
             }
@@ -1110,6 +1106,9 @@ proc TextOperation {oper} {
     }
     unset nb
 }
+
+
+
 
 
 

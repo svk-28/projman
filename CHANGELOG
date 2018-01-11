@@ -5,6 +5,12 @@
 # Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru
 #########################################################
 
+0.4.5
+
+11/01/2018
+- Changes color setting dialog into "Setting"
+- Actualizing information into "About" dialog 
+
 0.4.4
 
 19/10/2015
@@ -323,6 +329,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 

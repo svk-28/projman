@@ -135,7 +135,7 @@ proc GetContent {file} {
     fconfigure $file -encoding binary
     while {[gets $file line]>=0} {
 #        if {$line == ""} {
-#            set html "<h1>Файл $file не содержит данных</h1>"
+#            set html "<h1>ц╕ц│ц┼ц▄ $file ц▌ц┘ ц⌠ц▐ц└ц┘ц▓ц√ц┴ц■ ц└ц│ц▌ц▌ц≥ц┬</h1>"
 #        }
         set line [encoding convertfrom $sourceEncode $line]
         if {[regexp -nocase "<title>.+\</title>" $line a]} {
@@ -336,6 +336,7 @@ proc TopLevelHelp {} {
 #GetTOC
 
 #GetContent $docDir/tcl.toc.html
+
 
 
 

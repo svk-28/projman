@@ -880,7 +880,7 @@ proc EditFile {node fileName} {
     
     text $w.text\
     -relief sunken -wrap $editor(wrap) -highlightthickness 0 -undo 1 -font $editor(font)\
-    -selectborderwidth 0 -selectbackground #55c4d1 -width 10 -background $editor(bg) -foreground $editor(fg)
+    -selectborderwidth 0 -selectbackground $editor(selectbg) -width 10 -background $editor(bg) -foreground $editor(fg)
     
     pack $w.text -side left -fill both -expand true
     $scrwin setwidget $w.text
@@ -1133,6 +1133,7 @@ proc SelectAll {text} {
 
 #################################### 
 GetOp
+
 
 
 

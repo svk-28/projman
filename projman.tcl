@@ -8,7 +8,7 @@
 ###########################################################
 
 ########## VERSION INFORMATION ##########
-set ver "0.3.8"
+set ver "0.4.5"
 
 package require BWidget
 package require msgcat
@@ -24,6 +24,7 @@ if {[file exists $env(HOME)/projects/tcl/projman]==1} {
     set imgDir "[file join $env(HOME) projects tcl projman img]"
     set msgDir "[file join $env(HOME) projects tcl projman msgs]"
     set hlDir "[file join $env(HOME) projects tcl projman highlight]"
+    set binDir "[file join $env(HOME) projects tcl projman]"
 } else {
     set binDir  [file join $rootDir bin]
     set dataDir [file join $rootDir share projman]
@@ -98,5 +99,6 @@ foreach file [lsort [glob -nocomplain [file join $hlDir *.tcl]]] {
 
 set editor(selectBorder) "0"
 
+#option add *tree.foreground red widgetDefault
 
 

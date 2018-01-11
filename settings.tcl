@@ -635,23 +635,23 @@ proc ConfigureEnt {col} {
     global editor color
     global main editFrm network
     $editFrm.frmColorEditFG.txtColorEditFG configure -background $col
-    $editFrm.frmColorProc.txtColorProc configure -background $col
-    $editFrm.frmColorKeyWord.txtColorKeyWord configure -background $col
-    $editFrm.frmColorParam.txtColorParam  configure -background $col
-    $editFrm.frmColorSubParam.txtColorSubParam  configure -background $col
-    $editFrm.frmColorComments.txtColorComments configure -background $col
-    $editFrm.frmColorVar.txtColorVar configure -background $col
-    $editFrm.frmColorString.txtColorString configure -background $col
-    $editFrm.frmColorBrace.txtColorBrace configure -background $col
-    $editFrm.frmColorBraceQuad.txtColorBraceQuad configure -background $col
-    $editFrm.frmColorBraceBG.txtColorBraceBG configure -background $col
-    $editFrm.frmColorBraceFG.txtColorBraceFG configure -background $col
-    $editFrm.frmColorPercent.txtColorPercent configure -background $col
-    $editFrm.frmColorBindKey.txtColorBindKey configure -background $col
-    $editFrm.frmColorLabel.txtColorLabel configure -background $col
-    $editFrm.frmColorSixFG.txtColorSixFG configure -background $col
-    $editFrm.frmColorSixBG.txtColorSixBG configure -background $col
-    $editFrm.frmColorSQL.txtColorSQL configure -background $col
+    $editFrm.frmColorProc.txtColorProc configure -background $col -fg $color(procName)
+    $editFrm.frmColorKeyWord.txtColorKeyWord configure -background $col -fg $color(keyWord)
+    $editFrm.frmColorParam.txtColorParam  configure -background $col -fg $color(param)
+    $editFrm.frmColorSubParam.txtColorSubParam  configure -background $col -fg $color(subParam)
+    $editFrm.frmColorComments.txtColorComments configure -background $col -fg $color(comments)
+    $editFrm.frmColorVar.txtColorVar configure -background $col -fg $color(var)
+    $editFrm.frmColorString.txtColorString configure -background $col -fg $color(string)
+    $editFrm.frmColorBrace.txtColorBrace configure -background $col -fg $color(brace)
+    $editFrm.frmColorBraceQuad.txtColorBraceQuad configure -background $col -fg $color(bracequad)
+    $editFrm.frmColorBraceBG.txtColorBraceBG configure -background $col -fg $color(braceBG)
+    $editFrm.frmColorBraceFG.txtColorBraceFG configure -background $col -fg $color(braceFG)
+    $editFrm.frmColorPercent.txtColorPercent configure -background $col -fg $color(percent)
+    $editFrm.frmColorBindKey.txtColorBindKey configure -background $col -fg $color(bindKey)
+    $editFrm.frmColorLabel.txtColorLabel configure -background $col -fg $color(label)
+    $editFrm.frmColorSixFG.txtColorSixFG configure -background $col -fg $color(sixFG)
+    $editFrm.frmColorSixBG.txtColorSixBG configure -background $col -fg $color(sixBG)
+    $editFrm.frmColorSQL.txtColorSQL configure -background $col -fg $color(sql)
 }
 
 ## READ CONFIG FILE ##
@@ -857,14 +857,4 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
-
-
-
-
-
-
-
-
-
-
 

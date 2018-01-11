@@ -8,7 +8,7 @@
 ###########################################################
 
 ## SETTING VARIABLES AND DIRECTORYES ##
-set ver "0.3.8"
+set ver "0.4.5"
 set imgDir img
 set msgDir msgs
 set docDir hlp
@@ -380,6 +380,7 @@ proc SetVarLang {lang} {
         }
     }
 }
+
 
 
 

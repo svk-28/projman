@@ -11,6 +11,7 @@ proc NewProjDialog {type} {
     set w .newProj
     # destroy the find window if it already exists
     if {[winfo exists $w]} {
+        
         destroy $w
     }
     
@@ -902,4 +903,5 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
 
