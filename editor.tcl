@@ -853,8 +853,8 @@ proc TextEncode {encode} {
 
 ## EDITING  FILE ##
 proc EditFile {node fileName} {
-    global projDir workDir imgDir tree noteBook fontNormal fontBold w fileList replace nodeEdit
-    global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG 
+    global projDir workDir imgDir tree noteBook fontNormal fontBold w fileList replace nodeEdit procList
+    global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG activeProject
     set nodeEdit $node
     set replace 0
     set file [file tail $fileName]
@@ -923,14 +923,22 @@ proc EditFile {node fileName} {
             } elseif {$keyWord == "class"} {
                 set img "class.gif"
             }
+            if {$keyWord =="proc"} {
+                lappend procList($activeProject) [list $procName "param"]
+                #$w.text tag add procName $lineNumber.[expr $startPos + $length] $lineNumber.[string wordend $line [expr $startPos + $length +2]]
+            }
             if {[$tree exists $prcNode$dot$lineNumber] !=1} {
                 $tree insert end $node $prcNode$dot$lineNumber -text $procName \
                 -data "prc_$procName"\
                 -image [Bitmap::get [file join $imgDir $img]] -font $fontNormal
             }
         }
+        if {$keyWord =="set"} {
+            lappend varList($activeProject) [list $procName "param"]]
+        }
         incr lineNumber
     }
+    #puts $procList
     close $file
     $w.text mark set insert 0.0
     $w.text see insert
@@ -1135,6 +1143,7 @@ proc SelectAll {text} {
 
 #################################### 
 GetOp
+
 
 
 

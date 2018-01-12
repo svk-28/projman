@@ -385,8 +385,3 @@ $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
 
-
-
-
-
-

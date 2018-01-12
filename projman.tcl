@@ -132,3 +132,4 @@ option add *Scrollbar.background $editor(bg) startupFile
 
 
 
+

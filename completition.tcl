@@ -36,9 +36,10 @@ proc auto_completition { widget } {
 } ;# proc auto_completition
 
 ## PROCEDURE LIST        ##
-## by BanZaj                ##
+## by BanZaj             ##
+
 proc auto_completition_proc { widget } {
-    global procList activeProject noteBook
+    global procList activeProject noteBook varList
     set nodeEdit [$noteBook raise]
     if {$nodeEdit == "" || $nodeEdit == "newproj" || $nodeEdit == "about" || $nodeEdit == "debug"} {
         return
@@ -51,24 +52,29 @@ proc auto_completition_proc { widget } {
     set cnt 0
     set pos "1.0"
     set last_pos ""
-    set pattern "$start_word\\w*"
+    puts "$start_word"
+    puts [regsub -all -- "\$" $start_word "\\\$" word]
+    puts $word
     #set list_word($start_word) 1
-    if [info exists procList($activeProject)] {
-        set len [llength $procList($activeProject)]
+    if {[string index $start_word 0] == "\$"} {
+        set workList $varList($activeProject)
+    } else {
+        set workList $procList($activeProject)
+    }
+    if [info exists workList] {
+        set len [llength $workList]
     } else {
         return
     }
     set i 0
     while {$len >=$i} {
-        set line [lindex $procList($activeProject) $i]
+        set line [lindex $ $i]
         scan $line "%s" word
-        if [regexp -nocase -all -- {\s\{.*?\}+\s} $line par] {
-            regsub -all (\{|\}) $par " " par
-            set word_ "$word [string trim $par]"
-            if {[string match "$start_word*" $word]} {set list_word($word_) $i}
+        if {[string match "$start_word*" $word]} {
+            set list_word($word) $i
         }
         incr i
-    }    
+    }
     bindtags $widget [list CompletitionBind [winfo toplevel $widget] $widget Text sysAfter all]
     bind CompletitionBind <Escape>  "bindtags $widget {[list [winfo toplevel $widget] $widget Text sysAfter all]}; catch { destroy .aCompletition }"
     bind CompletitionBind <Key>     {auto_completition_key %W %K %A ; break}
@@ -149,6 +155,10 @@ proc auto_completition_key { widget K A } {
         }
     }
 } ;# proc auto_completition_key
+
+
+
+
 
 
 
