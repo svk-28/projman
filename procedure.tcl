@@ -401,23 +401,6 @@ proc GetProj {tree} {
                 -image [Bitmap::get [file join $imgDir folder.gif]]
                 GetFiles [file join $string] $prjName $tree
                 set dir $string
-                if {$module(ctags) != ""} {
-                    if {[catch {cd $dir}] != 0} {
-                        return ""
-                    }
-                    if {[file exists [file join $workDir $prjName.tags]] == 1} {
-                        GetTagList_ [file join $workDir $prjName.tags] ;# geting tag list
-                    } else {
-                        set curDir [pwd]
-                        set tagFile [file join $workDir $prjName.tags]
-                        set pipe [open "|ctags -R --sort=yes --tcl-types=p -h -l -f $tagFile" "r"]
-                        #fileevent $pipe readable
-                        #fconfigure $pipe -buffering none -blocking no
-                        if {[catch {cd $curDir}] != 0} {
-                            return ""
-                        }
-                    }
-                }
             }
         }
     }
@@ -599,7 +582,7 @@ proc MakeTGZ {} {
     set answer [tk_messageBox\
             -message "$msg"\
             -type ok -icon $icon]
-    case $answer {
+            case $answer {
         ok {return 0}
     }
 }
@@ -678,7 +661,7 @@ proc Progress {oper} {
     } elseif {$oper == "stop"} {
         destroy .frmStatus.frmProgress.lblProgress.progress
     }
-#    ProgUpdate
+    #    ProgUpdate
 }
 proc ProgUpdate { } {
     global progval
@@ -794,7 +777,7 @@ proc Print {command} {
                 -message "[::msgcat::mc "Don't selected file"]"\
                 -type ok -icon warning\
                 -title [::msgcat::mc "Warning"]]
-        case $answer {
+                case $answer {
             ok {return 0}
         }
     }
@@ -820,7 +803,7 @@ proc Modules {} {
     global tcl_platform
     global module tclDir dataDir binDir
     # TkDIFF loading
-    foreach m {tkcvs tkdiff ctags tkregexp} {
+    foreach m {tkcvs tkdiff gitk tkregexp} {
         if {$tcl_platform(platform) == "unix"} {
             if {$m == "tkregexp"} {
                 set module($m) "[file join $binDir tkregexp.tcl]"
@@ -944,22 +927,11 @@ proc DoModule {mod} {
             fileevent $pipe readable
             fconfigure $pipe -buffering none -blocking no
         }
-        ctags {
-            if {[catch {cd $dir}] != 0} {
-                return ""
-            }
-            if {$module(ctags) == ""} {
-                return
-            }
-            set tagFile [file join $workDir $activeProject.tags]
-            set pipe [open "|ctags -R --sort=yes --tcl-types=p -h -l -f $tagFile" "r"]
-            #fileevent $pipe readable
-            #fconfigure $pipe -buffering none -blocking no
-            if {[catch {cd $curDir}] != 0} {
-                return ""
-            }
+        gitk {
+            set pipe [open "|$module(gitk)" "r"]
+            fileevent $pipe readable
+            fconfigure $pipe -buffering none -blocking no
         }
-        
     }
 }
 
@@ -1106,6 +1078,7 @@ proc TextOperation {oper} {
     }
     unset nb
 }
+
 
 
 

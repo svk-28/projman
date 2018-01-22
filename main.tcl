@@ -171,9 +171,9 @@ if {$module(tkdiff) != ""} {
 if {$module(tkregexp) != ""} {
     $m add command -label "TkREGEXP" -command {DoModule tkregexp} -font $fontNormal
 }
-if {$module(ctags) != ""} {
-    $m add command -label "CTags" -font $fontNormal -command {
-        DoModule ctags
+if {$module(gitk) != ""} {
+    $m add command -label "Gitk" -font $fontNormal -command {
+        DoModule gitk
         GetTagList [file join $workDir $activeProject.tags] ;# geting tag list
     }
 }
@@ -384,4 +384,5 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
+
 
