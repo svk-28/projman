@@ -1,18 +1,18 @@
 Name:           projman
-Version:        0.3.8
-Release:        alt1
+Version:        0.4.5
+Release:        1
 Summary:        Tcl/Tk Project Manager
 License:        GPL
 Group:          Development/Tcl
-Url:            http://conero.lrn.ru
+Url:            https://bitbucket.org/svk28/projman
 BuildArch:      noarch
 Source:         %name-%version-%release.tar.gz
-Requires:        bwidget, ctags, tcl-img
+Requires:        bwidget, tcl-img
 
 %description
 This programm is Integrated Development Environment for Tcl/Tk language programming. Include - project manager, text and source editor with syntax highlightning, archive (tar.gz) and PRM builder and more.
 
-%description -l ru_RU.KOI8-R
+%description -l ru_RU.UTF8
 Интегрированная среда для программирования на Tcl/Tk. Включает в себя - менеджер проектов, полнофункциональный редактор, систему навигации по файлам и структуре файлов и многое другое.
 
 %prep
@@ -69,6 +69,7 @@ install -p -m644 img/icons/mini/%name.png $RPM_BUILD_ROOT%_miconsdir/
 
 * Wed Oct 18 2006 Sergey Kalinin <banzaj@altlinux.ru> 0.3.7-alt3
 - Remove SuperText widget now use native TEXT
+
 
 
 
