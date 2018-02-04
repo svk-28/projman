@@ -1,8 +1,8 @@
 ######################################################
 #                Tk LaTeX Editor
 #        Distributed under GNU Public License
-# Author: Sergey Kalinin (BanZaj) banzaj@lrn.ru
-# Copyright (c) "CONERO lab", 2002, http://conero.lrn.ru
+# Author: Sergey Kalinin banzaj28@yandex.ru
+# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru
 ######################################################
 
 

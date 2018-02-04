@@ -1,8 +1,8 @@
 ######################################################
 #                Tcl/Tk project Manager
 #        Distributed under GNU Public License
-# Author: Sergey Kalinin banzaj@lrn.ru
-# Home page: http://conero.lrn.ru
+# Author: Sergey Kalinin banzaj28@yandex.ru
+# Home page: http://nuk-svk.ru
 ######################################################
 
 ## SETTING DIALOG ##
@@ -40,8 +40,8 @@ proc Settings {} {
         puts $file "#                TCL/Tk Project Manager                   #"
         puts $file "#                    version $ver                        #"
         puts $file "#                                                         #"
-        puts $file "# Copyright \(c\) \"CONERO lab\", 2001, http://conero.lrn.ru  #"
-        puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj@lrn.ru      #"
+        puts $file "# Copyright \(c\) \"Sergey Kalinin\", 2001, http://nuk-svk.ru  #"
+        puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj28@yandex.ru      #"
         puts $file "###########################################################"        
         puts $file "# Modification date: [exec date]"
         puts $file "###########################################################\n"
@@ -773,8 +773,8 @@ proc SaveSettings {} {
     puts $file "#                TCL/Tk Project Manager                   #"
     puts $file "#                    version $ver                        #"
     puts $file "#                                                         #"
-    puts $file "# Copyright \(c\) \"CONERO lab\", 2001, http://conero.lrn.ru  #"
-    puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj@lrn.ru      #"
+    puts $file "# Copyright \(c\) \"Sergey Kalinin\", 2001, http://nuk-svk.ru  #"
+    puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj28@yandex.ru      #"
     puts $file "###########################################################\n"
     puts $file "# Modification date: [exec date]"
     puts $file "###########################################################\n"

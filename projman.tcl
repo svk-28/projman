@@ -3,8 +3,8 @@
 ###########################################################
 #                Tcl/Tk Project Manager                   #
 #                Distrubuted under GPL                    #
-# Copyright (c) "CONERO lab", 2002, http://conero.lrn.ru  #
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru       #
+# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru  #
+# Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
 
 ########## VERSION INFORMATION ##########

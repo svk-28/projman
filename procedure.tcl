@@ -2,8 +2,8 @@
 #                Tcl/Tk Project Manager                   #
 #                 Distributed under GPL                   #
 #                  all procedure file                     #
-# Copyright (c) "CONERO lab", 2001, http://conero.lrn.ru  #
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru       #
+# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru  #
+# Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
 
 ## INSERT TEXT INTO ENTRY BOmX ##
@@ -456,23 +456,23 @@ proc AboutDialog {} {
     #
     #bind $w.frmlbl.lblWWW <Enter> {
     #    .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg blue -cursor hand1
-    #    LabelUpdate .frmStatus.frmHelp.lblHelp "Goto http://conero.lrn.ru"
+    #    LabelUpdate .frmStatus.frmHelp.lblHelp "Goto http://nuk-svk.ru"
     #}
     #bind $w.frmlbl.lblWWW <Leave> {
     #    .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg black
     #    LabelUpdate .frmStatus.frmHelp.lblHelp ""
     #}
-    #bind $w.frmlbl.lblWWW <ButtonRelease-1> {GoToURL "http://conero.lrn.ru"}
+    #bind $w.frmlbl.lblWWW <ButtonRelease-1> {GoToURL "http://nuk-svk.ru"}
     #
     bind $w.frmlbl.lblEmail <Enter> {
         .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg blue -cursor hand1
-        LabelUpdate .frmStatus.frmHelp.lblHelp "Send email \"banzaj@lrn.ru\""
+        LabelUpdate .frmStatus.frmHelp.lblHelp "Send email \"banzaj28@yandex.ru\""
     }
     bind $w.frmlbl.lblEmail <Leave> {
         .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg black
         LabelUpdate .frmStatus.frmHelp.lblHelp ""
     }
-    #bind $w.frmlbl.lblEmail <ButtonRelease-1> {SendEmail "http://conero.lrn.ru"}
+    #bind $w.frmlbl.lblEmail <ButtonRelease-1> {SendEmail "http://nuk-svk.ru"}
 
 
     $noteBook  raise about

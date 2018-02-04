@@ -1,8 +1,8 @@
 ###########################################################
 #                Tcl/Tk Project Manager                   #
 #                  all procedure file                     #
-# Copyright (c) "CONERO lab", 2002, http://conero.lrn.ru  #
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru       #
+# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru  #
+# Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
 
 ## GETTING OPERATORS FOR COMPLITE PROCEDURE #
@@ -47,8 +47,7 @@ proc Position {} {
     set posX [lindex [split $pos "."] 1]
     set lbl .frmStatus.frmLine.lblLine
     $lbl configure -text $pos -font $fontBold
-    
-    
+    return $pos
 }
 proc ReplaceChar {text} {
     global replace
@@ -972,7 +971,32 @@ proc EditFile {node fileName} {
     bind $text <Control-ntilde> "tk_textCopy $w.text;break"
     bind $text <Control-c> "tk_textCopy $w.text;break"
     bind $text <Control-igrave> "tk_textPaste $w.text;break"
-    bind $text <Control-v> "tk_textPaste $w.text;break"
+    #bind $text <Control-v> "tk_textPaste $w.text;break"
+    bind $text <Control-v> {
+        set startPos [Position]
+        set nodeEdit [$noteBook raise]
+        EditFlag $nodeEdit $file 1
+        set fileList($nodeEdit) [list [lindex $fileList($nodeEdit) 0] 1]
+        tk_textPaste $w.text
+        set endPos [Position]
+        set lineBegin [lindex [split $startPos "."] 0]
+        set lineEnd [lindex [split $endPos "."] 0]
+        for {set line $lineBegin} {$line <= $lineEnd} {incr line} {
+            if {$nodeEdit == "" || $nodeEdit == "newproj" || $nodeEdit == "settings" || $nodeEdit == "about" || $nodeEdit == "debug"} {
+            } else {
+                set textEdit "$noteBook.f$nodeEdit.text"
+                set editLine [$textEdit get $line.0 $line.end]
+                if {$autoFormat == "Yes"} {
+                    if {$fileExt != "for"} {
+                        TabIns $textEdit
+                    }
+                }
+                HighLight $fileExt $textEdit $editLine $line $nodeEdit
+            }
+        }
+        break
+    }
+    
     bind $text <Control-adiaeresis> "auto_completition $text"
     bind $text <Control-l> "auto_completition $text"
     bind $text <Control-icircumflex> "auto_completition_proc $text"
@@ -1143,6 +1167,7 @@ proc SelectAll {text} {
 
 #################################### 
 GetOp
+
 
 
 

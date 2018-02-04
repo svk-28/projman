@@ -2,8 +2,8 @@
 #                Tcl/Tk Project Manager                   #
 #                    version 0.0.1                        #
 #                   TCL highlight file                     #
-# Copyright (c) "CONERO lab", 2001, http://conero.lrn.ru  #
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru       #
+# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru  #
+# Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
 
 proc HighLightRIVET {text line lineNumber node} {

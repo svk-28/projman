@@ -1,8 +1,8 @@
 ###########################################################
 #                Tcl/Tk Project Manager                   #
 #                Distrubuted under GPL                    #
-# Copyright (c) "CONERO lab", 2002, http://conero.lrn.ru  #
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru       #
+# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru  #
+# Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
 #                AutoCompletition Procedure               #
 #                    Author Alex DEDERER                  #
@@ -13,13 +13,10 @@ proc auto_completition { widget } {
     set box        [$widget bbox insert]
     set box_x      [expr [lindex $box 0] + [winfo rootx $widget] ]
     set box_y      [expr [lindex $box 1] + [winfo rooty $widget] + [lindex $box 3] ] 
-    
     set cnt 0
     set pos "1.0"
     set last_pos ""
     set pattern "$start_word\\w*"
-    #set pattern ""
-    
     set list_word($start_word) 1
     while { ([set start [$widget search -count cnt -regexp -- $pattern $pos end]] != "") } {
         set word [$widget get $start "$start + $cnt chars"]
@@ -155,6 +152,7 @@ proc auto_completition_key { widget K A } {
         }
     }
 } ;# proc auto_completition_key
+
 
 
 

@@ -22,7 +22,7 @@ Tcl/Tk Project Manager FAQ 0.1
 
 Вам потребуется интерпретатор языка Tcl/Tk(более подробную информацию по
 Tcl/Tk можно найти на сайте http://www.tcl-tk.org), BWidget <http://sourceforge.net/projects/tcllib> и последняя версия дистрибутива
-Tcl/Tk Project Manager(ее можно скачать с сайта http://conero.lrn.ru)
+Tcl/Tk Project Manager(ее можно скачать с сайта http://nuk-svk.ru)
 
 Следуйте инструкциям по установке вашего дистрибутива ProjMan
 изложенными в файле INSTALL архива.
@@ -56,5 +56,5 @@ Tcl/Tk Project Manager(ее можно скачать с сайта http://conero.lrn.ru)
 
 --
 Igor Didkovsky aka Gor (ididkovsky@mail.ru)
-Segey Kalinin aka BanZaj (banzaj@lrn.ru)
+Segey Kalinin (banzaj28@yandex.ru)
 

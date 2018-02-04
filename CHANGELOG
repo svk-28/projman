@@ -1,11 +1,14 @@
 #########################################################
 #                Tcl/Tk Project Manager
 #        Distributed under GNU Public License
-# Copyright (c) "CONERO lab", 2001, http://conero.lrn.ru
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru
+# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru
+# Author: Sergey Kalinin banzaj28@yandex.ru
 #########################################################
 
 0.4.5
+04.02.2018
+- Fixed paste text highlight
+- Fixed setting edited flag when paste the text from buffer
 
 22/01/2018
 - Remove ctags support
@@ -336,6 +339,8 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
+
 
 
 

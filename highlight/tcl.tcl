@@ -1,16 +1,14 @@
-###########################################################
-#                Tcl/Tk Project Manager                   #
-#                    version 0.0.1                        #
-#                   TCL highlight file                     #
-# Copyright (c) "CONERO lab", 2001, http://conero.lrn.ru  #
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru       #
-###########################################################
+###########################################
+#                Tcl/Tk Project Manager
+#                    version 0.0.1
+#                   TCL highlight file
+# Copyright (c) Sergey Kalinin 2001, http://nuk-svk.ru
+# Author: Sergey Kalinin (aka BanZaj) banzaj28@gmail.com
+###########################################
 
 proc HighLightTCL {text line lineNumber node} {
     global fontNormal fontBold editorFontBold tree imgDir noteBook
     global editor color
-    #    set pos [$text index insert]
-    #    set lineNumber [lindex [split $pos "."] 0]
     
     set startIndex 0
     # bind text tags for highlightning #
@@ -211,6 +209,7 @@ proc HighLightTCL {text line lineNumber node} {
         }
     }
 }
+
 
 
 

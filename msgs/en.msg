@@ -1,8 +1,8 @@
 ###########################################################
 #                Tcl/Tk Project Manager                   #
 #                 english messages file                          #
-# Copyright (c) "CONERO lab", 2001, http://conero.lrn.ru  #
-# Author: Sergey Kalinin (aka BanZaj) banzaj@lrn.ru       #
+# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru  #
+# Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
 
 ::msgcat::mcset en "About ..."
