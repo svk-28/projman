@@ -856,7 +856,7 @@ proc DoModule {mod} {
     }
     close $file
     
-    puts $dir
+    #puts "project dir - $dir"
     
     set curDir [pwd]
     case $mod {
@@ -928,6 +928,8 @@ proc DoModule {mod} {
             fconfigure $pipe -buffering none -blocking no
         }
         gitk {
+            cd $dir
+            #puts "========== $projDir $dir $curDir"
             set pipe [open "|$module(gitk)" "r"]
             fileevent $pipe readable
             fconfigure $pipe -buffering none -blocking no
@@ -1078,6 +1080,10 @@ proc TextOperation {oper} {
     }
     unset nb
 }
+
+
+
+
 
 
 
