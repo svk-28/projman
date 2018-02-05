@@ -87,7 +87,7 @@ proc NewProj {type proj l} {
     pack $frm -fill both -expand true
     
     image create photo imgFold -format gif -file [file join $imgDir folder.gif]
-
+    
     set frm_1 [frame $frm.frmProjName]
     label $frm_1.lblProjName -text [::msgcat::mc "Project name"] -width 20 -anchor w
     entry $frm_1.txtProjName -textvariable txtProjName
@@ -322,9 +322,8 @@ proc CreateProj {type lang txtFileName txtProjName txtFileName txtDirName txtCom
             set text "\%**************************************************\n%\t$txtProjName\n%\tDistributed under GNU Public License\n% Author: $txtProjAuthor $txtProjEmail\n* Home page: $txtProjHome\n%*****************************************************\)\n"
             set lang erl          
         }
-        
-        if {[file exists [file join $dir $txtFileName.[string tolower $lang]]] == 0} {
-            set file [open [file join $dir $txtFileName.[string tolower $lang]] w]
+        if {[file exists [file join $dir $txtFileName]] == 0} {
+            set file [open [file join $dir $txtFileName] w]
             puts $file $text
             close $file
         }
@@ -713,7 +712,7 @@ proc MakeProj {action t} {
         }
     } elseif {$action == "run"} {
         if {$t == "proj"} {
-            set prog [file join $projDirName $projFileName.tcl]
+            set prog [file join $projDirName $projFileName]
         } elseif {$t == "file"} {
             set node [$tree selection get]
             set fullPath [$tree itemcget $node -data]
@@ -903,6 +902,11 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
+
+
+
+
 
 
 

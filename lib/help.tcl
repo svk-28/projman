@@ -23,7 +23,7 @@
 source [file join $dataDir html_lib.tcl]
 #source [file join $dataDir htmllib.tcl]
 
-set sourceEncode "koi8-r"
+set sourceEncode "utf-8"
 
 ## LOAD MESSAGES FILE? LANGUAGE AND NEDDED FILES ##
 #source $homeDir/html.tcl
@@ -59,13 +59,10 @@ proc GetTOC {} {
     foreach dir [lsort [glob -nocomplain *]] {
         if {[file isdirectory $dir] == 1} {
             foreach file [lsort [glob -nocomplain [file join $dir *toc.html]]] {
-                #puts $file
                 set fileName [file join $file]
                 set tocFile [open $fileName r]
                 fconfigure $tocFile -encoding binary
                 set dot "_"
-                #set nodeParent [string range $fileName 0 [expr [string first "." $fileName]-1]]
-                #puts $fileName
                 set nodeParent [file dirname $fileName]
                 while {[gets $tocFile line]>=0} {
                     set a ""
@@ -75,28 +72,21 @@ proc GetTOC {} {
                         if {[regexp ">.+\<" $line a]} {
                             set length [string length $a]
                             set title [string range $a 1 [expr $length-2]]
-                            #puts $nodeParent ;# debug info
                             $hlpTree insert end root $nodeParent -text "$title" -font $fontNormal \
-                                    -data "toc_$nodeParent" -open 0\
-                                    -image [Bitmap::get [file join $imgDir books.gif]]
+                            -data "toc_$nodeParent" -open 0\
+                            -image [Bitmap::get [file join $imgDir books.gif]]
                         }
-                    } elseif {[regexp "\".+\"" $line a]} {
-                        set data [string range $a 1 [expr [string last "\"" $a]-1]]
-                        if {[regexp ">.+\<" $line b]} {
-                            set line [string range $b 1 [expr [string first "<" $b]-1]]
-                            regsub -all {[ :]} $line "_" subNode
-                            #regsub -all ":" $ubNode "_" node
-                            set subNode "$nodeParent$dot$subNode"
-                            if {[info exists arr($subNode)] == 0} {
-                                set arr($subNode) [file join $dir $data]
-                            }
-                            set data [file join $dir $data]
-                            #puts "$subNode" ;# debug info
-                            $hlpTree insert end "$nodeParent" $subNode -text "$line"\
-                            -font $fontNormal -data "doc_$data" -open 0\
-                            -image [Bitmap::get [file join $imgDir file.gif]]
-                            $lstSearch insert end $line
-                        }        
+                    } elseif {[regexp -nocase -all -line -- {(<a href=)(|\")(.+\.[a-zA-Z]+)(\">|>)(.+)(</a><br>)} $line match v1 v2 v3 v4 v5 v6]} {
+                        regsub -all {[ :]} $v5 "_" subNode
+                        set subNode "$nodeParent$dot$subNode"
+                        if {[info exists arr($subNode)] == 0} {
+                            set arr($subNode) [file join $dir $v3]
+                        }
+                        set data [file join $dir $v3]
+                        $hlpTree insert end "$nodeParent" $subNode -text "$v5"\
+                        -font $fontNormal -data "doc_$data" -open 0\
+                        -image [Bitmap::get [file join $imgDir file.gif]]
+                        $lstSearch insert end $v3
                     } else {
                         break
                     }
@@ -164,7 +154,7 @@ proc GetContent {file} {
     HM::parse_html $html "HM::render $txt"
 #    HM::tag_title .help "Help - $nbTitle"
     $txt configure -state disabled
-
+    
 }
 ## GOTO URL PROCEDURE ##
 proc LinkCallback {w url} {
@@ -333,6 +323,10 @@ proc TopLevelHelp {} {
 #GetTOC
 
 #GetContent $docDir/tcl.toc.html
+
+
+
+
 
 
 

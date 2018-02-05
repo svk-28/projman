@@ -11,6 +11,8 @@
 - Change "Paste from Clipboard" function
 - Change popup editor menu (undo, redo, copy, paste, cut functions)
 - Change Logo and About dialog
+- Russian help files was conerting into utf-8 encode
+- Change help file load procedure
 
 04.02.2018
 - Fixed paste text highlight
@@ -345,6 +347,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 
