@@ -964,31 +964,7 @@ proc EditFile {node fileName} {
     bind $text <Control-c> "tk_textCopy $w.text;break"
     bind $text <Control-igrave> "tk_textPaste $w.text;break"
     #bind $text <Control-v> "tk_textPaste $w.text;break"
-    bind $text <Control-v> {
-        set startPos [Position]
-        set nodeEdit [$noteBook raise]
-        EditFlag $nodeEdit [lindex $fileList($nodeEdit) 0] 1
-        set fileList($nodeEdit) [list [lindex $fileList($nodeEdit) 0] 1]
-        puts "fuck - $fileList($nodeEdit)"
-        tk_textPaste $w.text
-        set endPos [Position]
-        set lineBegin [lindex [split $startPos "."] 0]
-        set lineEnd [lindex [split $endPos "."] 0]
-        for {set line $lineBegin} {$line <= $lineEnd} {incr line} {
-            if {$nodeEdit == "" || $nodeEdit == "newproj" || $nodeEdit == "settings" || $nodeEdit == "about" || $nodeEdit == "debug"} {
-            } else {
-                set textEdit "$noteBook.f$nodeEdit.text"
-                set editLine [$textEdit get $line.0 $line.end]
-                if {$autoFormat == "Yes"} {
-                    if {$fileExt != "for"} {
-                        TabIns $textEdit
-                    }
-                }
-                HighLight $fileExt $textEdit $editLine $line $nodeEdit
-            }
-        }
-        break
-    }
+    bind $text <Control-v> {TextOperation paste; break}
     
     bind $text <Control-adiaeresis> "auto_completition $text"
     bind $text <Control-l> "auto_completition $text"
@@ -1155,14 +1131,45 @@ proc SelectAll {text} {
     
 }
 
+proc TextOperation {oper} {
+    global noteBook fileList autoFormat
+    set nb [$noteBook raise]
+    if {$nb == "" || $nb == "newproj" || $nb == "about" || $nb == "debug"} {
+        return
+    }
+    set nb "$noteBook.f$nb"
+    switch $oper {
+        "copy" {tk_textCopy $nb.text}
+        "paste" {
+            set startPos [Position]
+            set nodeEdit [$noteBook raise]
+            EditFlag $nodeEdit [lindex $fileList($nodeEdit) 0] 1
+            set fileList($nodeEdit) [list [lindex $fileList($nodeEdit) 0] 1]
+            set fileExt [string range [file extension [lindex $fileList($nodeEdit) 0]] 1 end]
+            tk_textPaste $noteBook.f$nodeEdit.text
+            set endPos [Position]
+            set lineBegin [lindex [split $startPos "."] 0]
+            set lineEnd [lindex [split $endPos "."] 0]
+            for {set line $lineBegin} {$line <= $lineEnd} {incr line} {
+                if {$nodeEdit == "" || $nodeEdit == "newproj" || $nodeEdit == "settings" || $nodeEdit == "about" || $nodeEdit == "debug"} {
+                } else {
+                    set textEdit "$noteBook.f$nodeEdit.text"
+                    set editLine [$textEdit get $line.0 $line.end]
+                    if {$autoFormat == "Yes"} {
+                        if {$fileExt != "for"} {
+                            TabIns $textEdit
+                        }
+                    }
+                    HighLight $fileExt $textEdit $editLine $line $nodeEdit
+                }
+            }
+        }
+        "cut" {tk_textCut $nb.text}
+        "redo" {$nb.text edit redo}
+        "undo" {$nb.text edit undo}
+    }
+    unset nb
+}
 #################################### 
 GetOp
-
-
-
-
-
-
-
-
 

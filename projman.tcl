@@ -1,10 +1,9 @@
 #!/usr/bin/wish                                                                 
-
 ###########################################################
 #                Tcl/Tk Project Manager                   #
 #                Distrubuted under GPL                    #
-# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru  #
-# Author: Sergey Kalinin banzaj28@yandex.ru       #
+# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru #
+# Author: Sergey Kalinin banzaj28@yandex.ru               #
 ###########################################################
 
 ########## VERSION INFORMATION ##########
@@ -17,7 +16,6 @@ package require msgcat
 set rootDir "/usr"
 set tclDir "/usr/bin"
 
-##
 if {[file exists $env(HOME)/projects/tcl/projman]==1} {
     set dataDir "[file join $env(HOME) projects tcl projman lib]"
     set docDir "[file join $env(HOME) projects tcl projman hlp ru]"
@@ -88,9 +86,6 @@ foreach modFile [lsort [glob -nocomplain [file join $hlDir *.tcl]]] {
 
 source [file join $dataDir main.tcl]
 
-
-#set editor(selectBorder) "0"
-
 #option add *tree.foreground red widgetDefault
 # Set colors for widgets
 option add *Frame.background $editor(bg) startupFile
@@ -121,4 +116,5 @@ option add *NoteBook.fg $editor(fg) startupFile
 option add *Listbox.foreground $editor(fg) startupFile
 option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
+
 

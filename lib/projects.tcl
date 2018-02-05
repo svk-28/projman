@@ -1,9 +1,9 @@
-#########################################################
-#                Tcl/Tk project Manager
-#        Distributed under GNU Public License
-# Author: Sergey Kalinin banzaj28@yandex.ru
-# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru
-#########################################################
+###########################################################
+#                Tcl/Tk project Manager                   #
+#        Distributed under GNU Public License             # 
+# Author: Sergey Kalinin banzaj28@yandex.ru               #
+# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru #
+###########################################################
 
 proc NewProjDialog {type} {
     global  fontNormal tree projDir workDir activeProject fileList noteBook imgDir prjDir prjName
@@ -903,6 +903,8 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
+
 
 
 

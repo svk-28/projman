@@ -1060,22 +1060,3 @@ proc GetExtention {node} {
     return $ext
 }
 
-proc TextOperation {oper} {
-    global noteBook
-    set nb [$noteBook raise]
-    if {$nb == "" || $nb == "newproj" || $nb == "about" || $nb == "debug"} {
-        return
-    }
-    set nb "$noteBook.f$nb"
-    switch $oper {
-        "copy" {tk_textCopy $nb.text}
-        "paste" {tk_textPaste $nb.text}
-        "cut" {tk_textCut $nb.text}
-        "redo" {$nb.text edit redo}
-        "undo" {$nb.text edit undo}
-    }
-    unset nb
-}
-
-
-

@@ -92,9 +92,9 @@ menubutton .frmMenu.mnuEdit -text [::msgcat::mc "Edit"] -menu .frmMenu.mnuEdit.m
 proc GetMenu {m} {
     global fontNormal fontBold imgDir editor
     $m add command -label [::msgcat::mc "Undo"] -font $fontNormal -accelerator "Ctrl+Z"\
-    -state normal -command Undo
-    $m add command -label [::msgcat::mc "Redo"] -font $fontNormal -accelerator "Ctrl+Z"\
-    -state normal -command Redo
+    -state normal -command {TextOperation undo}
+    $m add command -label [::msgcat::mc "Redo"] -font $fontNormal -accelerator "Ctrl+G"\
+    -state normal -command {TextOperation redo}
     $m add separator
     $m add command -label [::msgcat::mc "Procedure name complit"] -font $fontNormal -accelerator "Ctrl+J" -state normal\
     -command {
@@ -104,23 +104,11 @@ proc GetMenu {m} {
     }
     $m add separator
     $m add command -label [::msgcat::mc "Copy"] -font $fontNormal -accelerator "Ctrl+C"\
-    -command {
-        set nb "$noteBook.f[$noteBook raise]"
-        tk_textCopy $nb.text
-        unset nb
-    }
+    -command {TextOperation copy}
     $m add command -label [::msgcat::mc "Paste"] -font $fontNormal -accelerator "Ctrl+V"\
-    -command {
-        set nb "$noteBook.f[$noteBook raise]"
-        tk_textPaste $nb.text
-        unset nb
-    }
+    -command {TextOperation paste}
     $m add command -label [::msgcat::mc "Cut"] -font $fontNormal -accelerator "Ctrl+X"\
-    -command {
-        set nb "$noteBook.f[$noteBook raise]"
-        tk_textCut $nb.text
-        unset nb
-    }
+    -command {TextOperation cut}
     $m add separator
     $m add command -label [::msgcat::mc "Select all"] -font $fontNormal -accelerator "Ctrl+/"\
     -command {
@@ -380,5 +368,6 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
+
 
 
