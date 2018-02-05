@@ -408,7 +408,7 @@ proc GetProj {tree} {
 
 ## ABOUT PROGRAMM DIALOG ##
 proc AboutDialog {} {
-    global docDir imgDir tree noteBook ver fontNormal dataDir env
+    global docDir imgDir tree noteBook ver fontNormal dataDir env editor
     set w {}
     # prevent double creation "About" page
     if { [catch {set w [$noteBook insert end about -text [::msgcat::mc "About ..."]]} ] } {
@@ -416,20 +416,22 @@ proc AboutDialog {} {
         return
     }
     frame $w.frmImg -borderwidth 2 -relief ridge -background white
-    image create photo imgAbout -format gif -file [file join $imgDir projman.gif]
-    label $w.frmImg.lblImg -image imgAbout
-    pack $w.frmImg.lblImg -side top -pady 5 -padx 5
+    image create photo imgLogo -format png -file [file join $imgDir projman.png]
+    #    image create photo imgAbout -format png -file [file join $imgDir icons large projman.png]
+    label $w.frmImg.lblImgLogo -image imgLogo -border 0
+    #label $w.frmImg.lblImg -image imgAbout
+    pack $w.frmImg.lblImgLogo -side top -pady 5 -padx 5
     
     frame $w.frmlbl -borderwidth 2 -relief ridge
     label $w.frmlbl.lblVersion -text "[::msgcat::mc Version] $ver"
     label $w.frmlbl.lblCompany -text "License: GPL"
     label $w.frmlbl.lblAuthorName -text "[::msgcat::mc Author]: Sergey Kalinin"
-    label $w.frmlbl.lblEmail -text "[::msgcat::mc E-mail]: banzaj28@gmail.com"
-    label $w.frmlbl.lblWWW  -fg black \
-    -text "[::msgcat::mc "Home page"]: https://bitbucket.org/svk28/projman/ , https://nuk-svk.ru"
+    label $w.frmlbl.lblEmail -text "[::msgcat::mc E-mail]: banzaj28@yandex.ru"
+    label $w.frmlbl.lblWWWhome -text "[::msgcat::mc "Home page"]: https://nuk-svk.ru"
+    label $w.frmlbl.lblWWWgit -text "Git repository: https://bitbucket.org/svk28/projman"
     
     pack $w.frmlbl.lblVersion $w.frmlbl.lblCompany $w.frmlbl.lblAuthorName \
-    $w.frmlbl.lblEmail $w.frmlbl.lblWWW -side top -padx 5
+    $w.frmlbl.lblEmail $w.frmlbl.lblWWWhome $w.frmlbl.lblWWWgit -side top -padx 5
     frame $w.frmThanks -borderwidth 2 -relief ridge
     label $w.frmThanks.lblThanks -text "[::msgcat::mc Thanks]" -font $fontNormal
     text $w.frmThanks.txtThanks -width 10 -height 10 -font $fontNormal\
@@ -448,32 +450,41 @@ proc AboutDialog {} {
     pack $w.frmlbl  -side top -expand true -fill both
     pack $w.frmThanks  -side top -expand true -fill both
     pack $w.frmBtn -side top -fill x
-
+    
     bind $w <KeyRelease-Return> "$noteBook  delete about"
     bind $w <Escape>  "$noteBook  delete about"
     bind $w <Return> {$noteBook  delete about}
     #
-    #bind $w.frmlbl.lblWWW <Enter> {
-    #    .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg blue -cursor hand1
-    #    LabelUpdate .frmStatus.frmHelp.lblHelp "Goto http://nuk-svk.ru"
-    #}
-    #bind $w.frmlbl.lblWWW <Leave> {
-    #    .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWW configure -fg black
-    #    LabelUpdate .frmStatus.frmHelp.lblHelp ""
-    #}
-    #bind $w.frmlbl.lblWWW <ButtonRelease-1> {GoToURL "http://nuk-svk.ru"}
+    bind $w.frmlbl.lblWWWhome <Enter> {
+        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWhome configure -fg blue -cursor hand1
+        LabelUpdate .frmStatus.frmHelp.lblHelp "Goto https://nuk-svk.ru"
+    }
+    bind $w.frmlbl.lblWWWhome <Leave> {
+        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWhome configure -fg $editor(fg)
+        LabelUpdate .frmStatus.frmHelp.lblHelp ""
+    }
+    bind $w.frmlbl.lblWWWhome <ButtonRelease-1> {GoToURL "https://nuk-svk.ru"}
+    bind $w.frmlbl.lblWWWgit <Enter> {
+        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWgit configure -fg blue -cursor hand1
+        LabelUpdate .frmStatus.frmHelp.lblHelp "Goto https://bitbucket.org/svk28/projman"
+    }
+    bind $w.frmlbl.lblWWWgit <Leave> {
+        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWgit configure -fg $editor(fg)
+        LabelUpdate .frmStatus.frmHelp.lblHelp ""
+    }
+    bind $w.frmlbl.lblWWWgit <ButtonRelease-1> {GoToURL "https://bitbucket.org/svk28/projman"}
     #
     bind $w.frmlbl.lblEmail <Enter> {
         .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg blue -cursor hand1
         LabelUpdate .frmStatus.frmHelp.lblHelp "Send email \"banzaj28@yandex.ru\""
     }
     bind $w.frmlbl.lblEmail <Leave> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg black
+        .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg $editor(fg)
         LabelUpdate .frmStatus.frmHelp.lblHelp ""
     }
-    #bind $w.frmlbl.lblEmail <ButtonRelease-1> {SendEmail "http://nuk-svk.ru"}
-
-
+    bind $w.frmlbl.lblEmail <ButtonRelease-1> {SendEmail "banzaj28@yandex.ru"}
+    
+    
     $noteBook  raise about
     focus $w.frmBtn.btnOk
     if {[file exists $env(HOME)/projects/tcl/projman]==1} {
@@ -693,29 +704,58 @@ proc GoToURL {url} {
     } elseif {$tcl_platform(platform) == "mac"} {
         set pipe [open "|iexplore $url" "r"]
     } elseif {$tcl_platform(platform) == "unix"} {
-        set pipe [open "|$env(BROWSER) $url" "r"]
+        #$env(BROWSER)
+        #set pipe [open "|$env(BROWSER) $url" "r"]
+        launchBrowser $url
+        return
     }
     fileevent $pipe readable
     fconfigure $pipe -buffering none -blocking no
 }
+
+proc launchBrowser {url} {
+    global tcl_platform
+    
+    if {$tcl_platform(platform) eq "windows"} {
+        # first argument to "start" is "window title", which is not used here
+        set command [list {*}[auto_execok start] {}]
+        # (older) Windows shell would start a new command after &, so shell escape it with ^
+        #set url [string map {& ^&} $url]
+        # but 7+ don't seem to (?) so this nonsense is gone
+        if {[file isdirectory $url]} {
+            # if there is an executable named eg ${url}.exe, avoid opening that instead:
+            set url [file nativename [file join $url .]]
+        }
+    } elseif {$tcl_platform(os) eq "Darwin"} {
+        # It *is* generally a mistake to use $tcl_platform(os) to select functionality,
+        # particularly in comparison to $tcl_platform(platform).  For now, let's just
+        # regard it as a stylistic variation subject to debate.
+        set command [list open]
+    } else {
+        set command [list xdg-open]
+    }
+    exec {*}$command $url &
+}
+
+proc _launchBrowser {url} {
+    if [catch {launchBrowser $url} err] {
+        tk_messageBox -icon error -message "error '$err' with '$command'"
+    }
+}
+
 ## SEND EMAIL PROCEDURE ##
 proc SendEmail {mail} {
     global env tcl_platform
     if {$tcl_platform(platform) == "windows"} {
 
     } elseif {$tcl_platform(platform) == "mac"} {
-
+        
     } elseif {$tcl_platform(platform) == "unix"} {
-#        set pipe [open "|$env(BROWSER) $url" "r"]
-        set answer [tk_messageBox\
-                -message "[::msgcat::mc "Not implemented yet"]"\
-                -type ok -icon info]
-        case $answer {
-            ok {return 0}
-        }
-}
-#    fileevent $pipe readable
-#    fconfigure $pipe -buffering none -blocking no
+        set pipe [open "|xdg-open $mail" "r"]
+        fileevent $pipe readable
+        fconfigure $pipe -buffering none -blocking no
+        
+    }
 }
 ## QUIT PROJECT MANAGER PROCEDURE ##
 proc Quit {} {
@@ -1059,4 +1099,6 @@ proc GetExtention {node} {
     set ext [string range [file extension [file tail [lindex $fileList($node) 0]]] 1 end]
     return $ext
 }
+
+
 

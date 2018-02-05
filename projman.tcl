@@ -118,3 +118,4 @@ option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
 
 
+

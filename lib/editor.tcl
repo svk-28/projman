@@ -1173,3 +1173,4 @@ proc TextOperation {oper} {
 #################################### 
 GetOp
 
+

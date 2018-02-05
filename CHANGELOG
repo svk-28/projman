@@ -10,6 +10,7 @@
 - Added binding mouse button: click on notebook tab highlight opened file name in tree
 - Change "Paste from Clipboard" function
 - Change popup editor menu (undo, redo, copy, paste, cut functions)
+- Change Logo and About dialog
 
 04.02.2018
 - Fixed paste text highlight
@@ -344,6 +345,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 
