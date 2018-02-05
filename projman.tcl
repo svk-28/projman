@@ -19,11 +19,10 @@ set tclDir "/usr/bin"
 
 ##
 if {[file exists $env(HOME)/projects/tcl/projman]==1} {
-    set dataDir "[file join $env(HOME) projects tcl projman]"
+    set dataDir "[file join $env(HOME) projects tcl projman lib]"
     set docDir "[file join $env(HOME) projects tcl projman hlp ru]"
     set imgDir "[file join $env(HOME) projects tcl projman img]"
     set msgDir "[file join $env(HOME) projects tcl projman msgs]"
-    set hlDir "[file join $env(HOME) projects tcl projman highlight]"
     set binDir "[file join $env(HOME) projects tcl projman]"
 } else {
     set binDir  [file join $rootDir bin]
@@ -31,8 +30,9 @@ if {[file exists $env(HOME)/projects/tcl/projman]==1} {
     set docDir  [file join $rootDir share doc projman-$ver]
     set imgDir  [file join $dataDir img]
     set msgDir  [file join $dataDir msgs]
-    set hlDir  [file join $dataDir highlight]
 }
+set hlDir  [file join $dataDir highlight]
+
 if {$tcl_platform(platform) == "unix"} {
     set tmpDir "$env(HOME)/tmp"
     set workDir "[file join $env(HOME) .projman]"
@@ -71,31 +71,23 @@ if [info exists env(LANG)] {
 
 ::msgcat::mclocale $locale
 ::msgcat::mcload $msgDir
-#set mc_source [open [file join $msgDir $locale.msg] "r"]
-#set mc_source [encoding convertto koi8-r $mc_source]
-#set mc_source [encoding convertfrom [encoding system] $mc_source]
 
 ## LOAD FILE ##
+# Load modules but maain.tcl must last loaded
+foreach modFile [lsort [glob -nocomplain [file join $dataDir *.tcl]]] {
+    if {[file tail $modFile] ne "main.tcl"} {
+        source $modFile
+        puts "Loaded module $modFile"
+    }
+}
+# load code highlight modules
+foreach modFile [lsort [glob -nocomplain [file join $hlDir *.tcl]]] {
+    source $modFile
+    puts "Loaded highlight module $modFile"
+}
 
-
-source [file join $dataDir procedure.tcl]
-source [file join $dataDir supertext.tcl]
-source [file join $dataDir editor.tcl]
-source [file join $dataDir help.tcl]
-source [file join $dataDir settings.tcl]
-source [file join $dataDir baloon.tcl]
-source [file join $dataDir completition.tcl]
-source [file join $dataDir pane.tcl]
-source [file join $dataDir taglist.tcl]
-source [file join $dataDir projects.tcl]
-source [file join $dataDir imgviewer.tcl]
 source [file join $dataDir main.tcl]
 
-
-foreach file [lsort [glob -nocomplain [file join $hlDir *.tcl]]] {
-    source $file
-    puts "Loaded highlight module $file"
-}
 
 #set editor(selectBorder) "0"
 
@@ -129,7 +121,4 @@ option add *NoteBook.fg $editor(fg) startupFile
 option add *Listbox.foreground $editor(fg) startupFile
 option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
-
-
-
 

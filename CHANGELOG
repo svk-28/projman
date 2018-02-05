@@ -6,6 +6,9 @@
 #########################################################
 
 0.4.5
+05.02.2018
+- Added binding mouse button: click on notebook tab highlight opened file name in tree
+
 04.02.2018
 - Fixed paste text highlight
 - Fixed setting edited flag when paste the text from buffer
@@ -339,6 +342,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 
