@@ -18,7 +18,6 @@ package require msgcat
 package require BWidget
 
 
-
 ::msgcat::mclocale en
 ::msgcat::mcload msgs
 
@@ -382,6 +381,7 @@ proc SetVarLang {lang} {
         }
     }
 }
+
 
 
 

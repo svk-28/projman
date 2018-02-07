@@ -165,14 +165,6 @@ proc HighLightTCL {text line lineNumber node} {
         }        
     }
     
-    # add comment #
-    set workLine [$text get $lineNumber.0 $lineNumber.end]
-    if {[regexp -indices "(^|\t|;| )#" $workLine word]} {
-        set p [lindex $word 1]
-        $text tag add comments $lineNumber.$p $lineNumber.end
-    } else {
-        $text tag remove comments $lineNumber.0 $lineNumber.end
-    }
     # DEDERER
     # hightlight [, {, }, ]
     set startPos 0
@@ -208,20 +200,14 @@ proc HighLightTCL {text line lineNumber node} {
             break
         }
     }
+    # add comment #
+    set workLine [$text get $lineNumber.0 $lineNumber.end]
+    if {[regexp -indices "(^|\t|;| )#" $workLine word]} {
+        set p [lindex $word 1]
+        $text tag add comments $lineNumber.$p $lineNumber.end
+        $text tag raise comments
+    } else {
+        $text tag remove comments $lineNumber.0 $lineNumber.end
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

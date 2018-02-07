@@ -209,7 +209,3 @@ proc HighLightJAVA {text line lineNumber node} {
     }
 }
 
-
-
-
-
