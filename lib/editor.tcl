@@ -221,16 +221,13 @@ proc FindNext {text {incr 1}} {
 ## FIND FUNCTION PROCEDURE ##
 proc FindProc {text findString node} {
     global noteBook
-    
     set pos "0.0"
     $text see $pos
     set line [lindex [split $pos "."] 0]
     set x [lindex [split $pos "."] 1]
-    
     set pos [$text search -nocase $findString $line.$x end]
     $text mark set insert $pos
     $text see $pos
-    
     # highlight the found word
     set line [lindex [split $pos "."] 0]
     set x [lindex [split $pos "."] 1]
@@ -955,7 +952,7 @@ proc EditFile {node fileName} {
     bind $text <Control-ucircumflex> {FileDialog save}
     bind $text <Control-s> {FileDialog save}
     bind $text <Control-ocircumflex> {FileDialog save_as}
-    bind $text <Control-a> {FileDialog save_as}
+    bind $text <Shift-Control-s> {FileDialog save_as}
     bind $text <Control-odiaeresis> {FileDialog close}
     bind $text <Control-w> {FileDialog close}
     bind $text <Control-division> "tk_textCut $w.text;break"
@@ -965,12 +962,23 @@ proc EditFile {node fileName} {
     bind $text <Control-igrave> "tk_textPaste $w.text;break"
     #bind $text <Control-v> "tk_textPaste $w.text;break"
     bind $text <Control-v> {TextOperation paste; break}
+    bind $text <Control-a> {
+        set nb [$noteBook raise]
+        if {$nb == "" || $nb == "newproj" || $nb == "about" || $nb == "debug"} {
+            return
+        }
+        set nb "$noteBook.f$nb"
+        SelectAll $nb.text
+        unset nb
+    }
     
     bind $text <Control-adiaeresis> "auto_completition $text"
     bind $text <Control-l> "auto_completition $text"
     bind $text <Control-icircumflex> "auto_completition_proc $text"
     bind $text <Control-j> "auto_completition_proc $text"
     bind $text <Control-q> Find
+    bind $text <Control-slash> {TextOperation comment}
+    bind $text <Control-backslash> {TextOperation uncomment}
     bind $text <Control-eacute> Find
     #bind . <Control-m> PageTab
     #bind . <Control-udiaeresis> PageTab
@@ -1167,10 +1175,42 @@ proc TextOperation {oper} {
         "cut" {tk_textCut $nb.text}
         "redo" {$nb.text edit redo}
         "undo" {$nb.text edit undo}
+        "comment" {
+            set selIndex [$nb.text tag ranges sel]
+            if {$selIndex != ""} {
+                set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
+                set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
+                for {set i $lineBegin} {$i <=$lineEnd} {incr i} {
+                    $nb.text insert $i.0 "# "
+                }
+                $nb.text tag add comments $lineBegin.0 $lineEnd.end
+                $nb.text tag raise comments
+            } else {
+                return
+            }
+        }
+        "uncomment" {
+            set selIndex [$nb.text tag ranges sel]
+            if {$selIndex != ""} {
+                set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
+                set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
+                for {set i $lineBegin} {$i <=$lineEnd} {incr i} {
+                    set str [$nb.text get $i.0 $i.end]
+                    if {[regexp -nocase -all -line -- {(^| )(#+)(.+)} $str match v1 v2 v3]} {
+                        $nb.text delete $i.0 $i.end
+                        $nb.text insert $i.0 $v3
+                    }
+                }
+                $nb.text tag remove comments $lineBegin.0 $lineEnd.end
+            } else {
+                return
+            }
+        }
     }
     unset nb
 }
 #################################### 
 GetOp
+
 
 
