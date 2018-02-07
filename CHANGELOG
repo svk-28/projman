@@ -40,7 +40,6 @@
 19/10/2015
 - Fixed install.tcl script
 
-
 0.3.7
 
 18/10/2007
@@ -217,11 +216,11 @@ Fixed bug with PageRise function
     - Added german localisation by Roman Schaller <r.schaller@gmx.ch>
 
 0.2.0 (26/03/2002)
-        
+
     - Added Close opened file procedure when Delete file
     - Fix calling Ctags module if ctags package not installed
     - Added paned windows (for changes Tree size)
-            
+
     22/03/2002
     - Autocomplitition procedure (by Alexander Dederer (aka Korwin))
     - Added procedure names and parameters complitition
@@ -232,28 +231,23 @@ Fixed bug with PageRise function
     - Added Edit pop-up menu into editor window
     - Small fix with some keys binding
     - Small fix with quit ProjMan and saved modifing files 
-    
-        
 
 0.1.5 (01/03/2002)
     - Fix autoindent text procedure
     - Include updated ducumenation (by Alex Danilov)
-        
-        
+
 0.1.4 (20/02/2002)
     - Fix some problem with Close/Open file
     - Added bracket highlightning and corsor jumping for bracket!!! (by Korwin)
-        
 
     07/02/2002
     - Added refresh Tree procedure and ToolBar On/Off procedure
     - Some changes menu structure
-        
 
     05/02/2002
     - Changed GUI for installiation dialog
     - Added english ProjMan user manual
-        
+
     04/02/2002
     - Changes documentation structure, now documentation split by chapters and languages
     - Changes Help procedure for working with new directory structure
@@ -262,7 +256,7 @@ Fixed bug with PageRise function
     - Fixed problem with encoding russian documentation in Windows OS
     - Fixed problem with names like "proc::name" into Help system
     - Added Tcl/Tk and BWidget english documentation
-        
+
 0.1.3 (31/01/2002)
         - Replase SelectDir on standart dialog tk_chooseDirectory
         - Fixed error into TkDIFF+ with convert date procedure
@@ -353,6 +347,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 
