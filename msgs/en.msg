@@ -18,6 +18,8 @@
 ::msgcat::mcset en "Close all"
 ::msgcat::mcset en "Close Project Manager?"
 ::msgcat::mcset en "Comments"
+::msgcat::mcset en "Comment selected"
+::msgcat::mcset en "Uncomment selected"
 ::msgcat::mcset en "Company"
 ::msgcat::mcset en "Compiler"
 ::msgcat::mcset en "Compile"
@@ -160,6 +162,7 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
+
 
 
 

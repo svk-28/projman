@@ -960,25 +960,15 @@ proc EditFile {node fileName} {
     bind $text <Control-ntilde> "tk_textCopy $w.text;break"
     bind $text <Control-c> "tk_textCopy $w.text;break"
     bind $text <Control-igrave> "tk_textPaste $w.text;break"
-    #bind $text <Control-v> "tk_textPaste $w.text;break"
     bind $text <Control-v> {TextOperation paste; break}
-    bind $text <Control-a> {
-        set nb [$noteBook raise]
-        if {$nb == "" || $nb == "newproj" || $nb == "about" || $nb == "debug"} {
-            return
-        }
-        set nb "$noteBook.f$nb"
-        SelectAll $nb.text
-        unset nb
-    }
     
     bind $text <Control-adiaeresis> "auto_completition $text"
     bind $text <Control-l> "auto_completition $text"
     bind $text <Control-icircumflex> "auto_completition_proc $text"
     bind $text <Control-j> "auto_completition_proc $text"
     bind $text <Control-q> Find
-    bind $text <Control-slash> {TextOperation comment}
-    bind $text <Control-backslash> {TextOperation uncomment}
+    bind $text <Control-comma> {TextOperation comment}
+    bind $text <Control-period> {TextOperation uncomment}
     bind $text <Control-eacute> Find
     #bind . <Control-m> PageTab
     #bind . <Control-udiaeresis> PageTab
@@ -1211,6 +1201,7 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
 
 
 

@@ -110,7 +110,7 @@ proc GetMenu {m} {
     $m add command -label [::msgcat::mc "Cut"] -font $fontNormal -accelerator "Ctrl+X"\
     -command {TextOperation cut}
     $m add separator
-    $m add command -label [::msgcat::mc "Select all"] -font $fontNormal -accelerator "Ctrl+A"\
+    $m add command -label [::msgcat::mc "Select all"] -font $fontNormal -accelerator "Ctrl+/"\
     -command {
         set nb [$noteBook raise]
         if {$nb == "" || $nb == "newproj" || $nb == "about" || $nb == "debug"} {
@@ -120,9 +120,9 @@ proc GetMenu {m} {
         SelectAll $nb.text
         unset nb
     }
-    $m add command -label [::msgcat::mc "Comment selected"] -font $fontNormal -accelerator "Ctrl+/"\
-    -command {TextOperation comment}
-    $m add command -label [::msgcat::mc "Uncomment selected"] -font $fontNormal  -accelerator "Ctrl+\\" \
+    $m add command -label [::msgcat::mc "Comment selected"] -font $fontNormal -accelerator "Ctrl+,"\
+            -command {TextOperation comment}
+    $m add command -label [::msgcat::mc "Uncomment selected"] -font $fontNormal  -accelerator "Ctrl+." \
     -command {TextOperation uncomment}
     
     $m add separator
@@ -373,6 +373,7 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
+
 
 
 

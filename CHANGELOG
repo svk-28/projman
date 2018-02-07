@@ -9,6 +9,8 @@
 07.02.2018
 - Tcl, Perl, PHP highlight comment procedure fixed
 - Help file Text.html utf-8 encoding
+- Change hotkeys "Control+," "Control+." "Control+/" (commect selected, uncoment selected, select all)
+- Add new function Comments/Uncomment selected text
 
 05.02.2018
 - Added binding mouse button: click on notebook tab highlight opened file name in tree
@@ -351,6 +353,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 

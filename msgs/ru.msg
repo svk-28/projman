@@ -19,6 +19,8 @@
 ::msgcat::mcset ru "Close all" "Закрыть все"
 ::msgcat::mcset ru "Close Project Manager?" "Выйти из программы?"
 ::msgcat::mcset ru "Comments" "Коментарии"
+::msgcat::mcset ru "Comment selected" "Закоментировать"
+::msgcat::mcset ru "Uncomment selected" "Раскоментировать"
 ::msgcat::mcset ru "Company" "Компания"
 ::msgcat::mcset ru "Compiler" "Компилятор"
 ::msgcat::mcset ru "Compile" "Компиляция"
@@ -164,6 +166,7 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
+
 
 
 
