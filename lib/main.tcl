@@ -35,19 +35,19 @@ $mn add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog 
 -font $fontNormal -accelerator "Ctrl+N"
 $mn add command -label [::msgcat::mc "New project"] -command {NewProjDialog "new"}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Open"] -command {FileDialog open}\
--font $fontNormal -accelerator "Ctrl+O"        -state disable
-$m add command -label [::msgcat::mc "Save"] -command {FileDialog save}\
+#$m add command -label [::msgcat::mc "Open"] -command {FileDialog open}\
+#-font $fontNormal -accelerator "Ctrl+O"        -state disable
+$m add command -label [::msgcat::mc "Save"] -command {FileDialog $tree save}\
 -font $fontNormal -accelerator "Ctrl+S"
-$m add command -label [::msgcat::mc "Save as"] -command {FileDialog save_as}\
+$m add command -label [::msgcat::mc "Save as"] -command {FileDialog $tree save_as}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Save all"] -command {FileDialog save_all}\
+$m add command -label [::msgcat::mc "Save all"] -command {FileDialog $tree save_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Close"] -command {FileDialog close}\
+$m add command -label [::msgcat::mc "Close"] -command {FileDialog $tree close}\
 -font $fontNormal -accelerator "Ctrl+W"
-$m add command -label [::msgcat::mc "Close all"] -command {FileDialog close_all}\
+$m add command -label [::msgcat::mc "Close all"] -command {FileDialog $tree close_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Delete"] -command {FileDialog delete}\
+$m add command -label [::msgcat::mc "Delete"] -command {FileDialog $tree delete}\
 -font $fontNormal -accelerator "Ctrl+D"
 $m add separator
 $m add command -label [::msgcat::mc "Compile file"] -command {MakeProj compile file} -font $fontNormal -accelerator "Ctrl+F8"
@@ -219,11 +219,11 @@ proc CreateToolBar {} {
     if {$toolBar == "Yes"} {
         set bboxFile [ButtonBox .frmTool.bboxFile -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
         add_toolbar_button $bboxFile new.png {AddToProjDialog file} [::msgcat::mc "Create new file"]
-        add_toolbar_button $bboxFile save.png {FileDialog save} [::msgcat::mc "Save file"]
-        add_toolbar_button $bboxFile save_as.png {FileDialog save_as} [::msgcat::mc "Save file as"]
-        add_toolbar_button $bboxFile save_all.png {FileDialog save_all} [::msgcat::mc "Save all"]
+        add_toolbar_button $bboxFile save.png {FileDialog $tree save} [::msgcat::mc "Save file"]
+        add_toolbar_button $bboxFile save_as.png {FileDialog $tree save_as} [::msgcat::mc "Save file as"]
+        add_toolbar_button $bboxFile save_all.png {FileDialog $tree save_all} [::msgcat::mc "Save all"]
         add_toolbar_button $bboxFile printer.png {PrintDialog} [::msgcat::mc "Print ..."]
-        add_toolbar_button $bboxFile close.png {FileDialog close} [::msgcat::mc "Close"]
+        add_toolbar_button $bboxFile close.png {FileDialog $tree close} [::msgcat::mc "Close"]
         
         set bboxEdit [ButtonBox .frmTool.bboxEdit -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
         add_toolbar_button $bboxEdit copy.png {TextOperation copy} [::msgcat::mc "Copy into clipboard"]
@@ -308,8 +308,8 @@ $tree bindText  <ButtonPress-1> "TreeOneClick $tree [$tree selection get]"
 $tree bindImage  <Double-ButtonPress-1> "TreeDoubleClick $tree [$tree selection get]"
 $tree bindImage  <ButtonPress-1> "TreeOneClick $tree [$tree selection get]"
 $tree bindText <Shift-Button-1> {$tree selection add [$tree selection get]}
-bind $frmTree.tree.c <Control-acircumflex> {FileDialog delete}
-bind $frmTree.tree.c <Control-d> {FileDialog delete}
+bind $frmTree.tree.c <Control-acircumflex> {FileDialog $tree delete}
+bind $frmTree.tree.c <Control-d> {FileDialog $tree delete}
 bind $frmTree.tree.c <Return> {
     set node [$tree selection get]
     TreeOneClick $tree $node
@@ -323,19 +323,19 @@ $m add command -label [::msgcat::mc "New file"] -command {AddToProjDialog file}\
 -font $fontNormal -accelerator "Ctrl+N"
 $m add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog directory}\
 -font $fontNormal -accelerator "Alt + Ctrl+N"
-$m add command -label [::msgcat::mc "Open"] -command {FileDialog open}\
+$m add command -label [::msgcat::mc "Open"] -command {FileDialog $tree open}\
 -font $fontNormal -accelerator "Ctrl+O"        -state disable
-$m add command -label [::msgcat::mc "Save"] -command {FileDialog save}\
+$m add command -label [::msgcat::mc "Save"] -command {FileDialog $tree save}\
 -font $fontNormal -accelerator "Ctrl+S"
-$m add command -label [::msgcat::mc "Save as"] -command {FileDialog save_as}\
+$m add command -label [::msgcat::mc "Save as"] -command {FileDialog $tree save_as}\
 -font $fontNormal -accelerator "Ctrl+A"
-$m add command -label [::msgcat::mc "Save all"] -command {FileDialog save_all}\
+$m add command -label [::msgcat::mc "Save all"] -command {FileDialog $tree save_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Close"] -command {FileDialog close}\
+$m add command -label [::msgcat::mc "Close"] -command {FileDialog $tree close}\
 -font $fontNormal -accelerator "Ctrl+W"
-$m add command -label [::msgcat::mc "Close all"] -command {FileDialog close_all}\
+$m add command -label [::msgcat::mc "Close all"] -command {FileDialog $tree close_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Delete"] -command {FileDialog delete}\
+$m add command -label [::msgcat::mc "Delete"] -command {FileDialog $tree delete}\
 -font $fontNormal -accelerator "Ctrl+D"
 $m add separator
 $m add command -label [::msgcat::mc "Compile file"] -command {MakeProj compile file} -font $fontNormal -accelerator "Ctrl+F8"
@@ -348,9 +348,9 @@ GetProjMenu $m
 ## TABS popups ##
 set m .popupTabs
 menu $m -font $fontNormal -bg $editor(bg) -fg $editor(fg)
-$m add command -label [::msgcat::mc "Close"] -command {FileDialog close}\
+$m add command -label [::msgcat::mc "Close"] -command {FileDialog $tree close}\
 -font $fontNormal -accelerator "Ctrl+W"
-$m add command -label [::msgcat::mc "Close all"] -command {FileDialog close_all}\
+$m add command -label [::msgcat::mc "Close all"] -command {FileDialog $tree close_all}\
 -font $fontNormal
 
 proc PopupMenuTab {menu x y} {

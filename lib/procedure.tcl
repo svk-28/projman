@@ -192,7 +192,7 @@ proc MakeTGZ {} {
             ok {return 0}
         }
     }
-    FileDialog save_all
+    FileDialog tree save_all
     set file [open [file join $workDir $activeProject.proj] r]
     while {[gets $file line]>=0} {
         scan $line "%s" keyWord
@@ -404,7 +404,7 @@ proc SendEmail {mail} {
 }
 ## QUIT PROJECT MANAGER PROCEDURE ##
 proc Quit {} {
-    set v [FileDialog close_all]
+    set v [FileDialog tree close_all]
     if {$v == "cancel"} {
         return
     } else {

@@ -363,7 +363,7 @@ proc Replace {text incr} {
     #    focus -force .replace
 }
 ## FILE OPERATION ##
-proc FileDialog {$tree operation} {
+proc FileDialog {tree operation} {
     global noteBook fontNormal fontBold fileList noteBook projDir activeProject imgDir editor
     set dot "_"
     set types {
@@ -407,7 +407,7 @@ proc FileDialog {$tree operation} {
         -type yesno -icon question -default yes]
         case $answer {
             yes {
-                FileDialog close
+                FileDialog $tree close
                 file delete -force "$fullPath"
                 $tree delete $node
                 $tree configure -redraw 1
@@ -520,7 +520,7 @@ proc FileDialog {$tree operation} {
             -title [::msgcat::mc "Warning"]]
             case $answer {
                 yes {
-                    FileDialog save
+                    FileDialog $tree save
                     #                    FileDialog close
                 }
                 no {
@@ -588,7 +588,7 @@ proc FileDialog {$tree operation} {
                     -title [::msgcat::mc "Warning"]]
                     case $answer {
                         yes {
-                            FileDialog save
+                            FileDialog $tree save
                         }
                         no {}
                         cancel {return cancel}
@@ -971,12 +971,12 @@ proc EditFile {tree node fileName} {
     bind $text <Control-ecircumflex> ReplaceDialog
     bind $text <Control-r> ReplaceDialog
     bind $text <F4> {ReplaceCommand $w.text 1}
-    bind $text <Control-ucircumflex> {FileDialog save}
-    bind $text <Control-s> {FileDialog save}
-    bind $text <Control-ocircumflex> {FileDialog save_as}
-    bind $text <Shift-Control-s> {FileDialog save_as}
-    bind $text <Control-odiaeresis> {FileDialog close}
-    bind $text <Control-w> {FileDialog close}
+    bind $text <Control-ucircumflex> {FileDialog $tree save}
+    bind $text <Control-s> {FileDialog $tree save}
+    bind $text <Control-ocircumflex> {FileDialog $tree save_as}
+    bind $text <Shift-Control-s> {FileDialog $tree save_as}
+    bind $text <Control-odiaeresis> {FileDialog $tree close}
+    bind $text <Control-w> {FileDialog $tree close}
     bind $text <Control-division> "tk_textCut $w.text;break"
     bind $text <Control-x> "tk_textCut $w.text;break"
     bind $text <Control-ntilde> "tk_textCopy $w.text;break"
