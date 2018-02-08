@@ -798,6 +798,29 @@ proc TabIns {text} {
                 set shouldBeSpaces [expr {$shouldBeSpaces - $indentSize}]
             }
         }
+        if {$lastSymbol == "\["} {
+            incr shouldBeSpaces $indentSize
+        }
+        set a ""
+        regexp "^| *\]" $curText a
+        if {$a != ""} {
+            # make unindent
+            if {$shouldBeSpaces >= $indentSize} {
+                set shouldBeSpaces [expr {$shouldBeSpaces - $indentSize}]
+            }
+        }
+        if {$lastSymbol == "\("} {
+            incr shouldBeSpaces $indentSize
+        }
+        set a ""
+        regexp {^| *\)} $curText a
+        if {$a != ""} {
+            # make unindent
+            if {$shouldBeSpaces >= $indentSize} {
+                set shouldBeSpaces [expr {$shouldBeSpaces - $indentSize}]
+            }
+        }
+        
         set spaceNum [string length $spaces]
         if {$shouldBeSpaces > $spaceNum} {
             #insert spaces
@@ -1201,7 +1224,4 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
-
-
-
 

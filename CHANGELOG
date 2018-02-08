@@ -6,6 +6,9 @@
 #########################################################
 
 0.4.5
+08.02.2018
+- Auto indent added for () [] braces
+
 07.02.2018
 - Tcl, Perl, PHP highlight comment procedure fixed
 - Help file Text.html utf-8 encoding
@@ -347,6 +350,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 

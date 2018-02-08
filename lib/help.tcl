@@ -324,37 +324,3 @@ proc TopLevelHelp {} {
 
 #GetContent $docDir/tcl.toc.html
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
