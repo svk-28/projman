@@ -71,6 +71,11 @@ proc Settings {} {
         } else {
             puts $file "set backUpFileDelete \"Yes\""
         }
+        if {$dotFileShow == "false"} {
+            puts $file "set dotFileShow \"No\""
+        } else {
+            puts $file "set dotFileShow \"Yes\""
+        }
         puts $file "\n# Don't edit this line"
         puts $file "# Directorys Settings #"
         puts $file "set projDir \"[$main.frmProjDir.txtProjDir get]\""
@@ -259,9 +264,16 @@ proc Settings {} {
             -font $fontNormal -onvalue true -offvalue false
     pack $frm_12.lblBackUpDel -side left
     pack $frm_12.chkBackUpDel -side left
-    
+    set frm_13 [frame $main.frmDotFilesShow -bg $editor(bg)]
+    label $frm_13.lblDotFilesShow -text [::msgcat::mc "Show dot files"]\
+            -width 30 -anchor w -font $fontNormal -fg $editor(fg)
+    checkbutton $frm_13.chkDotFilesShow -text "" -variable showDotFiles \
+            -font $fontNormal -onvalue true -offvalue false
+    pack $frm_13.lblDotFilesShow -side left
+    pack $frm_13.chkDotFilesShow -side left
+
     pack $frm_1 $frm_2 $frm_5 $frm_3 $frm_4 $frm_6 $frm_7 \
-    $frm_8 $frm_9 $frm_10 $frm_11 $frm_12 -side top -fill both -expand true
+    $frm_8 $frm_9 $frm_10 $frm_11 $frm_12  $frm_13 -side top -fill both -expand true
     
     #################### EDITOR PREF #########################
     set editFrm [$nb insert end editor -text "[::msgcat::mc "Editor"]"]
@@ -862,6 +874,8 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
+
+
 
 
 

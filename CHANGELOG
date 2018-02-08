@@ -8,6 +8,7 @@
 0.4.5
 08.02.2018
 - Auto indent added for () [] braces
+- File Browser added. Now we will edited any file without project
 
 07.02.2018
 - Tcl, Perl, PHP highlight comment procedure fixed
@@ -350,6 +351,8 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
+
 
 
 

@@ -58,6 +58,7 @@
 ::msgcat::mcset en "File was modifyed. Close?"
 ::msgcat::mcset en "File was modifyed. Save?"
 ::msgcat::mcset en "File saved"
+::msgcat::mcset en "Files"
 ::msgcat::mcset en "Find"
 ::msgcat::mcset en "Font normal"
 ::msgcat::mcset en "Font bold"
@@ -162,6 +163,7 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
+
 
 
 

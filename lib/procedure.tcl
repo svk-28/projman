@@ -28,31 +28,6 @@ proc LabelUpdate {widget value} {
     global fontNormal
     $widget configure -text $value -font $fontNormal
 }
-## SHOW PUP-UP MENUS ## 
-proc PopupMenuTree {x y} {
-    global tree fontNormal fontBold imgDir activeProject
-    set node [$tree selection get]
-    if {$node ==""} {
-        set answer [tk_messageBox\
-        -message "[::msgcat::mc "Not found active project"]"\
-        -type ok -icon warning]
-        case $answer {
-            ok {return 0}
-        }
-    }
-    $tree selection set $node
-    set item [$tree itemcget $node -data]
-    if {[string range $item 0 2] == "prj"} {
-        set activeProject [string range $item 4 end]
-        .frmStatus.frmActive.lblActive configure -text [$tree itemcget $node -text] -font $fontBold
-        tk_popup .popupProj $x $y
-        return
-    }
-    if {[info exists fileList($node)] != 1} {
-        #        set fileList($node) $item
-        tk_popup .popupFile $x $y
-    }
-}
 proc PopupMenuEditor {x y} {
     tk_popup .popMnuEdit $x $y
 }
@@ -66,16 +41,16 @@ proc FileAttr {file} {
         set modifyTime [clock format $unixTime -format "%d/%m/%Y, %H:%M"]
         append fileAttribute $modifyTime
     } elseif {$tcl_platform(platform) == "mac"} {
-    
-} elseif {$tcl_platform(platform) == "unix"} {
-    set unixTime [file mtime $file]
-    set modifyTime [clock format $unixTime -format "%d/%m/%Y, %H:%M"]
-    append fileAttribute $modifyTime
-}
-# get file size
-set size [file size $file]
-if {$size < 1024} {
-    set fileSize "$size b"
+        
+    } elseif {$tcl_platform(platform) == "unix"} {
+        set unixTime [file mtime $file]
+        set modifyTime [clock format $unixTime -format "%d/%m/%Y, %H:%M"]
+        append fileAttribute $modifyTime
+    }
+    # get file size
+    set size [file size $file]
+    if {$size < 1024} {
+        set fileSize "$size b"
     }
     if {$size >= 1024} {
         set s [expr ($size.0) / 1024]
@@ -92,318 +67,6 @@ if {$size < 1024} {
         set fileSize "$int.$dec Mb"
     }
     append fileAttribute ", $fileSize"
-}
-## OPEN TREE PROCEDURE
-proc TreeOpen {node} {
-    global fontNormal tree projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    
-    $tree selection set $node
-    set item [$tree itemcget $node -data]
-    if {[string range $item 0 2] == "prj"} {
-        set activeProject [string range $item 4 end]
-        puts $activeProject
-        .frmStatus.frmActive.lblActive configure -text [$tree itemcget $node -text] -font $fontBold
-        $tree itemconfigure $node -image [Bitmap::get [file join $imgDir openfold.gif]] 
-        if {[file exists [file join $workDir $activeProject.tags]] == 1} {
-            GetTagList [file join $workDir $activeProject.tags] ;# geting tag list
-        } else {
-            DoModule ctags
-        }
-    }
-    if {[info exists fileList($node)] != 1} {
-       set fileList($node) $item
-        if {[file isdirectory $item] == 1} {
-            $tree itemconfigure $node -image [Bitmap::get [file join $imgDir openfold.gif]] 
-        }
-    }
-}
-## CLOSE TREE PROCEDURE ##
-proc TreeClose {node} {
-    global fontNormal tree projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    
-    $tree selection set $node
-    set item [$tree itemcget $node -data]
-    if {[string range $item 0 2] == "prj"} {
-        $tree itemconfigure $node -image [Bitmap::get [file join $imgDir folder.gif]] 
-    }
-    if {[info exists fileList($node)] != 1} {
-        if {[file isdirectory $item] == 1} {
-            $tree itemconfigure $node -image [Bitmap::get [file join $imgDir folder.gif]]
-        }
-    }
-}
-## TREE ONE CLICK PROCEDURE ##
-proc TreeOneClick {node} {
-    global fontNormal tree projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    $tree selection set $node
-    set item [$tree itemcget $node -data]
-    if {[string range $item 0 2] == "prj"} {
-        set activeProject [string range $item 4 end]
-        puts $activeProject
-        .frmStatus.frmActive.lblActive configure -text [$tree itemcget $node -text] -font $fontBold
-        if {[file exists [file join $workDir $activeProject.tags]] == 1} {
-            GetTagList [file join $workDir $activeProject.tags] ;# geting tag list
-        } else {
-            DoModule ctags
-        }
-        return
-    }
-    if {[info exists fileList($node)] != 1} {
-        if {[file isdirectory $item] == 1} {
-            return
-        } else {
-            if {[file exists $item] == 1} {
-                LabelUpdate .frmStatus.frmHelp.lblHelp [FileAttr $item]
-            }
-        }
-    } else {
-        PageRaise $node
-    }
-    if {[string range $item 0 2] == "prc"} {
-        set parent [$tree parent $node]
-        set file [$tree itemcget $parent -data]
-        set fileExt [string range [file extension $file] 1 end]
-        if {[info exists fileList($parent)] == 0} {
-            EditFile $parent $file
-        }
-        PageRaise $parent
-        $tree selection set $node
-        set text "$noteBook.f$parent.text"
-        set index1 [expr [string first "_" $item]+1]
-        set index2 [expr [string last "_" $item]11]
-        if {$fileExt == "java" || $fileExt == "ja"} {
-            set findString "class [string range $item $index1 $index2] "
-        } elseif {$fileExt == "perl" || $fileExt == "pl"} {
-            set findString "sub [string range $item $index1 $index2]"
-        } elseif {$fileExt == "ml" || $fileExt == "mli"} {
-            set findString "let [string range $item $index1 $index2]"
-        } elseif {$fileExt == "php" || $fileExt == "phtml"} {
-            set findString "function [string range $item $index1 $index2]"
-            puts $findString
-            #return
-        } elseif {$fileExt == "rb"} {
-            set findString "class [string range $item $index1 $index2]"
-        } else {
-            set findString "proc [string range $item $index1 $index2] "
-        }
-        FindProc $text $findString $node
-        focus -force $text
-    }
-}
-## TREE DOUBLE  CLICK PROCEDURE ##
-proc TreeDoubleClick {node} {
-    global  fontNormal tree projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    
-    $tree selection set $node
-    set item [$tree itemcget $node -data]
-    if {[$tree itemcget $node -open] == 1} {
-        $tree itemconfigure $node -open 0
-    } elseif {[$tree itemcget $node -open] == 0} {
-        $tree itemconfigure $node -open 1
-    }
-    if {[string range $item 0 2] == "prj"} {
-        set activeProject [string range $item 4 end]
-        .frmStatus.frmActive.lblActive configure -text [$tree itemcget $node -text] -font $fontBold
-        GetTagList [file join $workDir $activeProject.tags] ;# geting tag list
-    }
-    
-   if {[info exists fileList($node)] != 1} {
-        if {[file isdirectory $item] == 1} {
-            GetFilesSubdir $node $item
-        } else {
-            if {[file exists $item] == 1} {
-                EditFile $node $item
-                LabelUpdate .frmStatus.frmFile.lblFile "[file size $item] b."
-            }
-        }
-    }
-    if {[string range $item 0 2] == "prc"} {
-        $tree selection set $node
-        set parent [$tree parent $node]
-        if {[info exists fileList($parent)] != 1} {
-            set file [$tree itemcget $parent -data]
-            EditFile $parent $file
-            $noteBook raise $parent
-        } else {
-            $noteBook raise $parent
-        }
-        set text "$noteBook.f$parent.text"
-        set index1 [expr [string first "_" $item]+1]
-        set index2 [expr [string last "_" $item]11]
-        set findString "proc [string range $item $index1 $index2] "
-        FindProc $text $findString $node
-        focus -force $text
-    }
-}
-## GETTING FILES FROM SUBCIR ##
-proc GetFilesSubdir {node dir} {
-    global  fontNormal tree projDir workDir activeProject imgDir count
-    global backUpFileShow
-    set count 1
-    set rList ""
-    if {[catch {cd $dir}] != 0} {
-        return ""
-    }
-    foreach file [lsort [glob -nocomplain .*]] {
-        if {$file == "." || $file == ".."} {
-            puts $file
-        } else {
-            lappend rList [list [file join $dir $file]]
-            set fileName [file join $file]
-            set img [GetImage $fileName]
-            set dot "_"
-            regsub -all {\.} $fileName "_" subNode
-            set subNode "$activeProject$dot$node$dot$subNode$dot$count"
-            if {[$tree exists $subNode] == 1} {return}
-            if {$backUpFileShow == "Yes"} {
-                $tree insert end $node $subNode -text $fileName \
-                -data [file join $dir $fileName] -open 1\
-                -image [Bitmap::get [file join $imgDir $img.gif]]\
-                -font $fontNormal
-            }
-            if {$backUpFileShow == "No"} {
-                if {[file isdirectory $fileName] == 1} {
-                    $tree insert end $node $subNode -text $fileName \
-                    -data [file join $dir $fileName] -open 1\
-                    -image [Bitmap::get [file join $imgDir $img.gif]]\
-                    -font $fontNormal
-                } else {
-                    if {[string index $fileName end] != "~"} {
-                        $tree insert end $node $subNode -text $fileName \
-                        -data [file join $dir $fileName] -open 1\
-                        -image [Bitmap::get [file join $imgDir $img.gif]]\
-                        -font $fontNormal
-                    }
-                }
-            }
-        }
-        incr count
-    }
-    foreach file [lsort [glob -nocomplain *]] {
-        lappend rList [list [file join $dir $file]]
-        set fileName [file join $file]
-        set img [GetImage $fileName]
-        set dot "_"
-        regsub -all {\.} $fileName "_" subNode
-        set subNode "$activeProject$dot$node$dot$subNode$dot$count"
-        if {[$tree exists $subNode] == 1} {return}
-        if {$backUpFileShow == "Yes"} {
-            $tree insert end $node $subNode -text $fileName \
-            -data [file join $dir $fileName] -open 1\
-            -image [Bitmap::get [file join $imgDir $img.gif]]\
-            -font $fontNormal
-        }
-        if {$backUpFileShow == "No"} {
-            if {[file isdirectory $fileName] == 1} {
-                $tree insert end $node $subNode -text $fileName \
-                -data [file join $dir $fileName] -open 1\
-                -image [Bitmap::get [file join $imgDir $img.gif]]\
-                -font $fontNormal
-            } else {
-                if {[string index $fileName end] != "~"} {
-                    $tree insert end $node $subNode -text $fileName \
-                    -data [file join $dir $fileName] -open 1\
-                    -image [Bitmap::get [file join $imgDir $img.gif]]\
-                    -font $fontNormal
-                }
-            }
-        }
-        incr count
-    }
-    $tree itemconfigure $node -open 1
-}
-## GETTING FILES FROM PROJECT DIR AND INSERT INTO TREE WIDGET ##
-proc GetFiles {dir project tree} {
-    global  fontNormal backUpFileShow imgDir
-    set rList ""
-    set count 1
-    if {[catch {cd $dir}] != 0} {
-        return ""
-    }
-    foreach file [lsort [glob -nocomplain .*]] {
-        if {$file == "." || $file == ".."} {
-            puts $file
-        } else {
-            lappend rList [list [file join $dir $file]]
-            set fileName [file join $file]
-            set img [GetImage $fileName]
-            set dot "_"
-            regsub -all {\.} $fileName "_" subNode
-            set subNode "$project$dot$subNode$dot$count"
-            if {$backUpFileShow == "Yes"} {
-                $tree insert end $project $subNode -text $fileName \
-                -data [file join $dir $fileName] -open 1\
-                -image [Bitmap::get [file join $imgDir $img.gif]]\
-                -font $fontNormal
-            }
-            if {$backUpFileShow == "No"} {
-                if {[string index $fileName end] != "~"} {
-                    $tree insert end $project $subNode -text $fileName \
-                    -data [file join $dir $fileName] -open 1\
-                    -image [Bitmap::get [file join $imgDir $img.gif]]\
-                    -font $fontNormal
-                }
-            }
-        }
-            incr count
-    }
-    
-    foreach file [lsort [glob -nocomplain *]] {
-        lappend rList [list [file join $dir $file]]
-        set fileName [file join $file]
-        set img [GetImage $fileName]
-        set dot "_"
-        regsub -all {\.} $fileName "_" subNode
-        set subNode "$project$dot$subNode$dot$count"
-        if {$backUpFileShow == "Yes"} {
-            $tree insert end $project $subNode -text $fileName \
-            -data [file join $dir $fileName] -open 1\
-            -image [Bitmap::get [file join $imgDir $img.gif]]\
-            -font $fontNormal
-        }
-        if {$backUpFileShow == "No"} {
-            if {[string index $fileName end] != "~"} {
-                $tree insert end $project $subNode -text $fileName \
-                -data [file join $dir $fileName] -open 1\
-                -image [Bitmap::get [file join $imgDir $img.gif]]\
-                -font $fontNormal
-            }
-        }
-        incr count
-    }
-    $tree configure -redraw 1
-}
-## GETTING PROJECT NAMES FROM DIR AND PUTS INTO 
-proc GetProj {tree} {
-    global projDir workDir fontNormal imgDir module
-    set rList ""                     
-    if {[catch {cd $workDir}] != 0} {
-        return ""
-    }
-    foreach proj [lsort [glob -nocomplain *.proj]] {
-        lappend rList [list [file join $workDir $proj]]
-        set projFile [open [file join $workDir $proj] r]
-        set prjName [file rootname $proj]
-        while {[gets $projFile line]>=0} {
-            scan $line "%s" keyWord
-            set string [string range $line [string first "\"" $line] [string last "\"" $line]]
-            set string [string trim $string "\""]
-            if {$keyWord == "ProjectName"} {
-                regsub -all " " $string "_" project
-                set projName "$string"
-            }
-            if {$keyWord == "ProjectDirName"} {
-                set projList($prjName) [file dirname $string]
-                puts "$projList($prjName) - $string"
-                $tree insert end root $prjName -text "$projName" -font $fontNormal \
-                -data "prj_$prjName" -open 0\
-                -image [Bitmap::get [file join $imgDir folder.gif]]
-                GetFiles [file join $string] $prjName $tree
-                set dir $string
-            }
-        }
-    }
-    $tree configure -redraw 1
 }
 
 ## ABOUT PROGRAMM DIALOG ##
@@ -964,12 +627,6 @@ proc SelectDir {dir} {
         -parent .]
     return $dirName
 }
-## UPDATE TREE ##
-proc UpdateTree {} {
-    global tree
-    $tree delete [$tree nodes root]
-    GetProj $tree
-}
 ## TOOLBAR ON/OFF PROCEDURE ##
 proc ToolBar {} {
     global toolBar
@@ -1081,6 +738,9 @@ proc GetExtention {node} {
     set ext [string range [file extension [file tail [lindex $fileList($node) 0]]] 1 end]
     return $ext
 }
+
+
+
 
 
 

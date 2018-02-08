@@ -3,8 +3,8 @@
 ###########################################################
 #                Tcl/Tk Project Manager                   #
 #                  install script                         #
-# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru  #
-# Author: Sergey Kalinin banzaj28@yandex.ru       #
+# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru #
+# Author: Sergey Kalinin banzaj28@yandex.ru               #
 ###########################################################
 
 ## SETTING VARIABLES AND DIRECTORYES ##
@@ -16,7 +16,6 @@ set hlDir highlight
 set fontNormal "helvetica 12 normal roman"
 package require msgcat
 package require BWidget
-
 
 ::msgcat::mclocale en
 ::msgcat::mcload msgs
@@ -381,6 +380,7 @@ proc SetVarLang {lang} {
         }
     }
 }
+
 
 
 

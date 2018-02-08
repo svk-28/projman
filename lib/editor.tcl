@@ -363,8 +363,8 @@ proc Replace {text incr} {
     #    focus -force .replace
 }
 ## FILE OPERATION ##
-proc FileDialog {operation} {
-    global noteBook fontNormal fontBold fileList tree noteBook projDir activeProject imgDir editor
+proc FileDialog {$tree operation} {
+    global noteBook fontNormal fontBold fileList noteBook projDir activeProject imgDir editor
     set dot "_"
     set types {
         {"Tcl files" {.tcl}}
@@ -686,7 +686,7 @@ proc PageTab {key} {
         }
         $nb see [lindex [$nb pages] $newIndex]
         $nb raise [lindex [$nb pages] $newIndex]
-        PageRaise [lindex [$nb pages] $newIndex]
+        PageRaise $tree [lindex [$nb pages] $newIndex]
     }
 }
 
@@ -722,8 +722,8 @@ proc _PageTab {} {
     }
 }
 ## RAISED NOTEBOOK TAB IF CLICK MOUSE BUTTON ##
-proc PageRaise {node} {
-    global noteBook tree fileList editor nodeEdit
+proc PageRaise {tree node} {
+    global noteBook fileList editor nodeEdit
     #puts $node
     $noteBook raise $node
     set nodeEdit [$noteBook raise]
@@ -765,7 +765,7 @@ proc TabIns {text} {
     set posNum [lindex [split $pos "."] 1]
     if {$lineNum > 1} {
         # get current text
-        set curText  [$text get $lineNum.0 "$lineNum.0 lineend"]
+        set curText [$text get $lineNum.0 "$lineNum.0 lineend"]
         #get text of prev line
         set prevLineNum [expr {$lineNum - 1}]
         set prevText [$text get $prevLineNum.0 "$prevLineNum.0 lineend"]
@@ -820,7 +820,6 @@ proc TabIns {text} {
                 set shouldBeSpaces [expr {$shouldBeSpaces - $indentSize}]
             }
         }
-        
         set spaceNum [string length $spaces]
         if {$shouldBeSpaces > $spaceNum} {
             #insert spaces
@@ -870,8 +869,8 @@ proc TextEncode {encode} {
 }
 
 ## EDITING  FILE ##
-proc EditFile {node fileName} {
-    global projDir workDir imgDir tree noteBook fontNormal fontBold w fileList replace nodeEdit procList
+proc EditFile {tree node fileName} {
+    global projDir workDir imgDir  noteBook fontNormal fontBold w fileList replace nodeEdit procList
     global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG activeProject
     set nodeEdit $node
     set replace 0
@@ -1224,4 +1223,11 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
+
+
+
+
+
+
 

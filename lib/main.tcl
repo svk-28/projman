@@ -278,7 +278,17 @@ pack $frmWork -side left -fill both -expand true
 ## CREATE PANE ##
 pane::create .frmBody.frmCat .frmBody.frmWork
 
-set frmTree [ScrolledWindow $frmCat.frmTree -bg $editor(bg)]
+# NoteBook - Projects and Files
+#################### WORKING AREA ####################
+set noteBookFiles [NoteBook $frmCat.noteBook -font $fontNormal -side top -bg $editor(bg) -fg $editor(fg)]
+pack $noteBookFiles -fill both -expand true -padx 2 -pady 2
+set nbProjects [$noteBookFiles insert end projects -text [::msgcat::mc "Projects"]]
+set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]]
+
+FileTree::create $nbFiles
+
+# tree
+set frmTree [ScrolledWindow $nbProjects.frmTree -bg $editor(bg)]
 global tree noteBook
 set tree [Tree $frmTree.tree \
 -relief sunken -borderwidth 1 -width 5 -height 5 -highlightthickness 1\
@@ -291,17 +301,19 @@ set tree [Tree $frmTree.tree \
 $frmTree setwidget $tree
 pack $frmTree -side top -fill both -expand true
 
-$tree bindText  <Double-ButtonPress-1> "TreeDoubleClick [$tree selection get]"
-$tree bindText  <ButtonPress-1> "TreeOneClick [$tree selection get]"
-$tree bindImage  <Double-ButtonPress-1> "TreeDoubleClick [$tree selection get]"
-$tree bindImage  <ButtonPress-1> "TreeOneClick [$tree selection get]"
+$noteBookFiles raise projects
+
+$tree bindText  <Double-ButtonPress-1> "TreeDoubleClick $tree [$tree selection get]"
+$tree bindText  <ButtonPress-1> "TreeOneClick $tree [$tree selection get]"
+$tree bindImage  <Double-ButtonPress-1> "TreeDoubleClick $tree [$tree selection get]"
+$tree bindImage  <ButtonPress-1> "TreeOneClick $tree [$tree selection get]"
 $tree bindText <Shift-Button-1> {$tree selection add [$tree selection get]}
 bind $frmTree.tree.c <Control-acircumflex> {FileDialog delete}
 bind $frmTree.tree.c <Control-d> {FileDialog delete}
 bind $frmTree.tree.c <Return> {
     set node [$tree selection get]
-    TreeOneClick $node
-    TreeDoubleClick $node
+    TreeOneClick $tree $node
+    TreeDoubleClick $tree $node
 }
 
 ## POPUP FILE-MENU ##
@@ -358,7 +370,7 @@ bind $frmTree.tree.c <Shift-Button-5> "$tree xview scroll  2 units"
 #################### WORKING AREA ####################
 set noteBook [NoteBook $frmWork.noteBook -font $fontNormal -side top -bg $editor(bg) -fg $editor(fg)]
 pack $noteBook -fill both -expand true -padx 2 -pady 2
-$noteBook bindtabs  <ButtonRelease-1> "PageRaise [$noteBook raise]"
+$noteBook bindtabs  <ButtonRelease-1> "PageRaise $tree [$noteBook raise]"
 $noteBook bindtabs <Button-3> {catch [PopupMenuTab .popupTabs %X %Y]}
 
 #bind . <Control-udiaeresis> PageTab
@@ -373,9 +385,6 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
-
-
-
 
 
 

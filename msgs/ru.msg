@@ -57,6 +57,7 @@
 ::msgcat::mcset ru "Error open URL" "Ошибка открытия URL"
 ::msgcat::mcset ru "Exit" "Выход"
 ::msgcat::mcset ru "File" "Файл"
+::msgcat::mcset ru "Files" "Файлы"
 ::msgcat::mcset ru "File already exists. Overwrite?" "Файл уже существует. Переписать?"
 ::msgcat::mcset ru "File was modifyed. Close?" "Файл был изменен. Закрыть?"
 ::msgcat::mcset ru "File was modifyed. Save?" "Файл был изменен. Сохранить?"
@@ -166,6 +167,7 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
+
 
 
 

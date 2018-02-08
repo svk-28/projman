@@ -1,4 +1,4 @@
-Аналоги клавиш для bind в WINDOWS
+п░п╫п╟п╩п╬пЁп╦ п╨п╩п╟п╡п╦я┬ п╢п╩я▐ bind п╡ WINDOWS
 
 a ocircumflex
 b egrave
@@ -28,4 +28,7 @@ y iacute
 z ydiaeresis
 comma aacute
 period thorn
+
+
+
 
