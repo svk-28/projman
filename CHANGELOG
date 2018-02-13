@@ -6,6 +6,11 @@
 #########################################################
 
 0.4.5
+13.02.2018
+- Added gray theme
+- Fixed work with file from directory (FileBrowser function).
+
+
 08.02.2018
 - Auto indent added for () [] braces
 - File Browser added. Now we will edited any file without project

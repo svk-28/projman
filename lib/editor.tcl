@@ -220,7 +220,7 @@ proc FindNext {text {incr 1}} {
 }
 ## FIND FUNCTION PROCEDURE ##
 proc FindProc {text findString node} {
-    global noteBook
+    global noteBook editor
     set pos "0.0"
     $text see $pos
     set line [lindex [split $pos "."] 0]
@@ -234,6 +234,8 @@ proc FindProc {text findString node} {
     set x [expr {$x + [string length $findString]}]
     $text tag remove sel 1.0 end
     $text tag add sel $pos $line.$x
+    #$text tag configure sel -background $editor(selectbg) -foreground $editor(fg)
+    $text tag raise sel
     focus -force $text
     Position
     return 1
@@ -1230,6 +1232,7 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
 
 
 
