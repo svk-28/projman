@@ -7,7 +7,7 @@
 
 Modules
 ## MAIN INTERFACE ##
-wm geometry . 1024x768+0+0
+wm geometry . 1200x1024+0+0
 wm title . "Tcl/Tk Project Manager $ver"
 wm iconname . "Tcl/Tk Project Manager $ver"
 wm protocol . WM_DELETE_WINDOW Quit
@@ -35,7 +35,7 @@ $mn add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog 
 -font $fontNormal -accelerator "Ctrl+N"
 $mn add command -label [::msgcat::mc "New project"] -command {NewProjDialog "new"}\
 -font $fontNormal
-#$m add command -label [::msgcat::mc "Open"] -command {FileDialog open}\
+#$m add command -label [::msgcat::mc "Open"] -command {FileDialog $tree open}\
 #-font $fontNormal -accelerator "Ctrl+O"        -state disable
 $m add command -label [::msgcat::mc "Save"] -command {FileDialog $tree save}\
 -font $fontNormal -accelerator "Ctrl+S"
@@ -219,6 +219,7 @@ proc CreateToolBar {} {
     if {$toolBar == "Yes"} {
         set bboxFile [ButtonBox .frmTool.bboxFile -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
         add_toolbar_button $bboxFile new.png {AddToProjDialog file} [::msgcat::mc "Create new file"]
+        #add_toolbar_button $bboxFile open.png {FileDialog $tree open} [::msgcat::mc "Open file"]
         add_toolbar_button $bboxFile save.png {FileDialog $tree save} [::msgcat::mc "Save file"]
         add_toolbar_button $bboxFile save_as.png {FileDialog $tree save_as} [::msgcat::mc "Save file as"]
         add_toolbar_button $bboxFile save_all.png {FileDialog $tree save_all} [::msgcat::mc "Save all"]
@@ -385,6 +386,11 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
+
+
+
+
+
 
 
 

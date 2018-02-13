@@ -7,6 +7,7 @@
 # Author: Sergey Kalinin banzaj28@yandex.ru               #
 ###########################################################
 
+
 ## SETTING VARIABLES AND DIRECTORYES ##
 set ver "0.4.5"
 set imgDir img
@@ -380,6 +381,8 @@ proc SetVarLang {lang} {
         }
     }
 }
+
+
 
 
 

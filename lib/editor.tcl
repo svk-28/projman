@@ -388,15 +388,15 @@ proc FileDialog {tree operation} {
     
     if {$operation == "open"} {
         set dir $projDir
-        set fullPath [tk_getOpenFile -initialdir $dir -filetypes \
-        $types -parent $noteBook]
+        set fullPath [tk_getOpenFile -initialdir $dir -filetypes $types -parent $noteBook]
+        set file [string range $fullPath [expr [string last "/" $fullPath]+1] end]
         regsub -all "." $file "_" node
         set dir [file dirname $fullPath]
         set file [file tail $fullPath]
         set name [file rootname $file]
         set ext [string range [file extension $file] 1 end]
         set node "$name$dot$ext"
-        EditFile $node $fullPath
+        EditFile $tree $node $fullPath
         return 1
     } elseif {$operation == "delete"} {
         set node [$tree selection get]
@@ -447,9 +447,10 @@ proc FileDialog {tree operation} {
     set img [GetImage $file]
     
     if {$operation == "open"} {
-        set fullPath [tk_getOpenFile -initialdir $dir -filetypes \
-        $types -parent $noteBook]
+        set fullPath [tk_getOpenFile -initialdir $dir -filetypes $types -parent $noteBook]
+        puts $fullPath
         set file [string range $fullPath [expr [string last "/" $fullPath]+1] end]
+        
         regsub -all "." $file "_" node
         $noteBook insert end $node -text "$file"
         EditFile $node $fullPath
@@ -511,6 +512,7 @@ proc FileDialog {tree operation} {
             set node [$noteBook raise]
             return
         }
+        set tree [GetTreeForNode $node]
         set editFlag [lindex $fileList($node) 1]
         set closedFile [file tail [lindex $fileList($node) 0]]
         if {$editFlag == 1} {
@@ -525,6 +527,7 @@ proc FileDialog {tree operation} {
                 }
                 no {
                     set index 0
+                    
                     set nl [$tree nodes $node 0 end]
                     if {$nl != ""} {
                         foreach n $nl {
@@ -571,6 +574,7 @@ proc FileDialog {tree operation} {
         set nodeList [$noteBook pages 0 end]
         $noteBook raise [$noteBook page 0]
         set nbNode [$noteBook raise]
+        set tree [GetTreeForNode $nbNode]
         while {$nbNode != ""} {
             if {$nbNode == "newproj" || $nbNode == "settings" || $nbNode == "about" || $nbNode == "debug"} {
                 $noteBook delete $nbNode
@@ -726,6 +730,8 @@ proc PageRaise {tree node} {
     global noteBook fileList editor nodeEdit
     #puts $node
     $noteBook raise $node
+    set tree [GetTreeForNode $node]
+    
     set nodeEdit [$noteBook raise]
     #set nodeEdit $node
     puts $node
@@ -748,7 +754,8 @@ proc PageRaise {tree node} {
         LabelUpdate .frmStatus.frmFile.lblFile "[file size $item] b."
         if {[lindex $fileList($node) 1] == 0} {
             LabelUpdate .frmStatus.frmProgress.lblProgress ""
-            $noteBook itemconfigure $node -foreground $editor(nbNormal)
+            $noteBook itemconfigure $node 
+            #-foreground $editor(nbNormal)
         } else {
             LabelUpdate .frmStatus.frmProgress.lblProgress [::msgcat::mc "File modify"]
             $noteBook itemconfigure $node -foreground $editor(nbModify)
@@ -1223,6 +1230,12 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
+
+
+
+
+
 
 
 

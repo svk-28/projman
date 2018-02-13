@@ -677,7 +677,7 @@ proc MakeProj {action t} {
             ok {return 0}
         }
     }
-    FileDialog save_all
+    FileDialog $tree save_all
     set file [open [file join $workDir $activeProject.proj] r]
     while {[gets $file line]>=0} {
         scan $line "%s" keyWord
@@ -795,8 +795,6 @@ proc MakeProj {action t} {
     
     fileevent $pipe readable [list DebugInfo $w.frame.text $pipe $f]
     fconfigure $pipe -buffering none -blocking no
-    #fileevent $f readable [list DebugInfo $w.frame.text $f]
-    #fconfigure $f -buffering none -blocking no
 }
 ## INSERT DEBUG INFORMATION INTO TEXT WIDGET ##
 proc DebugInfo {widget file f} {
@@ -902,11 +900,6 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
-
-
-
-
-
 
 
 

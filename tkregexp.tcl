@@ -45,46 +45,46 @@ set version 3.0
 set geometry            800x600+0+0
 # main font used to display the text
 if {$tcl_platform(platform) == "windows"} {
-	set font_regexp     {Courier 10}
-	set font_replace    {Courier 10}
-	set font_sample     {Courier 10}
+        set font_regexp     {Courier 10}
+        set font_replace    {Courier 10}
+        set font_sample     {Courier 10}
 } else {
-	set font_regexp		9x15
-	set font_replace	9x15
-	set font_sample		9x15
+        set font_regexp                9x15
+        set font_replace        9x15
+        set font_sample                9x15
 }
 # the font used in the popup menu (use ---- to get a separator, else format is {font size ?bold?}
-set fonts 				{{Courier 8} {Courier 9} {Courier 10} {Courier 11} {Courier 12}
-						 ----
-					     {Arial 8} {Arial 9} {Arial 10} {Arial 11} {Arial 12}
-					     ----
-					     8x13 8x13bold 9x15 9x15bold 10x20}
+set fonts                                 {{Courier 8} {Courier 9} {Courier 10} {Courier 11} {Courier 12}
+                                                 ----
+                                             {Arial 8} {Arial 9} {Arial 10} {Arial 11} {Arial 12}
+                                             ----
+                                             8x13 8x13bold 9x15 9x15bold 10x20}
 # the colors for the different matching groups
 set colors              {#ff0000 #0000ff darkgreen violetred #ff9000 #537db9 #e4c500     firebrick darkgoldenrod hotpink}
 set bgcolors            {#ffe6e6 #e6e6ff #e6ffe6   #efd5e1   #fef3e5 #d6dce5 lightyellow white    white        white}
 # use background color in sample by default ? (1 use, 0 do not use)
-set background			0
+set background                        0
 # background color to visualize the non-reporting group (?:...)
 set color_noreport      #fffdc4
 # background color to visualize the lookhead group (?=...) and (?!...)
 set color_lookahead     wheat
 # show/hide help about control characters in regexp
-set show_help			0
+set show_help                        0
 # show/hide history windows on startup
-set history				0
+set history                                0
 # mode to use on startup (select/concat = raw, select/insert new lines = nl, replace = replace)
-set mode				replace
+set mode                                replace
 # database of some regexp to appear in the "Insert regexp" menu
 set regexp_db {
-	"URL"			{(?:^|")(http|ftp|mailto):(?://)?(\w+(?:[\.:@]\w+)*?)(?:/|@)([^"\?]*?)(?:\?([^\?"]*?))?(?:$|")}
-	"IP numbers" 	{[12]?[0-9]?[0-9](\.[12]?[0-9]?[0-9]){3}}
-	"HTML tags"		{<[^<>]+>}
-	"HTML tag content" {<(\w+)[^>]*?>(.*?)</\1>}
-	"vars and arrays (PHP)" {\$[^0-9 ]{1}[a-zA-Z0-9_]*((?:\[[a-zA-Z0-9_'\"]+\])*)}
-	"dd/mm/yyyy"	{(0[1-9]|[12][0-9]|3[01])(/|-)(0[1-9]|1[12])(/|-)[12][0-9]{3}}
-	"mm/dd/yyyy"	{(0[1-9]|1[12])(/|-)(0[1-9]|[12][0-9]|3[01])(/|-)[12][0-9]{3}}
-	"hh:mm"			{([01][0-9]|2[0-3]):[0-5][0-9]}
-	"user@domain.net" {[A-Za-z0-9_.-]+@([A-Za-z0-9_]+\.)+[A-Za-z]{2,4}}
+        "URL"                        {(?:^|")(http|ftp|mailto):(?://)?(\w+(?:[\.:@]\w+)*?)(?:/|@)([^"\?]*?)(?:\?([^\?"]*?))?(?:$|")}
+        "IP numbers"         {[12]?[0-9]?[0-9](\.[12]?[0-9]?[0-9]){3}}
+        "HTML tags"                {<[^<>]+>}
+        "HTML tag content" {<(\w+)[^>]*?>(.*?)</\1>}
+        "vars and arrays (PHP)" {\$[^0-9 ]{1}[a-zA-Z0-9_]*((?:\[[a-zA-Z0-9_'\"]+\])*)}
+        "dd/mm/yyyy"        {(0[1-9]|[12][0-9]|3[01])(/|-)(0[1-9]|1[12])(/|-)[12][0-9]{3}}
+        "mm/dd/yyyy"        {(0[1-9]|1[12])(/|-)(0[1-9]|[12][0-9]|3[01])(/|-)[12][0-9]{3}}
+        "hh:mm"                        {([01][0-9]|2[0-3]):[0-5][0-9]}
+        "user@domain.net" {[A-Za-z0-9_.-]+@([A-Za-z0-9_]+\.)+[A-Za-z]{2,4}}
 }
 
 
@@ -93,14 +93,14 @@ set regexp_db {
 #----------------------------------------------------------------------------------------------
 
 namespace eval regexp {} {
-	set data(v:undo:index) 0
-	set data(v:undo:sample) ""
-	set data(v:dir) "."
-	set data(v:file) "untitled.txt"
+        set data(v:undo:index) 0
+        set data(v:undo:sample) ""
+        set data(v:dir) "."
+        set data(v:file) "untitled.txt"
 }
 
 #----------------------------------------------------------------------------------------------
-#	Main GUI
+#        Main GUI
 #----------------------------------------------------------------------------------------------
 
 proc regexp::gui {} {
@@ -109,398 +109,398 @@ global colors bgcolors color_noreport color_lookahead geometry show_help regexp_
 global tcl_platform
 
 
-	set top ""
+        set top ""
 
-	# frame for regexp
-	set w [frame $top.regexp -bd 2 -relief groove]
-		# options
-		set fo [frame $w.options]
-		set sep 0
-		foreach option {nocase all - line lineanchor linestop - inline} \
-				label {nocase all - line "lineanchor (k)" "linestop (m)" - inline} \
-				underline {0 0 - 0 12 10 - 0} {
-			if {$option != "-"} {
-				checkbutton $fo.$option -text $label -bd 1 -underline $underline \
-							-variable regexp::data(v:$option) \
-							-offvalue "" -onvalue "-$option"
-				set data(v:$option) ""
-				pack $fo.$option -side left
-			} else {
-				pack [frame $fo.[incr sep] -width 40] -side left
-			}
-		}
-		# text for regexp entry
-		set data(w:regexp) [text $w.regexp -wrap char -bg white -font $::font_regexp \
-									-selectbackground lightblue -selectborderwidth 0 \
-									-width 1 -height 3 -bd 1]
-		if {$tcl_platform(platform) == "windows"} {
-			set sfont {Courier 8}
-			set sbfont {Courier 8 bold}
-		} else {
-			set sfont 6x13
-			set sbfont 6x13bold
-		}
-		set data(w:help) [text $w.help -font $sfont -bd 0 -height 9 -wrap none -bg [$w cget -bg]]
-		$w.help insert 1.0 "\n\n\n\n\n\n\n\n"
-		$w.help insert 1.0 {\a  alert              \n     newline     \0    char 0       \d [[:digit:]]    \A beginning of the string }
-		$w.help insert 2.0 {\b  backspace          \r     carriage    \xyz  octal code   \D [^[:digit:]]   \Z end of string }
-		$w.help insert 3.0 {\B  synomyn for \      \t     tab                            \s [[:space:]]    \m beginning of a word}
-		$w.help insert 4.0 {\cX same as X & 0x1F   \uwxyz unicode     \x    backref      \S [^[:space:]]   \M end of a word}
-		$w.help insert 5.0 {\e  ESC                \v     vert tab                       \w [[:alnum:]_]   \y beginning or end of a word}
-		$w.help insert 6.0 {\f  form feed          \xhhh  hexa code                      \W [^[:alnum:]_]  \Y not beginning or end of a word}
-		$w.help insert 7.0 {----------------------------------------------------------------------------------------------------------------}
-		$w.help insert 8.0 {    ungreedy:          ?? single optional *? zero-many       +? at least one   {n,m}? ungreedy quantifiers}
-		$w.help insert 9.0 {(?:) ghost group       (?=) lookahead     (?!) neg. lookahead}
-		$w.help tag configure bold -font $sbfont
-		foreach line {1 2 3 4 5 6} {
-			foreach {min max} {0 2 23 25 42 44 61 63 79 82} {
-				$w.help tag add bold $line.$min $line.$max
-			}
-		}
-		$w.help tag remove bold 2.43 2.44 4.43 4.44
-		# buttons & selection of match
-		set fb [frame $w.b]
-		button $fb.go -text "Go" -underline 0 -command "regexp::go" -bd 1 -width 5
-		button $fb.clear -text "Clear (z)" -underline 7 -command "regexp::clear" -bd 1 -width 5
-		pack $fb.go [frame $fb.00 -width 10] $fb.clear -side left -pady 5
+        # frame for regexp
+        set w [frame $top.regexp -bd 2 -relief groove]
+                # options
+                set fo [frame $w.options]
+                set sep 0
+                foreach option {nocase all - line lineanchor linestop - inline} \
+                                label {nocase all - line "lineanchor (k)" "linestop (m)" - inline} \
+                                underline {0 0 - 0 12 10 - 0} {
+                        if {$option != "-"} {
+                                checkbutton $fo.$option -text $label -bd 1 -underline $underline \
+                                                        -variable regexp::data(v:$option) \
+                                                        -offvalue "" -onvalue "-$option"
+                                set data(v:$option) ""
+                                pack $fo.$option -side left
+                        } else {
+                                pack [frame $fo.[incr sep] -width 40] -side left
+                        }
+                }
+                # text for regexp entry
+                set data(w:regexp) [text $w.regexp -wrap char -bg white -font $::font_regexp \
+                                                                        -selectbackground lightblue -selectborderwidth 0 \
+                                                                        -width 1 -height 3 -bd 1]
+                if {$tcl_platform(platform) == "windows"} {
+                        set sfont {Courier 8}
+                        set sbfont {Courier 8 bold}
+                } else {
+                        set sfont 6x13
+                        set sbfont 6x13bold
+                }
+                set data(w:help) [text $w.help -font $sfont -bd 0 -height 9 -wrap none -bg [$w cget -bg]]
+                $w.help insert 1.0 "\n\n\n\n\n\n\n\n"
+                $w.help insert 1.0 {\a  alert              \n     newline     \0    char 0       \d [[:digit:]]    \A beginning of the string }
+                $w.help insert 2.0 {\b  backspace          \r     carriage    \xyz  octal code   \D [^[:digit:]]   \Z end of string }
+                $w.help insert 3.0 {\B  synomyn for \      \t     tab                            \s [[:space:]]    \m beginning of a word}
+                $w.help insert 4.0 {\cX same as X & 0x1F   \uwxyz unicode     \x    backref      \S [^[:space:]]   \M end of a word}
+                $w.help insert 5.0 {\e  ESC                \v     vert tab                       \w [[:alnum:]_]   \y beginning or end of a word}
+                $w.help insert 6.0 {\f  form feed          \xhhh  hexa code                      \W [^[:alnum:]_]  \Y not beginning or end of a word}
+                $w.help insert 7.0 {----------------------------------------------------------------------------------------------------------------}
+                $w.help insert 8.0 {    ungreedy:          ?? single optional *? zero-many       +? at least one   {n,m}? ungreedy quantifiers}
+                $w.help insert 9.0 {(?:) ghost group       (?=) lookahead     (?!) neg. lookahead}
+                $w.help tag configure bold -font $sbfont
+                foreach line {1 2 3 4 5 6} {
+                        foreach {min max} {0 2 23 25 42 44 61 63 79 82} {
+                                $w.help tag add bold $line.$min $line.$max
+                        }
+                }
+                $w.help tag remove bold 2.43 2.44 4.43 4.44
+                # buttons & selection of match
+                set fb [frame $w.b]
+                button $fb.go -text "Go" -underline 0 -command "regexp::go" -bd 1 -width 5
+                button $fb.clear -text "Clear (z)" -underline 7 -command "regexp::clear" -bd 1 -width 5
+                pack $fb.go [frame $fb.00 -width 10] $fb.clear -side left -pady 5
 
-		# selection - buttons for match level
-		label $fb.sep
-		label $fb.l -text "Select:"
-		pack $fb.sep -side left -fill x -expand true
-		pack $fb.l -side left -padx 5 -pady 5
-		set i 0
-		foreach c $colors t {match 1 2 3 4 5 6 7 8 9} {
-			button $fb.$i -text $t -fg $c -bd 1 -padx 0 -width 6 -command "regexp::select $i"
-			pack $fb.$i -side left -fill y -pady 5
-			incr i
-		}
-		# text for replace
-		set f [frame $w.replace]
-			set data(w:replace) [text $f.replace -wrap char -bg white -font $::font_replace \
-										-selectbackground lightblue -selectborderwidth 0 \
-										-width 1 -height 2 -bd 1]
-			button $f.do -text "Replace" -underline 0 -bd 1 -width 9 -command "regexp::replace"
-			label $f.nb -textvariable regexp::data(v:nbreplace) -width 12 -anchor e
-			pack $data(w:replace) -side left -expand true -fill both -pady 5 -padx 5
-			pack $f.do -side left -pady 5
-			pack $f.nb -side left -pady 5 -padx 5
-		# layout
-		pack [frame $w.0 -height 5] $data(w:regexp) -side top -anchor w -padx 5 -expand true -fill both
-		pack $fo $fb -side top -anchor w -padx 5 -expand true -fill both
-		pack $fb -side top -anchor w -padx 5 -expand true -fill both
-		set data(w:allreplace) $f
+                # selection - buttons for match level
+                label $fb.sep
+                label $fb.l -text "Select:"
+                pack $fb.sep -side left -fill x -expand true
+                pack $fb.l -side left -padx 5 -pady 5
+                set i 0
+                foreach c $colors t {match 1 2 3 4 5 6 7 8 9} {
+                        button $fb.$i -text $t -fg $c -bd 1 -padx 0 -width 6 -command "regexp::select $i"
+                        pack $fb.$i -side left -fill y -pady 5
+                        incr i
+                }
+                # text for replace
+                set f [frame $w.replace]
+                        set data(w:replace) [text $f.replace -wrap char -bg white -font $::font_replace \
+                                                                                -selectbackground lightblue -selectborderwidth 0 \
+                                                                                -width 1 -height 2 -bd 1]
+                        button $f.do -text "Replace" -underline 0 -bd 1 -width 9 -command "regexp::replace"
+                        label $f.nb -textvariable regexp::data(v:nbreplace) -width 12 -anchor e
+                        pack $data(w:replace) -side left -expand true -fill both -pady 5 -padx 5
+                        pack $f.do -side left -pady 5
+                        pack $f.nb -side left -pady 5 -padx 5
+                # layout
+                pack [frame $w.0 -height 5] $data(w:regexp) -side top -anchor w -padx 5 -expand true -fill both
+                pack $fo $fb -side top -anchor w -padx 5 -expand true -fill both
+                pack $fb -side top -anchor w -padx 5 -expand true -fill both
+                set data(w:allreplace) $f
 
-	# frame for sample
-	set w [frame $top.sample -bd 2 -relief groove]
-		set w [frame $w.inner]
-		pack $top.sample.inner -padx 5 -pady 5 -fill both -expand true
-		# text for sample highlighting
-		set data(w:sample) [text $w.sample  -bg white -font $::font_sample -bd 1 -width 1 -height 1 \
-									-selectbackground lightblue -selectborderwidth 0 \
-									-yscrollcommand "$w.sy set" -xscrollcommand "$w.sx set"]
-		scrollbar $w.sy -command "$w.sample yview" -orient vertical -bd 1
-		scrollbar $w.sx -command "$w.sample xview" -orient horizontal -bd 1
-		# set tags for colors & special
-		set data(v:levels) {e0 e1 e2 e3 e4 e5 e6 e7 e8 e9}
-		foreach level $data(v:levels) \
-				color $colors {
-			$data(w:regexp) tag configure $level -foreground $color
-			$data(w:history) tag configure $level -foreground $color
-			$data(w:sample) tag configure $level -foreground $color
-		}
-		$data(w:regexp) tag configure lookahead -background $color_lookahead
-		$data(w:regexp) tag configure noreport -background $color_noreport
-		$data(w:history) tag configure lookahead -background $color_lookahead
-		$data(w:history) tag configure noreport -background $color_noreport
-		# options
-		set f [frame $w.matches]
-			label $f.nb -textvariable regexp::data(v:nbmatches) -anchor w
-			set regexp::data(v:nbmatches) "0 matches"
-			# button for navigation
-			button $f.p -text "Previous" -bd 1 -pady 2 -width 8 -command "regexp::sample:move -1"
-			button $f.n -text "Next" -bd 1 -pady 2 -width 8 -command "regexp::sample:move +1"
-			set data(v:positions) [list ]
-			set data(v:position) 0
-			# layout
-			pack $f.nb [frame $f.0 -width 15] $f.p $f.n -padx 5 -side left
-		
-		# layout
-		grid $w.sample	$w.sy	-sticky news
-		grid $w.sx		x		-sticky news
-		grid $w.matches	-		-sticky news
-		grid rowconfigure $w {0} -weight 1
-		grid columnconfigure $w {0} -weight 1
+        # frame for sample
+        set w [frame $top.sample -bd 2 -relief groove]
+                set w [frame $w.inner]
+                pack $top.sample.inner -padx 5 -pady 5 -fill both -expand true
+                # text for sample highlighting
+                set data(w:sample) [text $w.sample  -bg white -font $::font_sample -bd 1 -width 1 -height 1 \
+                                                                        -selectbackground lightblue -selectborderwidth 0 \
+                                                                        -yscrollcommand "$w.sy set" -xscrollcommand "$w.sx set"]
+                scrollbar $w.sy -command "$w.sample yview" -orient vertical -bd 1
+                scrollbar $w.sx -command "$w.sample xview" -orient horizontal -bd 1
+                # set tags for colors & special
+                set data(v:levels) {e0 e1 e2 e3 e4 e5 e6 e7 e8 e9}
+                foreach level $data(v:levels) \
+                                color $colors {
+                        $data(w:regexp) tag configure $level -foreground $color
+                        $data(w:history) tag configure $level -foreground $color
+                        $data(w:sample) tag configure $level -foreground $color
+                }
+                $data(w:regexp) tag configure lookahead -background $color_lookahead
+                $data(w:regexp) tag configure noreport -background $color_noreport
+                $data(w:history) tag configure lookahead -background $color_lookahead
+                $data(w:history) tag configure noreport -background $color_noreport
+                # options
+                set f [frame $w.matches]
+                        label $f.nb -textvariable regexp::data(v:nbmatches) -anchor w
+                        set regexp::data(v:nbmatches) "0 matches"
+                        # button for navigation
+                        button $f.p -text "Previous" -bd 1 -pady 2 -width 8 -command "regexp::sample:move -1"
+                        button $f.n -text "Next" -bd 1 -pady 2 -width 8 -command "regexp::sample:move +1"
+                        set data(v:positions) [list ]
+                        set data(v:position) 0
+                        # layout
+                        pack $f.nb [frame $f.0 -width 15] $f.p $f.n -padx 5 -side left
+                
+                # layout
+                grid $w.sample        $w.sy        -sticky news
+                grid $w.sx                x                -sticky news
+                grid $w.matches        -                -sticky news
+                grid rowconfigure $w {0} -weight 1
+                grid columnconfigure $w {0} -weight 1
 
-	# main layout
-	pack $top.regexp -side top -anchor w -padx 5 -pady 5 -fill x
-	pack $top.sample -side top -anchor w -padx 5 -pady 5 -expand true -fill both
-	wm geometry . $geometry
-	wm title . "Visual REGEXP $::version"
-	focus $data(w:regexp)
+        # main layout
+        pack $top.regexp -side top -anchor w -padx 5 -pady 5 -fill x
+        pack $top.sample -side top -anchor w -padx 5 -pady 5 -expand true -fill both
+        wm geometry . $geometry
+        wm title . "Visual REGEXP $::version"
+        focus $data(w:regexp)
 
-	# main menu
-	. configure -menu .menubar
-	set m [menu .menubar -tearoff 0 -bd 1 -activeborderwidth 1]
-	  # file
-	  $m add cascade -menu $m.file -label "File" -underline 0
-	  set mm [menu $m.file -tearoff 0 -bd 1 -activeborderwidth 1]
-		$mm add command -label "Load regexp ..." -command "regexp::regexp:load"
-		$mm add command -label "Load sample ..." -command "regexp::sample:load" -accelerator "Alt-O"
-		$mm add separator
-		$mm add command -label "Save sample (auto) ..." -command "regexp::sample:save auto" -accelerator "Alt-S"
-		$mm add command -label "Save sample Unix (lf) ..." -command "regexp::sample:save lf"
-		$mm add command -label "Save sample Windows (crlf) ..." -command "regexp::sample:save crlf"
-		$mm add command -label "Save sample Mac (cr) ..." -command "regexp::sample:save cr"
-		$mm add separator
-		$mm add command -label "Quit" -underline 0 -command "exit" -accelerator "Alt-Q"
-	  # edit
-	  $m add cascade -menu $m.edit -label "Edit" -underline 0
-	  set mm [menu $m.edit -tearoff 0 -bd 1 -activeborderwidth 1]
-		$mm add command -label "Copy regexp to clipboard" -command "regexp::dump" -accelerator "Alt-C"
-		$mm add separator
-		$mm add command -label "Undo" -command "regexp::unredo:regexp -1" -accelerator "Control-Z"
-		$mm add command -label "Redo" -command "regexp::unredo:regexp +1" -accelerator "Control-R"
-	  # view
-	  $m add cascade -menu $m.view -label "View" -underline 0
-	  set mm [menu $m.view -tearoff 0 -bd 1 -activeborderwidth 1]
-		set regexp::data(v:background) $::background
-		regexp::sample:background
-		$mm add checkbutton -label "Show background for matches" -command "regexp::sample:background" \
-				-variable regexp::data(v:background)
-		$mm add checkbutton -label "Show regexp help" -command "regexp::regexp:help:toggle" \
-				-variable regexp::data(v:help)
-		set regexp::data(v:help) $show_help
-		$mm add checkbutton -label "Wrap lines in sample" -variable regexp::data(v:wrap) \
-						-command "$data(w:sample) configure -wrap \$regexp::data(v:wrap)" \
-						-offvalue "none" -onvalue "char"
-		set regexp::data(v:history) $history
-		$mm add checkbutton -label "History of Regexp" -variable regexp::data(v:history) \
-						-command "if {\$regexp::data(v:history)} {wm deiconify .history} else {wm iconify .history}"
-	  # select mode
-	  $m add cascade -menu $m.select -label "Select mode" -underline 5
-	  set mm [menu $m.select -tearoff 0 -bd 1 -activeborderwidth 1]
-		$mm add radiobutton -label "select / concat raw matches" \
-				-variable regexp::data(v:mode) -value "raw" -command regexp::replace:toggle
-		$mm add radiobutton -label "select / insert new line between matches" \
-				-variable regexp::data(v:mode) -value "nl" -command regexp::replace:toggle
-		$mm add radiobutton -label "replace widget" \
-				-variable regexp::data(v:mode) -value "replace" -command regexp::replace:toggle
-	  # insert well know regexp
-	  $m add cascade -menu $m.insert -label "Insert regexp" -underline 11
-	  set mm [menu $m.insert -tearoff 0 -bd 1 -activeborderwidth 1]
-		$mm add command -label "Make regexp ..." -command "regexp::make-regexp"
-		$mm add separator
-		$mm add command -label "Load patterns ..." -command "regexp::pattern:load"
-		$mm add separator
-		foreach {n e} $regexp_db {
-			$mm add command -label "$n" -command "regexp::regexp:insert [list $e]"
-		}
-		set data(w:menu) $mm
-	  # help
-	  $m add cascade -menu $m.help -label "Help" -underline 0
-	  set mm [menu $m.help -tearoff 0 -bd 1 -activeborderwidth 1]
-		$mm add command -label "Help" -command "regexp::help"
+        # main menu
+        . configure -menu .menubar
+        set m [menu .menubar -tearoff 0 -bd 1 -activeborderwidth 1]
+          # file
+          $m add cascade -menu $m.file -label "File" -underline 0
+          set mm [menu $m.file -tearoff 0 -bd 1 -activeborderwidth 1]
+                $mm add command -label "Load regexp ..." -command "regexp::regexp:load"
+                $mm add command -label "Load sample ..." -command "regexp::sample:load" -accelerator "Alt-O"
+                $mm add separator
+                $mm add command -label "Save sample (auto) ..." -command "regexp::sample:save auto" -accelerator "Alt-S"
+                $mm add command -label "Save sample Unix (lf) ..." -command "regexp::sample:save lf"
+                $mm add command -label "Save sample Windows (crlf) ..." -command "regexp::sample:save crlf"
+                $mm add command -label "Save sample Mac (cr) ..." -command "regexp::sample:save cr"
+                $mm add separator
+                $mm add command -label "Quit" -underline 0 -command "exit" -accelerator "Alt-Q"
+          # edit
+          $m add cascade -menu $m.edit -label "Edit" -underline 0
+          set mm [menu $m.edit -tearoff 0 -bd 1 -activeborderwidth 1]
+                $mm add command -label "Copy regexp to clipboard" -command "regexp::dump" -accelerator "Alt-C"
+                $mm add separator
+                $mm add command -label "Undo" -command "regexp::unredo:regexp -1" -accelerator "Control-Z"
+                $mm add command -label "Redo" -command "regexp::unredo:regexp +1" -accelerator "Control-R"
+          # view
+          $m add cascade -menu $m.view -label "View" -underline 0
+          set mm [menu $m.view -tearoff 0 -bd 1 -activeborderwidth 1]
+                set regexp::data(v:background) $::background
+                regexp::sample:background
+                $mm add checkbutton -label "Show background for matches" -command "regexp::sample:background" \
+                                -variable regexp::data(v:background)
+                $mm add checkbutton -label "Show regexp help" -command "regexp::regexp:help:toggle" \
+                                -variable regexp::data(v:help)
+                set regexp::data(v:help) $show_help
+                $mm add checkbutton -label "Wrap lines in sample" -variable regexp::data(v:wrap) \
+                                                -command "$data(w:sample) configure -wrap \$regexp::data(v:wrap)" \
+                                                -offvalue "none" -onvalue "char"
+                set regexp::data(v:history) $history
+                $mm add checkbutton -label "History of Regexp" -variable regexp::data(v:history) \
+                                                -command "if {\$regexp::data(v:history)} {wm deiconify .history} else {wm iconify .history}"
+          # select mode
+          $m add cascade -menu $m.select -label "Select mode" -underline 5
+          set mm [menu $m.select -tearoff 0 -bd 1 -activeborderwidth 1]
+                $mm add radiobutton -label "select / concat raw matches" \
+                                -variable regexp::data(v:mode) -value "raw" -command regexp::replace:toggle
+                $mm add radiobutton -label "select / insert new line between matches" \
+                                -variable regexp::data(v:mode) -value "nl" -command regexp::replace:toggle
+                $mm add radiobutton -label "replace widget" \
+                                -variable regexp::data(v:mode) -value "replace" -command regexp::replace:toggle
+          # insert well know regexp
+          $m add cascade -menu $m.insert -label "Insert regexp" -underline 11
+          set mm [menu $m.insert -tearoff 0 -bd 1 -activeborderwidth 1]
+                $mm add command -label "Make regexp ..." -command "regexp::make-regexp"
+                $mm add separator
+                $mm add command -label "Load patterns ..." -command "regexp::pattern:load"
+                $mm add separator
+                foreach {n e} $regexp_db {
+                        $mm add command -label "$n" -command "regexp::regexp:insert [list $e]"
+                }
+                set data(w:menu) $mm
+          # help
+          $m add cascade -menu $m.help -label "Help" -underline 0
+          set mm [menu $m.help -tearoff 0 -bd 1 -activeborderwidth 1]
+                $mm add command -label "Help" -command "regexp::help"
 
 
-	# key binding
-	bind all <Alt-q> "exit"
-	bind all <Alt-g> "regexp::go"
-	bind $data(w:regexp) <Return> "regexp::go; break"
-	bind all <Alt-c> "regexp::dump"
-	bind all <Alt-r> "regexp::replace"
-	bind all <Alt-o> "regexp::sample:load"
-	bind all <Alt-s> "regexp::sample:save auto"
+        # key binding
+        bind all <Alt-q> "exit"
+        bind all <Alt-g> "regexp::go"
+        bind $data(w:regexp) <Return> "regexp::go; break"
+        bind all <Alt-c> "regexp::dump"
+        bind all <Alt-r> "regexp::replace"
+        bind all <Alt-o> "regexp::sample:load"
+        bind all <Alt-s> "regexp::sample:save auto"
 
-	bind $data(w:regexp) <Control-z> "regexp::unredo:regexp -1"
-	bind $data(w:regexp) <Control-r> "regexp::unredo:regexp +1"
+        bind $data(w:regexp) <Control-z> "regexp::unredo:regexp -1"
+        bind $data(w:regexp) <Control-r> "regexp::unredo:regexp +1"
 
-	bind $data(w:replace) <Control-z> "regexp::undo:sample"
-	bind $data(w:sample) <Control-z> "regexp::undo:sample"
+        bind $data(w:replace) <Control-z> "regexp::undo:sample"
+        bind $data(w:sample) <Control-z> "regexp::undo:sample"
 
-	bind all <Alt-a> "$fo.all toggle"
-	bind all <Alt-n> "$fo.nocase toggle"
-	bind all <Alt-l> "$fo.line toggle"
-	bind all <Alt-k> "$fo.lineanchor toggle"
-	bind all <Alt-m> "$fo.linestop toggle"
-	bind all <Alt-i> "$fo.inline toggle"
-	bind all <Alt-z> "regexp::clear"
+        bind all <Alt-a> "$fo.all toggle"
+        bind all <Alt-n> "$fo.nocase toggle"
+        bind all <Alt-l> "$fo.line toggle"
+        bind all <Alt-k> "$fo.lineanchor toggle"
+        bind all <Alt-m> "$fo.linestop toggle"
+        bind all <Alt-i> "$fo.inline toggle"
+        bind all <Alt-z> "regexp::clear"
 
-	bind $data(w:regexp) <Control-Key> { # nothing }
-	bind $data(w:regexp) <Alt-Key> { # nothing }
-	bind $data(w:regexp) <Meta-Key> { # nothing }
-	bind $data(w:regexp) <Mod1-Key> { # nothing }
-	bind $data(w:regexp) <Key> "regexp::undo:regexp:compute %W %K %A"
+        bind $data(w:regexp) <Control-Key> { # nothing }
+        bind $data(w:regexp) <Alt-Key> { # nothing }
+        bind $data(w:regexp) <Meta-Key> { # nothing }
+        bind $data(w:regexp) <Mod1-Key> { # nothing }
+        bind $data(w:regexp) <Key> "regexp::undo:regexp:compute %W %K %A"
 
-	bind $data(w:replace) <Control-Tab> "$data(w:replace) insert insert {\\t}; break;"
-	bind $data(w:sample) <Control-Tab> "$data(w:sample) insert insert {\t}; break;"
-	# special for regexp Ctrl+letter = \<letter>
-	bind $data(w:regexp) <Control-Tab> "$data(w:regexp) insert insert {\\t}; break;"
-	foreach key {a b B e f n r t v u x 0 d D s S w W A Z m M y Y} {
-		bind $data(w:regexp) <Control-$key> "$data(w:regexp) insert insert {\\$key}; break;"
-	}
-	foreach key {a b B e f n r t v u x 0} {
-		bind $data(w:replace) <Control-$key> "$data(w:replace) insert insert {\\$key}; break;"
-	}
+        bind $data(w:replace) <Control-Tab> "$data(w:replace) insert insert {\\t}; break;"
+        bind $data(w:sample) <Control-Tab> "$data(w:sample) insert insert {\t}; break;"
+        # special for regexp Ctrl+letter = \<letter>
+        bind $data(w:regexp) <Control-Tab> "$data(w:regexp) insert insert {\\t}; break;"
+        foreach key {a b B e f n r t v u x 0 d D s S w W A Z m M y Y} {
+                bind $data(w:regexp) <Control-$key> "$data(w:regexp) insert insert {\\$key}; break;"
+        }
+        foreach key {a b B e f n r t v u x 0} {
+                bind $data(w:replace) <Control-$key> "$data(w:replace) insert insert {\\$key}; break;"
+        }
 
-	bind Text <Control-v> {}
+        bind Text <Control-v> {}
 
-	# font selection popup
-	foreach w {regexp replace sample} {
-		set m [menu .fonts_$w -tearoff 0]
-		foreach f $::fonts {
-			if {$f == "----"} {
-				$m add separator
-			} else {
-				$m add command -label $f -command "$data(w:$w) configure -font [list $f]"
-			}
-		}
-		bind $data(w:$w) <3> "tk_popup $m %X %Y"
-	}
+        # font selection popup
+        foreach w {regexp replace sample} {
+                set m [menu .fonts_$w -tearoff 0]
+                foreach f $::fonts {
+                        if {$f == "----"} {
+                                $m add separator
+                        } else {
+                                $m add command -label $f -command "$data(w:$w) configure -font [list $f]"
+                        }
+                }
+                bind $data(w:$w) <3> "tk_popup $m %X %Y"
+        }
 
-	# some init
-	set data(v:nocase) "-nocase"
-	set data(v:all) "-all"
-	set data(v:wrap) "char"
-	set regexp::data(v:mode) $::mode
-	replace:toggle		;# set bindings
-	regexp:help:toggle
+        # some init
+        set data(v:nocase) "-nocase"
+        set data(v:all) "-all"
+        set data(v:wrap) "char"
+        set regexp::data(v:mode) $::mode
+        replace:toggle                ;# set bindings
+        regexp:help:toggle
 }
 
 proc regexp::pattern:load {{file ""}} {
 variable data
 
-	# get filename
-	if {$file == ""} {
-		set types [list [list "All" *]]
-		set file [tk_getOpenFile -filetypes $types -parent .]
-	    if {$file == ""} {
-			return
-		}
-	}
-	# do it
-	set in [open $file "r"]
-	$data(w:menu) delete [expr 4+[llength $::regexp_db]/2] end
-	while {![eof $in]} {
-		set name [gets $in]
-		while {$name == ""} {
-			set name [gets $in]
-		}
-		set pattern [gets $in]
-		while {$pattern == ""} {
-			set pattern [gets $in]
-		}
-		$data(w:menu) add command -label $name -command "regexp::regexp:insert [list $pattern]"
-	}
-	close $in
+        # get filename
+        if {$file == ""} {
+                set types [list [list "All" *]]
+                set file [tk_getOpenFile -filetypes $types -parent .]
+            if {$file == ""} {
+                        return
+                }
+        }
+        # do it
+        set in [open $file "r"]
+        $data(w:menu) delete [expr 4+[llength $::regexp_db]/2] end
+        while {![eof $in]} {
+                set name [gets $in]
+                while {$name == ""} {
+                        set name [gets $in]
+                }
+                set pattern [gets $in]
+                while {$pattern == ""} {
+                        set pattern [gets $in]
+                }
+                $data(w:menu) add command -label $name -command "regexp::regexp:insert [list $pattern]"
+        }
+        close $in
 }
 
 
 #----------------------------------------------------------------------------------------------
-#	Main toplevel commands
+#        Main toplevel commands
 #----------------------------------------------------------------------------------------------
 
 proc regexp::go {} {
 variable data
 
-	set exp [$data(w:regexp) get 1.0 end-1char]
-	# check if regexp is OK
-	if {[catch { regexp -- $exp dummy } errMsg]} {
-		tk_messageBox -type ok -icon error -message "Malformed regexp: $errMsg"
-		return
-	}
-	regexp::regexp:colorize
-	regexp::sample:colorize
-	regexp::history:add
+        set exp [$data(w:regexp) get 1.0 end-1char]
+        # check if regexp is OK
+        if {[catch { regexp -- $exp dummy } errMsg]} {
+                tk_messageBox -type ok -icon error -message "Malformed regexp: $errMsg"
+                return
+        }
+        regexp::regexp:colorize
+        regexp::sample:colorize
+        regexp::history:add
 }
 
 proc regexp::clear {} {
 variable data
 
-	regexp::history:add
-	$data(w:regexp) delete 1.0 end
-	regexp::go
+        regexp::history:add
+        $data(w:regexp) delete 1.0 end
+        regexp::go
 }
 
 proc regexp::dump {} {
 variable data
 
-	# update display
-	go
-	# built list of options
-	set dump "regexp"
-	foreach option {nocase all   line lineanchor linestop   inline} {
-		if {$data(v:$option) != ""} {
-			append dump " $data(v:$option)"
-		}
-	}
-	# build expression
-	set exp [$data(w:regexp) get 1.0 end-1char]
-	append dump " -- {$exp} string"
-	# add variables if needed
-	if {$data(v:inline) == ""} {
-		append dump " match"
-		for {set i 1} {$i < $data(v:nblevels)} {incr i} {
-			append dump " v$i"
-		}
-	}
-	# put dump into the clipboard (by creating a hidden entry ... anyone has a better solution?)
-	destroy .e
-	entry .e
-	.e insert 0 $dump
-	.e selection range 0 end
-	puts "$dump"
+        # update display
+        go
+        # built list of options
+        set dump "regexp"
+        foreach option {nocase all   line lineanchor linestop   inline} {
+                if {$data(v:$option) != ""} {
+                        append dump " $data(v:$option)"
+                }
+        }
+        # build expression
+        set exp [$data(w:regexp) get 1.0 end-1char]
+        append dump " -- {$exp} string"
+        # add variables if needed
+        if {$data(v:inline) == ""} {
+                append dump " match"
+                for {set i 1} {$i < $data(v:nblevels)} {incr i} {
+                        append dump " v$i"
+                }
+        }
+        # put dump into the clipboard (by creating a hidden entry ... anyone has a better solution?)
+        destroy .e
+        entry .e
+        .e insert 0 $dump
+        .e selection range 0 end
+        puts "$dump"
 }
 
 proc regexp::select {level} {
 variable data
 
-	# update
-	go
-	if {[llength $data(v:result)] == 0} {
-		bell
-		return
-	}
-	# puts regexp
-	dump
-	# extract matching parts in sample
-	set i 0
-	set newsample ""
-	foreach match $data(v:result) {
-		if {($i % $data(v:nblevels)) == $level} {
-			set text [$data(w:sample) get \
-							[$data(w:sample) index "1.0+[lindex $match 0]chars"] \
-							[$data(w:sample) index "1.0+[expr [lindex $match 1]+1]chars"]]
-			append newsample $text
-			if {$data(v:mode) == "nl"} {
-				append newsample "\n"
-			}
-		}
-		incr i
-	}
-	$data(w:sample) delete 1.0 end
-	$data(w:sample) insert 1.0 $newsample
-	# update with regexp
-	go
+        # update
+        go
+        if {[llength $data(v:result)] == 0} {
+                bell
+                return
+        }
+        # puts regexp
+        dump
+        # extract matching parts in sample
+        set i 0
+        set newsample ""
+        foreach match $data(v:result) {
+                if {($i % $data(v:nblevels)) == $level} {
+                        set text [$data(w:sample) get \
+                                                        [$data(w:sample) index "1.0+[lindex $match 0]chars"] \
+                                                        [$data(w:sample) index "1.0+[expr [lindex $match 1]+1]chars"]]
+                        append newsample $text
+                        if {$data(v:mode) == "nl"} {
+                                append newsample "\n"
+                        }
+                }
+                incr i
+        }
+        $data(w:sample) delete 1.0 end
+        $data(w:sample) insert 1.0 $newsample
+        # update with regexp
+        go
 }
 
 proc regexp::help {} {
 global tcl_platform
 
-	toplevel .help
-	wm title .help "Help"
-	# logo
-	label .help.l -image logo
-	pack .help.l -side top -padx 10 -pady 10
-	# help text
-	if {$tcl_platform(platform) == "windows"} {
-		text .help.t -bd 2 -relief groove -font {Courier 10}
-	} else {
-		text .help.t -bd 2 -relief groove
-	}
-	pack .help.t -side top -padx 20
-	.help.t tag configure bold -font "[.help.t cget -font] bold"
-	.help.t insert 1.0 "Version:" bold " $::version
+        toplevel .help
+        wm title .help "Help"
+        # logo
+        label .help.l -image logo
+        pack .help.l -side top -padx 10 -pady 10
+        # help text
+        if {$tcl_platform(platform) == "windows"} {
+                text .help.t -bd 2 -relief groove -font {Courier 10}
+        } else {
+                text .help.t -bd 2 -relief groove
+        }
+        pack .help.t -side top -padx 20
+        .help.t tag configure bold -font "[.help.t cget -font] bold"
+        .help.t insert 1.0 "Version:" bold " $::version
 
 " normal "Usage:" bold " tkregexp <sampleFile>
 
@@ -524,199 +524,199 @@ global tcl_platform
          to undo/redo the last typing.
       4) When using the replace function, using Control-Z restore the value
          of the sample before the replacement : you try, retry, reretry, ..."
-	# ok button
-	button .help.ok -text "Ok" -width 10 -default active -command "destroy .help"
-	pack .help.ok -side bottom -pady 10
+        # ok button
+        button .help.ok -text "Ok" -width 10 -default active -command "destroy .help"
+        pack .help.ok -side bottom -pady 10
 }
 
 proc regexp::regexp:help:toggle {} {
 variable data
 
-	if {$data(v:help) == 0} {
-		pack forget $data(w:help)
-	} else {
-		pack $data(w:help) -before $data(w:regexp) -fill x -padx 5
-	}
+        if {$data(v:help) == 0} {
+                pack forget $data(w:help)
+        } else {
+                pack $data(w:help) -before $data(w:regexp) -fill x -padx 5
+        }
 }
 
 #----------------------------------------------------------------------------------------------
-#	Undo/redo (quick and dirty UNDO/REDO support)
+#        Undo/redo (quick and dirty UNDO/REDO support)
 #----------------------------------------------------------------------------------------------
 
 proc regexp::undo:sample {} {
 variable data
 
-	# display result
-	$data(w:sample) delete 1.0 end
-	$data(w:sample) insert 1.0 $data(v:undo:sample)
-	# colorize
-	go
+        # display result
+        $data(w:sample) delete 1.0 end
+        $data(w:sample) insert 1.0 $data(v:undo:sample)
+        # colorize
+        go
 }
 
 proc regexp::unredo:regexp {dir} {
 variable data
 
-	set index [expr ($data(v:undo:index)+$dir) % 100]
-	if {![info exists data(v:undo:r$index)]} {
-		return
-	}
-	set data(v:undo:index) $index
+        set index [expr ($data(v:undo:index)+$dir) % 100]
+        if {![info exists data(v:undo:r$index)]} {
+                return
+        }
+        set data(v:undo:index) $index
 
-	set t $data(w:regexp)
-	$t delete 1.0 end
-	$t insert 1.0 [lindex $data(v:undo:r$index) 1]
-	$t mark set insert [lindex $data(v:undo:r$index) 0]
+        set t $data(w:regexp)
+        $t delete 1.0 end
+        $t insert 1.0 [lindex $data(v:undo:r$index) 1]
+        $t mark set insert [lindex $data(v:undo:r$index) 0]
 }
 
 proc regexp::undo:regexp:compute {w k a} {
 variable data
 
-	if {[string match -nocase "*control*" $k]
-			|| [string match -nocase "*shift*" $k]
-			|| [string match -nocase "*alt*" $k]} {
-		return
-	}
+        if {[string match -nocase "*control*" $k]
+                        || [string match -nocase "*shift*" $k]
+                        || [string match -nocase "*alt*" $k]} {
+                return
+        }
 
-	set data(v:undo:r$data(v:undo:index)) [list [$w index insert] [$w get 1.0 end-1char]]
-	set data(v:undo:index) [expr ($data(v:undo:index)+1) % 100]
+        set data(v:undo:r$data(v:undo:index)) [list [$w index insert] [$w get 1.0 end-1char]]
+        set data(v:undo:index) [expr ($data(v:undo:index)+1) % 100]
 }
 
 #----------------------------------------------------------------------------------------------
-#	Replace
+#        Replace
 #----------------------------------------------------------------------------------------------
 
 proc regexp::replace {} {
 variable data
 
-	set exp [$data(w:regexp) get 1.0 end-1char]
-	set subst [$data(w:replace) get 1.0 end-1char]
-	if {$exp == ""} {
-		set regexp::data(v:nbreplace) "empty regexp"
-		return
-	}
+        set exp [$data(w:regexp) get 1.0 end-1char]
+        set subst [$data(w:replace) get 1.0 end-1char]
+        if {$exp == ""} {
+                set regexp::data(v:nbreplace) "empty regexp"
+                return
+        }
 
-	# get sample & store it for undo
-	set sample [$data(w:sample) get 1.0 end]
-	set data(v:undo:sample) $sample
-	set result [eval regsub $data(v:all) \
-						$data(v:line) $data(v:lineanchor) $data(v:linestop) \
-						$data(v:nocase) -- \
-						[list $exp] [list $sample] [list [subst -nocommands -novariables $subst]] sample]
-	set regexp::data(v:nbreplace) "$result replaced"
-	# display result
-	$data(w:sample) delete 1.0 end
-	$data(w:sample) insert 1.0 $sample
+        # get sample & store it for undo
+        set sample [$data(w:sample) get 1.0 end]
+        set data(v:undo:sample) $sample
+        set result [eval regsub $data(v:all) \
+                                                $data(v:line) $data(v:lineanchor) $data(v:linestop) \
+                                                $data(v:nocase) -- \
+                                                [list $exp] [list $sample] [list [subst -nocommands -novariables $subst]] sample]
+        set regexp::data(v:nbreplace) "$result replaced"
+        # display result
+        $data(w:sample) delete 1.0 end
+        $data(w:sample) insert 1.0 $sample
 }
 
 proc regexp::replace:toggle {} {
 variable data
 
-	if {$regexp::data(v:mode) == "replace"} {
-		bind $data(w:regexp) <Tab> "focus $data(w:replace); break;"
-		bind $data(w:regexp) <Shift-Tab> "focus $data(w:sample); break;"
-		catch { bind $data(w:regexp) <ISO_Left_Tab> "focus $data(w:sample); break;" }
+        if {$regexp::data(v:mode) == "replace"} {
+                bind $data(w:regexp) <Tab> "focus $data(w:replace); break;"
+                bind $data(w:regexp) <Shift-Tab> "focus $data(w:sample); break;"
+                catch { bind $data(w:regexp) <ISO_Left_Tab> "focus $data(w:sample); break;" }
 
-		bind $data(w:replace) <Tab> "focus $data(w:sample); break;"
-		bind $data(w:replace) <Shift-Tab> "focus $data(w:regexp); break;"
-		catch { bind $data(w:replace) <ISO_Left_Tab> "focus $data(w:regexp); break;" }
+                bind $data(w:replace) <Tab> "focus $data(w:sample); break;"
+                bind $data(w:replace) <Shift-Tab> "focus $data(w:regexp); break;"
+                catch { bind $data(w:replace) <ISO_Left_Tab> "focus $data(w:regexp); break;" }
 
-		bind $data(w:sample) <Tab> "focus $data(w:regexp); break;"
-		bind $data(w:sample) <Shift-Tab> "focus $data(w:replace); break;"
-		catch { bind $data(w:sample) <ISO_Left_Tab> "focus $data(w:replace); break;" }
+                bind $data(w:sample) <Tab> "focus $data(w:regexp); break;"
+                bind $data(w:sample) <Shift-Tab> "focus $data(w:replace); break;"
+                catch { bind $data(w:sample) <ISO_Left_Tab> "focus $data(w:replace); break;" }
 
-		pack $data(w:allreplace) -side top -fill both
+                pack $data(w:allreplace) -side top -fill both
 
-	} else {
-		bind $data(w:regexp) <Tab> "focus $data(w:sample); break;"
-		catch { bind $data(w:regexp) <ISO_Left_Tab> "focus $data(w:sample); break;" }
+        } else {
+                bind $data(w:regexp) <Tab> "focus $data(w:sample); break;"
+                catch { bind $data(w:regexp) <ISO_Left_Tab> "focus $data(w:sample); break;" }
 
-		bind $data(w:sample) <Tab> "focus $data(w:regexp); break;"
-		catch { bind $data(w:sample) <ISO_Left_Tab> "focus $data(w:regexp); break;" }
+                bind $data(w:sample) <Tab> "focus $data(w:regexp); break;"
+                catch { bind $data(w:sample) <ISO_Left_Tab> "focus $data(w:regexp); break;" }
 
-		pack forget $data(w:allreplace)
-	}
+                pack forget $data(w:allreplace)
+        }
 }
 
 #----------------------------------------------------------------------------------------------
-#	Manage REGEXP
+#        Manage REGEXP
 #----------------------------------------------------------------------------------------------
 
 proc regexp::regexp:set {text} {
 variable data
 
-	$data(w:regexp) delete 1.0 end
-	$data(w:regexp) insert 1.0 $text
+        $data(w:regexp) delete 1.0 end
+        $data(w:regexp) insert 1.0 $text
 }
 
 proc regexp::regexp:colorize {} {
 variable data
 
-	set exp [$data(w:regexp) get 1.0 end-1char]
-	set max [string length $exp]
-	set stack {}
-	# list format : min max min max ...
-	set indices [list "report" 0 [string length $exp]]
-	# search the groups in the regexp
-	set data(v:nblevels) 1
-	for {set i 0} {$i < $max} {incr i} {
-		set c [string index $exp $i]
-		if {$c == "\\"} {
-			incr i
-			continue
-		} elseif {$c == "("} {
-			set c [string index $exp [expr $i+1]]
-			set what [string index $exp [expr $i+2]]
-			# test for escape with (?...)
-			if {$c == "?"} {
-				if {$what != ":"} {
-					lappend indices "lookahead"
-				} else {
-					lappend indices "noreport"
-				}
-			} else {
-				lappend indices "report"
-				incr data(v:nblevels)
-			}
-			lappend indices $i
-			set stack "[llength $indices] $stack"
-			lappend indices 0
+        set exp [$data(w:regexp) get 1.0 end-1char]
+        set max [string length $exp]
+        set stack {}
+        # list format : min max min max ...
+        set indices [list "report" 0 [string length $exp]]
+        # search the groups in the regexp
+        set data(v:nblevels) 1
+        for {set i 0} {$i < $max} {incr i} {
+                set c [string index $exp $i]
+                if {$c == "\\"} {
+                        incr i
+                        continue
+                } elseif {$c == "("} {
+                        set c [string index $exp [expr $i+1]]
+                        set what [string index $exp [expr $i+2]]
+                        # test for escape with (?...)
+                        if {$c == "?"} {
+                                if {$what != ":"} {
+                                        lappend indices "lookahead"
+                                } else {
+                                        lappend indices "noreport"
+                                }
+                        } else {
+                                lappend indices "report"
+                                incr data(v:nblevels)
+                        }
+                        lappend indices $i
+                        set stack "[llength $indices] $stack"
+                        lappend indices 0
 
-		} elseif {$c == ")"} {
-			set idx [lindex $stack 0]
-			if {$idx == ""} {
-				continue
-			}
-			set stack [lrange $stack 1 end]
-			set indices [lreplace $indices $idx $idx $i]
-		}
-	}
+                } elseif {$c == ")"} {
+                        set idx [lindex $stack 0]
+                        if {$idx == ""} {
+                                continue
+                        }
+                        set stack [lrange $stack 1 end]
+                        set indices [lreplace $indices $idx $idx $i]
+                }
+        }
 
-	# remove old colors
-	foreach level $data(v:levels) {
-		$data(w:regexp) tag remove $level 1.0 end
-	}
-	$data(w:regexp) tag remove "lookahead" 1.0 end
-	$data(w:regexp) tag remove "noreport" 1.0 end
-	# colorize the regexp
-	set i 0
-	foreach {type min max} $indices {
-		if {$type != "report"} {
-			continue
-		}
-		$data(w:regexp) tag add [lindex $data(v:levels) $i] \
-				[$data(w:regexp) index "1.0+${min}chars"] \
-				[$data(w:regexp) index "1.0+[expr $max+1]chars"]
-		incr i
-	}
-	# apply special item
-	foreach {type min max} $indices {
-		if {$type == "report"} {
-			continue
-		}
-		$data(w:regexp) tag add $type \
-				[$data(w:regexp) index "1.0+${min}chars"] \
-				[$data(w:regexp) index "1.0+[expr $max+1]chars"]
-	}
+        # remove old colors
+        foreach level $data(v:levels) {
+                $data(w:regexp) tag remove $level 1.0 end
+        }
+        $data(w:regexp) tag remove "lookahead" 1.0 end
+        $data(w:regexp) tag remove "noreport" 1.0 end
+        # colorize the regexp
+        set i 0
+        foreach {type min max} $indices {
+                if {$type != "report"} {
+                        continue
+                }
+                $data(w:regexp) tag add [lindex $data(v:levels) $i] \
+                                [$data(w:regexp) index "1.0+${min}chars"] \
+                                [$data(w:regexp) index "1.0+[expr $max+1]chars"]
+                incr i
+        }
+        # apply special item
+        foreach {type min max} $indices {
+                if {$type == "report"} {
+                        continue
+                }
+                $data(w:regexp) tag add $type \
+                                [$data(w:regexp) index "1.0+${min}chars"] \
+                                [$data(w:regexp) index "1.0+[expr $max+1]chars"]
+        }
 }
 
 #----------------------------------------------------------------------------------------------
@@ -724,16 +724,16 @@ variable data
 proc regexp::regexp:load {} {
 variable data
 
-	# get filename
-	set types [list [list "All" *]]
-	set file [tk_getOpenFile -filetypes $types -parent .]
-	if {$file == ""} {
-		return
-	}
-	# do it
-	set in [open $file "r"]
-	regexp:set [read $in [file size $file]]
-	close $in
+        # get filename
+        set types [list [list "All" *]]
+        set file [tk_getOpenFile -filetypes $types -parent .]
+        if {$file == ""} {
+                return
+        }
+        # do it
+        set in [open $file "r"]
+        regexp:set [read $in [file size $file]]
+        close $in
 }
 
 #----------------------------------------------------------------------------------------------
@@ -741,14 +741,14 @@ variable data
 proc regexp::regexp:insert {what} {
 variable data
 
-	set w $data(w:regexp)
-	# prepare undo/redo
-	set data(v:undo:r$data(v:undo:index)) [list [$w index insert] [$w get 1.0 end-1char]]
-	set data(v:undo:index) [expr ($data(v:undo:index)+1) % 100]
-	# do it
-	$w insert insert $what
-	# prepare undo/redo
-	set data(v:undo:r$data(v:undo:index)) [list [$w index insert] [$w get 1.0 end-1char]]
+        set w $data(w:regexp)
+        # prepare undo/redo
+        set data(v:undo:r$data(v:undo:index)) [list [$w index insert] [$w get 1.0 end-1char]]
+        set data(v:undo:index) [expr ($data(v:undo:index)+1) % 100]
+        # do it
+        $w insert insert $what
+        # prepare undo/redo
+        set data(v:undo:r$data(v:undo:index)) [list [$w index insert] [$w get 1.0 end-1char]]
 }
 
 #----------------------------------------------------------------------------------------------
@@ -758,38 +758,38 @@ proc regexp::history:init {} {
 variable data
 global font
 
-	set w [toplevel .history]
-	wm title $w "Visual REGEXP $::version -- REGEXP History"
-	wm geometry $w 640x480
-	wm protocol $w WM_DELETE_WINDOW "set regexp::data(v:history) 0; wm withdraw $w"
+        set w [toplevel .history]
+        wm title $w "Visual REGEXP $::version -- REGEXP History"
+        wm geometry $w 640x480
+        wm protocol $w WM_DELETE_WINDOW "set regexp::data(v:history) 0; wm withdraw $w"
 
-	# text zone	
-	set tf [frame $w.t]
-	pack $tf -side top -expand true -fill both
-	set t [text $tf.t -xscrollcommand "$tf.x set" -yscrollcommand "$tf.y set" \
-					-bg white -font $::font_regexp -width 5 -height 1 \
-					-selectbackground lightblue -selectborderwidth 0]
-	set data(w:history) $t
-	$t tag configure spacing -font {Helvetica 6}
-	set tx [scrollbar $tf.x -bd 1 -orient horizontal -command "$t xview"]
-	set ty [scrollbar $tf.y -bd 1 -orient vertical -command "$t yview"]
-	bindtags $t "$t all"
-	grid $t  $ty -sticky news
-	grid $tx x   -sticky news
-	grid columnconfigure $tf {0} -weight 1
-	grid columnconfigure $tf {1} -weight 0
-	grid rowconfigure $tf {0} -weight 1
-	grid rowconfigure $tf {1} -weight 0
+        # text zone        
+        set tf [frame $w.t]
+        pack $tf -side top -expand true -fill both
+        set t [text $tf.t -xscrollcommand "$tf.x set" -yscrollcommand "$tf.y set" \
+                                        -bg white -font $::font_regexp -width 5 -height 1 \
+                                        -selectbackground lightblue -selectborderwidth 0]
+        set data(w:history) $t
+        $t tag configure spacing -font {Helvetica 6}
+        set tx [scrollbar $tf.x -bd 1 -orient horizontal -command "$t xview"]
+        set ty [scrollbar $tf.y -bd 1 -orient vertical -command "$t yview"]
+        bindtags $t "$t all"
+        grid $t  $ty -sticky news
+        grid $tx x   -sticky news
+        grid columnconfigure $tf {0} -weight 1
+        grid columnconfigure $tf {1} -weight 0
+        grid rowconfigure $tf {0} -weight 1
+        grid rowconfigure $tf {1} -weight 0
 
-	# buttons
-	set bf [frame $w.f]
-	pack $bf -side bottom -padx 5 -pady 5
+        # buttons
+        set bf [frame $w.f]
+        pack $bf -side bottom -padx 5 -pady 5
 
-	set b1 [button $bf.1 -bd 1 -text "Hide" -command "wm withdraw $w; set ::regexp::data(v:history) 0"]
-	set b2 [button $bf.2 -bd 1 -text "Save ..." -command "regexp::history:save"]
-	pack $b2 $b1 -side left -anchor c
+        set b1 [button $bf.1 -bd 1 -text "Hide" -command "wm withdraw $w; set ::regexp::data(v:history) 0"]
+        set b2 [button $bf.2 -bd 1 -text "Save ..." -command "regexp::history:save"]
+        pack $b2 $b1 -side left -anchor c
 
-	wm withdraw $w
+        wm withdraw $w
 }
 
 set last ""
@@ -798,41 +798,41 @@ set counter 0
 proc regexp::history:add {} {
 variable data
 
-	if {$::inReplay} {
-		# avoid to put the same expression again when replaying it
-		set ::inReplay 0
-		return
-	}
+        if {$::inReplay} {
+                # avoid to put the same expression again when replaying it
+                set ::inReplay 0
+                return
+        }
 
-	set exp [$data(w:regexp) get 1.0 end-1char]
-	if {$exp != "" && $exp != $::last} {
-		# memorize position
-		set start [$data(w:history) index insert]
-		# add text
-		$data(w:history) insert end "$exp\n"
-		set end [$data(w:history) index insert]
-		$data(w:history) insert end "\n" {spacing}
-		set ::last $exp
-		$data(w:history) yview moveto 1.0
-		# do the binding
-		set tag "t$::counter"
-		incr ::counter
-	    $data(w:history) tag bind $tag <Any-Enter> "$data(w:history) tag configure $tag -background lightblue"
-	    $data(w:history) tag bind $tag <Any-Leave> "$data(w:history) tag configure $tag -background {}"
-		$data(w:history) tag bind $tag <1> "regexp::history:replay [list $exp]"
-		$data(w:history) tag add $tag $start $end
+        set exp [$data(w:regexp) get 1.0 end-1char]
+        if {$exp != "" && $exp != $::last} {
+                # memorize position
+                set start [$data(w:history) index insert]
+                # add text
+                $data(w:history) insert end "$exp\n"
+                set end [$data(w:history) index insert]
+                $data(w:history) insert end "\n" {spacing}
+                set ::last $exp
+                $data(w:history) yview moveto 1.0
+                # do the binding
+                set tag "t$::counter"
+                incr ::counter
+            $data(w:history) tag bind $tag <Any-Enter> "$data(w:history) tag configure $tag -background lightblue"
+            $data(w:history) tag bind $tag <Any-Leave> "$data(w:history) tag configure $tag -background {}"
+                $data(w:history) tag bind $tag <1> "regexp::history:replay [list $exp]"
+                $data(w:history) tag add $tag $start $end
 
-		# colorize the expression in history
-		scan $start "%d.%d" sl sc
-		incr sl -1
-		foreach tag {e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 lookahead noreport} {
-			foreach {start end} [$data(w:regexp) tag ranges $tag] {
-				set start [$data(w:history) index "$start + $sc chars + $sl lines"]
-				set end [$data(w:history) index "$end + $sc chars + $sl lines"]
-				$data(w:history) tag add $tag $start $end
-			}
-		}
-	}
+                # colorize the expression in history
+                scan $start "%d.%d" sl sc
+                incr sl -1
+                foreach tag {e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 lookahead noreport} {
+                        foreach {start end} [$data(w:regexp) tag ranges $tag] {
+                                set start [$data(w:history) index "$start + $sc chars + $sl lines"]
+                                set end [$data(w:history) index "$end + $sc chars + $sl lines"]
+                                $data(w:history) tag add $tag $start $end
+                        }
+                }
+        }
 }
 
 set inReplay 0
@@ -840,111 +840,111 @@ set inReplay 0
 proc regexp::history:replay {text} {
 variable data
 
-	set ::inReplay 1
-	regexp:set $text
-	go
+        set ::inReplay 1
+        regexp:set $text
+        go
 }
 
 proc regexp::history:save {} {
 variable data
 
-	set file [tk_getSaveFile -defaultextension .txt]
-	if {$file != ""} {
-		set out [open $file "w"]
-		puts -nonewline $out [$data(w:history) get 1.0 end]
-		close $out
-	}
+        set file [tk_getSaveFile -defaultextension .txt]
+        if {$file != ""} {
+                set out [open $file "w"]
+                puts -nonewline $out [$data(w:history) get 1.0 end]
+                close $out
+        }
 }
 
 
 #----------------------------------------------------------------------------------------------
-#	Manage SAMPLE
+#        Manage SAMPLE
 #----------------------------------------------------------------------------------------------
 
 proc regexp::sample:set {text} {
 variable data
 
-	$data(w:sample) delete 1.0 end
-	$data(w:sample) insert 1.0 $text
-	set data(v:undo:sample) $text
+        $data(w:sample) delete 1.0 end
+        $data(w:sample) insert 1.0 $text
+        set data(v:undo:sample) $text
 }
 
 proc regexp::sample:colorize {} {
 variable data
 
-	# remove old tags
-	foreach level $data(v:levels) {
-		$data(w:sample) tag remove $level 1.0 end
-	}
-	set data(v:position) 0
-	set data(v:positions) [list ]
+        # remove old tags
+        foreach level $data(v:levels) {
+                $data(w:sample) tag remove $level 1.0 end
+        }
+        set data(v:position) 0
+        set data(v:positions) [list ]
 
-	# set new tags
-	set exp [$data(w:regexp) get 1.0 end-1char]
-	if {$exp == ""} {
-		set data(v:result) {}
-		return
-	}
-	set result [eval regexp -inline -indices $data(v:all) \
-						$data(v:line) $data(v:lineanchor) $data(v:linestop) \
-						$data(v:nocase) -- \
-						[list $exp] [list [$data(w:sample) get 1.0 end]]]
-	set data(v:result) $result
-	set i 0
-	foreach match $result {
-		set start [$data(w:sample) index "1.0+[lindex $match 0]chars"]
-		$data(w:sample) tag add e[expr $i % $data(v:nblevels)] \
-				$start [$data(w:sample) index "1.0+[expr [lindex $match 1]+1]chars"]
-		lappend data(v:positions) $start
-		if {$i == 0} {
-			$data(w:sample) see $start
-		}
-		incr i
-	}
-	# set nb of matches
-	if {$data(v:nblevels)} {
-		set nb 0
-		foreach item $result {
-			if {[lindex $item 0] <= [lindex $item 1]} {
-				incr nb
-			}
-		}
-		set regexp::data(v:nbmatches) "[expr $nb/$data(v:nblevels)] matches"
-	} else {
-		set regexp::data(v:nbmatches) "? matches"
-	}
+        # set new tags
+        set exp [$data(w:regexp) get 1.0 end-1char]
+        if {$exp == ""} {
+                set data(v:result) {}
+                return
+        }
+        set result [eval regexp -inline -indices $data(v:all) \
+                                                $data(v:line) $data(v:lineanchor) $data(v:linestop) \
+                                                $data(v:nocase) -- \
+                                                [list $exp] [list [$data(w:sample) get 1.0 end]]]
+        set data(v:result) $result
+        set i 0
+        foreach match $result {
+                set start [$data(w:sample) index "1.0+[lindex $match 0]chars"]
+                $data(w:sample) tag add e[expr $i % $data(v:nblevels)] \
+                                $start [$data(w:sample) index "1.0+[expr [lindex $match 1]+1]chars"]
+                lappend data(v:positions) $start
+                if {$i == 0} {
+                        $data(w:sample) see $start
+                }
+                incr i
+        }
+        # set nb of matches
+        if {$data(v:nblevels)} {
+                set nb 0
+                foreach item $result {
+                        if {[lindex $item 0] <= [lindex $item 1]} {
+                                incr nb
+                        }
+                }
+                set regexp::data(v:nbmatches) "[expr $nb/$data(v:nblevels)] matches"
+        } else {
+                set regexp::data(v:nbmatches) "? matches"
+        }
 }
 
 proc regexp::sample:background {} {
 variable data
 
-	foreach level $data(v:levels) color $::colors bgcolor $::bgcolors {
-		if {$data(v:background)} {
-			$data(w:sample) tag configure $level -foreground $color -background $bgcolor
-		} else {
-			$data(w:sample) tag configure $level -foreground $color -background {}
-		}
-	}
+        foreach level $data(v:levels) color $::colors bgcolor $::bgcolors {
+                if {$data(v:background)} {
+                        $data(w:sample) tag configure $level -foreground $color -background $bgcolor
+                } else {
+                        $data(w:sample) tag configure $level -foreground $color -background {}
+                }
+        }
 }
 
 proc regexp::sample:move {amount} {
 variable data
 
-	if {$amount == -1} {
-		if {$data(v:position) > 0} {
-			incr data(v:position) -1
-		}
-	} else {
-		if {$data(v:position) < [llength $data(v:positions)]-1} {
-			incr data(v:position) +1
-		}
-	}
-	set where [lindex $data(v:positions) $data(v:position)]
-	if {$where != ""} {
-		$data(w:sample) see $where
-		$data(w:sample) mark set insert $where
-		focus $data(w:sample)
-	}
+        if {$amount == -1} {
+                if {$data(v:position) > 0} {
+                        incr data(v:position) -1
+                }
+        } else {
+                if {$data(v:position) < [llength $data(v:positions)]-1} {
+                        incr data(v:position) +1
+                }
+        }
+        set where [lindex $data(v:positions) $data(v:position)]
+        if {$where != ""} {
+                $data(w:sample) see $where
+                $data(w:sample) mark set insert $where
+                focus $data(w:sample)
+        }
 }
 
 #----------------------------------------------------------------------------------------------
@@ -952,127 +952,127 @@ variable data
 proc regexp::sample:load {} {
 variable data
 
-	# get filename
-	set types [list [list "All" *]]
-	set file [tk_getOpenFile -initialdir $data(v:dir) -filetypes $types -parent .]
+        # get filename
+        set types [list [list "All" *]]
+        set file [tk_getOpenFile -initialdir $data(v:dir) -filetypes $types -parent .]
     if {$file == ""} {
-		return
-	}
-	# memorize location
-	set data(v:dir) [file dirname $file]
-	set data(v:file) [file tail $file]
-	# do it
-	set in [open $file "r"]
-	sample:set [read $in [file size $file]]
-	close $in
+                return
+        }
+        # memorize location
+        set data(v:dir) [file dirname $file]
+        set data(v:file) [file tail $file]
+        # do it
+        set in [open $file "r"]
+        sample:set [read $in [file size $file]]
+        close $in
 }
 
 proc regexp::sample:save {mode} {
 variable data
 
-	# get filename
-	set types [list [list "All" *]]
-	set file [tk_getSaveFile -initialdir $data(v:dir) -initialfile $data(v:file) \
-							 -filetypes $types -parent .]
+        # get filename
+        set types [list [list "All" *]]
+        set file [tk_getSaveFile -initialdir $data(v:dir) -initialfile $data(v:file) \
+                                                         -filetypes $types -parent .]
     if {$file == ""} {
-		return
-	}
-	# memorize location
-	set data(v:dir) [file dirname $file]
-	set data(v:file) [file tail $file]
-	# do it
-	set out [open $file "w"]
-	fconfigure $out -translation $mode
-	puts $out [$data(w:sample) get 1.0 end]
-	close $out
+                return
+        }
+        # memorize location
+        set data(v:dir) [file dirname $file]
+        set data(v:file) [file tail $file]
+        # do it
+        set out [open $file "w"]
+        fconfigure $out -translation $mode
+        puts $out [$data(w:sample) get 1.0 end]
+        close $out
 }
 
 
 #----------------------------------------------------------------------------------------------
-#	Main toplevel commands
+#        Main toplevel commands
 #----------------------------------------------------------------------------------------------
 
 proc regexp::make-regexp {} {
 variable data
 
-	# new dialog
-	catch { destroy .mkregexp }
-	set w [toplevel .mkregexp]
-	wm title $w "Make regexp"
-	wm geometry $w 640x480
-	# widgets
-	set f [frame $w.top]
-		# area to input words
-		label $f.l1 -text "Words list:"
-		set list [text $f.list -wrap char -bg white -font $::font_regexp \
-							-selectbackground lightblue -selectborderwidth 0 \
-							-width 1 -height 10 -bd 1 -yscrollcommand "$f.sy1 set"]
-		scrollbar $f.sy1 -command "$list yview" -orient vertical -bd 1
-		# button to compute the regexp
-		set doit [button $f.doit -text "Compute" -width 15 -bd 1 -command "regexp::make-regexp:compute"]
-		# display result
-		label $f.l2 -text "Regexp:"
-		set output [text $f.output -wrap char -bg white -font $::font_regexp \
-							-selectbackground lightblue -selectborderwidth 0 \
-							-width 1 -height 4 -bd 1 -yscrollcommand "$f.sy2 set"]
-		bindtags $output "$output all"
-		scrollbar $f.sy2 -command "$output yview" -orient vertical -bd 1
-		# layout
-		grid $f.l1	$list		$f.sy1		-sticky news
-		grid $doit	-			-			-sticky ns -pady 2
-		grid $f.l2	$output	$f.sy2		-sticky news
-		grid columnconfigure $f {1} -weight 1
-		grid rowconfigure $f {0 2} -weight 1
-		# init
-		set data(w:make:list) $list
-		set data(w:make:output) $output
-	# button OK / CANCEL
-	set ff [frame $w.bottom]
-		set ok [button $ff.ok -text "Insert into regexp" -width 20 -bd 1 -command "regexp::make-regexp:ok $w"]
-		set cancel [button $ff.cancel -text "Cancel" -width 20 -bd 1 -command "destroy $w"]
-		pack $ok $cancel -side left -fill both -padx 10 -pady 10
-	# layout
-	pack $f -side top -expand true -fill both
-	pack $ff -side bottom -anchor c
+        # new dialog
+        catch { destroy .mkregexp }
+        set w [toplevel .mkregexp]
+        wm title $w "Make regexp"
+        wm geometry $w 640x480
+        # widgets
+        set f [frame $w.top]
+                # area to input words
+                label $f.l1 -text "Words list:"
+                set list [text $f.list -wrap char -bg white -font $::font_regexp \
+                                                        -selectbackground lightblue -selectborderwidth 0 \
+                                                        -width 1 -height 10 -bd 1 -yscrollcommand "$f.sy1 set"]
+                scrollbar $f.sy1 -command "$list yview" -orient vertical -bd 1
+                # button to compute the regexp
+                set doit [button $f.doit -text "Compute" -width 15 -bd 1 -command "regexp::make-regexp:compute"]
+                # display result
+                label $f.l2 -text "Regexp:"
+                set output [text $f.output -wrap char -bg white -font $::font_regexp \
+                                                        -selectbackground lightblue -selectborderwidth 0 \
+                                                        -width 1 -height 4 -bd 1 -yscrollcommand "$f.sy2 set"]
+                bindtags $output "$output all"
+                scrollbar $f.sy2 -command "$output yview" -orient vertical -bd 1
+                # layout
+                grid $f.l1        $list                $f.sy1                -sticky news
+                grid $doit        -                        -                        -sticky ns -pady 2
+                grid $f.l2        $output        $f.sy2                -sticky news
+                grid columnconfigure $f {1} -weight 1
+                grid rowconfigure $f {0 2} -weight 1
+                # init
+                set data(w:make:list) $list
+                set data(w:make:output) $output
+        # button OK / CANCEL
+        set ff [frame $w.bottom]
+                set ok [button $ff.ok -text "Insert into regexp" -width 20 -bd 1 -command "regexp::make-regexp:ok $w"]
+                set cancel [button $ff.cancel -text "Cancel" -width 20 -bd 1 -command "destroy $w"]
+                pack $ok $cancel -side left -fill both -padx 10 -pady 10
+        # layout
+        pack $f -side top -expand true -fill both
+        pack $ff -side bottom -anchor c
 }
 
 proc regexp::make-regexp:compute {} {
 variable data
 
-	set words [$data(w:make:list) get 1.0 end-1c]
-	$data(w:make:output) delete 1.0 end
-	$data(w:make:output) insert 1.0 [make-regexp::make-regexp $words]
+        set words [$data(w:make:list) get 1.0 end-1c]
+        $data(w:make:output) delete 1.0 end
+        $data(w:make:output) insert 1.0 [make-regexp::make-regexp $words]
 }
 
 proc regexp::make-regexp:ok {w} {
 variable data
 
-	set words [$data(w:make:list) get 1.0 end-1c]
+        set words [$data(w:make:list) get 1.0 end-1c]
 
-	$data(w:regexp) insert insert "([make-regexp::make-regexp $words])"
-	destroy $w
+        $data(w:regexp) insert insert "([make-regexp::make-regexp $words])"
+        destroy $w
 }
 
 
 #==============================================================================================
-#	Main entry point
+#        Main entry point
 #==============================================================================================
 
 # try to get customization from 'visual_regexp.ini'
 puts "[file exists visual_regexp.ini]"
 set filename [file dirname [info nameofexecutable]]/visual_regexp.ini
 if {[file exists $filename]} {
-	source $filename
+        source $filename
 } elseif {[file exists visual_regexp.ini]} {
-	source visual_regexp.ini
+        source visual_regexp.ini
 }
 
 # try to auto user patterns
 set filename [file dirname [info nameofexecutable]]/regexp.txt
 if {[file exists $filename]} {
-	regexp::pattern:load $filename
+        regexp::pattern:load $filename
 } elseif {[file exists regexp.txt]} {
-	regexp::pattern:load regexp.txt
+        regexp::pattern:load regexp.txt
 }
 
 # buld the GUI
@@ -1081,19 +1081,19 @@ regexp::gui
 regexp::go
 
 if {$argc > 1} {
-	puts "Usage: $argv0 <sampleFile>"
+        puts "Usage: $argv0 <sampleFile>"
 } elseif {$argc == 1} {
-	set filename [lindex $argv 0]
-	set file [open $filename]
-	set data [read $file [file size $filename]]
-	close $file
+        set filename [lindex $argv 0]
+        set file [open $filename]
+        set data [read $file [file size $filename]]
+        close $file
 
-	# memorize location
-	set regexp::data(v:dir) [file dirname $filename]
-	set regexp::data(v:file) [file tail $filename]
+        # memorize location
+        set regexp::data(v:dir) [file dirname $filename]
+        set regexp::data(v:file) [file tail $filename]
 
-	regexp::sample:set $data
-	unset data
+        regexp::sample:set $data
+        unset data
 }
 
 
@@ -1105,261 +1105,262 @@ image create photo logo -data {R0lGODlhLAFxAMYAAAICAhcXFzw8WFtbb4+Njq2ssioqNMfGx
 
 
 #==============================================================================================
-#	Make Regexp
+#        Make Regexp
 #==============================================================================================
 namespace eval make-regexp {
 }
-#	Takes a list of words, returns a list "prefix <recurse>   prefix <recurse>  ..."
-#	after grouping by first common letter.
+#        Takes a list of words, returns a list "prefix <recurse>   prefix <recurse>  ..."
+#        after grouping by first common letter.
 proc make-regexp::prefix {words} {
-	# init
-	set result {}
-	lappend words ""		;# to force last completion
-	# group by first letter
-	set prefix [string range [lindex $words 0] 0 0]
-	set subwords [list [string range [lindex $words 0] 1 end]]
-	foreach word [lrange $words 1 end] {
-		set char [string range $word 0 0]
-		if {$char == $prefix} {
-			lappend subwords [string range $word 1 end]
-		} else {
-			# compute prefixes recursively
-			set recurse [prefix $subwords]
-			if {[llength $recurse] == 2} {
-				# only one prefix, so concat with previous prefix
-				append prefix [lindex $recurse 0]
-				set recurse [lindex $recurse 1]
-			}
-			append result " [verify [list $prefix $recurse]]"
-			set prefix $char
-			set subwords [list [string range $word 1 end]]
-		}
-	}
-	# return
-	set result
+        # init
+        set result {}
+        lappend words ""                ;# to force last completion
+        # group by first letter
+        set prefix [string range [lindex $words 0] 0 0]
+        set subwords [list [string range [lindex $words 0] 1 end]]
+        foreach word [lrange $words 1 end] {
+                set char [string range $word 0 0]
+                if {$char == $prefix} {
+                        lappend subwords [string range $word 1 end]
+                } else {
+                        # compute prefixes recursively
+                        set recurse [prefix $subwords]
+                        if {[llength $recurse] == 2} {
+                                # only one prefix, so concat with previous prefix
+                                append prefix [lindex $recurse 0]
+                                set recurse [lindex $recurse 1]
+                        }
+                        append result " [verify [list $prefix $recurse]]"
+                        set prefix $char
+                        set subwords [list [string range $word 1 end]]
+                }
+        }
+        # return
+        set result
 }
-#	Verification of regexp.
-#	After searching common suffixes, some patterns grouped by parenthesis or conditional exps
-#	may be broken. We need to fix them.
+#        Verification of regexp.
+#        After searching common suffixes, some patterns grouped by parenthesis or conditional exps
+#        may be broken. We need to fix them.
 proc make-regexp::verify {exp} {
-	set orphans [isOrphans $exp]
-	set result {}
-	foreach {prefix recurse} $exp {
-		if {![isBalanced $prefix]} {
-			if {[llength $recurse]} {
-				foreach {pp rr} $recurse {
-					lappend result "$prefix$pp" $rr
-				}
-				if {![isBalanced $prefix] && $orphans} {
-					set result [verify $result]
-				}
-			} else {
-				lappend result "$prefix" ""
-			}
-		} else {
-			lappend result $prefix $recurse
-		}
-	}
-	# return result after fixing
-	set result
+        set orphans [isOrphans $exp]
+        set result {}
+        foreach {prefix recurse} $exp {
+                if {![isBalanced $prefix]} {
+                        if {[llength $recurse]} {
+                                foreach {pp rr} $recurse {
+                                        lappend result "$prefix$pp" $rr
+                                }
+                                if {![isBalanced $prefix] && $orphans} {
+                                        set result [verify $result]
+                                }
+                        } else {
+                                lappend result "$prefix" ""
+                        }
+                } else {
+                        lappend result $prefix $recurse
+                }
+        }
+        # return result after fixing
+        set result
 }
-#	Check for orphan grouping ('|' lost in lower level)
+#        Check for orphan grouping ('|' lost in lower level)
 proc make-regexp::isOrphans {exp} {
-	set orphan 0
-	foreach {prefix recurse} $exp {
-		if {[string index $prefix 0] == "|"} {
-			set orphan 1
-			break
-		}
-		if {[isOrphans $recurse]} {
-			set orphan 1
-			break
-		}
-	}
-	set orphan
+        set orphan 0
+        foreach {prefix recurse} $exp {
+                if {[string index $prefix 0] == "|"} {
+                        set orphan 1
+                        break
+                }
+                if {[isOrphans $recurse]} {
+                        set orphan 1
+                        break
+                }
+        }
+        set orphan
 }
 #==============================================================================================
-#	Check if parenthesis in 'str' after balanced.
+#        Check if parenthesis in 'str' after balanced.
 proc make-regexp::isBalanced {str} {
-	# if start with '?' skip it
-	if {[string index $str 0] == "?"} {
-		return 0
-	}
-	# must start with a ')'
-	if {[string index $str 0] != ")"} {
-		return 1
-	}
-	# try to balanced each ')' with an appropriate '('
-	set depth 0
-	foreach c [split $str {}] {
-		if {$c == "("} {
-			incr depth -1
-		} elseif {$c == ")"} {
-			incr depth +1
-		}
-	}
-	return [expr $depth == 0]
+        # if start with '?' skip it
+        if {[string index $str 0] == "?"} {
+                return 0
+        }
+        # must start with a ')'
+        if {[string index $str 0] != ")"} {
+                return 1
+        }
+        # try to balanced each ')' with an appropriate '('
+        set depth 0
+        foreach c [split $str {}] {
+                if {$c == "("} {
+                        incr depth -1
+                } elseif {$c == ")"} {
+                        incr depth +1
+                }
+        }
+        return [expr $depth == 0]
 }
-#	Check if 'str' contains a first level grouping
+#        Check if 'str' contains a first level grouping
 proc make-regexp::firstLevelGroup {str} {
-	set depth 0
-	foreach c [split $str {}] {
-		if {$c == "("} {
-			incr depth -1
-		} elseif {$c == ")"} {
-			incr depth +1
-		} elseif {$depth == 0 && $c == "|"} {
-			return 1
-		}
-	}
-	return 0
+        set depth 0
+        foreach c [split $str {}] {
+                if {$c == "("} {
+                        incr depth -1
+                } elseif {$c == ")"} {
+                        incr depth +1
+                } elseif {$depth == 0 && $c == "|"} {
+                        return 1
+                }
+        }
+        return 0
 }
 #==============================================================================================
-#	After having found common prefixes, try to find common suffixes in expression
+#        After having found common prefixes, try to find common suffixes in expression
 proc make-regexp::suffix {list} {
-	# end of recursion if empty list
-	if {[llength $list] == 0} {
-		return ""
-	}
-	set newlist {}
-	foreach {prefix recurse} $list {
-		set result [suffix $recurse]
-		lappend newlist $prefix [lindex $result 0]
-	}
-	# compute longest common suffixes
-	set words {}
-	foreach {prefix tail} $newlist {
-		if {[firstLevelGroup $tail]} {
-			set tail "($tail)"
-		}
-		lappend words [reverse $prefix$tail]
-	}
-	set words [lsort -unique $words]
-	set reverse [prefix $words]
-	# compute regexp from precomputed reverse list
-	set regexp [build "" $reverse]
-	# returns computed regexp
-	set regexp
+        # end of recursion if empty list
+        if {[llength $list] == 0} {
+                return ""
+        }
+        set newlist {}
+        foreach {prefix recurse} $list {
+                set result [suffix $recurse]
+                lappend newlist $prefix [lindex $result 0]
+        }
+        # compute longest common suffixes
+        set words {}
+        foreach {prefix tail} $newlist {
+                if {[firstLevelGroup $tail]} {
+                        set tail "($tail)"
+                }
+                lappend words [reverse $prefix$tail]
+        }
+        set words [lsort -unique $words]
+        set reverse [prefix $words]
+        # compute regexp from precomputed reverse list
+        set regexp [build "" $reverse]
+        # returns computed regexp
+        set regexp
 }
 proc make-regexp::build {mainstem reverse} {
-	# flag to indicate need for '?' (optional group)
-	set addQuestionMark 0
-	set regexp ""
-	foreach {prefix recurse} $reverse {
-		set stem "[reverse $prefix]$mainstem"
-		if {[llength $recurse]} {
-			set fromlower [build $stem $recurse]
-		} else {
-			set fromlower ""
-		}
-		# build regexp
-		if {$prefix == ""} {
-			set addQuestionMark 1
-		} else {
-			if {[string length $fromlower] > 1 && [string index $fromlower end] != "?"} {
-				set fromlower "($fromlower)"
-			}
-			append regexp "$fromlower[reverse $prefix]|"
-		}
-	}
-	# remove last trailing '|'
-	set regexp "[string range $regexp 0 end-1]"
-	# add '?' if needed
-	if {$addQuestionMark} {
-		if {[string length $regexp] == 1} {
-			set regexp "$regexp?"
-		} else {
-			set regexp "($regexp)?"
-		}
-	}
-	# result
-	set regexp
+        # flag to indicate need for '?' (optional group)
+        set addQuestionMark 0
+        set regexp ""
+        foreach {prefix recurse} $reverse {
+                set stem "[reverse $prefix]$mainstem"
+                if {[llength $recurse]} {
+                        set fromlower [build $stem $recurse]
+                } else {
+                        set fromlower ""
+                }
+                # build regexp
+                if {$prefix == ""} {
+                        set addQuestionMark 1
+                } else {
+                        if {[string length $fromlower] > 1 && [string index $fromlower end] != "?"} {
+                                set fromlower "($fromlower)"
+                        }
+                        append regexp "$fromlower[reverse $prefix]|"
+                }
+        }
+        # remove last trailing '|'
+        set regexp "[string range $regexp 0 end-1]"
+        # add '?' if needed
+        if {$addQuestionMark} {
+                if {[string length $regexp] == 1} {
+                        set regexp "$regexp?"
+                } else {
+                        set regexp "($regexp)?"
+                }
+        }
+        # result
+        set regexp
 }
 #----------------------------------------------------------------------------------------------
-#	Last pass for grouping '(x|y|z|...)' into char range '[xyz...]'
+#        Last pass for grouping '(x|y|z|...)' into char range '[xyz...]'
 proc make-regexp::optimize:charset {regexp} {
-	set optimized ""
-	set memory ""
-	set ok 1
-	set charset ""
-	# examine char one by one
-	set len [string length $regexp]
-	for {set i 0} {$i < $len} {incr i} {
-		set char [string index $regexp $i]
-		append memory $char
-		if {$char =="("} {
-			# start of group
-			if {$ok} {
-				append optimized [string range $memory 0 end-1]
-			}
-			incr i
-			set result [optimize:charset [string range $regexp $i end]]
-			append optimized "[lindex $result 2][lindex $result 0][lindex $result 3]"
-			set memory ""
-			set ok 0
-			incr i [expr [lindex $result 1]]
-			continue
-		} elseif {$char ==")"} {
-			# end of group
-			if {$ok} {
-				set optimized "\[$charset\]"
-				return [list $optimized $i "" ""]
-			} else {
-				return [list $optimized $i "(" ")"]
-			}
-		}
-		if {$ok} {
-			if {$i & 1} {
-				if {$char != "|"} {
-					set ok 0
-					append optimized $memory
-				}
-			} else {
-				append charset $char
-			}
-		} else {
-			append optimized $char
-		}
-	}
-	# return result
-	list $optimized $i "(" ")"
+        set optimized ""
+        set memory ""
+        set ok 1
+        set charset ""
+        # examine char one by one
+        set len [string length $regexp]
+        for {set i 0} {$i < $len} {incr i} {
+                set char [string index $regexp $i]
+                append memory $char
+                if {$char =="("} {
+                        # start of group
+                        if {$ok} {
+                                append optimized [string range $memory 0 end-1]
+                        }
+                        incr i
+                        set result [optimize:charset [string range $regexp $i end]]
+                        append optimized "[lindex $result 2][lindex $result 0][lindex $result 3]"
+                        set memory ""
+                        set ok 0
+                        incr i [expr [lindex $result 1]]
+                        continue
+                } elseif {$char ==")"} {
+                        # end of group
+                        if {$ok} {
+                                set optimized "\[$charset\]"
+                                return [list $optimized $i "" ""]
+                        } else {
+                                return [list $optimized $i "(" ")"]
+                        }
+                }
+                if {$ok} {
+                        if {$i & 1} {
+                                if {$char != "|"} {
+                                        set ok 0
+                                        append optimized $memory
+                                }
+                        } else {
+                                append charset $char
+                        }
+                } else {
+                        append optimized $char
+                }
+        }
+        # return result
+        list $optimized $i "(" ")"
 }
 #==============================================================================================
-#	Compute string in reverse order
+#        Compute string in reverse order
 proc make-regexp::reverse {string} {
-	set result ""
-	for {set i [expr [string length $string]-1]} {$i >= 0} {incr i -1} {
-		append result [string index $string $i]
-	}
-	set result
+        set result ""
+        for {set i [expr [string length $string]-1]} {$i >= 0} {incr i -1} {
+                append result [string index $string $i]
+        }
+        set result
 }
 #==============================================================================================
 proc make-regexp::make-regexp {words} {
-	set words [lsort -unique $words]
-	# escape special chars used to form regexp
-	regsub -all -- {\|} $words "\x01" words
-	regsub -all -- {\(} $words "\x02" words
-	regsub -all -- {\)} $words "\x03" words
-	regsub -all -- {\?} $words "\x04" words
-	regsub -all -- {\[} $words "\x07" words
-	regsub -all -- {\]} $words "\x08" words
-	# do it
-	set list [prefix $words]
-	set regexp [suffix $list]
-	# returns regexp
-  	set regexp [lindex [optimize:charset $regexp] 0]
-	# un-escape special chars used to form regexp
-	regsub -all -- "\x01" $regexp "\\|" regexp
-	regsub -all -- "\x02" $regexp "\\(" regexp
-	regsub -all -- "\x03" $regexp "\\)" regexp
-	regsub -all -- "\x04" $regexp "\\?" regexp
-	regsub -all -- "\x07" $regexp "\\\[" regexp
-	regsub -all -- "\x08" $regexp "\\\]" regexp
-	regsub -all -- "\\*" $regexp "\\*" regexp
-	regsub -all -- "\\+" $regexp "\\+" regexp
-	regsub -all -- "\\\$" $regexp "\$" regexp
-	regsub -all -- "\\\^" $regexp "\\\^" regexp
-	# returns result
-	set regexp
+        set words [lsort -unique $words]
+        # escape special chars used to form regexp
+        regsub -all -- {\|} $words "\x01" words
+        regsub -all -- {\(} $words "\x02" words
+        regsub -all -- {\)} $words "\x03" words
+        regsub -all -- {\?} $words "\x04" words
+        regsub -all -- {\[} $words "\x07" words
+        regsub -all -- {\]} $words "\x08" words
+        # do it
+        set list [prefix $words]
+        set regexp [suffix $list]
+        # returns regexp
+          set regexp [lindex [optimize:charset $regexp] 0]
+        # un-escape special chars used to form regexp
+        regsub -all -- "\x01" $regexp "\\|" regexp
+        regsub -all -- "\x02" $regexp "\\(" regexp
+        regsub -all -- "\x03" $regexp "\\)" regexp
+        regsub -all -- "\x04" $regexp "\\?" regexp
+        regsub -all -- "\x07" $regexp "\\\[" regexp
+        regsub -all -- "\x08" $regexp "\\\]" regexp
+        regsub -all -- "\\*" $regexp "\\*" regexp
+        regsub -all -- "\\+" $regexp "\\+" regexp
+        regsub -all -- "\\\$" $regexp "\$" regexp
+        regsub -all -- "\\\^" $regexp "\\\^" regexp
+        # returns result
+        set regexp
 }
 #==============================================================================================
+

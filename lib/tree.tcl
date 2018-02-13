@@ -30,6 +30,7 @@ proc FileTree::create {nb} {
         } -opencmd {FileTree::select tree 1 $treeFiles} \
         -closecmd  {FileTree::select tree 1 $treeFiles}
     ]
+    puts $treeFiles
     $frmTreeFiles setwidget $treeFiles
     pack $frmTreeFiles -side top -fill both -expand true
     $treeFiles bindText <ButtonPress-1> "TreeOneClick $treeFiles [$treeFiles selection get]"
@@ -555,12 +556,11 @@ proc UpdateTree {} {
     GetProj $tree
 }
 
-
-
-
-
-
-
-
-
-
+proc GetTreeForNode {node} {
+    if {[.frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles exists $node] ==1} {
+        return .frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles
+    } elseif {[.frmBody.frmCat.noteBook.fprojects.frmTree.tree exists $node] ==1} {
+        return .frmBody.frmCat.noteBook.fprojects.frmTree.tree 
+    }
+    
+}
