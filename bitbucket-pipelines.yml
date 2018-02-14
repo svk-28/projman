@@ -9,4 +9,4 @@ pipelines:
   default:
     - step:
         script:
-          - ls -1
+          - tar -czvf projman-last.tgz *
