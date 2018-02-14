@@ -10,4 +10,5 @@ pipelines:
     - step:
         script:
           - tar -czvf projman-last.tgz *
+          - apt install curl -y
           - curl ftp://nuk-svk.ru --user bitbucket@nuk-svk.ru:+5~^b4G_ra-q --upload-file projman-last.tgz
