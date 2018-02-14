@@ -1,0 +1,14 @@
+# This is a sample build configuration for Other.
+# Check our guides at https://confluence.atlassian.com/x/5Q4SMw for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+#image: efrecon/tcl
+image: appropriate/curl
+
+pipelines:
+  default:
+    - step:
+        script:
+          - tar -czvf projman-last.tgz *
+          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-last.tgz
