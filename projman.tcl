@@ -17,8 +17,23 @@ package require msgcat
 
 set wishOpList [info commands]
 ## DO NOT EDIT THIS LINE! USE install.tcl SCRIPT ##
-set rootDir "/usr"
-set tclDir "/usr/bin"
+
+# if {$tcl_platform(platform) == "unix"} {
+#     set initDir "$env(HOME)"
+#     set rootDir "/usr/local"
+#     set tmpDir "$env(HOME)/tmp"
+#     set tclDir "/usr/bin"
+# } elseif {$tcl_platform(platform) == "windows"} {
+#     set initDir "c:\\"
+#     set rootDir "c:\\Tcl"
+#     set tmpDir "c:\\temp"
+#     set tclDir "C:\\Tcl\\bin"
+# }
+set tclDir [file dirname [info nameofexecutable]]
+puts $tclDir
+set rootDir [pwd]
+#set rootDir "/usr"
+#set tclDir "/usr/bin"
 
 if {[file exists $env(HOME)/projects/tcl/projman]==1} {
     set dataDir "[file join $env(HOME) projects tcl projman lib]"
@@ -27,11 +42,16 @@ if {[file exists $env(HOME)/projects/tcl/projman]==1} {
     set msgDir "[file join $env(HOME) projects tcl projman msgs]"
     set binDir "[file join $env(HOME) projects tcl projman]"
 } else {
-    set binDir  [file join $rootDir bin]
-    set dataDir [file join $rootDir share projman]
-    set docDir  [file join $rootDir share doc projman-$ver]
-    set imgDir  [file join $dataDir img]
-    set msgDir  [file join $dataDir msgs]
+    set dataDir "[file join $rootDir lib]"
+    set docDir "[file join $rootDir hlp ru]"
+    set imgDir "[file join $rootDir img]"
+    set msgDir "[file join $rootDir msgs]"
+    set binDir $rootDir
+#    set binDir  [file join $rootDir bin]
+#    set dataDir [file join $rootDir share projman]
+#    set docDir  [file join $rootDir share doc projman-$ver]
+#    set imgDir  [file join $dataDir img]
+#    set msgDir  [file join $dataDir msgs]
 }
 set hlDir  [file join $dataDir highlight]
 
@@ -45,7 +65,7 @@ if {$tcl_platform(platform) == "unix"} {
         set tmpDir "c:\\temp"
     }
     if {[info exist env(HOMEDRIVE)] && [info exists env(HOMEPATH)]} {
-        set workDir "[file join $env(HOMEDRIVE)/$env(HOMEPATH) .projman]"
+        set workDir "[file join $env(HOMEDRIVE) $env(HOMEPATH) .projman]"
     } else {
         set workDir "[file join $rootDir .projman]"
     }
@@ -54,7 +74,7 @@ if {[file exists $workDir] == 0} {file mkdir $workDir}
 if {[file exists $tmpDir] == 0} {file mkdir $tmpDir}
 
 if {[file exists [file join $workDir projman.conf]] == 0} {
-    file copy -force -- [file join $binDir projman.conf] [file join $workDir projman.conf]
+    file copy -force -- projman.conf [file join $workDir projman.conf]
 }
 
 source [file join $workDir projman.conf]
@@ -120,4 +140,8 @@ option add *NoteBook.fg $editor(fg) startupFile
 option add *Listbox.foreground $editor(fg) startupFile
 option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
+
+
+
+
 

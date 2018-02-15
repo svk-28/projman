@@ -255,22 +255,21 @@ $m add command -label [::msgcat::mc "Refresh"] -font $fontNormal -accelerator "F
 menubutton  .frmMenu.mnuCVS -text [::msgcat::mc "Modules"] -menu .frmMenu.mnuCVS.m \
 -font $fontNormal -state normal -bg $editor(bg) -fg $editor(fg)
 set m [menu .frmMenu.mnuCVS.m -bg $editor(bg) -fg $editor(fg)]
-if {$module(tkcvs) != ""} {
+if {[info exists module(tkcvs)]} {
     $m add command -label "TkCVS" -command {DoModule tkcvs} -font $fontNormal
 }
-if {$module(tkdiff) != ""} {
+if {[info exists module(tkdiff)]} {
     $m add command -label "TkDIFF+" -command {DoModule tkdiff} -font $fontNormal
 }
-if {$module(tkregexp) != ""} {
+if {[info exists module(tkregexp)]} {
     $m add command -label "TkREGEXP" -command {DoModule tkregexp} -font $fontNormal
 }
-if {$module(gitk) != ""} {
+if {[info exists module(gitk)]} {
     $m add command -label "Gitk" -font $fontNormal -command {
         DoModule gitk
         GetTagList [file join $workDir $activeProject.tags] ;# geting tag list
     }
 }
-
 menubutton  .frmMenu.mnuHelp  -text [::msgcat::mc "Help"] -menu .frmMenu.mnuHelp.m \
 -underline 0 -font $fontNormal -bg $editor(bg) -fg $editor(fg)
 set m [menu .frmMenu.mnuHelp.m -bg $editor(bg) -fg $editor(fg)]
@@ -499,3 +498,4 @@ if {[info exists workingProject]} {
         TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
     }
 }
+

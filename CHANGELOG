@@ -13,6 +13,7 @@
 - Fixed "Close all" procedure if opened files from projects and file browser
 - Fixed parsing some procedure name like ::proc::name or proc_na::me(aa) and parameters {{} {} {}}
 - Added opening last active project when project run
+- Fixed Windows OS running without installation
 
 13.02.2018
 - Added gray theme
@@ -364,3 +365,4 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
