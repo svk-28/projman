@@ -54,7 +54,7 @@ if {[file exists $workDir] == 0} {file mkdir $workDir}
 if {[file exists $tmpDir] == 0} {file mkdir $tmpDir}
 
 if {[file exists [file join $workDir projman.conf]] == 0} {
-    file copy -force -- [file join $dataDir projman.conf] [file join $workDir projman.conf]
+    file copy -force -- [file join $binDir projman.conf] [file join $workDir projman.conf]
 }
 
 source [file join $workDir projman.conf]
@@ -120,6 +120,4 @@ option add *NoteBook.fg $editor(fg) startupFile
 option add *Listbox.foreground $editor(fg) startupFile
 option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
-
-
 

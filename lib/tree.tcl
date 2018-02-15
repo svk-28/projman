@@ -505,9 +505,10 @@ proc TreeOneClick {tree node} {
 ## TREE DOUBLE  CLICK PROCEDURE ##
 proc TreeDoubleClick {tree node} {
     global  fontNormal projDir workDir activeProject fileList noteBook findString imgDir fontBold
+    puts "$tree $node"
     $tree selection set $node
     set item [$tree itemcget $node -data]
-    puts $item
+    #puts $item
     if {[$tree itemcget $node -open] == 1} {
         $tree itemconfigure $node -open 0
     } elseif {[$tree itemcget $node -open] == 0} {
@@ -564,5 +565,4 @@ proc GetTreeForNode {node} {
     }
     
 }
-
 

@@ -312,7 +312,7 @@ proc SendEmail {mail} {
 }
 ## QUIT PROJECT MANAGER PROCEDURE ##
 proc Quit {} {
-    global workDir
+    global workDir activeProject
     set v [FileDialog tree close_all]
     if {$v == "cancel"} {
         return
@@ -325,6 +325,8 @@ proc Quit {} {
         while {[gets $file line]>=0} {
             if {[regexp -nocase -all -- {set topLevelGeometry} $line match]} {
                 puts $file1 "set topLevelGeometry \"[winfo geometry .]\""
+            } elseif {[regexp -nocase -all -- {set workingProject} $line match]} {
+                puts $file1 "set workingProject \"$activeProject\""
             } else {
                 puts $file1 "$line"
             }
@@ -659,20 +661,4 @@ proc GetExtention {node} {
     set ext [string range [file extension [file tail [lindex $fileList($node) 0]]] 1 end]
     return $ext
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

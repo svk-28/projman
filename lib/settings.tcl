@@ -129,6 +129,7 @@ proc Settings {} {
         puts $file "set color(sixFG) \"[$editFrm.frmColorSixFG.txtColorSixFG get]\""
         puts $file "set color(sixBG) \"[$editFrm.frmColorSixBG.txtColorSixBG get]\""
         puts $file "set color(sql) \"[$editFrm.frmColorSQL.txtColorSQL get]\""
+        puts $file "\nset workingProject \"\""
         
         close $file
         destroy .pref
@@ -869,16 +870,9 @@ proc SaveSettings {} {
     puts $file "set color(sixFG) \"[$editFrm.frmColorSixFG.txtColorSixFG get]\""
     puts $file "set color(sixBG) \"[$editFrm.frmColorSixBG.txtColorSixBG get]\""
     puts $file "set color(sql) \"[$editFrm.frmColorSQL.txtColorSQL get]\""
-    
+    puts $file "\nset workingProject \"\""
     close $file
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
-
-
-
-
-
-
-
 

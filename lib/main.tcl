@@ -493,4 +493,9 @@ $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
 
-
+# Opened last active project
+if {[info exists workingProject]} {
+    if {$workingProject ne ""} {
+        TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
+    }
+}
