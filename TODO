@@ -6,16 +6,13 @@
 ##########################################################
 
 1. GUI
-- Запомнить размер и местоположение окна и при запуске соответсвенно устанавливать.
-
-- one click tree procedure
+- Поиск процедуры по файлам проекта
 - added tcl-console    
 - added readline widget
 - into settings dialog
 -- on/off highligttning
 -- on/off
 - Add color scheme
-- Переключение закладок с помощью Alt+>  Alt+<
 - перед первой фукнцией возможность перейти в начало документа, а после последней на конец 
 документа
 - В статусбаре самый последнее поле (правое) где тест file saved уж 
@@ -26,12 +23,7 @@
 - rpm spec file
 - deb
 
-4. Working with release (distribute)
-- ftp received
-
 5. Working with files
-- open file dialog
-- include internal cvs support
 - search and replacement text into all projects files (ala grep)
 
 6. Working with projects
@@ -67,6 +59,4 @@
 фолдинг
 поддержка frink (автоформаттер)
 нумерация строк
-
-
 

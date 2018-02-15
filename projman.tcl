@@ -15,6 +15,7 @@ set ver "0.4.5"
 package require BWidget
 package require msgcat
 
+set wishOpList [info commands]
 ## DO NOT EDIT THIS LINE! USE install.tcl SCRIPT ##
 set rootDir "/usr"
 set tclDir "/usr/bin"
@@ -119,3 +120,6 @@ option add *NoteBook.fg $editor(fg) startupFile
 option add *Listbox.foreground $editor(fg) startupFile
 option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
+
+
+

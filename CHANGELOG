@@ -8,6 +8,9 @@
 0.4.5
 14.02.2018
 - Added saving main window geometry into projman.conf file when close programm
+- Fixed AutoComplite precedure for TCL/TK-projects
+- Added colored icon for main window
+- Fixed "Close all" procedure if opened files from projects and file browser
 
 13.02.2018
 - Added gray theme
@@ -215,195 +218,146 @@ Fixed bug with PageRise function
 
 14/05/2002
 - Fixed location help files
-    - Added menu support into spec
-    
-    15/04/2002
-    - Changes highlight procedure - now all highlight files puts into /highlight directory and loaded automaticaly and now creation new highlight module so easy...
-    - Added TeX highlightning
-    
-    09/04/2002
-    - Added french localisation and Tcl help by Michel SALVAGNIAC
-    
-    01/04/2002
-    - Added german localisation by Roman Schaller <r.schaller@gmx.ch>
+- Added menu support into spec
+
+15/04/2002
+- Changes highlight procedure - now all highlight files puts into /highlight directory and loaded automaticaly and now creation new highlight module so easy...
+- Added TeX highlightning
+
+09/04/2002
+- Added french localisation and Tcl help by Michel SALVAGNIAC
+
+01/04/2002
+- Added german localisation by Roman Schaller <r.schaller@gmx.ch>
 
 0.2.0 (26/03/2002)
 
-    - Added Close opened file procedure when Delete file
-    - Fix calling Ctags module if ctags package not installed
-    - Added paned windows (for changes Tree size)
+- Added Close opened file procedure when Delete file
+- Fix calling Ctags module if ctags package not installed
+- Added paned windows (for changes Tree size)
 
-    22/03/2002
-    - Autocomplitition procedure (by Alexander Dederer (aka Korwin))
-    - Added procedure names and parameters complitition
-    - Changed Create New File dialog
-    - Fixed directory setings and created into Windows
-    - Added CTags support (*nix only)
-    - Fixed error with Pop-Up menu
-    - Added Edit pop-up menu into editor window
-    - Small fix with some keys binding
-    - Small fix with quit ProjMan and saved modifing files 
+22/03/2002
+- Autocomplitition procedure (by Alexander Dederer (aka Korwin))
+- Added procedure names and parameters complitition
+- Changed Create New File dialog
+- Fixed directory setings and created into Windows
+- Added CTags support (*nix only)
+- Fixed error with Pop-Up menu
+- Added Edit pop-up menu into editor window
+- Small fix with some keys binding
+- Small fix with quit ProjMan and saved modifing files 
 
 0.1.5 (01/03/2002)
-    - Fix autoindent text procedure
-    - Include updated ducumenation (by Alex Danilov)
+- Fix autoindent text procedure
+- Include updated ducumenation (by Alex Danilov)
 
 0.1.4 (20/02/2002)
-    - Fix some problem with Close/Open file
-    - Added bracket highlightning and corsor jumping for bracket!!! (by Korwin)
+- Fix some problem with Close/Open file
+- Added bracket highlightning and corsor jumping for bracket!!! (by Korwin)
 
-    07/02/2002
-    - Added refresh Tree procedure and ToolBar On/Off procedure
-    - Some changes menu structure
+07/02/2002
+- Added refresh Tree procedure and ToolBar On/Off procedure
+- Some changes menu structure
 
-    05/02/2002
-    - Changed GUI for installiation dialog
-    - Added english ProjMan user manual
+05/02/2002
+- Changed GUI for installiation dialog
+- Added english ProjMan user manual
 
-    04/02/2002
-    - Changes documentation structure, now documentation split by chapters and languages
-    - Changes Help procedure for working with new directory structure
-    - Include new Tcl documentation by Alexander Danilov
-    - Changes installiation procedure - added select Documentation language for install
-    - Fixed problem with encoding russian documentation in Windows OS
-    - Fixed problem with names like "proc::name" into Help system
-    - Added Tcl/Tk and BWidget english documentation
+04/02/2002
+- Changes documentation structure, now documentation split by chapters and languages
+- Changes Help procedure for working with new directory structure
+- Include new Tcl documentation by Alexander Danilov
+- Changes installiation procedure - added select Documentation language for install
+- Fixed problem with encoding russian documentation in Windows OS
+- Fixed problem with names like "proc::name" into Help system
+- Added Tcl/Tk and BWidget english documentation
 
 0.1.3 (31/01/2002)
-        - Replase SelectDir on standart dialog tk_chooseDirectory
-        - Fixed error into TkDIFF+ with convert date procedure
-        - Added find history in Find dialog, and now used F3 for repeat searching
-        - Fixed hot keys bindings into Find (F3, Enter) and Replace (F4, Enter) dialogs
-        - Fixed changing "File modify" flag after successfully replaceing
+- Replase SelectDir on standart dialog tk_chooseDirectory
+- Fixed error into TkDIFF+ with convert date procedure
+- Added find history in Find dialog, and now used F3 for repeat searching
+- Fixed hot keys bindings into Find (F3, Enter) and Replace (F4, Enter) dialogs
+- Fixed changing "File modify" flag after successfully replaceing
 
 0.1.2 (29/01/2002)
-        - Fix error with "Close all" procedure if raised About (Debug, Settings e.t.c.) dialog
-        - Translate TODO on English
+- Fix error with "Close all" procedure if raised About (Debug, Settings e.t.c.) dialog
+- Translate TODO on English
 
-        24/01/2002
-        - Added mouse wheel support on Tree widget (by Korwin)
-        - Added "editor.conf" for change editor preferences and source highlightning colors
+24/01/2002
+- Added mouse wheel support on Tree widget (by Korwin)
+- Added "editor.conf" for change editor preferences and source highlightning colors
 
 0.1.1 (23/01/2002)
-        - Fix correct cursor position viewed
-        - Added highlightning comments like ";#" (by Korwin)
+- Fix correct cursor position viewed
+- Added highlightning comments like ";#" (by Korwin)
 
-        22/01/2002
-        - Added raised notebook tab when click mouse on opened file name
-        - Fix correct windows path to tcl interpritator into Project Setting dialog
-        - Added TkREGEXP module (aka VisualREGEXP) from Laurent Riesterer
-        - Added new diff'ing module TkDIFF+ (with compare dirrectoryes) from Laurent Riesterer
-        - Added TkREGEXP and TkDIFF+ documentation
+22/01/2002
+- Added raised notebook tab when click mouse on opened file name
+- Fix correct windows path to tcl interpritator into Project Setting dialog
+- Added TkREGEXP module (aka VisualREGEXP) from Laurent Riesterer
+- Added new diff'ing module TkDIFF+ (with compare dirrectoryes) from Laurent Riesterer
+- Added TkREGEXP and TkDIFF+ documentation
 
-        19/01/2002
-        - Fix callback links procedure into help system (thanks Dederer)
-    
+19/01/2002
+- Fix callback links procedure into help system (thanks Dederer)
+
 0.1.0 (17/01/2002)
-        - Added graphical installiation
-        - Corrected path for work in windows
-        
-        16/01/2002
-        - Fix error with create and select directory into install.tcl
-        - Some Windows bugs fix
-        - Add invoke tkDiff for one or two selected files
-        - Add saved all files before run project
+- Added graphical installiation
+- Corrected path for work in windows
+
+16/01/2002
+- Fix error with create and select directory into install.tcl
+- Some Windows bugs fix
+- Add invoke tkDiff for one or two selected files
+- Add saved all files before run project
 
 0.0.19 (15/01/2002)
-        - Add "Select Directory" procedure into settings page
-        - Add "Open project" procedure for adding existing project
-        - Add invoke TkCVS for Active project
-        - Fix error with open files with names like "some.file.name"
-        - Code cleaning
+- Add "Select Directory" procedure into settings page
+- Add "Open project" procedure for adding existing project
+- Add invoke TkCVS for Active project
+- Fix error with open files with names like "some.file.name"
+- Code cleaning
 
-        14/01/2001
-        - Add close window procedure into "Settings" and "Project Settings" dialog
-        after pushed "Save" button
+14/01/2001
+- Add close window procedure into "Settings" and "Project Settings" dialog
+after pushed "Save" button
 
 0.0.17 (11/01/2002)
-        - Fix error with "New file" in new project procedure
-        - Fix small errors
+- Fix error with "New file" in new project procedure
+- Fix small errors
 
-        10/01/2002
-        - Replaced hotkey "Ctrl-T" with "Ctrl-M". And now "Control-T" reverses the order of the two
-        characters to the right of the insertion cursor.
-        - Fix small bug
+10/01/2002
+- Replaced hotkey "Ctrl-T" with "Ctrl-M". And now "Control-T" reverses the order of the two
+characters to the right of the insertion cursor.
+- Fix small bug
 
-        09/01/2002
-        - Added "Interface Language" select procedure into "Settings" dialog
-        - Fix error with close opening and modifing file procedure
-        - Fix read procedure with names "Proc::Name" and "Proc_name"
-        - Fix Insert/Overwrite editor mode
+09/01/2002
+- Added "Interface Language" select procedure into "Settings" dialog
+- Fix error with close opening and modifing file procedure
+- Fix read procedure with names "Proc::Name" and "Proc_name"
+- Fix Insert/Overwrite editor mode
 
-        08/01/2002
-        - Fix error in notebook with mouse button click
-        - Changes mouse click procedure in Tree widget
+08/01/2002
+- Fix error in notebook with mouse button click
+- Changes mouse click procedure in Tree widget
 
-        07/01/2002
-        - Added "Print file" command
-            - Added "Print Selected text" command
-        - Fix error with "Save Setting" procedure (CheckBox verify)
-        - Fix error with "Find dialog" "Replace dialog", e.t.c. if no files opened
-        - Added "Editor font" option
+07/01/2002
+- Added "Print file" command
+- Added "Print Selected text" command
+- Fix error with "Save Setting" procedure (CheckBox verify)
+- Fix error with "Find dialog" "Replace dialog", e.t.c. if no files opened
+- Added "Editor font" option
 
-        04/01/2002
-        - Fixed many small bugs
-        - Fix error with Ctrl+T keys
-        - Fix error with "Save As" procedure
+04/01/2002
+- Fixed many small bugs
+- Fix error with Ctrl+T keys
+- Fix error with "Save As" procedure
 
-        03/01/2002
-        - Added THANKS file, and view this into About window
-        - Fix problem with execute external browser from About window
-        - Fix create new text file in "Add To Project" dialog
-        - Fix some errors in MakeRPM procedure, but not working yet :(
-        - Fix error with select active project after creating new project
-        - Fix small error with delete project procedure
-        - Fix uncorrect cursor position counter into editor
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+03/01/2002
+- Added THANKS file, and view this into About window
+- Fix problem with execute external browser from About window
+- Fix create new text file in "Add To Project" dialog
+- Fix some errors in MakeRPM procedure, but not working yet :(
+    - Fix error with select active project after creating new project
+    - Fix small error with delete project procedure
+    - Fix uncorrect cursor position counter into editor    

@@ -16,6 +16,8 @@ if {[info exists topLevelGeometry]} {
 
 wm title . "Tcl/Tk Project Manager $ver"
 wm iconname . "Tcl/Tk Project Manager $ver"
+image create photo icon -format png -file [file join $imgDir icons large projman.png]
+wm iconphoto . icon
 wm protocol . WM_DELETE_WINDOW Quit
 wm overrideredirect . 0
 wm positionfrom . user
@@ -392,15 +394,4 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
-
-
-
-
-
-
-
-
-
-
-
 

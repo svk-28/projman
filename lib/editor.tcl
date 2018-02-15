@@ -366,7 +366,8 @@ proc Replace {text incr} {
 }
 ## FILE OPERATION ##
 proc FileDialog {tree operation} {
-    global noteBook fontNormal fontBold fileList noteBook projDir activeProject imgDir editor
+    global noteBook noteBookFiles fontNormal fontBold
+    global fileList projDir activeProject imgDir editor
     set dot "_"
     set types {
         {"Tcl files" {.tcl}}
@@ -565,6 +566,8 @@ proc FileDialog {tree operation} {
             } else {
                 focus -force $noteBook.f$node
             }
+            set tree [GetTreeForNode $node]
+            focus $tree
             $tree selection set $node
         } else {
             LabelUpdate .frmStatus.frmLine.lblLine ""
@@ -577,6 +580,12 @@ proc FileDialog {tree operation} {
         $noteBook raise [$noteBook page 0]
         set nbNode [$noteBook raise]
         set tree [GetTreeForNode $nbNode]
+        if {$tree eq ".frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles"} {
+            $noteBookFiles raise files
+        } elseif {$tree eq ".frmBody.frmCat.noteBook.fprojects.frmTree.tree"} {
+            $noteBookFiles raise projects
+        }
+        
         while {$nbNode != ""} {
             if {$nbNode == "newproj" || $nbNode == "settings" || $nbNode == "about" || $nbNode == "debug"} {
                 $noteBook delete $nbNode
@@ -600,6 +609,7 @@ proc FileDialog {tree operation} {
                         cancel {return cancel}
                     }
                 }
+                set tree [GetTreeForNode $nbNode]
                 set nl [$tree nodes $nbNode 0 end]
                 if {$nl != ""} {
                     foreach n $nl {
@@ -729,15 +739,17 @@ proc _PageTab {} {
 }
 ## RAISED NOTEBOOK TAB IF CLICK MOUSE BUTTON ##
 proc PageRaise {tree node} {
-    global noteBook fileList editor nodeEdit
+    global noteBook fileList editor nodeEdit noteBookFiles
     #puts $node
     $noteBook raise $node
     set tree [GetTreeForNode $node]
+    if {$tree eq ".frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles"} {
+        $noteBookFiles raise files
+    } elseif {$tree eq ".frmBody.frmCat.noteBook.fprojects.frmTree.tree"} {
+        $noteBookFiles raise projects
+    }
     
     set nodeEdit [$noteBook raise]
-    #set nodeEdit $node
-    puts $node
-    puts $nodeEdit
     if {$node == "newproj" || $node == "settings" || $node == "about" || $node == "debug"} {
         return
     } else {
@@ -937,7 +949,7 @@ proc EditFile {tree node fileName} {
         
         ###################
         if {[regexp -nocase -all -line -- {proc (.*) \{(.*)\}} $line match procName params]} {
-            set procList($activeProject) [list $procName [string trim $params]]
+            lappend procList($activeProject) [list $procName [string trim $params]]
             puts "proc $procName $params"
         }
         if {[regexp -nocase -all -line -- {set (\w+)} $line match varName]} {
@@ -1004,10 +1016,12 @@ proc EditFile {tree node fileName} {
     bind $text <Control-igrave> "tk_textPaste $w.text;break"
     bind $text <Control-v> {TextOperation paste; break}
     
-    bind $text <Control-adiaeresis> "auto_completition $text"
-    bind $text <Control-l> "auto_completition $text"
+    #bind $text <Control-adiaeresis> "auto_completition $text"
+    #bind $text <Control-l> "auto_completition $text"
     bind $text <Control-icircumflex> "auto_completition_proc $text"
     bind $text <Control-j> "auto_completition_proc $text"
+    #bind $text <Control-Tab> "auto_completition_proc $text"
+    
     bind $text <Control-q> Find
     bind $text <Control-comma> {TextOperation comment}
     bind $text <Control-period> {TextOperation uncomment}
@@ -1243,6 +1257,13 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
+
+
+
+
+
+
 
 
 

@@ -36,13 +36,13 @@ proc auto_completition { widget } {
 ## by BanZaj             ##
 
 proc auto_completition_proc { widget } {
-    global procList activeProject noteBook varList
+    global procList activeProject noteBook varList wishOpList
     set nodeEdit [$noteBook raise]
     if {$nodeEdit == "" || $nodeEdit == "newproj" || $nodeEdit == "about" || $nodeEdit == "debug"} {
         return
     }
     #puts $procList()
-    set start_word [$widget get "insert - 1 chars wordstart" insert]
+    set start_word [string tolower [$widget get "insert - 1 chars wordstart" insert]]
     set box        [$widget bbox insert]
     set box_x      [expr [lindex $box 0] + [winfo rootx $widget] ]
     set box_y      [expr [lindex $box 1] + [winfo rooty $widget] + [lindex $box 3] ] 
@@ -55,23 +55,28 @@ proc auto_completition_proc { widget } {
     #puts $word
     #set list_word($start_word) 1
     #puts $varList($activeProject)
-    puts $procList($activeProject)
-    
-    if {[string index $start_word 0] == "\$"} {
-        set workList $varList($activeProject)
-    } else {
+    #puts $procList($activeProject)
+    #puts [lindex $wishOpList 0]
+    if {[info exists procList($activeProject)]} {
         set workList $procList($activeProject)
+        if [info exists workList] {
+            set len [llength $workList]
+            set i 0
+            while {$len >=$i} {
+                set line [lindex $workList $i]
+                scan $line "%s" word
+                if {[string match "$start_word*" [string tolower $word]]} {
+                    set list_word($word) $i
+                }
+                incr i
+            }
+        }
     }
-    if [info exists workList] {
-        set len [llength $workList]
-    } else {
-        return
-    }
+    
     set i 0
-    while {$len >=$i} {
-        set line [lindex $ $i]
-        scan $line "%s" word
-        if {[string match "$start_word*" $word]} {
+    while {$i <= [llength $wishOpList]} {
+        set word [lindex $wishOpList $i]
+        if {[string match "$start_word*" [string tolower $word]]} {
             set list_word($word) $i
         }
         incr i
@@ -156,6 +161,9 @@ proc auto_completition_key { widget K A } {
         }
     }
 } ;# proc auto_completition_key
+
+
+
 
 
 
