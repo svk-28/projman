@@ -179,6 +179,7 @@ proc HighLightTCL {text line lineNumber node} {
             incr end $startPos
             $text tag add bracequad $lineNumber.$start $lineNumber.$end
             set startPos $end
+            $text tag lower bracequad
         } else {
             break
         }
@@ -210,6 +211,4 @@ proc HighLightTCL {text line lineNumber node} {
         $text tag remove comments $lineNumber.0 $lineNumber.end
     }
 }
-
-
 

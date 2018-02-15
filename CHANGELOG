@@ -6,6 +6,9 @@
 #########################################################
 
 0.4.5
+14.02.2018
+- Added saving main window geometry into projman.conf file when close programm
+
 13.02.2018
 - Added gray theme
 - Fixed work with file from directory (FileBrowser function).
@@ -356,6 +359,7 @@ Fixed bug with PageRise function
         - Fix small error with delete project procedure
         - Fix uncorrect cursor position counter into editor
         
+
 
 
 

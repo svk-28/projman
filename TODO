@@ -6,6 +6,7 @@
 ##########################################################
 
 1. GUI
+- Запомнить размер и местоположение окна и при запуске соответсвенно устанавливать.
 
 - one click tree procedure
 - added tcl-console    
@@ -52,12 +53,8 @@
 - code/encode text files
 - Add Insert curent date procedure
 - search procedure with reguliar expretions
-- Comment/uncomment selected area
 - On/Off wrap function
 
-
-9. Locale (messages)
-- autodetect system locale
 
 10. Help system
 - patching html_lib
@@ -70,15 +67,6 @@
 фолдинг
 поддержка frink (автоформаттер)
 нумерация строк
-
-
-
-
-########################################
-
-
-
-
 
 
 

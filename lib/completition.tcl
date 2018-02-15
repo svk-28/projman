@@ -41,6 +41,7 @@ proc auto_completition_proc { widget } {
     if {$nodeEdit == "" || $nodeEdit == "newproj" || $nodeEdit == "about" || $nodeEdit == "debug"} {
         return
     }
+    #puts $procList()
     set start_word [$widget get "insert - 1 chars wordstart" insert]
     set box        [$widget bbox insert]
     set box_x      [expr [lindex $box 0] + [winfo rootx $widget] ]
@@ -50,9 +51,12 @@ proc auto_completition_proc { widget } {
     set pos "1.0"
     set last_pos ""
     puts "$start_word"
-    puts [regsub -all -- "\$" $start_word "\\\$" word]
-    puts $word
+    #puts [regsub -all -- "\$" $start_word "\\\$" word]
+    #puts $word
     #set list_word($start_word) 1
+    #puts $varList($activeProject)
+    puts $procList($activeProject)
+    
     if {[string index $start_word 0] == "\$"} {
         set workList $varList($activeProject)
     } else {
@@ -152,6 +156,8 @@ proc auto_completition_key { widget K A } {
         }
     }
 } ;# proc auto_completition_key
+
+
 
 
 

@@ -119,5 +119,3 @@ option add *NoteBook.fg $editor(fg) startupFile
 option add *Listbox.foreground $editor(fg) startupFile
 option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
-
-

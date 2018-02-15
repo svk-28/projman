@@ -881,6 +881,7 @@ proc TextEncode {encode} {
 proc EditFile {tree node fileName} {
     global projDir workDir imgDir  noteBook fontNormal fontBold w fileList replace nodeEdit procList
     global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG activeProject
+    global varList
     set nodeEdit $node
     set replace 0
     set file [file tail $fileName]
@@ -933,6 +934,19 @@ proc EditFile {tree node fileName} {
         } else {
             scan $line "%s%s" keyWord procName
         }
+        
+        ###################
+        if {[regexp -nocase -all -line -- {proc (.*) \{(.*)\}} $line match procName params]} {
+            set procList($activeProject) [list $procName [string trim $params]]
+            puts "proc $procName $params"
+        }
+        if {[regexp -nocase -all -line -- {set (\w+)} $line match varName]} {
+            #set varList($activeProject) [list [string trim $varName]]
+            #puts "variable $varName"
+        }
+        
+        ###################
+        
         # && $procName != ""
         if {$keyWord == "proc" || $keyWord == "let" || $keyWord == "class" || $keyWord == "sub" || $keyWord == "function" || $keyWord == "fun" } {
             set dot "_"
@@ -946,7 +960,7 @@ proc EditFile {tree node fileName} {
                 set img "class.gif"
             }
             if {$keyWord =="proc"} {
-                lappend procList($activeProject) [list $procName "param"]
+                
                 #$w.text tag add procName $lineNumber.[expr $startPos + $length] $lineNumber.[string wordend $line [expr $startPos + $length +2]]
             }
             if {[$tree exists $prcNode$dot$lineNumber] !=1} {
@@ -954,9 +968,6 @@ proc EditFile {tree node fileName} {
                 -data "prc_$procName"\
                 -image [Bitmap::get [file join $imgDir $img]] -font $fontNormal
             }
-        }
-        if {$keyWord =="set"} {
-            lappend varList($activeProject) [list $procName "param"]]
         }
         incr lineNumber
     }
@@ -1232,6 +1243,10 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
+
+
+
 
 
 

@@ -8,10 +8,10 @@
 ## SETTING DIALOG ##
 proc Settings {} {
     global fontNormal fontBold imgDir workDir
-    global editor color nb
+    global editor color nb topLevelGeometry
     global main editFrm network
     global toolBar autoFormat backUpDel backUpCreate backUpShow localeSet localeList wrapSet wrapList
-    
+    set topLevelGeometry [winfo geometry .]
     set w .pref
     # destroy the find window if it already exists
     if {[winfo exists $w]} {
@@ -40,12 +40,12 @@ proc Settings {} {
         puts $file "#                TCL/Tk Project Manager                   #"
         puts $file "#                    version $ver                        #"
         puts $file "#                                                         #"
-        puts $file "# Copyright \(c\) \"Sergey Kalinin\", 2001, http://nuk-svk.ru  #"
-        puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj28@yandex.ru      #"
+        puts $file "# Copyright \(c\) \"Sergey Kalinin\", 2001, http://nuk-svk.ru #"
+        puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj28@yandex.ru #"
         puts $file "###########################################################"        
         puts $file "# Modification date: [exec date]"
         puts $file "###########################################################\n"
-        
+        puts $file "set topLevelGeometry \"$topLevelGeometry\""
         puts $file "# Normal Font"
         puts $file "set fontNormal \"[$main.frmFontNormal.txtFontNormal get]\""
         puts $file "# Bold Font #"
@@ -430,7 +430,7 @@ proc Settings {} {
     set frm_20 [frame $editFrm.frmColorString -bg $editor(bg)]
     label $frm_20.lblColorString -text [::msgcat::mc "Quote string"]\
             -width 30 -anchor w -font $fontNormal
-    entry $frm_20.txtColorString -background $editor(bg)
+            entry $frm_20.txtColorString -background $editor(bg)
     button $frm_20.btnColorString -borderwidth {1} -font $fontNormal \
             -command {ColorSelect $editFrm.frmColorString.txtColorString $editFrm.frmColorString.btnColorString} \
             -text "Select color"\
@@ -480,7 +480,7 @@ proc Settings {} {
 
     set frm_26 [frame $editFrm.frmColorPercent -bg $editor(bg)]
     label $frm_26.lblColorPercent -text [::msgcat::mc "Percent \%"]\
-            -width 30 -anchor w -font $fontNormal
+    -width 30 -anchor w -font $fontNormal
     entry $frm_26.txtColorPercent -background $editor(bg)
     button $frm_26.btnColorPercent -borderwidth {1} -font $fontNormal \
             -command {ColorSelect $editFrm.frmColorPercent.txtColorPercent $editFrm.frmColorPercent.btnColorPercent} \
@@ -777,7 +777,7 @@ proc LoadSettings {} {
 
 ## SAVE SETTINGS PROCEDURE ##
 proc SaveSettings {} {
-    global editor color workDir
+    global editor color workDir topLevelGeometry
     global main editFrm network wrapSet
     file copy -force [file join $workDir projman.conf] [file join $workDir projman.conf.old]
     set file [open [file join $workDir projman.conf] w]
@@ -785,12 +785,12 @@ proc SaveSettings {} {
     puts $file "#                TCL/Tk Project Manager                   #"
     puts $file "#                    version $ver                        #"
     puts $file "#                                                         #"
-    puts $file "# Copyright \(c\) \"Sergey Kalinin\", 2001, http://nuk-svk.ru  #"
-    puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj28@yandex.ru      #"
+    puts $file "# Copyright \(c\) \"Sergey Kalinin\", 2001, http://nuk-svk.ru #"
+    puts $file "# Authors: Sergey Kalinin \(aka BanZaj\) banzaj28@yandex.ru #"
     puts $file "###########################################################\n"
     puts $file "# Modification date: [exec date]"
     puts $file "###########################################################\n"
-    
+    puts $file "set topLevelGeometry \"$topLevelGeometry\""
     puts $file "# Normal Font"
     puts $file "set fontNormal \"[$main.frmFontNormal.txtFontNormal get]\""
     puts $file "# Bold Font #"
@@ -874,6 +874,9 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
+
+
+
 
 
 

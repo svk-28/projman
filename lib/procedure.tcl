@@ -404,10 +404,23 @@ proc SendEmail {mail} {
 }
 ## QUIT PROJECT MANAGER PROCEDURE ##
 proc Quit {} {
+    global workDir
     set v [FileDialog tree close_all]
     if {$v == "cancel"} {
         return
     } else {
+        # copy projman.conf file and rewrite them 
+        # open projman.conf file and write current main window geometry
+        file copy -force [file join $workDir projman.conf] [file join $workDir projman.conf.old]
+        set file [open [file join $workDir projman.conf.old] RDONLY]
+        set file1 [open [file join $workDir projman.conf] WRONLY]
+        while {[gets $file line]>=0} {
+            if {[regexp -nocase -all -- {set topLevelGeometry} $line match]} {
+                puts $file1 "set topLevelGeometry \"[winfo geometry .]\""
+            } else {
+                puts $file1 "$line"
+            }
+        }
         exit
     }
 }
@@ -738,6 +751,10 @@ proc GetExtention {node} {
     set ext [string range [file extension [file tail [lindex $fileList($node) 0]]] 1 end]
     return $ext
 }
+
+
+
+
 
 
 

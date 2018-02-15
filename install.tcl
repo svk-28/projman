@@ -7,7 +7,6 @@
 # Author: Sergey Kalinin banzaj28@yandex.ru               #
 ###########################################################
 
-
 ## SETTING VARIABLES AND DIRECTORYES ##
 set ver "0.4.5"
 set imgDir img
@@ -34,7 +33,7 @@ if {$tcl_platform(platform) == "unix"} {
 }
 
 proc InsertEnt {entry text} {
-    $entry delete 0 end
+    entry delete 0 end
     $entry insert end $text
 }
 proc SelectDir {dir} {
@@ -381,4 +380,6 @@ proc SetVarLang {lang} {
         }
     }
 }
+
+
 

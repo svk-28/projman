@@ -7,7 +7,13 @@
 
 Modules
 ## MAIN INTERFACE ##
-wm geometry . 1200x1024+0+0
+#
+if {[info exists topLevelGeometry]} {
+    wm geometry . $topLevelGeometry
+} else {
+    wm geometry . 1200x1024+0+0
+}
+
 wm title . "Tcl/Tk Project Manager $ver"
 wm iconname . "Tcl/Tk Project Manager $ver"
 wm protocol . WM_DELETE_WINDOW Quit
@@ -386,6 +392,7 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
+
 
 
 
