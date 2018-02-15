@@ -69,98 +69,6 @@ proc FileAttr {file} {
     append fileAttribute ", $fileSize"
 }
 
-## ABOUT PROGRAMM DIALOG ##
-proc AboutDialog {} {
-    global docDir imgDir tree noteBook ver fontNormal dataDir env editor
-    set w {}
-    # prevent double creation "About" page
-    if { [catch {set w [$noteBook insert end about -text [::msgcat::mc "About ..."]]} ] } {
-        $noteBook raise about
-        return
-    }
-    frame $w.frmImg -borderwidth 2 -relief ridge -background white
-    image create photo imgLogo -format png -file [file join $imgDir projman.png]
-    #    image create photo imgAbout -format png -file [file join $imgDir icons large projman.png]
-    label $w.frmImg.lblImgLogo -image imgLogo -border 0
-    #label $w.frmImg.lblImg -image imgAbout
-    pack $w.frmImg.lblImgLogo -side top -pady 5 -padx 5
-    
-    frame $w.frmlbl -borderwidth 2 -relief ridge
-    label $w.frmlbl.lblVersion -text "[::msgcat::mc Version] $ver"
-    label $w.frmlbl.lblCompany -text "License: GPL"
-    label $w.frmlbl.lblAuthorName -text "[::msgcat::mc Author]: Sergey Kalinin"
-    label $w.frmlbl.lblEmail -text "[::msgcat::mc E-mail]: banzaj28@yandex.ru"
-    label $w.frmlbl.lblWWWhome -text "[::msgcat::mc "Home page"]: https://nuk-svk.ru"
-    label $w.frmlbl.lblWWWgit -text "Git repository: https://bitbucket.org/svk28/projman"
-    
-    pack $w.frmlbl.lblVersion $w.frmlbl.lblCompany $w.frmlbl.lblAuthorName \
-    $w.frmlbl.lblEmail $w.frmlbl.lblWWWhome $w.frmlbl.lblWWWgit -side top -padx 5
-    frame $w.frmThanks -borderwidth 2 -relief ridge
-    label $w.frmThanks.lblThanks -text "[::msgcat::mc Thanks]" -font $fontNormal
-    text $w.frmThanks.txtThanks -width 10 -height 10 -font $fontNormal\
-    -selectborderwidth 0 -selectbackground #55c4d1 -width 10
-    pack $w.frmThanks.lblThanks -pady 5
-    pack $w.frmThanks.txtThanks -fill both -expand true
-    
-    frame $w.frmBtn -borderwidth 2 -relief ridge
-    button $w.frmBtn.btnOk -text [::msgcat::mc "Close"] -borderwidth {1} \
-    -command {
-        $noteBook delete about
-        $noteBook  raise [$noteBook page end]
-    }
-    pack $w.frmBtn.btnOk -pady 2
-    pack $w.frmImg -side top -fill x
-    pack $w.frmlbl  -side top -expand true -fill both
-    pack $w.frmThanks  -side top -expand true -fill both
-    pack $w.frmBtn -side top -fill x
-    
-    bind $w <KeyRelease-Return> "$noteBook  delete about"
-    bind $w <Escape>  "$noteBook  delete about"
-    bind $w <Return> {$noteBook  delete about}
-    #
-    bind $w.frmlbl.lblWWWhome <Enter> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWhome configure -fg blue -cursor hand1
-        LabelUpdate .frmStatus.frmHelp.lblHelp "Goto https://nuk-svk.ru"
-    }
-    bind $w.frmlbl.lblWWWhome <Leave> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWhome configure -fg $editor(fg)
-        LabelUpdate .frmStatus.frmHelp.lblHelp ""
-    }
-    bind $w.frmlbl.lblWWWhome <ButtonRelease-1> {GoToURL "https://nuk-svk.ru"}
-    bind $w.frmlbl.lblWWWgit <Enter> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWgit configure -fg blue -cursor hand1
-        LabelUpdate .frmStatus.frmHelp.lblHelp "Goto https://bitbucket.org/svk28/projman"
-    }
-    bind $w.frmlbl.lblWWWgit <Leave> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblWWWgit configure -fg $editor(fg)
-        LabelUpdate .frmStatus.frmHelp.lblHelp ""
-    }
-    bind $w.frmlbl.lblWWWgit <ButtonRelease-1> {GoToURL "https://bitbucket.org/svk28/projman"}
-    #
-    bind $w.frmlbl.lblEmail <Enter> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg blue -cursor hand1
-        LabelUpdate .frmStatus.frmHelp.lblHelp "Send email \"banzaj28@yandex.ru\""
-    }
-    bind $w.frmlbl.lblEmail <Leave> {
-        .frmBody.frmWork.noteBook.fabout.frmlbl.lblEmail configure -fg $editor(fg)
-        LabelUpdate .frmStatus.frmHelp.lblHelp ""
-    }
-    bind $w.frmlbl.lblEmail <ButtonRelease-1> {SendEmail "banzaj28@yandex.ru"}
-    
-    
-    $noteBook  raise about
-    focus $w.frmBtn.btnOk
-    if {[file exists $env(HOME)/projects/tcl/projman]==1} {
-        set file [open [file join $env(HOME)/projects/tcl/projman THANKS] r]
-    } else {
-        set file [open [file join $docDir THANKS] r]
-    }
-    while {[gets $file line]>=0} {
-        $w.frmThanks.txtThanks insert end "$line\n"
-    }
-    close $file
-    $w.frmThanks.txtThanks configure -state disable
-}
 ## CLOSE FILE ##
 proc CloseFile {} {
     global docDir imgDir tree noteBook ver fontNormal node
@@ -751,6 +659,7 @@ proc GetExtention {node} {
     set ext [string range [file extension [file tail [lindex $fileList($node) 0]]] 1 end]
     return $ext
 }
+
 
 
 
