@@ -308,6 +308,7 @@ proc add_toolbar_button {path icon command helptext} {
 }
 # Separator for toolbar
 set sepIndex 0
+
 proc Separator {} {
     global sepIndex editor
     set f [frame .frmTool.separator$sepIndex -width 10 -border 1 \
@@ -491,4 +492,5 @@ GetProj $tree
 $tree configure -redraw 1
 set activeProject ""
 focus -force $tree
+
 

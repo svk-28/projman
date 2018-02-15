@@ -948,7 +948,10 @@ proc EditFile {tree node fileName} {
         }
         
         ###################
-        if {[regexp -nocase -all -line -- {proc (.*) \{(.*)\}} $line match procName params]} {
+        #regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{} string match v1 v2 v3 v4 v5
+        #regexp -nocase -all -line -- {proc (.*) \{(.*)\}} $line match procName params
+        if {[regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{}  $line match v1 v2 v3 v4 params]} {
+            set procName "$v1$v2$v3$v4"  
             lappend procList($activeProject) [list $procName [string trim $params]]
             puts "proc $procName $params"
         }
@@ -1257,6 +1260,7 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
 
 
 

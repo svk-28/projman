@@ -273,12 +273,9 @@ proc TopLevelHelp {} {
         
         entry $frmSrchEnt.entSearch
         set lstSearch [listbox $frmSrchList.lstSearch -font $fontNormal\
-        -yscrollcommand\
-        {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhList.scrListY set}\
-        -xscrollcommand\
-        {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhScrollX.scrListX set}\
-        -selectmode single -selectbackground #55c4d1\
-        -selectborderwidth 0]
+        -yscrollcommand {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhList.scrListY set}\
+        -xscrollcommand {.help.frmBody.frmCat.nBookTree.fhlpSearch.frmScrhScrollX.scrListX set}\
+        -selectmode single -selectbackground #55c4d1 -selectborderwidth 0]
         scrollbar $frmSrchList.scrListY -command\
         {$frmSrchList.lstSearch yview} -borderwidth {1} -width {10} -takefocus 0
         
@@ -323,4 +320,5 @@ proc TopLevelHelp {} {
 #GetTOC
 
 #GetContent $docDir/tcl.toc.html
+
 
