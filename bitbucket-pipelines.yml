@@ -4,11 +4,20 @@
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
 #image: efrecon/tcl
-image: appropriate/curl
+#image: appropriate/curl
+
+#pipelines:
+#  default:
+#    - step:
+#        script:
+#          - tar -czvf projman-0.4.5-1.tgz *
+#          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-last.tgz
+          
+image: jitakirin/rpmbuild
 
 pipelines:
   default:
     - step:
         script:
-          - tar -czvf projman-last.tgz *
-          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-last.tgz
+          - tar -czvf projman-0.4.5-1.tgz *
+          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-0.4.5-1.tgz
