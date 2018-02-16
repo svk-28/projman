@@ -22,12 +22,10 @@ pipelines:
           #- mkdir SOURCES
           - tar -czvf projman-0.4.5-1.tgz *
           #- runuser rpmbuild /usr/local/bin/docker-rpm-build.sh projman.spec
-          - docker run -e VERBOSE=1 --rm --volume=$BUILD_DIR:/src --workdir=/src   jitakirin/rpmbuild projman.spec
+          - builder --volume=$BUILD_DIR:/src --workdir=/src projman.spec
           #- rpmbuild -r /opt/atlassian/pipelines/agent/build -ba projman.spec
           #- curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-0.4.5-1.tgz
-#definitions: 
-#  services:
-#    docker: 
-#      image: jitakirin/rpmbuild
-#      environment: 
-#        MYSQL_DATABASE: 'db'
+definitions: 
+  services:
+    builder: 
+      image: jitakirin/rpmbuild
