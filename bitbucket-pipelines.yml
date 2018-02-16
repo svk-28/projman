@@ -13,7 +13,7 @@
 #          - tar -czvf projman-0.4.5-1.tgz *
 #          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-last.tgz
           
-image: appropriate/curl
+image: jitakirin/rpmbuild
 
 pipelines:
   default:
@@ -21,11 +21,7 @@ pipelines:
         script:
           #- mkdir SOURCES
           - tar -czvf projman-0.4.5-1.tgz *
-          #- runuser rpmbuild /usr/local/bin/docker-rpm-build.sh projman.spec
-          - builder --volume=$BUILD_DIR:/src --workdir=/src projman.spec
+          - TOPDIR=$BUILD_DIR/home/rpmbuild/rpmbuild runuser rpmbuild /usr/local/bin/docker-rpm-build.sh projman.spec
+          
           #- rpmbuild -r /opt/atlassian/pipelines/agent/build -ba projman.spec
           #- curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-0.4.5-1.tgz
-definitions: 
-  services:
-    builder: 
-      image: jitakirin/rpmbuild
