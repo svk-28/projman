@@ -13,11 +13,11 @@
 #          - tar -czvf projman-0.4.5-1.tgz *
 #          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-last.tgz
           
-image: jitakirin/rpmbuild -e VERBOSE=1 --rm --volume=$BUILD_DIR:/src --workdir=/src
-
+image: jitakirin/rpmbuild
 pipelines:
   default:
     - step:
         script:
           - tar -czvf projman-0.4.5-1.tgz *
-          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-0.4.5-1.tgz
+          - rpmbuild -ba projman.spec
+#          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-0.4.5-1.tgz
