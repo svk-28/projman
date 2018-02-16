@@ -20,7 +20,7 @@ pipelines:
     - step:
         script:
           #- mkdir SOURCES
-          - tar -czvf SOURCES/projman-0.4.5-1.tgz *
+          - tar -czvf projman-0.4.5-1.tgz *
           #- runuser rpmbuild /usr/local/bin/docker-rpm-build.sh projman.spec
           - docker run -e VERBOSE=1 --rm --volume=$BUILD_DIR:/src --workdir=/src   jitakirin/rpmbuild projman.spec
           #- rpmbuild -r /opt/atlassian/pipelines/agent/build -ba projman.spec
