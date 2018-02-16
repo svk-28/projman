@@ -18,7 +18,6 @@ pipelines:
   default:
     - step:
         script:
-          - pwd
-#          - tar -czvf projman-0.4.5-1.tgz *
-#          - rpmbuild -ba projman.spec
+          - tar -czvf projman-0.4.5-1.tgz *
+          - rpmbuild -r `pwd` -ba projman.spec
 #          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-0.4.5-1.tgz
