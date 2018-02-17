@@ -137,17 +137,17 @@ $mn add command -label [::msgcat::mc "New project"] -command {NewProjDialog "new
 -font $fontNormal
 #$m add command -label [::msgcat::mc "Open"] -command {FileDialog $tree open}\
 #-font $fontNormal -accelerator "Ctrl+O"        -state disable
-$m add command -label [::msgcat::mc "Save"] -command {FileDialog $tree save}\
+$m add command -label [::msgcat::mc "Save"] -command {FileDialog [$noteBookFiles raise] save}\
 -font $fontNormal -accelerator "Ctrl+S"
-$m add command -label [::msgcat::mc "Save as"] -command {FileDialog $tree save_as}\
+$m add command -label [::msgcat::mc "Save as"] -command {FileDialog [$noteBookFiles raise] save_as}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Save all"] -command {FileDialog $tree save_all}\
+$m add command -label [::msgcat::mc "Save all"] -command {FileDialog [$noteBookFiles raise] save_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Close"] -command {FileDialog $tree close}\
+$m add command -label [::msgcat::mc "Close"] -command {FileDialog [$noteBookFiles raise] close}\
 -font $fontNormal -accelerator "Ctrl+W"
-$m add command -label [::msgcat::mc "Close all"] -command {FileDialog $tree close_all}\
+$m add command -label [::msgcat::mc "Close all"] -command {FileDialog [$noteBookFiles raise] close_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Delete"] -command {FileDialog $tree delete}\
+$m add command -label [::msgcat::mc "Delete"] -command {FileDialog [$noteBookFiles raise] delete}\
 -font $fontNormal -accelerator "Ctrl+D"
 $m add separator
 $m add command -label [::msgcat::mc "Compile file"] -command {MakeProj compile file} -font $fontNormal -accelerator "Ctrl+F8"
@@ -162,25 +162,6 @@ $m add command -label [::msgcat::mc "Exit"] -command Quit -font $fontNormal -acc
 
 ##.frmMenu 'Project' ##
 
-proc GetProjMenu {m} {
-    global fontNormal
-    $m add command -label [::msgcat::mc "Project settings"] -command {NewProj edit $activeProject ""}\
-    -font $fontNormal
-    $m add separator
-    $m add command -label [::msgcat::mc "Open project"] -command {OpenProj} -font $fontNormal
-    $m add command -label [::msgcat::mc "New project"] -command {NewProjDialog new} -font $fontNormal
-    $m add command -label [::msgcat::mc "Delete project"] -command DelProj -font $fontNormal
-    $m add separator
-    $m add command -label [::msgcat::mc "Add to project"] -command AddToProjDialog -font $fontNormal
-    $m add command -label [::msgcat::mc "Delete from project"]\
-    -command {FileDialog delete} -font $fontNormal
-    $m add separator
-    $m add command -label [::msgcat::mc "Make archive"] -command MakeTGZ -font $fontNormal -accelerator "F7"
-    $m add command -label [::msgcat::mc "Make RPM"] -command MakeRPM -font $fontNormal -accelerator "F6"
-    $m add separator
-    $m add command -label [::msgcat::mc "Compile"] -command {MakeProj compile proj} -font $fontNormal -accelerator "F8"
-    $m add command -label [::msgcat::mc "Run"] -command {MakeProj run proj} -font $fontNormal -accelerator "F9"
-}
 
 menubutton .frmMenu.mnuProj -text [::msgcat::mc "Project"] -menu .frmMenu.mnuProj.m -font $fontNormal -bg $editor(bg) -fg $editor(fg)
 set m [menu .frmMenu.mnuProj.m -bg $editor(bg) -fg $editor(fg)]
@@ -189,54 +170,6 @@ GetProjMenu $m
 ##.frmMenu 'Edit' ##
 menubutton .frmMenu.mnuEdit -text [::msgcat::mc "Edit"] -menu .frmMenu.mnuEdit.m -font $fontNormal -bg $editor(bg) -fg $editor(fg)
 ## BUILDING EDIT-MENU FOR MAIN AND POP-UP MENU ##
-proc GetMenu {m} {
-    global fontNormal fontBold imgDir editor
-    $m add command -label [::msgcat::mc "Undo"] -font $fontNormal -accelerator "Ctrl+Z"\
-    -state normal -command {TextOperation undo}
-    $m add command -label [::msgcat::mc "Redo"] -font $fontNormal -accelerator "Ctrl+G"\
-    -state normal -command {TextOperation redo}
-    $m add separator
-    $m add command -label [::msgcat::mc "Procedure name complit"] -font $fontNormal -accelerator "Ctrl+J" -state normal\
-    -command {
-        set nb "$noteBook.f[$noteBook raise]"
-        auto_completition_proc $nb.text
-        unset nb
-    }
-    $m add separator
-    $m add command -label [::msgcat::mc "Copy"] -font $fontNormal -accelerator "Ctrl+C"\
-    -command {TextOperation copy}
-    $m add command -label [::msgcat::mc "Paste"] -font $fontNormal -accelerator "Ctrl+V"\
-    -command {TextOperation paste}
-    $m add command -label [::msgcat::mc "Cut"] -font $fontNormal -accelerator "Ctrl+X"\
-    -command {TextOperation cut}
-    $m add separator
-    $m add command -label [::msgcat::mc "Select all"] -font $fontNormal -accelerator "Ctrl+/"\
-    -command {
-        set nb [$noteBook raise]
-        if {$nb == "" || $nb == "newproj" || $nb == "about" || $nb == "debug"} {
-            return
-        }
-        set nb "$noteBook.f$nb"
-        SelectAll $nb.text
-        unset nb
-    }
-    $m add command -label [::msgcat::mc "Comment selected"] -font $fontNormal -accelerator "Ctrl+,"\
-            -command {TextOperation comment}
-    $m add command -label [::msgcat::mc "Uncomment selected"] -font $fontNormal  -accelerator "Ctrl+." \
-    -command {TextOperation uncomment}
-    
-    $m add separator
-    $m add command -label [::msgcat::mc "Goto line"] -command GoToLine -font $fontNormal\
-    -accelerator "Ctrl+G"
-    $m add command -label [::msgcat::mc "Find"] -command Find -font $fontNormal -accelerator "Ctrl+F"
-    $m add command -label [::msgcat::mc "Replace"] -command ReplaceDialog -font $fontNormal\
-    -accelerator "Ctrl+R"
-    $m add cascade -label [::msgcat::mc "Encode"] -menu $m.encode -font $fontNormal
-        set me [menu $m.encode  -bg $editor(bg) -fg $editor(fg)]
-        $me add command -label [::msgcat::mc "KOI8-R"] -command {TextEncode koi8-r} -font $fontNormal
-        $me add command -label [::msgcat::mc "CP1251"] -command {TextEncode cp1251} -font $fontNormal
-        $me add command -label [::msgcat::mc "CP866"] -command {TextEncode cp866} -font $fontNormal
-}
 GetMenu [menu .frmMenu.mnuEdit.m -bg $editor(bg) -fg $editor(fg)];# main edit menu
 GetMenu [menu .popMnuEdit -bg $editor(bg) -fg $editor(fg)] ;# pop-up edit menu
 
@@ -297,57 +230,8 @@ bind . <Control-eacute> Quit
 bind . <Control-q> Quit
 bind . <Control-ccedilla> PrintDialog
 bind . <Control-p> PrintDialog
-## TOOLBAR ##
-proc add_toolbar_button {path icon command helptext} {
-    global editor imgDir
-    image create photo $icon -format png -file [file join $imgDir $icon]
-    $path add -image $icon \
-    -highlightthickness 0 -takefocus 0 -relief link -bd 1  -activebackground $editor(bg)\
-    -padx 1 -pady 1 -command $command -helptext $helptext
-}
-# Separator for toolbar
 set sepIndex 0
 
-proc Separator {} {
-    global sepIndex editor
-    set f [frame .frmTool.separator$sepIndex -width 10 -border 1 \
-    -background $editor(bg) -relief raised]
-    incr sepIndex 1
-    return $f
-}
-proc CreateToolBar {} {
-    global toolBar fontBold noteBook tree imgDir editor
-    if {$toolBar == "Yes"} {
-        set bboxFile [ButtonBox .frmTool.bboxFile -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
-        add_toolbar_button $bboxFile new.png {AddToProjDialog file} [::msgcat::mc "Create new file"]
-        #add_toolbar_button $bboxFile open.png {FileDialog $tree open} [::msgcat::mc "Open file"]
-        add_toolbar_button $bboxFile save.png {FileDialog $tree save} [::msgcat::mc "Save file"]
-        add_toolbar_button $bboxFile save_as.png {FileDialog $tree save_as} [::msgcat::mc "Save file as"]
-        add_toolbar_button $bboxFile save_all.png {FileDialog $tree save_all} [::msgcat::mc "Save all"]
-        add_toolbar_button $bboxFile printer.png {PrintDialog} [::msgcat::mc "Print ..."]
-        add_toolbar_button $bboxFile close.png {FileDialog $tree close} [::msgcat::mc "Close"]
-        
-        set bboxEdit [ButtonBox .frmTool.bboxEdit -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
-        add_toolbar_button $bboxEdit copy.png {TextOperation copy} [::msgcat::mc "Copy into clipboard"]
-        add_toolbar_button $bboxEdit cut.png {TextOperation cut} [::msgcat::mc "Cut into clipboard"]
-        add_toolbar_button $bboxEdit paste.png {TextOperation paste} [::msgcat::mc "Paste from clipboard"]
-        add_toolbar_button $bboxEdit undo.png {TextOperation undo} [::msgcat::mc "Undo"]
-        add_toolbar_button $bboxEdit redo.png {TextOperation redo} [::msgcat::mc "Redo"]
-        
-        
-        set bboxProj [ButtonBox .frmTool.bboxProj -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
-        
-        add_toolbar_button $bboxProj doit.png {MakeProj run proj} [::msgcat::mc "Running project"]
-        add_toolbar_button $bboxProj doit_file.png {MakeProj run file} [::msgcat::mc "Running file"]
-        add_toolbar_button $bboxProj archive.png {MakeTGZ} [::msgcat::mc "Make TGZ"]
-        
-        set bboxHelp [ButtonBox .frmTool.bboxHelp -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
-        add_toolbar_button $bboxHelp help.png {ShowHelp} [::msgcat::mc "Help"]
-        
-        pack $bboxFile [Separator] $bboxEdit [Separator] $bboxProj [Separator] $bboxHelp -side left -anchor w
-        
-    }
-}
 ########## STATUS BAR ##########
 set frm1 [frame .frmStatus.frmHelp -bg $editor(bg)]
 set frm2 [frame .frmStatus.frmActive -bg $editor(bg)]
@@ -393,9 +277,11 @@ pack $noteBookFiles -fill both -expand true -padx 2 -pady 2
 set nbProjects [$noteBookFiles insert end projects -text [::msgcat::mc "Projects"]]
 set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]]
 
+
+# Create FileTree
 FileTree::create $nbFiles
 
-# tree
+# Create Project tree
 set frmTree [ScrolledWindow $nbProjects.frmTree -bg $editor(bg)]
 global tree noteBook
 set tree [Tree $frmTree.tree \
@@ -416,8 +302,8 @@ $tree bindText  <ButtonPress-1> "TreeOneClick $tree [$tree selection get]"
 $tree bindImage  <Double-ButtonPress-1> "TreeDoubleClick $tree [$tree selection get]"
 $tree bindImage  <ButtonPress-1> "TreeOneClick $tree [$tree selection get]"
 $tree bindText <Shift-Button-1> {$tree selection add [$tree selection get]}
-bind $frmTree.tree.c <Control-acircumflex> {FileDialog $tree delete}
-bind $frmTree.tree.c <Control-d> {FileDialog $tree delete}
+bind $frmTree.tree.c <Control-acircumflex> {FileDialog [$noteBookFiles raise] delete}
+bind $frmTree.tree.c <Control-d> {FileDialog [$noteBookFiles raise] delete}
 bind $frmTree.tree.c <Return> {
     set node [$tree selection get]
     TreeOneClick $tree $node
@@ -431,23 +317,30 @@ $m add command -label [::msgcat::mc "New file"] -command {AddToProjDialog file}\
 -font $fontNormal -accelerator "Ctrl+N"
 $m add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog directory}\
 -font $fontNormal -accelerator "Alt + Ctrl+N"
-$m add command -label [::msgcat::mc "Open"] -command {FileDialog $tree open}\
+$m add command -label [::msgcat::mc "Open"] -command {FileDialog [$noteBookFiles raise] open}\
 -font $fontNormal -accelerator "Ctrl+O"        -state disable
-$m add command -label [::msgcat::mc "Save"] -command {FileDialog $tree save}\
+$m add command -label [::msgcat::mc "Save"] -command {FileDialog [$noteBookFiles raise] save}\
 -font $fontNormal -accelerator "Ctrl+S"
-$m add command -label [::msgcat::mc "Save as"] -command {FileDialog $tree save_as}\
+$m add command -label [::msgcat::mc "Save as"] -command {FileDialog [$noteBookFiles raise] save_as}\
 -font $fontNormal -accelerator "Ctrl+A"
-$m add command -label [::msgcat::mc "Save all"] -command {FileDialog $tree save_all}\
+$m add command -label [::msgcat::mc "Save all"] -command {FileDialog [$noteBookFiles raise] save_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Close"] -command {FileDialog $tree close}\
+$m add command -label [::msgcat::mc "Close"] -command {FileDialog [$noteBookFiles raise] close}\
 -font $fontNormal -accelerator "Ctrl+W"
-$m add command -label [::msgcat::mc "Close all"] -command {FileDialog $tree close_all}\
+$m add command -label [::msgcat::mc "Close all"] -command {FileDialog [$noteBookFiles raise] close_all}\
 -font $fontNormal
-$m add command -label [::msgcat::mc "Delete"] -command {FileDialog $tree delete}\
+$m add command -label [::msgcat::mc "Delete"] -command {FileDialog [$noteBookFiles raise] delete}\
 -font $fontNormal -accelerator "Ctrl+D"
 $m add separator
-$m add command -label [::msgcat::mc "Compile file"] -command {MakeProj compile file} -font $fontNormal -accelerator "Ctrl+F8"
-$m add command -label [::msgcat::mc "Run file"] -command {MakeProj run file} -font $fontNormal -accelerator "Ctrl+F9"
+$m add command -label [::msgcat::mc "Compile file"] -command {MakeProj compile file} \
+-font $fontNormal -accelerator "Ctrl+F8"
+$m add command -label [::msgcat::mc "Run file"] -command {MakeProj run file} -font $fontNormal \
+-accelerator "Ctrl+F9"
+$m add separator
+$m add command -label [::msgcat::mc "Add to existing project"] -command {AddToProjDialog ""} \
+-font $fontNormal -state disable
+$m add command -label [::msgcat::mc "Add as new project"] -command {OpenProj [$noteBookFiles raise]} -font $fontNormal
+    
 
 ## POPUP PROJECT-MENU ##
 set m [menu .popupProj -font $fontNormal -bg $editor(bg) -fg $editor(fg)]
@@ -456,14 +349,11 @@ GetProjMenu $m
 ## TABS popups ##
 set m .popupTabs
 menu $m -font $fontNormal -bg $editor(bg) -fg $editor(fg)
-$m add command -label [::msgcat::mc "Close"] -command {FileDialog $tree close}\
+$m add command -label [::msgcat::mc "Close"] -command {FileDialog [$noteBookFiles raise] close}\
 -font $fontNormal -accelerator "Ctrl+W"
-$m add command -label [::msgcat::mc "Close all"] -command {FileDialog $tree close_all}\
+$m add command -label [::msgcat::mc "Close all"] -command {FileDialog [$noteBookFiles raise] close_all}\
 -font $fontNormal
 
-proc PopupMenuTab {menu x y} {
-    tk_popup $menu $x $y
-}
 
 bind $frmTree.tree.c <Button-3> {catch [PopupMenuTree %X %Y]}
 
@@ -498,4 +388,5 @@ if {[info exists workingProject]} {
         TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
     }
 }
+
 

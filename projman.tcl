@@ -2,12 +2,12 @@
 # Tcl ignores the next line -*- tcl -*- \
 exec wish "$0" -- "$@"
 
-###########################################################
-#                Tcl/Tk Project Manager                   #
-#                Distrubuted under GPL                    #
+###############################################
+#                Tcl/Tk Project Manager                                   #
+#                Distrubuted under GPL                                    #
 # Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru #
-# Author: Sergey Kalinin banzaj28@yandex.ru               #
-###########################################################
+# Author: Sergey Kalinin banzaj28@yandex.ru                #
+##############################################
 
 ########## VERSION INFORMATION ##########
 set ver "0.4.5"
@@ -140,8 +140,5 @@ option add *NoteBook.fg $editor(fg) startupFile
 option add *Listbox.foreground $editor(fg) startupFile
 option add *Listbox.background $editor(bg) startupFile
 option add *Scrollbar.background $editor(bg) startupFile
-
-
-
-
+option add *Widget.color red startupFile
 

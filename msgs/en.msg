@@ -6,6 +6,8 @@
 ###########################################################
 
 ::msgcat::mcset en "About ..."
+::msgcat::mcset en "Add as new project"
+::msgcat::mcset en "Add to existing project"
 ::msgcat::mcset en "Add to project"
 ::msgcat::mcset en "Author"
 ::msgcat::mcset en "Braces"
@@ -75,6 +77,7 @@
 ::msgcat::mcset en "Install Tcl/Tk Project Manager"
 ::msgcat::mcset en "Input file name"
 ::msgcat::mcset en "Label"
+::msgcat::mcset en "Language"
 ::msgcat::mcset en "Line number"
 ::msgcat::mcset en "Main"
 ::msgcat::mcset en "Make RPM"
@@ -117,6 +120,7 @@
 ::msgcat::mcset en "Project name"
 ::msgcat::mcset en "Project file"
 ::msgcat::mcset en "Project dir"
+::msgcat::mcset en "Project type"
 ::msgcat::mcset en "Question"
 ::msgcat::mcset en "Quit without saving?"
 ::msgcat::mcset en "Quote string"
@@ -163,9 +167,4 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
-
-
-
-
-
 

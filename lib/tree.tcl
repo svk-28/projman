@@ -30,7 +30,6 @@ proc FileTree::create {nb} {
         } -opencmd {FileTree::select tree 1 $treeFiles} \
         -closecmd  {FileTree::select tree 1 $treeFiles}
     ]
-    puts $treeFiles
     $frmTreeFiles setwidget $treeFiles
     pack $frmTreeFiles -side top -fill both -expand true
     $treeFiles bindText <ButtonPress-1> "TreeOneClick $treeFiles [$treeFiles selection get]"
@@ -38,6 +37,10 @@ proc FileTree::create {nb} {
     $treeFiles bindImage <Double-ButtonPress-1> "TreeDoubleClick $treeFiles [$treeFiles selection get]"
     $treeFiles bindText <Double-ButtonPress-1> "TreeDoubleClick $treeFiles [$treeFiles selection get]"
     $treeFiles bindText <Shift-Button-1> {$treeFiles selection add $treeFiles [$treeFiles selection get]}
+    # Added menu
+    GetMenuFileTree [menu .popMenuFileTree -bg $editor(bg) -fg $editor(fg)] ;# pop-up edit menu
+    
+    bind $frmTreeFiles.treeFiles.c <Button-3> {catch [PopupMenuFileTree $treeFiles %X %Y]}
     
     FileTree::GetAllDirs $treeFiles
 }
@@ -175,7 +178,6 @@ proc FileTree::edit { where treeFile node } {
     
 }
 
-
 proc FileTree::expand { treeFile but } {
     if { [set cur [$treeFile selection get]] != "" } {
         if { $but == 0 } {
@@ -216,7 +218,7 @@ proc GetFilesSubdir {tree node dir} {
     if {$dotFileShow eq "Yes"} {
         foreach file [lsort [glob -nocomplain .*]] {
             if {$file == "." || $file == ".."} {
-                puts $file
+                #puts $file
             } else {
                 lappend rList [list [file join $dir $file]]
                 set fileName [file join $file]
@@ -294,7 +296,7 @@ proc GetFiles {dir project tree} {
     if {$dotFileShow eq "Yes"} {
         foreach file [lsort [glob -nocomplain .*]] {
             if {$file == "." || $file == ".."} {
-                puts $file
+                #puts $file
             } else {
                 lappend rList [list [file join $dir $file]]
                 set fileName [file join $file]
@@ -367,7 +369,7 @@ proc GetProj {tree} {
             }
             if {$keyWord == "ProjectDirName"} {
                 set projList($prjName) [file dirname $string]
-                puts "$projList($prjName) - $string"
+                #puts "$projList($prjName) - $string"
                 $tree insert end root $prjName -text "$projName" -font $fontNormal \
                 -data "prj_$prjName" -open 0\
                 -image [Bitmap::get [file join $imgDir folder.gif]]
@@ -380,6 +382,17 @@ proc GetProj {tree} {
 }
 
 ## SHOW PUP-UP MENUS ## 
+proc PopupMenuFileTree {treeFiles x y} {
+    #global fontNormal fontBold imgDir activeProject
+    set node [$treeFiles selection get]
+    $treeFiles selection set $node
+    #set item [$treeFiles itemcget $node -data]
+    if {[info exists fileList($node)] != 1} {
+        #        set fileList($node) $item
+        tk_popup .popupFile $x $y
+    }
+}
+
 proc PopupMenuTree {x y} {
     global tree fontNormal fontBold imgDir activeProject
     set node [$tree selection get]
@@ -405,6 +418,7 @@ proc PopupMenuTree {x y} {
     }
 }
 
+
 ## OPEN TREE PROCEDURE
 proc TreeOpen {node} {
     global fontNormal tree projDir workDir activeProject fileList noteBook findString imgDir fontBold
@@ -413,7 +427,7 @@ proc TreeOpen {node} {
     set item [$tree itemcget $node -data]
     if {[string range $item 0 2] == "prj"} {
         set activeProject [string range $item 4 end]
-        puts $activeProject
+        #puts $activeProject
         .frmStatus.frmActive.lblActive configure -text [$tree itemcget $node -text] -font $fontBold
         $tree itemconfigure $node -image [Bitmap::get [file join $imgDir openfold.gif]] 
         if {[file exists [file join $workDir $activeProject.tags]] == 1} {
@@ -447,13 +461,13 @@ proc TreeClose {node} {
 ## TREE ONE CLICK PROCEDURE ##
 proc TreeOneClick {tree node} {
     global fontNormal projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    #puts [$tree selection get]
-    puts [$tree selection set $node]
+    $tree selection get
+    $tree selection set $node
     #puts "$tree >>> $node"
     set item [$tree itemcget $node -data]
     if {[string range $item 0 2] == "prj"} {
         set activeProject [string range $item 4 end]
-        puts $activeProject
+        #puts $activeProject
         .frmStatus.frmActive.lblActive configure -text [$tree itemcget $node -text] -font $fontBold
         if {[file exists [file join $workDir $activeProject.tags]] == 1} {
             GetTagList [file join $workDir $activeProject.tags] ;# geting tag list
@@ -491,7 +505,7 @@ proc TreeOneClick {tree node} {
             set findString "let [string range $item $index1 $index2]"
         } elseif {$fileExt == "php" || $fileExt == "phtml"} {
             set findString "function [string range $item $index1 $index2]"
-            puts $findString
+            #puts $findString
             #return
         } elseif {$fileExt == "rb"} {
             set findString "class [string range $item $index1 $index2]"
@@ -505,7 +519,7 @@ proc TreeOneClick {tree node} {
 ## TREE DOUBLE  CLICK PROCEDURE ##
 proc TreeDoubleClick {tree node} {
     global  fontNormal projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    puts "$tree $node"
+    #puts "$tree $node"
     $tree selection set $node
     set item [$tree itemcget $node -data]
     #puts $item

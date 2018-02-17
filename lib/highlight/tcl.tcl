@@ -161,6 +161,7 @@ proc HighLightTCL {text line lineNumber node} {
             $text tag add brace $lineNumber.$start $lineNumber.$end
             set startPos $end
         } else {
+            $text tag lower brace
             break
         }        
     }
@@ -179,8 +180,8 @@ proc HighLightTCL {text line lineNumber node} {
             incr end $startPos
             $text tag add bracequad $lineNumber.$start $lineNumber.$end
             set startPos $end
-            $text tag lower bracequad
         } else {
+            $text tag lower bracequad
             break
         }
     }
@@ -201,7 +202,7 @@ proc HighLightTCL {text line lineNumber node} {
             break
         }
     }
-    # add comment #
+    # add comment # 
     set workLine [$text get $lineNumber.0 $lineNumber.end]
     if {[regexp -indices "(^|\t|;| )#" $workLine word]} {
         set p [lindex $word 1]
@@ -211,4 +212,5 @@ proc HighLightTCL {text line lineNumber node} {
         $text tag remove comments $lineNumber.0 $lineNumber.end
     }
 }
+
 

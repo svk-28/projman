@@ -6,6 +6,8 @@
 ###########################################################
 
 ::msgcat::mcset ru "About ..." "О программе"
+::msgcat::mcset ru "Add as new project" "Добавить как Новый Проект"
+::msgcat::mcset ru "Add to existing project" "Добавить в существующий проект"
 ::msgcat::mcset ru "Add to project" "Добавить в проект"
 ::msgcat::mcset ru "Archive created in" "Архив помещен в"
 ::msgcat::mcset ru "Author" "Автор"
@@ -80,6 +82,7 @@
 ::msgcat::mcset ru "Install Tcl/Tk Project Manager" "Установка Tcl/Tk Project Manager"
 ::msgcat::mcset ru "Input file name" "Введите имя файла"
 ::msgcat::mcset ru "Label" "Метка"
+::msgcat::mcset ru "Language" "Язык"
 ::msgcat::mcset ru "Line number" "Номер строки"
 ::msgcat::mcset ru "Make RPM" "Создать RPM"
 ::msgcat::mcset ru "Make archive" "Создать архив"
@@ -122,6 +125,7 @@
 ::msgcat::mcset ru "Project name" "Название проекта"
 ::msgcat::mcset ru "Project file" "Файл проекта"
 ::msgcat::mcset ru "Project dir" "Каталог проекта"
+::msgcat::mcset ru "Project type" "Тип проекта"
 ::msgcat::mcset ru "Quit without saving?" "Выйти без сохранения?"
 ::msgcat::mcset ru "Question" "Вопрос"
 ::msgcat::mcset ru "Quote string" "Строка в кавычках"
@@ -167,10 +171,5 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
-
-
-
-
-
 
 

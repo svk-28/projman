@@ -4,424 +4,6 @@
 # Author: Sergey Kalinin banzaj28@yandex.ru               #
 # Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru #
 ###########################################################
-
-proc NewProjDialog {type} {
-    global  fontNormal tree projDir workDir activeProject fileList noteBook imgDir prjDir prjName
-    global openProjDir tclDir
-    set w .newProj
-    # destroy the find window if it already exists
-    if {[winfo exists $w]} {
-        
-        destroy $w
-    }
-    
-    set typeProjects "Tcl Java Perl Fortran O'Caml PHP Ruby Erlang"
-    
-    toplevel $w
-    wm title $w [::msgcat::mc "New project"]
-    wm resizable $w 0 0
-    wm transient $w .
-    frame $w.frmCombo -borderwidth 1
-    frame $w.frmBtn -borderwidth 1
-    pack $w.frmCombo $w.frmBtn -side top -fill x
-    
-    #    set combo [entry $w.frmCombo.entFind]
-    set combo [ComboBox $w.frmCombo.txtLocale\
-    -textvariable lang -editable false\
-    -selectbackground "#55c4d1" -selectborderwidth 0\
-    -values $typeProjects]
-    
-    pack $combo -fill x -padx 2 -pady 2
-    if {$type=="new"} {
-        button $w.frmBtn.btnFind -text "[::msgcat::mc "Create"]"\
-        -font $fontNormal -width 12 -relief groove\
-        -command {
-            NewProj add "" $lang
-            destroy .newProj
-        }
-    } elseif {$type=="open"} {
-        button $w.frmBtn.btnFind -text "[::msgcat::mc "Open"]"\
-        -font $fontNormal -width 12 -relief groove\
-        -command {
-            NewProj open "$prjName" $lang
-            destroy .newProj
-        }
-    }
-    button $w.frmBtn.btnCancel -text "[::msgcat::mc "Close"] - Esc"\
-    -relief groove -width 12 -font $fontNormal\
-    -command "destroy $w"
-    pack $w.frmBtn.btnFind $w.frmBtn.btnCancel -fill x -padx 2 -pady 2 -side left
-    if {$type=="open"} {
-        bind $w <Return> {NewProj open $prjName $lang; destroy .newProj}
-    } elseif {$type=="new"} {
-        bind $w <Return> {NewProj add "" $lang; destroy .newProj}
-    }
-    bind $w <Escape> "destroy $w"
-    focus -force $combo
-    
-    #    set findIndex [lsearch -exact $findHistory "$findString"]
-    $combo setvalue @0    
-}
-
-proc NewProj {type proj l} {
-    global  fontNormal tree projDir workDir activeProject fileList noteBook imgDir prjDir
-    global openProjDir tclDir frm lang operType
-    set operType $type
-    if {$operType == "edit" && $proj == ""} {
-        set answer [tk_messageBox\
-        -message "[::msgcat::mc "Not found active project"]"\
-        -type ok -icon warning -title [::msgcat::mc "Warning"]]
-        case $answer {
-            ok {return 0}
-        }
-    }
-    set lang $l
-    set node [$noteBook page [$noteBook index newproj]]
-    if {$node != ""} {
-        $noteBook raise newproj
-        return 0
-    } else {
-        set w [$noteBook insert end newproj -text [::msgcat::mc "New project"]]
-    }
-    set frm [frame $w.frmProjSettings]
-    pack $frm -fill both -expand true
-    
-    image create photo imgFold -format gif -file [file join $imgDir folder.gif]
-    
-    set frm_1 [frame $frm.frmProjName]
-    label $frm_1.lblProjName -text [::msgcat::mc "Project name"] -width 20 -anchor w
-    entry $frm_1.txtProjName -textvariable txtProjName
-    pack $frm_1.lblProjName -side left
-    pack $frm_1.txtProjName -side left -fill x -expand true
-    
-    set frm_2 [frame $frm.frmFileName]
-    label $frm_2.lblFileName -text [::msgcat::mc "Project file"] -width 20 -anchor w
-    entry $frm_2.txtFileName -textvariable txtFileName
-    pack  $frm_2.lblFileName -side left
-    pack $frm_2.txtFileName -side left -fill x -expand true
-    
-    set frm_8 [frame $frm.frmDirName]
-    label $frm_8.lblDirName -text [::msgcat::mc "Project dir"] -width 20 -anchor w
-    entry $frm_8.txtDirName -textvariable txtDirName -state disable
-    button $frm_8.btnDirName  -borderwidth {1} -image imgFold\
-    -command {
-        $frm.frmDirName.txtDirName configure -state normal
-        InsertEnt $frm.frmDirName.txtDirName [tk_chooseDirectory -initialdir $projDir -title "[::msgcat::mc "Select directory"]" -parent .]
-        $frm.frmDirName.txtDirName configure -state disable    
-    }
-    pack  $frm_8.lblDirName -side left
-    pack $frm_8.txtDirName -side left -fill x -expand true
-    pack  $frm_8.btnDirName -side left
-    
-    set frm_13 [frame $frm.frmCompiler]
-    label $frm_13.lblCompiler -text [::msgcat::mc "Compiler"]\
-    -width 20 -anchor w
-    entry $frm_13.txtCompiler -textvariable txtCompiler
-    button $frm_13.btnCompiler  -borderwidth {1} -image imgFold\
-    -command {
-        InsertEnt $frm.frmCompiler.txtCompiler [tk_getOpenFile -initialdir $tclDir -parent .]
-    }
-    pack $frm_13.lblCompiler -side left
-    pack $frm_13.txtCompiler -side left -fill x -expand true
-    pack  $frm_13.btnCompiler -side left
-    
-    set frm_12 [frame $frm.frmProjInterp]
-    label $frm_12.lblProjInterp -text [::msgcat::mc "Interpetator"]\
-    -width 20 -anchor w
-    entry $frm_12.txtProjInterp -textvariable txtProjInterp
-    button $frm_12.btnInterp  -borderwidth {1} -image imgFold\
-    -command {
-        InsertEnt $frm.frmProjInterp.txtProjInterp [tk_getOpenFile -initialdir $tclDir -parent .]
-    }
-    pack $frm_12.lblProjInterp -side left
-    pack $frm_12.txtProjInterp -side left -fill x -expand true
-    pack  $frm_12.btnInterp -side left
-    
-    
-    set frm_4 [frame $frm.frmVersion]
-    label $frm_4.lblProjVersion -text [::msgcat::mc "Version"] -width 20 -anchor w
-    entry $frm_4.txtProjVersion -textvariable txtProjVersion
-    pack $frm_4.lblProjVersion -side left
-    pack $frm_4.txtProjVersion -side left -fill x -expand true
-    InsertEnt $frm_4.txtProjVersion "0.0.1"
-    
-    set frm_11 [frame $frm.frmRelease]
-    label $frm_11.lblProjRelease -text [::msgcat::mc "Release"] -width 20 -anchor w
-    entry $frm_11.txtProjRelease -textvariable txtProjRelease
-    pack $frm_11.lblProjRelease -side left
-    pack $frm_11.txtProjRelease -side left -fill x -expand true
-    InsertEnt $frm_11.txtProjRelease "1"
-    
-    set frm_3 [frame $frm.frmProjAuthor]
-    label $frm_3.lblProjAuthor -text [::msgcat::mc "Author"] -width 20 -anchor w
-    entry $frm_3.txtProjAuthor -textvariable txtProjAuthor
-    pack  $frm_3.lblProjAuthor -side left
-    pack $frm_3.txtProjAuthor -side left -fill x -expand true
-    
-    set frm_9 [frame $frm.frmProjEmail]
-    label $frm_9.lblProjEmail -text [::msgcat::mc "E-mail"] -width 20 -anchor w
-    entry $frm_9.txtProjEmail -textvariable txtProjEmail
-    pack  $frm_9.lblProjEmail -side left
-    pack $frm_9.txtProjEmail -side left -fill x -expand true
-    
-    set frm_5 [frame $frm.frmProjCompany]
-    label $frm_5.lblProjCompany -text [::msgcat::mc "Company"] -width 20 -anchor w
-    entry $frm_5.txtProjCompany -textvariable txtProjCompany
-    pack $frm_5.lblProjCompany -side left
-    pack $frm_5.txtProjCompany -side left -fill x -expand true
-    
-    set frm_10 [frame $frm.frmProjHome]
-    label $frm_10.lblProjHome -text [::msgcat::mc "Home page"] -width 20 -anchor w
-    entry $frm_10.txtProjHome -textvariable txtProjHome
-    pack $frm_10.lblProjHome -side left
-    pack $frm_10.txtProjHome -side left -fill x -expand true
-    
-    set frm_7 [frame $frm.frmWinTitle -border 2 -relief ridge -background grey]
-    label $frm_7.lblWinTitle -text "[::msgcat::mc "Create new project"] $lang" -foreground yellow \
-    -background black
-    
-    pack $frm_7.lblWinTitle -fill x -expand true
-    
-    set frm_6 [frame $frm.frmBtn -border 2 -relief ridge]
-    if {$operType == "edit" && $proj != ""} {
-        $noteBook itemconfigure newproj -text [::msgcat::mc "Project settings"]
-        button $frm_6.btnProjCreate -text [::msgcat::mc "Save"] -relief groove\
-        -font $fontNormal -command {
-            regsub -all {\\} $txtProjInterp {\\\\} $txtProjInterp
-            SaveProj "$txtFileName" "$txtProjName" "$txtFileName" "$txtDirName"\
-            "$txtCompiler" "$txtProjInterp" "$txtProjVersion" "$txtProjRelease"\
-            "$txtProjAuthor" "$txtProjEmail" "$txtProjCompany" "$txtProjHome"
-            $noteBook delete newproj
-            $noteBook raise [$noteBook page end]
-        }
-    } else {
-        button $frm_6.btnProjCreate -text [::msgcat::mc "Create"] -relief groove\
-        -font $fontNormal -command {
-            CreateProj $operType $lang "$txtFileName" "$txtProjName" "$txtFileName" "$txtDirName"\
-            "$txtCompiler" "$txtProjInterp" "$txtProjVersion" "$txtProjRelease"\
-            "$txtProjAuthor" "$txtProjEmail" "$txtProjCompany" "$txtProjHome"
-            $noteBook delete newproj
-            $noteBook raise [$noteBook page end]
-        }
-        
-    }
-    button $frm_6.btnClose -text [::msgcat::mc "Cancel"] -relief groove -font $fontNormal -command {
-        $noteBook delete newproj
-        $noteBook raise [$noteBook page end]
-    }
-    pack $frm_6.btnProjCreate $frm_6.btnClose -padx 10 -pady 2 -side left -fill x -expand true
-    pack  $frm_7 $frm_1 $frm_2 $frm_8 $frm_13 $frm_12 $frm_4 $frm_11 $frm_3 $frm_9 $frm_5 $frm_10 $frm_6\
-    -side top -fill x
-    pack $frm_6 -side top -fill x -expand true -anchor s
-    bind $w <Escape>  "$noteBook delete newproj"
-    $noteBook raise newproj
-    
-    ## EDIT PROJECT SETTINGS ##
-    if {$operType == "edit" && $proj != ""} {
-        $frm.frmDirName.txtDirName configure -state normal
-        $frm_7.lblWinTitle configure -text [::msgcat::mc "Project settings"]
-        $frm_6.btnProjCreate configure -text "[::msgcat::mc "Save"]"
-        set file [open [file join $workDir $proj.proj] r]
-        while {[gets $file line]>=0} {
-            scan $line "%s" keyWord
-            set string [string range $line [string first "\"" $line] [string last "\"" $line]]
-            set string [string trim $string "\""]
-            #                regsub -all " " $string "_" project
-            puts $string
-            switch $keyWord {
-                ProjectName {InsertEnt $frm_1.txtProjName "$string"}
-                ProjectFileName {InsertEnt $frm_2.txtFileName "$string"}
-                ProjectDirName {InsertEnt $frm_8.txtDirName "$string"}  
-                ProjectCompiler {InsertEnt $frm_13.txtCompiler "$string"}  
-                ProjectInterp {InsertEnt $frm_12.txtProjInterp "$string"}  
-                ProjectVersion {InsertEnt $frm_4.txtProjVersion "$string"}  
-                ProjectRelease {InsertEnt $frm_11.txtProjRelease "$string"}  
-                ProjectAuthor {InsertEnt $frm_3.txtProjAuthor "$string"}  
-                ProjectEmail {InsertEnt $frm_9.txtProjEmail "$string"}  
-                ProjectCompany {InsertEnt $frm_5.txtProjCompany "$string"}  
-                ProjectHome {InsertEnt $frm_10.txtProjHome "$string"}  
-            }
-        }
-        close $file
-    } elseif {$operType == "open"} {
-        $frm_7.lblWinTitle configure -text "[::msgcat::mc "Open project"] $lang"
-        InsertEnt $frm_1.txtProjName "$proj"
-        InsertEnt $frm_2.txtFileName "$proj"
-        InsertEnt $frm_8.txtDirName "$proj"
-        $frm_8.txtDirName configure -state normal
-        puts $prjDir
-        InsertEnt $frm_8.txtDirName "$prjDir"
-        InsertEnt $frm_13.txtCompiler ""
-        InsertEnt $frm_12.txtProjInterp ""
-        InsertEnt $frm_4.txtProjVersion "0.0.1"
-        InsertEnt $frm_11.txtProjRelease "1"
-        InsertEnt $frm_3.txtProjAuthor ""
-        InsertEnt $frm_9.txtProjEmail ""
-        InsertEnt $frm_5.txtProjCompany ""
-        InsertEnt $frm_10.txtProjHome ""
-    } else {
-        InsertEnt $frm_1.txtProjName ""
-        InsertEnt $frm_2.txtFileName ""
-        InsertEnt $frm_8.txtDirName ""
-        InsertEnt $frm_13.txtCompiler ""
-        InsertEnt $frm_12.txtProjInterp ""
-        InsertEnt $frm_4.txtProjVersion "0.0.1"
-        InsertEnt $frm_11.txtProjRelease "1"
-        InsertEnt $frm_3.txtProjAuthor ""
-        InsertEnt $frm_9.txtProjEmail ""
-        InsertEnt $frm_5.txtProjCompany ""
-        InsertEnt $frm_10.txtProjHome ""
-    }
-}
-
-## CREATING PROJECT PROCEDURE ##
-proc CreateProj {type lang txtFileName txtProjName txtFileName txtDirName txtCompiler txtProjInterp txtProjVersion  txtProjRelease txtProjAuthor txtProjEmail txtProjCompany txtProjHome} {
-    global projDir workDir tree fontNormal dataDir tcl_platform
-    
-    set projShortName [file tail $txtDirName]
-    
-    set projFile [open [file join $workDir $projShortName.proj] w]
-    
-    puts $projFile "ProjectName \"$txtProjName\""
-    puts $projFile "ProjectFileName \"$txtFileName\""
-    puts $projFile "ProjectDirName \"$txtDirName\""
-    puts $projFile "ProjectCompiler  \"$txtCompiler\""
-    puts $projFile "ProjectInterp  \"$txtProjInterp\""
-    puts $projFile "ProjectVersion  \"$txtProjVersion\""
-    puts $projFile "ProjectRelease  \"$txtProjRelease\""
-    puts $projFile "ProjectAuthor \"$txtProjAuthor\""
-    puts $projFile "ProjectEmail \"$txtProjEmail\""
-    puts $projFile "ProjectCompany \"$txtProjCompany\""
-    puts $projFile "ProjectHome \"$txtProjHome\""
-    close $projFile
-    if {$type != "open"} {
-        set dir [file join $projDir $txtDirName]
-        if {[file exists "$dir"] != 1} {
-            file mkdir "$dir"
-        }
-        # file header
-        if {$lang=="Tcl"  || $lang == "Perl"} {
-            set text "######################################################\n#\t$txtProjName\n#\tDistributed under GNU Public License\n# Author: $txtProjAuthor $txtProjEmail\n# Home page: $txtProjHome\n######################################################\n"        
-        } elseif {$lang == "Perl"} {
-            set lang pl
-            set text "######################################################\n#\t$txtProjName\n#\tDistributed under GNU Public License\n# Author: $txtProjAuthor $txtProjEmail\n# Home page: $txtProjHome\n######################################################\n"        
-        } elseif {$lang=="Java"} {
-            set text "/*\n*****************************************************\n*\t$txtProjName\n*\tDistributed under GNU Public License\n* Author: $txtProjAuthor $txtProjEmail\n* Home page: $txtProjHome\n*****************************************************\n*/\n"
-        } elseif {$lang=="Fortran"} {
-            set text "\nc*****************************************************\nc*\t$txtProjName\n*c\tDistributed under GNU Public License\nc* Author: $txtProjAuthor $txtProjEmail\nc* Home page: $txtProjHome\nc*****************************************************\n*/\n"
-        } elseif {$lang=="O'Caml"} {
-            set text "\(*****************************************************\n*\t$txtProjName\n*\tDistributed under GNU Public License\n* Author: $txtProjAuthor $txtProjEmail\n* Home page: $txtProjHome\n******************************************************\)\n"
-            set lang ml            
-        } elseif {$lang=="Ruby"} {
-            set lang rb
-            set text "######################################################\n#\t$txtProjName\n#\tDistributed under GNU Public License\n# Author: $txtProjAuthor $txtProjEmail\n# Home page: $txtProjHome\n######################################################\n"        
-        } elseif {$lang=="PHP"} {
-            set text "<?\n/////////////////////////////////////////////////////\n//\t$txtProjName\n//\tDistributed under GNU Public License\n// Author: $txtProjAuthor $txtProjEmail\n// Home page: $txtProjHome\n/////////////////////////////////////////////////////\n?>"
-            set lang php
-        } elseif {$lang=="Erlang"} {
-            set text "\%**************************************************\n%\t$txtProjName\n%\tDistributed under GNU Public License\n% Author: $txtProjAuthor $txtProjEmail\n* Home page: $txtProjHome\n%*****************************************************\)\n"
-            set lang erl          
-        }
-        if {[file exists [file join $dir $txtFileName]] == 0} {
-            set file [open [file join $dir $txtFileName] w]
-            puts $file $text
-            close $file
-        }
-        # spec file generating
-        if {[file exists [file join $dir $txtFileName.spec]] == 0} {
-            set file [open [file join $dir $txtFileName.spec] w]
-            puts $file "%define name $txtFileName"
-            puts $file "%define version $txtProjVersion"
-            puts $file "%define release $txtProjRelease"
-            puts $file "%define instdir $dataDir"
-            puts $file "Summary:\t$txtProjName"
-            puts $file "Name:\t\t%\{name\}"
-            puts $file "Version:\t%\{version\}"
-            puts $file "Release:\t%\{release\}"
-            puts $file "Source:\t%\{name\}-%\{version\}.tar.gz"
-            puts $file "Copyright:\tGPL"
-            puts $file "Group:\t\tDevelopment"
-            puts $file "Vendor:\t\t$txtProjAuthor <$txtProjEmail>"
-            puts $file "BuildRoot:\t%{_tmppath}/%{name}-buildroot"
-            puts $file "BuildArch:\tnoarch"
-            puts $file "Requires:\ttcl >= 8.3\n"
-            puts $file "%description"
-            puts $file "This project made by Tcl/Tk Project Manager"
-            puts $file "%prep\n%setup -n%\{name\}\n%build\n"
-            puts $file "%install"
-            puts $file "rm -rf \$RPM_BUILD_ROOT"
-            puts $file "mkdir -p \$RPM_BUILD_ROOT%\{_datadir\}/%\{name\}"
-            puts $file "cp -f \* \$RPM_BUILD_ROOT%\{_datadir\}/%\{name\}\n"
-            puts $file "%post\nmkdir \$HOME/.$txtDirName"
-            puts $file "%clean\nrm -rf \$RPM_BUILD_ROOT"
-            puts $file "%files"
-            puts $file "%defattr\(-,root,root\)"
-            puts $file "%doc README TODO CHANGELOG COPYING INSTALL"
-            puts $file "%\{_datadir\}/%\{name\}"
-            puts $file "%define date\t%\(echo \`LC_ALL=\"C\" date +\"%a %b %d %Y\"\`\)"
-            puts $file "%changelog"
-            puts $file "\* %\{date\}\n\n# end of file"
-            close $file
-        }
-        #    file attributes "$dir/$txtFileName.tcl" -permissions "777"
-        #    catch {chmod 744 "$dir/$txtFileName.tcl"} mes
-        foreach f {README TODO CHANGELOG COPYING INSTALL} {
-            if {[file exists [file join $dir $f]] != 1} {
-                set file [open [file join $dir $f] w]
-                puts $file "$text"
-                if {$f == "CHANGELOG"} {
-                    if {$tcl_platform(platform) == "windows"} {
-                        set d [clock format [clock scan "now" -base [clock seconds]] -format %d/%m/%Y]
-                    } elseif {$tcl_platform(platform) == "mac"} {
-                        set d "Needed date command for this platform"
-                    } elseif {$tcl_platform(platform) == "unix"} {
-                        set d [clock format [clock scan "now" -base [clock seconds]] -format %d/%m/%Y]
-                    }
-                    
-                    puts $file "$d\n\t- Beginning the project"
-                }
-                close $file
-            }
-        }
-    } else {
-        ## Insert new project into tree ##
-        $tree insert end root $projShortName -text "$txtProjName" -font $fontNormal \
-        -data "prj_$projShortName" -open 0 -image [Bitmap::get folder]
-        GetFiles $txtDirName $projShortName $tree
-    }
-}
-## SAVING PROJECT SETTINGS ##
-proc SaveProj {txtFileName txtProjName txtFileName txtDirName txtCompiler txtProjInterp txtProjVersion txtProjRelease txtProjAuthor txtProjEmail txtProjCompany txtProjHome} {
-        global projDir workDir tree fontNormal dataDir
-        
-        set file [file tail $txtDirName]
-        
-    set projFile [open [file join $workDir $file.proj] w]
-    puts $projFile "ProjectName \"$txtProjName\""
-    puts $projFile "ProjectFileName \"$txtFileName\""
-    puts $projFile "ProjectDirName \"$txtDirName\""
-    puts $projFile "ProjectCompiler  \"$txtCompiler\""
-    puts $projFile "ProjectInterp  \"$txtProjInterp\""
-    puts $projFile "ProjectVersion  \"$txtProjVersion\""
-    puts $projFile "ProjectRelease  \"$txtProjRelease\""
-    puts $projFile "ProjectAuthor \"$txtProjAuthor\""
-    puts $projFile "ProjectEmail \"$txtProjEmail\""
-    puts $projFile "ProjectCompany \"$txtProjCompany\""
-    puts $projFile "ProjectHome \"$txtProjHome\""
-    close $projFile
-}    
-
-## OPEN EXISTING PROJECT AND ADDED INYO PROJMAN TREE ##
-proc OpenProj {} {
-    global projDir workDir openProjDir prjDir prjName
-    set prjDir [SelectDir $projDir]
-    if {$prjDir != ""} {
-        set prjName "[file tail $prjDir]"
-        NewProjDialog open
-        #file copy $prjDir $projDir
-    }
-    return
-}
 ## ADD FILE INTO PROJECTS ##
 proc AddToProj {fileName mode} {
     global projDir workDir activeProject tree noteBook fontNormal imgDir tree
@@ -480,15 +62,13 @@ proc AddToProj {fileName mode} {
         $tree itemconfigure $activeProject -open 1
     }
     set file [file join $dir $fileName]
-    #set f [open $file w]
-    #close $f
-    puts $file
+    
     if {$mode == "directory"} {
         file mkdir $file
         return
     }
     InsertTitle $file $type
-    EditFile $subNode [file join $dir $fileName]
+    EditFile [GetTreeForNode $subNode] $subNode [file join $dir $fileName]
 }
 ## ADD FILE INTO PROJECT DIALOG##
 proc AddToProjDialog {mode} {
@@ -610,7 +190,7 @@ proc DelProj {} {
     -type yesno -icon question -default yes]
     case $answer {
         yes {
-            FileDialog close_all
+            FileDialog $tree close_all
             file delete -force $projDir
             file delete -force [file join $workDir $activeProject.proj]
             file delete -force [file join $workDir $activeProject.tags]
@@ -900,6 +480,19 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

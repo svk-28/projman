@@ -6,6 +6,12 @@
 #########################################################
 
 0.4.5
+17.02.2018
+- Refactoring "Add New Projects" "Project Settings" (e.t.c.) dialogs
+- Added "Add as new project" dialog for file browser
+- Add popup menu for file browser
+- Fixed some highlight bug
+
 14.02.2018
 - Added saving main window geometry into projman.conf file when close programm
 - Fixed AutoComplite precedure for TCL/TK-projects
@@ -365,4 +371,5 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
 
