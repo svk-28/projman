@@ -112,33 +112,67 @@ source [file join $dataDir main.tcl]
 
 #option add *tree.foreground red widgetDefault
 # Set colors for widgets
-option add *Frame.background $editor(bg) startupFile
-option add *Scrollableframe.background $editor(bg) startupFile
-option add *Scrolledwindow.background $editor(bg) startupFile
-option add *Button.foreground $editor(fg) startupFile
-option add *Button.background $editor(bg) startupFile
-option add *Entry.foreground $editor(fg) startupFile
-option add *Entry.background $editor(bg) startupFile
-option add *Label.foreground $editor(fg) startupFile
-option add *Label.background $editor(bg) interactive
-option add *Checkbox.foreground $editor(fg) startupFile
-option add *Checkbox.background $editor(bg) startupFile
-option add *Checkbutton.foreground $editor(fg) startupFile
-option add *Checkbutton.background $editor(bg) startupFile
-option add *Combobox.foreground $editor(fg) startupFile
-option add *Combobox.background $editor(bg) startupFile
-option add *Text.foreground $editor(fg) startupFile
-option add *Text.background $editor(bg) startupFile
-option add *Tree.background $editor(bg) startupFile
-option add *Tree.foreground $editor(fg) startupFile
-option add *scrollbar.background $editor(bg) startupFile
-option add *Canvas.background $editor(bg) startupFile
-option add *Canvas.foreground $editor(fg) startupFile
-option add *Node.foreground $editor(fg) startupFile
+option add *Frame.Background $editor(bg) startupFile
+option add *ScrollableFrame.Background $editor(bg) startupFile
+option add *ScrolledWindow.Background $editor(bg) startupFile
+option add *Button.Foreground $editor(fg) startupFile
+option add *Button.Background $editor(bg) startupFile
+option add *Button.activeBackground $editor(bg) userDefault
+option add *Button.activeForeground $editor(fg) userDefault
+
+option add *Entry.Foreground $editor(fg) startupFile
+option add *Entry.Background $editor(bg) startupFile
+option add *Label.Foreground $editor(fg) startupFile
+option add *Label.Background $editor(bg) interactive
+option add *Checkbox.Foreground $editor(fg) startupFile
+option add *Checkbox.Background $editor(bg) startupFile
+option add *Checkbutton.Foreground $editor(fg) startupFile
+option add *Checkbutton.Background $editor(bg) startupFile
+option add *Combobox.Foreground $editor(fg) startupFile
+option add *Combobox.Background $editor(bg) startupFile
+option add *Text.Foreground $editor(fg) startupFile
+option add *Text.Background $editor(bg) startupFile
+option add *Tree.Background $editor(bg) startupFile
+option add *Tree.Foreground $editor(fg) startupFile
+option add *Scrollbar.Background $editor(bg) startupFile
+option add *Canvas.Background $editor(bg) startupFile
+option add *Canvas.Foreground $editor(fg) startupFile
+option add *Node.Foreground $editor(fg) startupFile
 option add *NoteBook.bg $editor(bg) startupFile
 option add *NoteBook.fg $editor(fg) startupFile
-option add *Listbox.foreground $editor(fg) startupFile
-option add *Listbox.background $editor(bg) startupFile
-option add *Scrollbar.background $editor(bg) startupFile
-option add *Widget.color red startupFile
+option add *Listbox.Foreground $editor(fg) startupFile
+option add *Listbox.Background $editor(bg) startupFile
+
+#option add *Button.font $guifont userDefault
+#option add *Label.font $guifont userDefault
+#option add *Menu.font $guifont userDefault
+#option add *Menubutton.font $guifont userDefault
+option add *Dialog.msg.background $editor(bg)
+  
+#   option add *Text.Background $textbg userDefault
+#   option add *Entry.Background $textbg userDefault
+#   option add *Text.Foreground $textfg userDefault
+#   option add *Entry.Foreground $textfg userDefault
+#   option add *Button.activeBackground $bg userDefault
+#   option add *Button.activeForeground $fg userDefault
+#   option add *Scrollbar.activeBackground $bg userDefault
+#   option add *Scrollbar.troughColor $shadow userDefault
+#   option add *Canvas.Background $shadow userDefault
+# 
+#   # These menu configs work if you use native menus.
+#   option add *Menu.borderWidth 1 userDefault
+#   option add *Menu.activeForeground $fg userDefault
+#   option add *Menubutton.activeForeground $fg userDefault
+# 
+#   # This draws a thin border around buttons
+#   #option add *highlightBackground $bg userDefault
+#   # Suppress the border
+#   option add *HighlightThickness 0 userDefault
+#   # Add it back for text and entry widgets
+#   option add *Text.highlightBackground $bg userDefault
+#   option add *Entry.highlightBackground $bg userDefault
+#   option add *Text.HighlightThickness 2 userDefault
+#   option add *Entry.HighlightThickness 1 userDefault
+#   
+# 
 

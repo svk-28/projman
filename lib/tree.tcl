@@ -17,7 +17,7 @@ namespace eval FileTree {
 proc FileTree::create {nb} {
     global editor
     global treeFiles
-    set frmTreeFiles [ScrolledWindow $nb.frmTreeFiles -bg $editor(bg)]
+    set frmTreeFiles [ScrolledWindow $nb.frmTreeFiles -bg $editor(bg) -background $editor(bg) ]
     
     set treeFiles [
         Tree $frmTreeFiles.treeFiles \
@@ -195,11 +195,14 @@ proc FileTree::GetAllDirs {treeFiles} {
     if {[catch {cd $rootDir}] != 0} {
         return ""
     }
+    set rootNode [$treeFiles insert end root $rootDir -text "$rootDir" -font $fontNormal \
+    -data "dir_root" -open 1\
+    -image [Bitmap::get [file join $imgDir folder.gif]]]
     
-    $treeFiles insert end root $rootDir -text "$rootDir" -font $fontNormal \
-    -data "dir_root" -open 0\
-    -image [Bitmap::get [file join $imgDir folder.gif]]
-    GetFiles [file join $rootDir] root $treeFiles
+#     $treeFiles insert end root $rootDir -text "$rootDir" -font $fontNormal \
+#     -data "dir_root" -open 0\
+#     -image [Bitmap::get [file join $imgDir folder.gif]]
+    GetFiles [file join $rootDir] $rootNode $treeFiles
     #set dir $string
     
     $treeFiles configure -redraw 1
@@ -579,4 +582,7 @@ proc GetTreeForNode {node} {
     }
     
 }
+
+
+
 

@@ -45,6 +45,9 @@
 ::msgcat::mcset ru "Delete file" "Удалить файл"
 ::msgcat::mcset ru "Delete backup files" "Удалять временные файлы"
 ::msgcat::mcset ru "Delete project" "Удалить проект"
+::msgcat::mcset ru "with all files" "вместе с файлами"
+::msgcat::mcset ru "If press \"Yes\" will deleted all files!" "Если нажать \"Да\" будут удалены все файлы"
+::msgcat::mcset ru  "If press \"No\" will deleted only proj-file" "Если нажать \"Нет\" будет удалён только файл проекта"
 ::msgcat::mcset ru "Delete from project" "Удалить из проекта"
 ::msgcat::mcset ru "Docs dir" "Каталог документации"
 ::msgcat::mcset ru "Don't selected file" "Не определен файл"
@@ -171,5 +174,6 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
+
 
 

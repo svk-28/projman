@@ -611,7 +611,10 @@ proc EditFile {tree node fileName} {
     set fileExt [string range [file extension $fileName] 1 end]
     set parentNode  [$tree parent $node]
     set project [$tree itemcget $parentNode -data]
+    #    set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]] \
+    #-background $editor(bg) -foreground $editor(fg)]
     set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]]]
+    
     # create array with file names #
     if {[info exists fileList($node)] != 1} {
         set fileList($node) [list $fileName 0]
@@ -626,7 +629,7 @@ proc EditFile {tree node fileName} {
     set scrwin [ScrolledWindow $w.scrwin -bg $editor(bg)]
     pack $scrwin -fill both -expand true
     text $w.text\
-    -relief sunken -wrap $editor(wrap) -highlightthickness 0 -undo 1 -font $editor(font)\
+    -relief sunken -wrap $editor(wrap) -highlightthickness 0 -undo 1 -font $editor(font) -blockcursor true\
     -selectborderwidth 0 -selectbackground $editor(selectbg) -width 10 -background $editor(bg) -foreground $editor(fg)
     
     pack $w.text -side left -fill both -expand true
@@ -970,6 +973,7 @@ proc TextOperation {oper} {
 }
 #################################### 
 GetOp
+
 
 
 

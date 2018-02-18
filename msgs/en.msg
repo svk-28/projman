@@ -42,6 +42,9 @@
 ::msgcat::mcset en "Delete"
 ::msgcat::mcset en "Delete backup files"
 ::msgcat::mcset en "Delete project"
+::msgcat::mc "with all files"
+::msgcat::mc "If press \"Yes\" will deleted all files!"
+::msgcat::mc  "If press \"No\" will deleted only proj-file"
 ::msgcat::mcset en "Delete from project"
 ::msgcat::mcset en "Docs dir"
 ::msgcat::mcset en "Don't selected file"
@@ -167,4 +170,5 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
+
 

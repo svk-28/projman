@@ -52,7 +52,7 @@ proc HlpTreeOneClick {node} {
 }
 ## GETTING TABLE OF CONTENT ##
 proc GetTOC {} {
-    global docDir hlpTree imgDir fontNormal lstSearch arr sourceEncode
+    global docDir hlpTree imgDir fontNormal lstSearch arr sourceEncode editor
     if {[catch {cd $docDir}] != 0} {
         return ""
     }
@@ -73,6 +73,7 @@ proc GetTOC {} {
                             set length [string length $a]
                             set title [string range $a 1 [expr $length-2]]
                             $hlpTree insert end root $nodeParent -text "$title" -font $fontNormal \
+                            -fill $editor(fg) \
                             -data "toc_$nodeParent" -open 0\
                             -image [Bitmap::get [file join $imgDir books.gif]]
                         }
@@ -85,6 +86,7 @@ proc GetTOC {} {
                         set data [file join $dir $v3]
                         $hlpTree insert end "$nodeParent" $subNode -text "$v5"\
                         -font $fontNormal -data "doc_$data" -open 0\
+                        -fill $editor(fg) \
                         -image [Bitmap::get [file join $imgDir file.gif]]
                         $lstSearch insert end $v3
                     } else {
@@ -320,5 +322,6 @@ proc TopLevelHelp {} {
 #GetTOC
 
 #GetContent $docDir/tcl.toc.html
+
 
 

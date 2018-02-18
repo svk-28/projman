@@ -23,9 +23,11 @@ proc Settings {} {
     #    wm resizable $w 0 0
     wm geometry $w 464x450+0+0
     wm transient $w .
-    frame $w.frmMain -borderwidth 1 -bg $editor(bg)
+    #frame $w.frmMain -borderwidth 1 -bg $editor(bg)
+    frame $w.frmMain -borderwidth 1 
     pack $w.frmMain -side top -fill both -expand 1
-    frame $w.frmBtn -borderwidth 1  -bg $editor(bg)
+    #frame $w.frmBtn -borderwidth 1  -bg $editor(bg)
+    frame $w.frmBtn -borderwidth 1 
     pack $w.frmBtn -side top -fill x
     
     set nb [NoteBook $w.frmMain.noteBook -font $fontBold -side top -bg $editor(bg) -fg $editor(fg)]
@@ -875,4 +877,5 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
+
 

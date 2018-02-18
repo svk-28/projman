@@ -1,0 +1,10 @@
+######################################################
+#                Tcl/Tk Project Manager
+#        Distributed under GNU Public License
+# Author: Sergey Kalinin banzaj28@yandex.ru
+# Copyright (c) "https://nuk-svk.ru", 2018, https://bitbucket.org/svk28/projman
+######################################################
+
+1. BaseALT SimplyLinux - Bwidget ScrolledWindow dont work with options:
+-background
+In Debian - it's all right.

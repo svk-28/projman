@@ -262,9 +262,11 @@ pack $frm6.lblOvwrt -fill x
 
 ########## PROJECT-FILE-FUNCTION TREE ##################
 
-set frmCat [frame .frmBody.frmCat -border 1 -relief sunken -bg $editor(bg)]
+#set frmCat [frame .frmBody.frmCat -border 1 -relief sunken -bg $editor(bg)]
+set frmCat [frame .frmBody.frmCat -border 1 -relief sunken]
 pack $frmCat -side left -fill y -fill both
-set frmWork [frame .frmBody.frmWork -border 1 -relief sunken -bg $editor(bg)]
+#set frmWork [frame .frmBody.frmWork -border 1 -relief sunken -bg $editor(bg)]
+set frmWork [frame .frmBody.frmWork -border 1 -relief sunken]
 pack $frmWork -side left -fill both -expand true
 
 ## CREATE PANE ##
@@ -272,10 +274,13 @@ pane::create .frmBody.frmCat .frmBody.frmWork
 
 # NoteBook - Projects and Files
 #################### WORKING AREA ####################
-set noteBookFiles [NoteBook $frmCat.noteBook -font $fontNormal -side top -bg $editor(bg) -fg $editor(fg)]
+set noteBookFiles [NoteBook $frmCat.noteBook -font $fontNormal -side top -bg $editor(bg) -fg $editor(fg) \
+-activebackground $editor(bg) -activeforeground $editor(fg) ]
 pack $noteBookFiles -fill both -expand true -padx 2 -pady 2
-set nbProjects [$noteBookFiles insert end projects -text [::msgcat::mc "Projects"]]
-set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]]
+set nbProjects [$noteBookFiles insert end projects -text [::msgcat::mc "Projects"] \
+-activebackground $editor(bg) -activeforeground $editor(fg)]
+set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]   \
+-activebackground $editor(bg) -activeforeground $editor(fg)]
 
 
 # Create FileTree
@@ -388,5 +393,7 @@ if {[info exists workingProject]} {
         TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
     }
 }
+
+
 
 
