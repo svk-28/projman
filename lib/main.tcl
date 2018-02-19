@@ -222,10 +222,10 @@ bind . <F8> {MakeProj compile proj}
 bind . <Control-F8> {MakeProj compile file}
 bind . <F9> {MakeProj run proj}
 bind . <Control-F9> {MakeProj run file}
-bind . <Control-ograve> AddToProjDialog
-bind . <Control-n> AddToProjDialog
-bind . <Control-ocircumflex> AddToProjDialog
-bind . <Control-a> AddToProjDialog
+bind . <Control-ograve> {AddToProjDialog file}
+bind . <Control-n> {AddToProjDialog file}
+#bind . <Control-ocircumflex> AddToProjDialog
+#bind . <Control-a> AddToProjDialog
 bind . <Control-eacute> Quit
 bind . <Control-q> Quit
 bind . <Control-ccedilla> PrintDialog
@@ -393,6 +393,7 @@ if {[info exists workingProject]} {
         TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
     }
 }
+
 
 
 
