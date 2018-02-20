@@ -61,7 +61,6 @@ proc balloon { widget action args } {
     } ;# switch action
 } ;# proc balloon
 
-
 proc raise_balloon {widget text} {
     global BALLOON
     
@@ -77,12 +76,4 @@ proc raise_balloon {widget text} {
     wm deiconify .bubble
     update
 } ;# proc raise_balloon
-
-
-
-
-
-
-
-
 

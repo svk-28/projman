@@ -6,31 +6,25 @@
 ######################################################
 
 ## SETTING DIALOG ##
-proc Settings {} {
+proc Settings {nBook} {
     global fontNormal fontBold imgDir workDir
     global editor color nb topLevelGeometry
     global main editFrm network
     global toolBar autoFormat backUpDel backUpCreate backUpShow localeSet localeList wrapSet wrapList
     set topLevelGeometry [winfo geometry .]
-    set w .pref
-    # destroy the find window if it already exists
-    if {[winfo exists $w]} {
-        destroy $w
+    if {[$nBook index settings] != -1} {
+        $nBook delete settings
     }
+    set w [$nBook insert end settings -text [::msgcat::mc "Settings"]]
+    $nBook raise settings
     
-    toplevel $w
-    wm title $w [::msgcat::mc "Settings"]
-    #    wm resizable $w 0 0
-    wm geometry $w 464x450+0+0
-    wm transient $w .
-    #frame $w.frmMain -borderwidth 1 -bg $editor(bg)
+    # destroy the find window if it already exists
     frame $w.frmMain -borderwidth 1 
     pack $w.frmMain -side top -fill both -expand 1
-    #frame $w.frmBtn -borderwidth 1  -bg $editor(bg)
     frame $w.frmBtn -borderwidth 1 
     pack $w.frmBtn -side top -fill x
     
-    set nb [NoteBook $w.frmMain.noteBook -font $fontBold -side top -bg $editor(bg) -fg $editor(fg)]
+    set nb [NoteBook $w.frmMain.noteBook -font $fontBold -side bottom -bg $editor(bg) -fg $editor(fg)]
     pack $nb -fill both -expand true -padx 2 -pady 2
     
     button $w.frmBtn.btnFind -text [::msgcat::mc "Save"] -font $fontNormal -width 12 -relief groove \
@@ -134,11 +128,12 @@ proc Settings {} {
         puts $file "\nset workingProject \"\""
         
         close $file
-        destroy .pref
+        #destroy $w
+        .frmBody.frmWork.noteBook delete settings
     }
     button $w.frmBtn.btnCancel -text [::msgcat::mc "Close"] -relief groove -width 12\
-    -font $fontNormal -command "destroy $w" -bg $editor(bg) -fg $editor(fg)
-    pack $w.frmBtn.btnFind $w.frmBtn.btnCancel -fill x -padx 2 -pady 2 -side left
+    -font $fontNormal -command "destroy $w; $nBook delete settings " -bg $editor(bg) -fg $editor(fg)
+    pack $w.frmBtn.btnFind $w.frmBtn.btnCancel -fill x -padx 5 -pady 5 -side right
     
     ##################  MAIN PREF ##########################
     set main [$nb insert end main -text "[::msgcat::mc "Main"]"]
@@ -229,7 +224,7 @@ proc Settings {} {
     pack $frm_7.lblTgzDir -side left
     pack $frm_7.txtTgzDir -side left -fill x -expand true
     pack $frm_7.btnTgzDir -side left
-
+    
     set frm_8 [frame $main.frmRpmNamed -bg $editor(bg)]
     label $frm_8.lblRpmNamed -text [::msgcat::mc "RPM file mask"] -width 30 -anchor w\
     -font $fontNormal -fg $editor(fg)
@@ -340,7 +335,7 @@ proc Settings {} {
 
     set frm_15 [frame $editFrm.frmAutoFormat -bg $editor(bg)]
     label $frm_15.lblAutoFormat -text [::msgcat::mc "Text autoformat"]\
-            -width 30 -anchor w -font $fontNormal
+    -width 30 -anchor w -font $fontNormal
     checkbutton $frm_15.chkAutoFormat -text "" -variable autoFormat \
             -font $fontNormal -onvalue true -offvalue false
     pack $frm_15.lblAutoFormat -side left
@@ -877,5 +872,4 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
-
 

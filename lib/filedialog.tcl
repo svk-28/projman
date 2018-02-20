@@ -29,6 +29,7 @@ proc FileDialog {nbNode operation} {
         {"Text files" {} TEXT}
         {"All files" *}
     }
+    variable tree
     if {$nbNode eq "files"} {
         set tree .frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles
     } elseif {$nbNode eq "projects"} {
@@ -131,9 +132,22 @@ proc FileDialog {nbNode operation} {
             $noteBook itemconfigure $nbNode -text $file
             set fileList($nbNode) [list $file 0]
         } else {
-            set contents [$text get 0.0 end]
             set fhandle [open [file join $dir $file] "w"]
-            puts $fhandle $contents nonewline
+            set lineNumber 1
+            #    Progress start
+            #    LabelUpdate .frmStatus.frmProgress.lblProgress "[::msgcat::mc "Opened file in progress"]"
+            set linesCount [$text count -lines $lineNumber.0 end]
+            foreach item [$tree nodes $node] {
+                puts $item
+                $tree delete $item
+            }
+            for {set lineNumber 1} {$lineNumber <= $linesCount} {incr lineNumber} {
+                set line [$text get $lineNumber.0 $lineNumber.end]
+                #puts $line
+                puts $fhandle $line
+                ReadFileStructure "updateFile" $line $lineNumber $tree $node
+                #exit
+            }
             close $fhandle
             EditFlag $node [file join $dir $file] 0
         }
@@ -596,6 +610,8 @@ proc FileOperation::FileDialog {tree operation} {
         return 0
     }
 }
+
+
 
 
 

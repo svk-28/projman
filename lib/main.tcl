@@ -156,7 +156,7 @@ $m add separator
 $m add command -label [::msgcat::mc "Print"] -command PrintDialog\
 -font $fontNormal -accelerator "Ctrl+P"
 $m add separator
-$m add command -label [::msgcat::mc "Settings"] -command Settings -font $fontNormal
+$m add command -label [::msgcat::mc "Settings"] -command {Settings $noteBook} -font $fontNormal
 $m add separator
 $m add command -label [::msgcat::mc "Exit"] -command Quit -font $fontNormal -accelerator "Ctrl+Q"
 
@@ -376,7 +376,6 @@ $noteBook bindtabs <Button-3> {catch [PopupMenuTab .popupTabs %X %Y]}
 
 #bind . <Control-udiaeresis> PageTab
 #bind . <Control-M> PageTab
-
 bind . <Control-Next> {PageTab 1}
 bind . <Control-Prior> {PageTab -1}
 
@@ -393,6 +392,8 @@ if {[info exists workingProject]} {
         TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
     }
 }
+
+
 
 
 

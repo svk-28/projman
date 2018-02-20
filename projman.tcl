@@ -112,36 +112,36 @@ source [file join $dataDir main.tcl]
 
 #option add *tree.foreground red widgetDefault
 # Set colors for widgets
-option add *Frame.Background $editor(bg) startupFile
-option add *ScrollableFrame.Background $editor(bg) startupFile
-option add *ScrolledWindow.Background $editor(bg) startupFile
-option add *Button.Foreground $editor(fg) startupFile
-option add *Button.Background $editor(bg) startupFile
+option add *Frame.Background $editor(bg) interactive
+option add *ScrollableFrame.Background $editor(bg) interactive
+option add *ScrolledWindow.Background $editor(bg) interactive
+option add *Button.Foreground $editor(fg) interactive
+option add *Button.Background $editor(bg) interactive
 option add *Button.activeBackground $editor(bg) userDefault
 option add *Button.activeForeground $editor(fg) userDefault
 
-option add *Entry.Foreground $editor(fg) startupFile
-option add *Entry.Background $editor(bg) startupFile
-option add *Label.Foreground $editor(fg) startupFile
+option add *Entry.Foreground $editor(fg) interactive
+option add *Entry.Background $editor(bg) interactive
+option add *Label.Foreground $editor(fg) interactive
 option add *Label.Background $editor(bg) interactive
-option add *Checkbox.Foreground $editor(fg) startupFile
-option add *Checkbox.Background $editor(bg) startupFile
-option add *Checkbutton.Foreground $editor(fg) startupFile
-option add *Checkbutton.Background $editor(bg) startupFile
-option add *Combobox.Foreground $editor(fg) startupFile
-option add *Combobox.Background $editor(bg) startupFile
-option add *Text.Foreground $editor(fg) startupFile
-option add *Text.Background $editor(bg) startupFile
-option add *Tree.Background $editor(bg) startupFile
-option add *Tree.Foreground $editor(fg) startupFile
-option add *Scrollbar.Background $editor(bg) startupFile
-option add *Canvas.Background $editor(bg) startupFile
-option add *Canvas.Foreground $editor(fg) startupFile
-option add *Node.Foreground $editor(fg) startupFile
-option add *NoteBook.bg $editor(bg) startupFile
-option add *NoteBook.fg $editor(fg) startupFile
-option add *Listbox.Foreground $editor(fg) startupFile
-option add *Listbox.Background $editor(bg) startupFile
+option add *Checkbox.Foreground $editor(fg) interactive
+option add *Checkbox.Background $editor(bg) interactive
+option add *Checkbutton.Foreground $editor(fg) interactive
+option add *Checkbutton.Background $editor(bg) interactive
+option add *Combobox.Foreground $editor(fg) interactive
+option add *Combobox.Background $editor(bg) interactive
+option add *Text.Foreground $editor(fg) interactive
+option add *Text.Background $editor(bg) interactive
+option add *Tree.Background $editor(bg) interactive
+option add *Tree.Foreground $editor(fg) interactive
+option add *Scrollbar.Background $editor(bg) interactive
+option add *Canvas.Background $editor(bg) interactive
+option add *Canvas.Foreground $editor(fg) interactive
+option add *Node.Foreground $editor(fg) interactive
+option add *NoteBook.bg $editor(bg) interactive
+option add *NoteBook.fg $editor(fg) interactive
+option add *Listbox.Foreground $editor(fg) interactive
+option add *Listbox.Background $editor(bg) interactive
 
 #option add *Button.font $guifont userDefault
 #option add *Label.font $guifont userDefault
@@ -175,4 +175,5 @@ option add *Dialog.msg.background $editor(bg)
 #   option add *Entry.HighlightThickness 1 userDefault
 #   
 # 
+
 

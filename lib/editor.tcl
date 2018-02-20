@@ -614,7 +614,7 @@ proc EditFile {tree node fileName} {
     #    set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]] \
     #-background $editor(bg) -foreground $editor(fg)]
     set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]]]
-    
+    puts $w 
     # create array with file names #
     if {[info exists fileList($node)] != 1} {
         set fileList($node) [list $fileName 0]
@@ -643,60 +643,9 @@ proc EditFile {tree node fileName} {
     set lineNumber 1
     #    Progress start
     #    LabelUpdate .frmStatus.frmProgress.lblProgress "[::msgcat::mc "Opened file in progress"]"
-    
-    while {[gets $file line]>=0} {
-        # Insert procedure names into tree #
-        regsub -all {\t} $line "        " line
-        $w.text insert end "$line\n"
-        #        set progress $lineNumber
-        set keyWord ""
-        set procName ""                                                         
-        
-        if {$fileExt == "php" || $fileExt == "phtml"} {
-            regexp -nocase -all -- {(function) (.*?)\(} $line match keyWord procName
-            #puts "$keyWord --- $procName"
-            
-        } else {
-            scan $line "%s%s" keyWord procName
-        }
-        
-        ###################
-        #regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{} string match v1 v2 v3 v4 v5
-        #regexp -nocase -all -line -- {proc (.*) \{(.*)\}} $line match procName params
-        if {[regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{}  $line match v1 v2 v3 v4 params]} {
-            set procName "$v1$v2$v3$v4"  
-            lappend procList($activeProject) [list $procName [string trim $params]]
-            puts "proc $procName $params"
-        }
-        if {[regexp -nocase -all -line -- {set (\w+)} $line match varName]} {
-            #set varList($activeProject) [list [string trim $varName]]
-            #puts "variable $varName"
-        }
-        
-        ###################
-        
-        # && $procName != ""
-        if {$keyWord == "proc" || $keyWord == "let" || $keyWord == "class" || $keyWord == "sub" || $keyWord == "function" || $keyWord == "fun" } {
-            set dot "_"
-            set openBrace [string first "\{" $line]
-            set closeBrace [expr [string first "\}" $line]-1]
-            set var [string range $line $openBrace end]
-            regsub -all ":" $procName "_" prcNode
-            if {$keyWord == "proc" || $keyWord == "sub" || $keyWord == "function"  || $keyWord == "let"} {
-                set img "proc.gif"
-            } elseif {$keyWord == "class"} {
-                set img "class.gif"
-            }
-            if {$keyWord =="proc"} {
-                
-                #$w.text tag add procName $lineNumber.[expr $startPos + $length] $lineNumber.[string wordend $line [expr $startPos + $length +2]]
-            }
-            if {[$tree exists $prcNode$dot$lineNumber] !=1} {
-                $tree insert end $node $prcNode$dot$lineNumber -text $procName \
-                -data "prc_$procName"\
-                -image [Bitmap::get [file join $imgDir $img]] -font $fontNormal
-            }
-        }
+    #puts [$tree nodes $node]
+    while {[gets $file line] >=0} {
+        ReadFileStructure "openFile" $line $lineNumber $tree $node
         incr lineNumber
     }
     close $file
@@ -971,34 +920,55 @@ proc TextOperation {oper} {
     }
     unset nb
 }
+proc ReadFileStructure {mod line lineNumber tree node} {
+    global projDir workDir imgDir  noteBook fontNormal fontBold fileList replace nodeEdit procList
+    global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG activeProject
+    global varList
+    
+    # Insert procedure names into tree #
+    regsub -all {\t} $line "        " line
+    set w $noteBook.f$node
+    if {$mod eq "openFile"} {
+        $w.text insert end "$line\n"
+    }
+    #        set progress $lineNumber
+    set keyWord ""
+    set procName ""                                                         
+    
+    if {$fileExt == "php" || $fileExt == "phtml"} {
+        regexp -nocase -all -- {(function) (.*?)\(} $line match keyWord procName
+        #puts "$keyWord --- $procName"
+    } else {
+        scan $line "%s%s" keyWord procName
+    }
+    
+    ###################
+    #regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{} string match v1 v2 v3 v4 v5
+    #regexp -nocase -all -line -- {proc (.*) \{(.*)\}} $line match procName params
+    if {[regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{}  $line match v1 v2 v3 v4 params]} {
+        set procName "$v1$v2$v3$v4"  
+        lappend procList($activeProject) [list $procName [string trim $params]]
+        puts "proc $procName $params"
+    }
+    if {$keyWord == "proc" || $keyWord == "let" || $keyWord == "class" || $keyWord == "sub" || $keyWord == "function" || $keyWord == "fun" } {
+        set dot "_"
+        set openBrace [string first "\{" $line]
+        set closeBrace [expr [string first "\}" $line]-1]
+        set var [string range $line $openBrace end]
+        regsub -all ":" $procName "_" prcNode
+        if {$keyWord == "proc" || $keyWord == "sub" || $keyWord == "function"  || $keyWord == "let"} {
+            set img "proc.gif"
+        } elseif {$keyWord == "class"} {
+            set img "class.gif"
+        }
+        if {[$tree exists $prcNode$dot$lineNumber] !=1} {
+            $tree insert end $node $prcNode$dot$lineNumber -text $procName \
+            -data "prc_$procName"\
+            -image [Bitmap::get [file join $imgDir $img]] -font $fontNormal
+        }
+    }
+}
+
 #################################### 
 GetOp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

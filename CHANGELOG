@@ -6,6 +6,10 @@
 #########################################################
 
 0.4.5
+20.02.2018
+- Refactoring auto update file structure (tree). Now structure updated when file was saving
+- Refactoring "Settings" dialog
+
 19.02.2018
 - Fix "New file" ctrl+n hotkey
 
@@ -378,8 +382,5 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
-
-
-
 
 

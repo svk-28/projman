@@ -421,3 +421,4 @@ proc AboutDialog {} {
     $w.frmThanks.txtThanks configure -state disable
 }
 
+
