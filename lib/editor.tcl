@@ -626,13 +626,22 @@ proc EditFile {tree node fileName} {
         $noteBook raise $node
         return
     }
+    # Textbox with line numbers
+#      text $w.textLines\
+#      -relief flat -highlightthickness 0 -font $editor(font) -blockcursor true\
+#      -selectborderwidth 0 -selectbackground $editor(selectbg) -width 5 \
+#      -background $editor(bg) -foreground $editor(fg)
+#      pack $w.textLines -side left -fill y -expand true
+    # Editor textbox
     set scrwin [ScrolledWindow $w.scrwin -bg $editor(bg)]
-    pack $scrwin -fill both -expand true
-    text $w.text\
-    -relief sunken -wrap $editor(wrap) -highlightthickness 0 -undo 1 -font $editor(font) -blockcursor true\
-    -selectborderwidth 0 -selectbackground $editor(selectbg) -width 10 -background $editor(bg) -foreground $editor(fg)
+    pack $scrwin -side left -fill both -expand true
+    text $w.text -relief sunken -wrap $editor(wrap) -highlightthickness 0 \
+    -undo 1 -font $editor(font) -blockcursor true -selectborderwidth 0 \
+    -selectbackground $editor(selectbg) -width 10 -background $editor(bg) \
+    -foreground $editor(fg)
     
     pack $w.text -side left -fill both -expand true
+    #$scrwin setwidget $w.textLines 
     $scrwin setwidget $w.text
     
     if {$backUpFileCreate == "Yes"} {file copy -force $fileName "$fileName~"}
@@ -971,4 +980,6 @@ proc ReadFileStructure {mod line lineNumber tree node} {
 
 #################################### 
 GetOp
+
+
 

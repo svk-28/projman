@@ -10,7 +10,7 @@ proc Settings {nBook} {
     global fontNormal fontBold imgDir workDir
     global editor color nb topLevelGeometry
     global main editFrm network
-    global toolBar autoFormat backUpDel backUpCreate backUpShow localeSet localeList wrapSet wrapList
+    global toolBar autoFormat backUpDel backUpCreate backUpShow showDotFiles localeSet localeList wrapSet wrapList
     set topLevelGeometry [winfo geometry .]
     if {[$nBook index settings] != -1} {
         $nBook delete settings
@@ -20,16 +20,17 @@ proc Settings {nBook} {
     
     # destroy the find window if it already exists
     frame $w.frmMain -borderwidth 1 
-    pack $w.frmMain -side top -fill both -expand 1
+    pack $w.frmMain -side top -fill both -expand true
     frame $w.frmBtn -borderwidth 1 
     pack $w.frmBtn -side top -fill x
     
-    set nb [NoteBook $w.frmMain.noteBook -font $fontBold -side bottom -bg $editor(bg) -fg $editor(fg)]
+    set nb [NoteBook $w.frmMain.noteBook -font $fontBold \
+    -side bottom -bg $editor(bg) -fg $editor(fg)]
     pack $nb -fill both -expand true -padx 2 -pady 2
     
-    button $w.frmBtn.btnFind -text [::msgcat::mc "Save"] -font $fontNormal -width 12 -relief groove \
-    -bg $editor(bg) -fg $editor(fg) \
-    -command {
+    button $w.frmBtn.btnFind -text [::msgcat::mc "Save"] \
+    -font $fontNormal -width 12 -relief flat \
+    -bg $editor(bg) -fg $editor(fg) -command {
         file copy -force [file join $workDir projman.conf] [file join $workDir projman.conf.old]
         set file [open [file join $workDir projman.conf] w]
         puts $file "###########################################################"
@@ -67,7 +68,7 @@ proc Settings {nBook} {
         } else {
             puts $file "set backUpFileDelete \"Yes\""
         }
-        if {$dotFileShow == "false"} {
+        if {$showDotFiles == "false"} {
             puts $file "set dotFileShow \"No\""
         } else {
             puts $file "set dotFileShow \"Yes\""
@@ -131,14 +132,14 @@ proc Settings {nBook} {
         #destroy $w
         .frmBody.frmWork.noteBook delete settings
     }
-    button $w.frmBtn.btnCancel -text [::msgcat::mc "Close"] -relief groove -width 12\
+    button $w.frmBtn.btnCancel -text [::msgcat::mc "Close"] -relief flat -width 12\
     -font $fontNormal -command "destroy $w; $nBook delete settings " -bg $editor(bg) -fg $editor(fg)
     pack $w.frmBtn.btnFind $w.frmBtn.btnCancel -fill x -padx 5 -pady 5 -side right
     
     ##################  MAIN PREF ##########################
     set main [$nb insert end main -text "[::msgcat::mc "Main"]"]
     
-    set scrwin [ScrolledWindow $main.scrwin -relief groove -bd 2 -bg $editor(bg)]
+    set scrwin [ScrolledWindow $main.scrwin -relief flat -bd 2 -bg $editor(bg)]
     #pack $scrwin -fill both -expand true
     set scrfrm [ScrollableFrame $main.frm  -bg $editor(bg)]
     pack $scrwin -fill both -expand true
@@ -146,7 +147,8 @@ proc Settings {nBook} {
     
     $scrwin setwidget $scrfrm
     set main [$scrfrm getframe]
-    
+    label $main.lblWinTitle -text [::msgcat::mc "Main settings"] -height 2 -font $fontBold
+    pack $main.lblWinTitle -side top -fill x -expand true
     set frm_1 [frame $main.frmFontNormal  -bg $editor(bg)]
     label $frm_1.lblFontNormal -text [::msgcat::mc "Font normal"] -width 30\
     -anchor w -font $fontNormal -fg $editor(fg) -bg $editor(bg)
@@ -262,27 +264,30 @@ proc Settings {nBook} {
             -font $fontNormal -onvalue true -offvalue false
     pack $frm_12.lblBackUpDel -side left
     pack $frm_12.chkBackUpDel -side left
+    
     set frm_13 [frame $main.frmDotFilesShow -bg $editor(bg)]
     label $frm_13.lblDotFilesShow -text [::msgcat::mc "Show dot files"]\
-            -width 30 -anchor w -font $fontNormal -fg $editor(fg)
+    -width 30 -anchor w -font $fontNormal -fg $editor(fg)
     checkbutton $frm_13.chkDotFilesShow -text "" -variable showDotFiles \
             -font $fontNormal -onvalue true -offvalue false
     pack $frm_13.lblDotFilesShow -side left
     pack $frm_13.chkDotFilesShow -side left
 
     pack $frm_1 $frm_2 $frm_5 $frm_3 $frm_4 $frm_6 $frm_7 \
-    $frm_8 $frm_9 $frm_10 $frm_11 $frm_12  $frm_13 -side top -fill both -expand true
+    $frm_8 $frm_9 $frm_10 $frm_11 $frm_12  $frm_13 -side top -fill both -expand true -padx 5 -pady 2
     
     #################### EDITOR PREF #########################
     set editFrm [$nb insert end editor -text "[::msgcat::mc "Editor"]"]
     
-    set scrwin [ScrolledWindow $editFrm.scrwin  -relief groove -bd 2 -bg $editor(bg)]
+    set scrwin [ScrolledWindow $editFrm.scrwin  -relief flat -bd 2 -bg $editor(bg)]
     set scrfrm [ScrollableFrame $editFrm.frm -bg $editor(bg)]
-    pack $scrwin -fill both -expand true
-    pack $scrfrm -fill both -expand true
+    pack $scrwin -fill both -expand true -fill both
+    pack $scrfrm -fill both -expand true -fill both
     $scrwin setwidget $scrfrm
     
     set editFrm [$scrfrm getframe]
+    label $editFrm.lblTitle -text [::msgcat::mc "Editor settings"] -height 2 -font $fontBold
+    pack $editFrm.lblTitle -side top -fill x -expand true
     
     set frm_13 [frame $editFrm.frmEditorFont -bg $editor(bg)]
     label $frm_13.lblEditorFont -text [::msgcat::mc "Editor font"] -width 30\
@@ -596,8 +601,10 @@ proc Settings {nBook} {
     pack $frm_41.txtColorBraceQuad -side left -fill x -expand true
     pack $frm_41.btnColorBraceQuad -side left
     
-    pack $frm_13 $frm_14 $frm_15 $frm_28 $frm_21 $frm_22 $frm_32 $frm_33 $frm_34 $frm_16 $frm_17 $frm_35 $frm_36 $frm_18 $frm_19 $frm_20\
-    $frm_23 $frm_41 $frm_24 $frm_25 $frm_26 $frm_27 $frm_37 $frm_38 $frm_39 $frm_40  -side top -fill x -expand true
+    pack $frm_13 $frm_14 $frm_15 $frm_28 $frm_21 $frm_22 $frm_32 \
+    $frm_33 $frm_34 $frm_16 $frm_17 $frm_35 $frm_36 $frm_18 $frm_19 \
+    $frm_20 $frm_23 $frm_41 $frm_24 $frm_25 $frm_26 $frm_27 $frm_37 \
+    $frm_38 $frm_39 $frm_40  -side top -fill x -expand true -padx 5 -pady 2
     
     ################### NETWORK PREF #########################
     set network [$nb insert end network -text "[::msgcat::mc "Network"]" -state disabled]
@@ -674,7 +681,7 @@ proc LoadSettings {} {
     global fontNormal imgDir workDir msgDir
     global editor color nb
     global main editFrm network
-    global toolBar autoFormat backUpDel backUpCreate backUpShow localeSet localeList wrapSet wrapList
+    global toolBar autoFormat backUpDel backUpCreate backUpShow showDotFiles localeSet localeList wrapSet wrapList
     
     ## load .conf file ##
     set file [open [file join $workDir projman.conf] r]
@@ -719,6 +726,13 @@ proc LoadSettings {} {
                         set backUpDel "true"
                     } else {
                         set backUpDel "false"
+                    }
+                }
+                dotFileShow {
+                    if {$var == "Yes"} {
+                        set showDotFiles "true"
+                    } else {
+                        set showDotFiles "false"
                     }
                 }
                 projDir {InsertEnt $main.frmProjDir.txtProjDir "$var"}
@@ -814,6 +828,11 @@ proc SaveSettings {} {
     } else {
         puts $file "set backUpFileDelete \"Yes\""
     }
+    if {$showDotFiles == "false"} {
+        puts $file "set dotFileShow \"No\""
+    } else {
+        puts $file "set dotFileShow \"Yes\""
+    }
     puts $file "\n# Don't edit this line"
     puts $file "# Directorys Settings #"
     puts $file "set projDir \"[$main.frmProjDir.txtProjDir get]\""
@@ -872,4 +891,8 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
+
+
+
+
 

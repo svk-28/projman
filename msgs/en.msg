@@ -56,6 +56,7 @@
 ::msgcat::mcset en "Editor font"
 ::msgcat::mcset en "Editor font bold"
 ::msgcat::mcset en "Error open URL"
+::msgcat::mcset en "Editor settings"
 ::msgcat::mcset en "Exit"
 ::msgcat::mcset en "File"
 ::msgcat::mcset en "File already exists. Overwrite?"
@@ -86,6 +87,7 @@
 ::msgcat::mcset en "Make RPM"
 ::msgcat::mcset en "Make archive"
 ::msgcat::mcset en "Make backup files"
+::msgcat::mcset en "Main settings"
 ::msgcat::mcset en "Modifying the Registry..."
 ::msgcat::mcset en "Must be one file select!"
 ::msgcat::mcset en "Must be one or two file select!"
@@ -152,6 +154,7 @@
 ::msgcat::mcset en "Selection color"
 ::msgcat::mcset en "Settings"
 ::msgcat::mcset en "Show backup files"
+::msgcat::mcset en "Show dot files"
 ::msgcat::mcset en "Split edit window"
 ::msgcat::mcset en "Interpretator"
 ::msgcat::mcset en "Text autoformat"
@@ -170,5 +173,7 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
+
+
 
 

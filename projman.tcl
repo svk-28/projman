@@ -3,11 +3,12 @@
 exec wish "$0" -- "$@"
 
 ###############################################
-#                Tcl/Tk Project Manager                                   #
-#                Distrubuted under GPL                                    #
-# Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru #
-# Author: Sergey Kalinin banzaj28@yandex.ru                #
-##############################################
+#        Tcl/Tk Project Manager               #
+#         Distrubuted under GPL               #
+# Copyright (c) "Sergey Kalinin", 2001,       #
+# Home: http://nuk-svk.ru                     #
+# Author: Sergey Kalinin banzaj28@yandex.ru   #
+###############################################
 
 ########## VERSION INFORMATION ##########
 set ver "0.4.5"
@@ -175,5 +176,7 @@ option add *Dialog.msg.background $editor(bg)
 #   option add *Entry.HighlightThickness 1 userDefault
 #   
 # 
+
+
 
 

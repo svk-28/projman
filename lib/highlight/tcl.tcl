@@ -51,9 +51,30 @@ proc HighLightTCL {text line lineNumber node} {
                 $text tag add bold $lineNumber.$startPos $lineNumber.$endPos
             }            
             if {[string trim $word]=="proc"} {
-                $text tag add procName $lineNumber.[expr $startPos + $length] $lineNumber.[string wordend $line [expr $startPos + $length +2]]
+                #$text tag add procName $lineNumber.[expr $startPos + $length] $lineNumber.[string wordend $line [expr $startPos + $length +2]]
             }
             set startPos [expr $endPos + 1]
+        } else {
+            break
+        }
+    }
+    
+    # Procedure name highlight
+    set workLine $line
+    while {$workLine != ""} {
+    #regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{}  $workLine match v1 v2 v3 v4 params
+   set endPos [string first "\{" $workLine]
+    #puts $workLine
+       if {[regexp -nocase -all -line -- {proc (::|)(\w+)(::|-|_|)(\w+)(.+) \{(.*)\} \{} $workLine match v1 v2 v3 v4 v5 params]} {
+           set word "$v1$v2$v3$v4$v5"
+           puts $word
+           set length [string length $word]
+           set startPos [string first [string trim $word] $line]
+           #set endPos [expr $startPos + $length]
+           set workLine [string range $workLine $length end]
+           puts "$length $startPos $endPos\n$workLine"
+           $text tag add procName $lineNumber.$startPos $lineNumber.$endPos
+           set startPos [expr $endPos + 1]
         } else {
             break
         }
@@ -212,5 +233,4 @@ proc HighLightTCL {text line lineNumber node} {
         $text tag remove comments $lineNumber.0 $lineNumber.end
     }
 }
-
 

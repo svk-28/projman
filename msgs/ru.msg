@@ -58,6 +58,7 @@
 ::msgcat::mcset ru "Editor foreground" "Цвет шрифта"
 ::msgcat::mcset ru "Editor font" "Шрифт редактора"
 ::msgcat::mcset ru "Editor font bold" "Шрифт редактора жирный"
+::msgcat::mcset ru "Editor settings" "Настройки редактора"
 ::msgcat::mcset ru "Encode" "Перекодировка"
 ::msgcat::mcset ru "Error open URL" "Ошибка открытия URL"
 ::msgcat::mcset ru "Exit" "Выход"
@@ -91,6 +92,7 @@
 ::msgcat::mcset ru "Make archive" "Создать архив"
 ::msgcat::mcset ru "Make backup files" "Создавать временные файлы"
 ::msgcat::mcset ru "Main" "Общие"
+::msgcat::mcset ru "Main settings" "Общие настройки"
 ::msgcat::mcset ru "Modules" "Модули"
 ::msgcat::mcset ru "Modifying the Registry..." "Внесение изменений в реестр"
 ::msgcat::mcset ru "Must be one file select!" "Вы должны выбрать только один файл"
@@ -157,6 +159,7 @@
 ::msgcat::mcset ru "Selection color" "Цвет выделения"
 ::msgcat::mcset ru "Settings" "Установки"
 ::msgcat::mcset ru "Show backup files" "Показывать временные файлы"
+::msgcat::mcset ru "Show dot files" "Показывать скрытые файлы"
 ::msgcat::mcset ru "Split edit window" "Разделить окно редактора"
 ::msgcat::mcset ru "Text autoformat" "Автоформат текста"
 ::msgcat::mcset ru "TGZ dir" "Каталог TGZ"
@@ -174,6 +177,8 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
+
+
 
 
 
