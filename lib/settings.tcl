@@ -141,7 +141,7 @@ proc Settings {nBook} {
     
     set scrwin [ScrolledWindow $main.scrwin -relief flat -bd 2 -bg $editor(bg)]
     #pack $scrwin -fill both -expand true
-    set scrfrm [ScrollableFrame $main.frm  -bg $editor(bg)]
+    set scrfrm [ScrollableFrame $main.frm  -bg $editor(bg) -constrainedwidth true]
     pack $scrwin -fill both -expand true
     pack $scrfrm -fill both -expand true
     
@@ -280,7 +280,7 @@ proc Settings {nBook} {
     set editFrm [$nb insert end editor -text "[::msgcat::mc "Editor"]"]
     
     set scrwin [ScrolledWindow $editFrm.scrwin  -relief flat -bd 2 -bg $editor(bg)]
-    set scrfrm [ScrollableFrame $editFrm.frm -bg $editor(bg)]
+    set scrfrm [ScrollableFrame $editFrm.frm -bg $editor(bg) -constrainedwidth true]
     pack $scrwin -fill both -expand true -fill both
     pack $scrfrm -fill both -expand true -fill both
     $scrwin setwidget $scrfrm
@@ -891,6 +891,7 @@ proc SaveSettings {} {
     $noteBook delete settings
     $noteBook  raise [$noteBook page end]
 }
+
 
 
 
