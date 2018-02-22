@@ -129,9 +129,9 @@ menubutton .frmMenu.mnuFile -text [::msgcat::mc "File"] -menu .frmMenu.mnuFile.m
 set m [menu .frmMenu.mnuFile.m -bg $editor(bg) -fg $editor(fg)]
 $m add cascade -label [::msgcat::mc "New"] -menu $m.new -font $fontNormal
 set mn [menu $m.new  -bg $editor(bg) -fg $editor(fg)]
-$mn add command -label [::msgcat::mc "New file"] -command {AddToProjDialog file}\
+$mn add command -label [::msgcat::mc "New file"] -command {AddToProjDialog file [$noteBookFiles raise]}\
 -font $fontNormal -accelerator "Ctrl+N"
-$mn add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog directory}\
+$mn add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog directory [$noteBookFiles raise]}\
 -font $fontNormal -accelerator "Ctrl+N"
 $mn add command -label [::msgcat::mc "New project"] -command {NewProjDialog "new"}\
 -font $fontNormal
@@ -222,8 +222,8 @@ bind . <F8> {MakeProj compile proj}
 bind . <Control-F8> {MakeProj compile file}
 bind . <F9> {MakeProj run proj}
 bind . <Control-F9> {MakeProj run file}
-bind . <Control-ograve> {AddToProjDialog file}
-bind . <Control-n> {AddToProjDialog file}
+bind . <Control-ograve> {AddToProjDialog file [$noteBookFiles raise]}
+bind . <Control-n> {AddToProjDialog file [$noteBookFiles raise]}
 #bind . <Control-ocircumflex> AddToProjDialog
 #bind . <Control-a> AddToProjDialog
 bind . <Control-eacute> Quit
@@ -315,12 +315,14 @@ bind $frmTree.tree.c <Return> {
     TreeDoubleClick $tree $node
 }
 
+$noteBookFiles bindtabs  <ButtonRelease-1> "FileNotePageRaise [$noteBookFiles raise]"
+
 ## POPUP FILE-MENU ##
 set m .popupFile
 menu $m -font $fontNormal -bg $editor(bg) -fg $editor(fg)
-$m add command -label [::msgcat::mc "New file"] -command {AddToProjDialog file}\
+$m add command -label [::msgcat::mc "New file"] -command {AddToProjDialog file [$noteBookFiles raise]}\
 -font $fontNormal -accelerator "Ctrl+N"
-$m add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog directory}\
+$m add command -label [::msgcat::mc "New directory"] -command {AddToProjDialog directory [$noteBookFiles raise]}\
 -font $fontNormal -accelerator "Alt + Ctrl+N"
 $m add command -label [::msgcat::mc "Open"] -command {FileDialog [$noteBookFiles raise] open}\
 -font $fontNormal -accelerator "Ctrl+O"        -state disable
@@ -342,7 +344,7 @@ $m add command -label [::msgcat::mc "Compile file"] -command {MakeProj compile f
 $m add command -label [::msgcat::mc "Run file"] -command {MakeProj run file} -font $fontNormal \
 -accelerator "Ctrl+F9"
 $m add separator
-$m add command -label [::msgcat::mc "Add to existing project"] -command {AddToProjDialog ""} \
+$m add command -label [::msgcat::mc "Add to existing project"] -command {AddToProjDialog "" [$noteBookFiles raise]} \
 -font $fontNormal -state disable
 $m add command -label [::msgcat::mc "Add as new project"] -command {OpenProj [$noteBookFiles raise]} -font $fontNormal
     
@@ -392,12 +394,4 @@ if {[info exists workingProject]} {
         TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
     }
 }
-
-
-
-
-
-
-
-
 

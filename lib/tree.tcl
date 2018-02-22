@@ -387,8 +387,13 @@ proc GetProj {tree} {
 ## SHOW PUP-UP MENUS ## 
 proc PopupMenuFileTree {treeFiles x y} {
     #global fontNormal fontBold imgDir activeProject
-    set node [$treeFiles selection get]
-    $treeFiles selection set $node
+    #set node [$treeFiles selection get]
+    if {[$treeFiles selection get] != ""} {
+        set node [$treeFiles selection get]
+        $treeFiles selection set $node
+    } else {
+        return
+    }
     #set item [$treeFiles itemcget $node -data]
     if {[info exists fileList($node)] != 1} {
         #        set fileList($node) $item
@@ -398,16 +403,14 @@ proc PopupMenuFileTree {treeFiles x y} {
 
 proc PopupMenuTree {x y} {
     global tree fontNormal fontBold imgDir activeProject
-    set node [$tree selection get]
-    if {$node ==""} {
-        set answer [tk_messageBox\
-        -message "[::msgcat::mc "Not found active project"]"\
-        -type ok -icon warning]
-        case $answer {
-            ok {return 0}
-        }
+    if {[$tree selection get] != ""} {
+        set node [$tree selection get]
+        $tree selection set $node
+    } else {
+        return
     }
-    $tree selection set $node
+    
+    #$tree selection set $node
     set item [$tree itemcget $node -data]
     if {[string range $item 0 2] == "prj"} {
         set activeProject [string range $item 4 end]
@@ -425,7 +428,7 @@ proc PopupMenuTree {x y} {
 ## OPEN TREE PROCEDURE
 proc TreeOpen {node} {
     global fontNormal tree projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    
+    set tree [GetTreeForNode $node]
     $tree selection set $node
     set item [$tree itemcget $node -data]
     if {[string range $item 0 2] == "prj"} {
@@ -449,7 +452,7 @@ proc TreeOpen {node} {
 ## CLOSE TREE PROCEDURE ##
 proc TreeClose {node} {
     global fontNormal tree projDir workDir activeProject fileList noteBook findString imgDir fontBold
-    
+    set tree [GetTreeForNode $node]
     $tree selection set $node
     set item [$tree itemcget $node -data]
     if {[string range $item 0 2] == "prj"} {
@@ -582,7 +585,15 @@ proc GetTreeForNode {node} {
     }
     
 }
-
-
-
+proc FileNotePageRaise {nb s} {
+    global workingTree
+    if {$nb eq "files"} {
+        set workingTree .frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles
+    } elseif {$nb eq "projects"} {
+        set workingTree .frmBody.frmCat.noteBook.fprojects.frmTree.tree 
+    } else {
+        puts "Error node"
+        return
+    }
+}
 

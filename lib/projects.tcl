@@ -1,12 +1,10 @@
-#######################################
-#                Tcl/Tk Project Manager
-#        Distributed under GNU Public License
+##################################################
+#          Tcl/Tk Project Manager
+#   Distributed under GNU Public License
 # Author: Serge Kalinin banzaj28@yandex.ru
 # Copyright (c) "https://nuk-svk.ru", 2018, 
 # Home: https://bitbucket.org/svk28/projman
-#######################################
-## ADD FILE INTO PROJECTS ##
-
+##################################################
 
 proc NewProj {type proj l} {
     global  fontNormal fontBold tree projDir workDir activeProject fileList noteBook imgDir prjDir
@@ -499,21 +497,23 @@ proc AddNewProjectIntoTree {proj} {
     }
 }
 
-proc AddToProj {fileName mode} {
-    global projDir workDir activeProject tree noteBook fontNormal imgDir tree
+## ADD FILE INTO PROJECTS ##
+proc AddToProj {fileName mode workingTree} {
+    global projDir workDir activeProject noteBook fontNormal imgDir
     set type [string trim [file extension $fileName] {.}]
     destroy .addtoproj
     
-    set node [$tree selection get]
-    set fullPath [$tree itemcget $node -data]
-    
+    set node [$workingTree selection get]
+    #puts "$fileName $mode $workingTree $node"
+    set fullPath [$workingTree itemcget $node -data]
     if {[file isdirectory $fullPath] == 1} {
         set dir $fullPath
         set parentNode $node
     } else {
         set dir [file dirname $fullPath]
-        set parentNode [$tree parent $node]
+        set parentNode [$workingTree parent $node]
     }
+    #puts "$node $parentNode $workingTree $fullPath"
     
     if {$type == "tcl"} {
         set img "tcl"
@@ -548,12 +548,12 @@ proc AddToProj {fileName mode} {
     set name [file rootname $fileName]
     set ext [string range [file extension $fileName] 1 end]
     set subNode "$name$dot$ext"
-    $tree insert end $parentNode $subNode -text $fileName \
+    $workingTree insert end $parentNode $subNode -text $fileName \
     -data [file join $dir $fileName] -open 1\
     -image [Bitmap::get [file join $imgDir $img.gif]]\
     -font $fontNormal
-    if {[$tree itemcget $activeProject -open] == 0} {
-        $tree itemconfigure $activeProject -open 1
+    if {[$workingTree itemcget $parentNode -open] == 0} {
+        $workingTree itemconfigure $parentNode -open 1
     }
     set file [file join $dir $fileName]
     
@@ -565,17 +565,25 @@ proc AddToProj {fileName mode} {
     EditFile [GetTreeForNode $subNode] $subNode [file join $dir $fileName]
 }
 ## ADD FILE INTO PROJECT DIALOG##
-proc AddToProjDialog {mode} {
-    global projDir workDir activeProject imgDir tree mod
+proc AddToProjDialog {mode node} {
+    global projDir workDir activeProject imgDir mod workingTree
     set mod $mode
-    if {$activeProject == ""} {
-        set answer [tk_messageBox\
-        -message "[::msgcat::mc "Not found active project"]"\
-        -type ok -icon warning]
-        case $answer {
-            ok {return 0}
-        }
+    if {$node eq "files"} {
+        set workingTree .frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles
+    } elseif {$node eq "projects"} {
+        set workingTree .frmBody.frmCat.noteBook.fprojects.frmTree.tree 
+    } else {
+        puts "Error node"
+        return
     }
+    #     if {$activeProject == ""} {
+#         set answer [tk_messageBox\
+#         -message "[::msgcat::mc "Not found active project"]"\
+#         -type ok -icon warning]
+#         case $answer {
+#             ok {return 0}
+#         }
+#     }
     
     set w .addtoproj
     if {[winfo exists $w]} {
@@ -596,17 +604,19 @@ proc AddToProjDialog {mode} {
     entry $w.frmCanv.entImgTcl
     pack $w.frmCanv.lblImgTcl $w.frmCanv.entImgTcl -expand true -padx 5 -pady 5 -side top
     
-    button $w.frmBtn.btnOk -text [::msgcat::mc "Create"] -relief groove -command {
-        AddToProj [.addtoproj.frmCanv.entImgTcl get] $mod
-    }
+    button $w.frmBtn.btnOk -text [::msgcat::mc "Create"] -relief groove \
+    -command {AddToProj [.addtoproj.frmCanv.entImgTcl get] $mod $workingTree}
+    
     button $w.frmBtn.btnCancel -text [::msgcat::mc "Close"] -command "destroy $w" -relief groove
     pack $w.frmBtn.btnOk $w.frmBtn.btnCancel -padx 2 -pady 2 -fill x -side left
     
     bind $w <Escape> "destroy .addtoproj"
     bind $w.frmCanv.entImgTcl <Return> {
-        AddToProj [.addtoproj.frmCanv.entImgTcl get] $mod
+        AddToProj [.addtoproj.frmCanv.entImgTcl get] $mod $workingTree
     }
     focus -force $w.frmCanv.entImgTcl
+    puts "$node $workingTree $mode"
+    
     #unset type
 }
 proc AddToProjDialog_ {} {
@@ -986,28 +996,4 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

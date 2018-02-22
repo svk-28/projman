@@ -1,14 +1,16 @@
-#########################################################
+##########################################################
 #                Tcl/Tk Project Manager
 #        Distributed under GNU Public License
 # Copyright (c) "Sergey Kalinin", 2001, http://nuk-svk.ru
 # Author: Sergey Kalinin banzaj28@yandex.ru
-#########################################################
+##########################################################
 
 0.4.5
 22.02.2018
 - Refactoring Settigs procedure source code
 - Some changes into messages files (localisation)
+- Fixed AddToProj procedure for file browser tree
+- Disable OpComplite procedure
 
 20.02.2018
 - Refactoring auto update file structure (tree). Now structure updated when file was saving
@@ -388,8 +390,3 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
-
-
-
-
-

@@ -20,6 +20,29 @@ proc GetOp {} {
     set opList(method) "\{\} \{\n\n\}"
     set opList(class) "\{\n\n\}"
 }
+## COMPLITE PRODEDURE AND OPERATOR ##
+proc OpComplite {text fileExt node} {
+    global opList autoFormat fileList
+    if {$node == "newproj" || $node == "settings" || $node == "about"} {return}
+    
+    set pos [$text index insert]
+    set line [lindex [split $pos "."] 0]
+    set posNum [lindex [split $pos "."] 1]
+    set string [$text get $line.0 $pos]
+    set first [string wordstart $string [expr $posNum-1]]
+    set op [string range $string $first $posNum]
+    if {[info exists opList($op)] == 1} {
+        if {[string match "*\{" [$text get $pos $line.end]] != 1} {
+            $text insert $pos $opList($op)
+            set x [expr $posNum + 2]
+            $text mark set insert $line.$posNum
+            $text see $line.$posNum
+        } else {
+            return
+        }
+    }
+}
+
 ## Alexander Dederer (aka Korwin) dederer-a@mail.ru ##
 ## SETTING DEFAULT STYLE FOR TEXT WIDGET    ##
 proc SetDefStyle { text args } {
@@ -364,28 +387,6 @@ proc Replace {text incr} {
     }
     #    focus -force .replace
 }
-## COMPLITE PRODEDURE AND OPERATOR ##
-proc OpComplite {text fileExt node} {
-    global opList autoFormat fileList
-    if {$node == "newproj" || $node == "settings" || $node == "about"} {return}
-    
-    set pos [$text index insert]
-    set line [lindex [split $pos "."] 0]
-    set posNum [lindex [split $pos "."] 1]
-    set string [$text get $line.0 $pos]
-    set first [string wordstart $string [expr $posNum-1]]
-    set op [string range $string $first $posNum]
-    if {[info exists opList($op)] == 1} {
-        if {[string match "*\{" [$text get $pos $line.end]] != 1} {
-            $text insert $pos $opList($op)
-            set x [expr $posNum + 2]
-            $text mark set insert $line.$posNum
-            $text see $line.$posNum
-        } else {
-            return
-        }
-    }
-}
 ## OPEN AND CLOSE BRACE HIGHLIGHT ##
 proc BraceHighLight {text} {
     set pos [$text index insert]
@@ -416,37 +417,6 @@ proc PageTab {key} {
     }
 }
 
-proc _PageTab {} {
-    global noteBook tree fileList editor
-    set nodeList [$noteBook pages 0 end]
-    set length [llength $nodeList]
-    set node [$noteBook raise]
-    set nodeIndex [$noteBook index $node]
-    if {$nodeIndex == [expr $length-1]} {
-        set nextNode [$noteBook page 0]
-    } else {
-        set nextNode [$noteBook page [expr $nodeIndex + 1]]
-    }
-    $noteBook raise $nextNode
-    
-    if {$nextNode == "newproj" || $nextNode == "settings" || $nextNode == "about" || $nextNode == "debug"} {
-        return
-    } else {
-        $tree selection set $nextNode
-        $tree see $nextNode
-        set item [$tree itemcget $nextNode -data]
-        focus -force $noteBook.f$nextNode.text
-        LabelUpdate .frmStatus.frmHelp.lblHelp "[FileAttr $item]"
-        LabelUpdate .frmStatus.frmFile.lblFile "[file size $item] b."
-        if {[lindex $fileList($nextNode) 1] == 0} {
-            LabelUpdate .frmStatus.frmProgress.lblProgress ""            
-            $noteBook itemconfigure $node -foreground $editor(nbNormal)
-        } else {
-            LabelUpdate .frmStatus.frmProgress.lblProgress [::msgcat::mc "File modify"]
-            $noteBook itemconfigure $node -foreground $editor(nbModify)
-        }
-    }
-}
 ## RAISED NOTEBOOK TAB IF CLICK MOUSE BUTTON ##
 proc PageRaise {tree node} {
     global noteBook fileList editor nodeEdit noteBookFiles
@@ -744,7 +714,7 @@ proc EditFile {tree node fileName} {
     bind $text <Key-space> {
         if {$nodeEdit == ""} {return}
         set textEdit "$noteBook.f$nodeEdit.text"
-        OpComplite $textEdit $fileExt $nodeEdit
+        #OpComplite $textEdit $fileExt $nodeEdit
         if {[lindex $fileList($nodeEdit) 1] == 0} {
             set fileList($nodeEdit) [list [lindex $fileList($nodeEdit) 0] 1]
             LabelUpdate .frmStatus.frmProgress.lblProgress [::msgcat::mc "File modify"]
@@ -980,7 +950,4 @@ proc ReadFileStructure {mod line lineNumber tree node} {
 
 #################################### 
 GetOp
-
-
-
 
