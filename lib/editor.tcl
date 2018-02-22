@@ -513,7 +513,7 @@ proc TabIns {text} {
                 incr shouldBeSpaces $tabSize
             } else  {
                 incr shouldBeSpaces
-            }
+            }            
         }
         #see last symbol in the prev String.
         set lastSymbol [string index $prevText [expr {[string length $prevText] - 1}]]
@@ -980,6 +980,7 @@ proc ReadFileStructure {mod line lineNumber tree node} {
 
 #################################### 
 GetOp
+
 
 
 

@@ -290,7 +290,7 @@ FileTree::create $nbFiles
 set frmTree [ScrolledWindow $nbProjects.frmTree -bg $editor(bg)]
 global tree noteBook
 set tree [Tree $frmTree.tree \
--relief sunken -borderwidth 1 -width 5 -height 5 -highlightthickness 1\
+-relief sunken -borderwidth 1 -width 3 -height 5 -highlightthickness 1\
 -redraw 0 -dropenabled 1 -dragenabled 1 -dragevent 3 \
 -background $editor(bg) -selectbackground $editor(selectbg) -selectforeground white\
 -droptypes {
@@ -392,6 +392,8 @@ if {[info exists workingProject]} {
         TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
     }
 }
+
+
 
 
 
