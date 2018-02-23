@@ -10,5 +10,5 @@ pipelines:
   default:
     - step:
         script:
-          - tar -czvf projman-last.tgz *
-          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-last.tgz
+          - tar -czvf projman-latest.tgz *
+          - curl ftp://nuk-svk.ru --user $FTP_USER:$FTP_PASS --upload-file projman-latest.tgz
