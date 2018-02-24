@@ -91,7 +91,9 @@ proc GetFiles {tree parent dir} {
 ## GETTING PROJECT NAMES FROM DIR AND PUTS INTO 
 proc GetProj {tree} {
     global projDir workDir fontNormal imgDir module
-    set rList ""                     
+    set rList ""
+    #set tree .frmBody.frmCat.noteBook.fprojects.frmTree.tree 
+        
     if {[catch {cd $workDir}] != 0} {
         return ""
     }
@@ -109,12 +111,12 @@ proc GetProj {tree} {
             }
             if {$keyWord == "ProjectDirName"} {
                 set projList($prjName) [file dirname $string]
-                #puts "$projList($prjName) - $string"
+                #puts "$tree $projList($prjName) - $prjName - $string"
                 $tree insert end root $prjName -text "$projName" -font $fontNormal \
                 -data "prj_$prjName" -open 0\
                 -image [Bitmap::get [file join $imgDir folder.gif]]
-                puts "GetFiles $tree $prjName $string"
-                GetFiles $tree $project $string
+                #puts "GetFiles $tree $prjName $string"
+                GetFiles $tree $prjName $string
                 #$tree itemconfigure $prjName -open 1
                 
             }
@@ -335,5 +337,7 @@ proc FileNotePageRaise {nb s} {
         return
     }
 }
+
+
 
 

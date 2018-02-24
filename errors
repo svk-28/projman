@@ -1,7 +1,0 @@
-Error in startup script: invalid command name "an""
-    while executing
-"an""
-    (file "/home/svk/.projman/projman.conf" line 76)
-    invoked from within
-"source [file join $workDir projman.conf]"
-    (file "/home/svk/projects/tcl/projman/projman.tcl" line 81)

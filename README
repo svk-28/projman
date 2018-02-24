@@ -19,9 +19,8 @@ See INSTALL
 REQUIREMENTS
 
 For UNIX-like OS
-Tcl/Tk http://www.scriptics.com
+Tcl/Tk >= 8.6 http://tcl.tk
 BWidget http://sourceforge.net/projects/tcllib
-CTags
 tcl-img - for image viewer
 
 For WINDOWS
