@@ -98,7 +98,13 @@ proc OverWrite {} {
 ## GOTO LINE DIALOG FORM ##
 proc GoToLine {} {
     global noteBook fileList fontNormal
+    #  toolbar entry used #######
+    focus .frmTool.frmGoto.entGoTo
+    .frmTool.frmGoto.entGoTo delete 0 end
+    return
+    #############################
     set node [$noteBook raise]
+    
     if {$node == "newproj" || $node == "settings" || $node == "about" || $node == ""} {
         return
     }
@@ -654,7 +660,7 @@ proc EditFile {tree node fileName} {
     }    
     bind $text <Control-idiaeresis> GoToLine
     #bind $text <Control-g> GoToLine
-    bind $text <Control-g> {focus .frmTool.frmGoto.entGoTo}
+    bind $text <Control-g> {focus .frmTool.frmGoto.entGoTo; .frmTool.frmGoto.entGoTo delete 0 end}
     bind $text <Control-agrave> Find
     bind $text <Control-f> Find
     bind $text <F3> {FindNext $w.text 1}
@@ -964,7 +970,5 @@ proc ReadFileStructure {mod line lineNumber tree node} {
 
 #################################### 
 GetOp
-
-
 
 

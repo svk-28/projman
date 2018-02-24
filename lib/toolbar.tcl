@@ -70,7 +70,10 @@ proc GoToLineButton {w} {
     -bg $editor(bg) -fg $editor(fg)
     pack $w.text $w.entGoTo -side left -anchor nw  -padx 2 -pady 2
     bind $w.entGoTo <Return> "+ToolBarGoToLineNumber $w"
+    balloon $w.entGoTo set [::msgcat::mc "Goto line"]
 }
+
+
 
 
 

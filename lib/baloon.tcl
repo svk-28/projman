@@ -14,7 +14,7 @@
 #######################################################################
 
 proc balloon { widget action args } {
-    global BALLOON
+    global BALLOON fontNormal
     
     switch -- $action {
         set {
@@ -34,7 +34,8 @@ proc balloon { widget action args } {
                 array set attrFont [font actual fixed]
                 set attrFont(-size) [expr $attrFont(-size) - 2]
                 eval pack [message .bubble.txt -aspect 5000 -bg lightyellow \
-                -font [array get attrFont] -text [lindex $args 0]]
+                -font $fontNormal -text [lindex $args 0]]
+                #-font [array get attrFont] -text [lindex $args 0]]
                 pack .bubble.txt
                 wm transient .bubble .
                 wm overrideredirect .bubble 1
@@ -76,4 +77,5 @@ proc raise_balloon {widget text} {
     wm deiconify .bubble
     update
 } ;# proc raise_balloon
+
 

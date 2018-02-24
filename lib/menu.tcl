@@ -1,4 +1,4 @@
-	######################################################
+        ######################################################
 #                Tcl/Tk Project Manager
 #        Distributed under GNU Public License
 # Author: Sergey Kalinin banzaj28@yandex.ru
@@ -79,16 +79,18 @@ proc GetMenu {m} {
     -command {TextOperation uncomment}
     
     $m add separator
-    $m add command -label [::msgcat::mc "Goto line"] -command GoToLine -font $fontNormal\
-    -accelerator "Ctrl+G"
+    $m add command -label [::msgcat::mc "Goto line"] -command GoToLine -font $fontNormal -accelerator "Ctrl+g"
+    $m add separator
+    
     $m add command -label [::msgcat::mc "Find"] -command Find -font $fontNormal -accelerator "Ctrl+F"
     $m add command -label [::msgcat::mc "Replace"] -command ReplaceDialog -font $fontNormal\
     -accelerator "Ctrl+R"
     $m add cascade -label [::msgcat::mc "Encode"] -menu $m.encode -font $fontNormal
-        set me [menu $m.encode  -bg $editor(bg) -fg $editor(fg)]
-        $me add command -label [::msgcat::mc "KOI8-R"] -command {TextEncode koi8-r} -font $fontNormal
-        $me add command -label [::msgcat::mc "CP1251"] -command {TextEncode cp1251} -font $fontNormal
-        $me add command -label [::msgcat::mc "CP866"] -command {TextEncode cp866} -font $fontNormal
+    set me [menu $m.encode  -bg $editor(bg) -fg $editor(fg)]
+    $me add command -label [::msgcat::mc "KOI8-R"] -command {TextEncode koi8-r} -font $fontNormal
+    $me add command -label [::msgcat::mc "CP1251"] -command {TextEncode cp1251} -font $fontNormal
+    $me add command -label [::msgcat::mc "CP866"] -command {TextEncode cp866} -font $fontNormal
 }
+
 
 
