@@ -1,7 +1,7 @@
 ###########################################################
 #                Tcl/Tk Project Manager                   #
 #                  all procedure file                     #
-# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru  #
+# Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru #
 # Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
 
@@ -141,6 +141,18 @@ proc GoToLineNumber {text w} {
         $text see insert
         Position $text .frmStatus.frmLine.lblLine
     }
+}
+#.frmBody.frmWork.noteBook.f_home_svk_projects_tcl_projman_projman_conf.text
+proc ToolBarGoToLineNumber {w} {
+    global noteBook
+    set lineNumber [$w.entGoTo get]
+    append text $noteBook .f [$noteBook raise] ".text"
+    catch {
+        focus $text
+        $text mark set insert $lineNumber.0
+        $text see $lineNumber.0
+    }
+    #Position ;#$text .frmStatus.frmLine.lblLine
 }
 ## SEARCH DIALOG FORM ##
 set findHistory ""
@@ -579,13 +591,13 @@ proc EditFile {tree node fileName} {
     set replace 0
     set file [file tail $fileName]
     set name [file rootname $file]
-    set fileExt [string range [file extension $fileName] 1 end]
+    set fileExt [string tolower [string range [file extension $fileName] 1 end]]
     set parentNode  [$tree parent $node]
     set project [$tree itemcget $parentNode -data]
     #    set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]] \
     #-background $editor(bg) -foreground $editor(fg)]
     set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]]]
-    puts $w 
+    #puts $w 
     # create array with file names #
     if {[info exists fileList($node)] != 1} {
         set fileList($node) [list $fileName 0]
@@ -641,7 +653,8 @@ proc EditFile {tree node fileName} {
         break
     }    
     bind $text <Control-idiaeresis> GoToLine
-    bind $text <Control-g> GoToLine
+    #bind $text <Control-g> GoToLine
+    bind $text <Control-g> {focus .frmTool.frmGoto.entGoTo}
     bind $text <Control-agrave> Find
     bind $text <Control-f> Find
     bind $text <F3> {FindNext $w.text 1}
@@ -928,7 +941,7 @@ proc ReadFileStructure {mod line lineNumber tree node} {
     if {[regexp -nocase -all -line -- {proc (::|)(\w+)(::|)(\w+) \{(.*)\} \{}  $line match v1 v2 v3 v4 params]} {
         set procName "$v1$v2$v3$v4"  
         lappend procList($activeProject) [list $procName [string trim $params]]
-        puts "proc $procName $params"
+        #puts "proc $procName $params"
     }
     if {$keyWord == "proc" || $keyWord == "let" || $keyWord == "class" || $keyWord == "sub" || $keyWord == "function" || $keyWord == "fun" } {
         set dot "_"
@@ -951,6 +964,7 @@ proc ReadFileStructure {mod line lineNumber tree node} {
 
 #################################### 
 GetOp
+
 
 
 

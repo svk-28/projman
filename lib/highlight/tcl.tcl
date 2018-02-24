@@ -67,12 +67,12 @@ proc HighLightTCL {text line lineNumber node} {
     #puts $workLine
        if {[regexp -nocase -all -line -- {proc (::|)(\w+)(::|-|_|)(\w+)(.+) \{(.*)\} \{} $workLine match v1 v2 v3 v4 v5 params]} {
            set word "$v1$v2$v3$v4$v5"
-           puts $word
+           #puts $word
            set length [string length $word]
            set startPos [string first [string trim $word] $line]
            #set endPos [expr $startPos + $length]
            set workLine [string range $workLine $length end]
-           puts "$length $startPos $endPos\n$workLine"
+           #puts "$length $startPos $endPos\n$workLine"
            $text tag add procName $lineNumber.$startPos $lineNumber.$endPos
            set startPos [expr $endPos + 1]
         } else {
@@ -233,5 +233,4 @@ proc HighLightTCL {text line lineNumber node} {
         $text tag remove comments $lineNumber.0 $lineNumber.end
     }
 }
-
 

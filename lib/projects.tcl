@@ -515,7 +515,7 @@ proc AddToProj {fileName mode workingTree} {
         set dir [file dirname $fullPath]
         set parentNode [$workingTree parent $node]
     }
-    #puts "$node $parentNode $workingTree $fullPath"
+    #puts ">>>>$node $parentNode $workingTree $fullPath"
     
     if {$type == "tcl"} {
         set img "tcl"
@@ -549,12 +549,12 @@ proc AddToProj {fileName mode workingTree} {
     set dot "_"
     set name [file rootname $fileName]
     set ext [string range [file extension $fileName] 1 end]
-    set subNode "$name$dot$ext"
-    if {[$workingTree exists $subNode] == 1} {
-        puts $count
-        append subNode "_$count"
-        incr count
+    if {$ext ne "" } {
+        set subNode "$parentNode$dot$name$dot$ext"
+    } else {
+        set subNode "$parentNode$dot$name"
     }
+    #puts ">>>>$subNode"
     $workingTree insert end $parentNode $subNode -text $fileName \
     -data [file join $dir $fileName] -open 1\
     -image [Bitmap::get [file join $imgDir $img.gif]]\
@@ -1004,6 +1004,7 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
 
 
 

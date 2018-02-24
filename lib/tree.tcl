@@ -219,10 +219,10 @@ proc TreeOneClick {tree node} {
             return
         }
     } elseif {[file isfile $item] == 1 } {
+        LabelUpdate .frmStatus.frmHelp.lblHelp [FileAttr $item]
         if {[$noteBook index $node] != -1} {
+            PageRaise $tree $node
             if {[file exists $item] == 1} {
-                LabelUpdate .frmStatus.frmHelp.lblHelp [FileAttr $item]
-                PageRaise $tree $node
             }
         }
     } elseif {[string range $item 0 2] == "prc"} {
@@ -337,6 +337,7 @@ proc FileNotePageRaise {nb s} {
         return
     }
 }
+
 
 
 

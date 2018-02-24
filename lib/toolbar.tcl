@@ -46,8 +46,10 @@ proc CreateToolBar {} {
         
         set bboxHelp [ButtonBox .frmTool.bboxHelp -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
         add_toolbar_button $bboxHelp help.png {ShowHelp} [::msgcat::mc "Help"]
-        
-        pack $bboxFile [Separator] $bboxEdit [Separator] $bboxProj [Separator] $bboxHelp -side left -anchor w
+        # GoTo field
+        set frm [frame .frmTool.frmGoto -bg $editor(bg)]
+        GoToLineButton $frm
+        pack $bboxFile [Separator] $bboxEdit [Separator] $bboxProj [Separator] $bboxHelp [Separator] $frm -side left -anchor w
         
     }
 }
@@ -60,5 +62,15 @@ proc add_toolbar_button {path icon command helptext} {
     -padx 1 -pady 1 -command $command -helptext $helptext
 }
 # Separator for toolbar
+proc GoToLineButton {w} {
+    global noteBook fontNormal editor
+    label $w.text -text [::msgcat::mc "Line number"] -font $fontNormal \
+    -bg $editor(bg) -fg $editor(fg)
+    entry $w.entGoTo -width 6 -validate key -validatecommand "ValidNumber %W %P" \
+    -bg $editor(bg) -fg $editor(fg)
+    pack $w.text $w.entGoTo -side left -anchor nw  -padx 2 -pady 2
+    bind $w.entGoTo <Return> "+ToolBarGoToLineNumber $w"
+}
+
 
 

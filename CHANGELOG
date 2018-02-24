@@ -10,6 +10,9 @@
 - Fixed Add to project procedure
 - Fixed hot key Cntrl+S saved prosedure when saved opened file from File Browser
 - Refactoring all Tree procedures
+- Added GoTo line into toolbar
+- Fixed fileinfo update when tree one click
+- Fixed bug with opened files have extention is a upper case
 
 22.02.2018
 - Refactoring Settigs procedure source code
@@ -395,6 +398,7 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
 
 
 
