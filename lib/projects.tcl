@@ -473,7 +473,8 @@ proc OpenProj {nbNode} {
 
 
 proc AddNewProjectIntoTree {proj} {
-    global workDir tree imgDir fontNormal
+    global workDir imgDir fontNormal
+    set tree .frmBody.frmCat.noteBook.fprojects.frmTree.tree 
     lappend rList [list [file join $workDir $proj]]
     set projFile [open [file join $workDir $proj] r]
     set prjName [file rootname $proj]
@@ -1003,6 +1004,7 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
 
 
 
