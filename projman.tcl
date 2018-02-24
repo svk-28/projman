@@ -35,25 +35,11 @@ puts $tclDir
 set rootDir [pwd]
 #set rootDir "/usr"
 #set tclDir "/usr/bin"
-
-if {[file exists $env(HOME)/projects/tcl/projman]==1} {
-    set dataDir "[file join $env(HOME) projects tcl projman lib]"
-    set docDir "[file join $env(HOME) projects tcl projman hlp ru]"
-    set imgDir "[file join $env(HOME) projects tcl projman img]"
-    set msgDir "[file join $env(HOME) projects tcl projman msgs]"
-    set binDir "[file join $env(HOME) projects tcl projman]"
-} else {
-    set dataDir "[file join $rootDir lib]"
-    set docDir "[file join $rootDir hlp ru]"
-    set imgDir "[file join $rootDir img]"
-    set msgDir "[file join $rootDir msgs]"
-    set binDir $rootDir
-#    set binDir  [file join $rootDir bin]
-#    set dataDir [file join $rootDir share projman]
-#    set docDir  [file join $rootDir share doc projman-$ver]
-#    set imgDir  [file join $dataDir img]
-#    set msgDir  [file join $dataDir msgs]
-}
+set dataDir "[file join $rootDir lib]"
+set docDir "[file join $rootDir hlp ru]"
+set imgDir "[file join $rootDir img]"
+set msgDir "[file join $rootDir msgs]"
+set binDir $rootDir
 set hlDir  [file join $dataDir highlight]
 
 if {$tcl_platform(platform) == "unix"} {
@@ -149,8 +135,8 @@ option add *Listbox.Background $editor(bg) interactive
 #option add *Menu.font $guifont userDefault
 #option add *Menubutton.font $guifont userDefault
 option add *Dialog.msg.background $editor(bg)
-  
-#   option add *Text.Background $textbg userDefault
+
+  #   option add *Text.Background $textbg userDefault
 #   option add *Entry.Background $textbg userDefault
 #   option add *Text.Foreground $textfg userDefault
 #   option add *Entry.Foreground $textfg userDefault
@@ -174,9 +160,5 @@ option add *Dialog.msg.background $editor(bg)
 #   option add *Entry.highlightBackground $bg userDefault
 #   option add *Text.HighlightThickness 2 userDefault
 #   option add *Entry.HighlightThickness 1 userDefault
-#   
-# 
-
-
 
 

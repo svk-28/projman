@@ -8,7 +8,7 @@
 
 ## ABOUT PROGRAMM DIALOG ##
 proc AboutDialog {} {
-    global docDir imgDir tree noteBook ver fontNormal dataDir env editor
+    global docDir imgDir tree noteBook ver fontNormal dataDir env editor rootDir
     set w {}
     # prevent double creation "About" page
     if { [catch {set w [$noteBook insert end about -text [::msgcat::mc "About ..."]]} ] } {
@@ -409,8 +409,8 @@ proc AboutDialog {} {
     
     $noteBook  raise about
     focus $w.frmBtn.btnOk
-    if {[file exists $env(HOME)/projects/tcl/projman]==1} {
-        set file [open [file join $env(HOME)/projects/tcl/projman THANKS] r]
+    if {[file exists [file join $rootDir THANKS]] == 1} {
+        set file [open [file join $rootDir THANKS] r]
     } else {
         set file [open [file join $docDir THANKS] r]
     }

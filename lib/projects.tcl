@@ -491,8 +491,9 @@ proc AddNewProjectIntoTree {proj} {
             $tree insert end root $prjName -text "$projName" -font $fontNormal \
             -data "prj_$prjName" -open 0\
             -image [Bitmap::get [file join $imgDir folder.gif]]
-            GetFiles [file join $string] $prjName $tree
+            GetFiles $tree $prjName [file join $string]
             set dir $string
+            
         }
     }
 }
@@ -570,6 +571,7 @@ proc AddToProj {fileName mode workingTree} {
     EditFile [GetTreeForNode $subNode] $subNode [file join $dir $fileName]
 }
 ## ADD FILE INTO PROJECT DIALOG##
+
 proc AddToProjDialog {mode node} {
     global projDir workDir activeProject imgDir mod workingTree
     set mod $mode
@@ -1001,5 +1003,6 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
 
 

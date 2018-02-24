@@ -6,6 +6,11 @@
 ##########################################################
 
 0.4.5
+24.02.2018
+- Fixed Add to project procedure
+- Fixed hot key Cntrl+S saved prosedure when saved opened file from File Browser
+- Refactoring all Tree procedures
+
 22.02.2018
 - Refactoring Settigs procedure source code
 - Some changes into messages files (localisation)
@@ -390,3 +395,6 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
+
+

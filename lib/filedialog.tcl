@@ -35,7 +35,7 @@ proc FileDialog {nbNode operation} {
     } elseif {$nbNode eq "projects"} {
         set tree .frmBody.frmCat.noteBook.fprojects.frmTree.tree 
     }
-    
+    puts "node $nbNode , Tree - $tree"
     if {$operation == "open"} {
         set dir $projDir
         set fullPath [tk_getOpenFile -initialdir $dir -filetypes $types -parent $noteBook]
@@ -610,6 +610,7 @@ proc FileOperation::FileDialog {tree operation} {
         return 0
     }
 }
+
 
 
 

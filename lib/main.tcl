@@ -284,7 +284,34 @@ set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]   \
 
 
 # Create FileTree
-FileTree::create $nbFiles
+#FileTree::create $nbFiles
+set frmTreeFiles [ScrolledWindow $nbFiles.frmTreeFiles -bg $editor(bg) -background $editor(bg) ]
+
+set treeFiles [
+    Tree $frmTreeFiles.treeFiles \
+    -relief sunken -borderwidth 1 -width 5 -highlightthickness 0\
+    -redraw 0 -dropenabled 1 -dragenabled 1 -dragevent 3 \
+    -background $editor(bg) -selectbackground $editor(selectbg) -selectforeground white\
+    -droptypes {
+        TREE_NODE    {copy {} move {} link {}}
+        LISTBOX_ITEM {copy {} move {} link {}}
+    } -opencmd {TreeOpen} \
+    -closecmd  {TreeClose}
+]
+$frmTreeFiles setwidget $treeFiles
+pack $frmTreeFiles -side top -fill both -expand true
+$treeFiles bindText <ButtonPress-1> "TreeOneClick $treeFiles [$treeFiles selection get]"
+$treeFiles bindImage <ButtonPress-1> "TreeOneClick $treeFiles [$treeFiles selection get]"
+$treeFiles bindImage <Double-ButtonPress-1> "TreeDoubleClick $treeFiles [$treeFiles selection get]"
+$treeFiles bindText <Double-ButtonPress-1> "TreeDoubleClick $treeFiles [$treeFiles selection get]"
+GetAllDirs $treeFiles
+
+$treeFiles bindText <Shift-Button-1> {$treeFiles selection add $treeFiles [$treeFiles selection get]}
+# Added menu
+
+GetMenuFileTree [menu .popMenuFileTree -bg $editor(bg) -fg $editor(fg)] ;# pop-up edit menu
+
+bind $frmTreeFiles.treeFiles.c <Button-3> {catch [PopupMenuFileTree $treeFiles %X %Y]}
 
 # Create Project tree
 set frmTree [ScrolledWindow $nbProjects.frmTree -bg $editor(bg)]
@@ -347,7 +374,7 @@ $m add separator
 $m add command -label [::msgcat::mc "Add to existing project"] -command {AddToProjDialog "" [$noteBookFiles raise]} \
 -font $fontNormal -state disable
 $m add command -label [::msgcat::mc "Add as new project"] -command {OpenProj [$noteBookFiles raise]} -font $fontNormal
-    
+
 
 ## POPUP PROJECT-MENU ##
 set m [menu .popupProj -font $fontNormal -bg $editor(bg) -fg $editor(fg)]
@@ -391,7 +418,9 @@ focus -force $tree
 # Opened last active project
 if {[info exists workingProject]} {
     if {$workingProject ne ""} {
-        TreeDoubleClick .frmBody.frmCat.noteBook.fprojects.frmTree.tree $workingProject
+        .frmBody.frmCat.noteBook.fprojects.frmTree.tree opentree $workingProject
+        
     }
 }
+
 

@@ -81,6 +81,7 @@ proc ReplaceChar {text} {
         $text delete $posY.$posX $posY.[expr $posX + 1]
     }
 }
+
 ## OVERWRITE SYMBOL PROCEDURE ##
 proc OverWrite {} {
     global replace fontNormal
@@ -573,7 +574,7 @@ proc TextEncode {encode} {
 proc EditFile {tree node fileName} {
     global projDir workDir imgDir  noteBook fontNormal fontBold w fileList replace nodeEdit procList
     global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG activeProject
-    global varList
+    global varList noteBookFiles
     set nodeEdit $node
     set replace 0
     set file [file tail $fileName]
@@ -647,12 +648,12 @@ proc EditFile {tree node fileName} {
     bind $text <Control-ecircumflex> ReplaceDialog
     bind $text <Control-r> ReplaceDialog
     bind $text <F4> {ReplaceCommand $w.text 1}
-    bind $text <Control-ucircumflex> {FileDialog $tree save}
-    bind $text <Control-s> {FileDialog $tree save}
-    bind $text <Control-ocircumflex> {FileDialog $tree save_as}
-    bind $text <Shift-Control-s> {FileDialog $tree save_as}
-    bind $text <Control-odiaeresis> {FileDialog $tree close}
-    bind $text <Control-w> {FileDialog $tree close}
+    bind $text <Control-ucircumflex> {FileDialog [$noteBookFiles raise] save}
+    bind $text <Control-s> {FileDialog [$noteBookFiles raise] save}
+    bind $text <Control-ocircumflex> {FileDialog [$noteBookFiles raise] save_as}
+    bind $text <Shift-Control-s> {FileDialog [$noteBookFiles raise] save_as}
+    bind $text <Control-odiaeresis> {FileDialog [$noteBookFiles raise] close}
+    bind $text <Control-w> {FileDialog [$noteBookFiles raise] close}
     bind $text <Control-division> "tk_textCut $w.text;break"
     bind $text <Control-x> "tk_textCut $w.text;break"
     bind $text <Control-ntilde> "tk_textCopy $w.text;break"
@@ -950,4 +951,6 @@ proc ReadFileStructure {mod line lineNumber tree node} {
 
 #################################### 
 GetOp
+
+
 
