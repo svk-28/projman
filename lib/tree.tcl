@@ -13,6 +13,7 @@ namespace eval FileTree {
     variable count
     variable dblclick
 }
+set count 1
 
 proc FileTree::create {nb} {
     global editor
@@ -46,8 +47,7 @@ proc FileTree::create {nb} {
 }
 
 proc FileTree::init { treeFile } {
-    global   tcl_platform
-    variable count
+    global   tcl_platform count
     
     set count 0
     if { $tcl_platform(platform) == "unix" } {
@@ -77,7 +77,7 @@ proc FileTree::init { treeFile } {
 }
 
 proc FileTree::getdir { treeFile node path } {
-    variable count
+    global count
     
     set lentries [glob -nocomplain [file join $path "*"]]
     set lfiles   {}
@@ -189,7 +189,7 @@ proc FileTree::expand { treeFile but } {
 }
 
 proc FileTree::GetAllDirs {treeFiles} {
-    global projDir workDir fontNormal imgDir module env
+    global projDir workDir fontNormal imgDir module env nodeCounter
     set rList ""
     set rootDir $env(HOME)
     if {[catch {cd $rootDir}] != 0} {
@@ -198,6 +198,7 @@ proc FileTree::GetAllDirs {treeFiles} {
     set rootNode [$treeFiles insert end root $rootDir -text "$rootDir" -font $fontNormal \
     -data "dir_root" -open 1\
     -image [Bitmap::get [file join $imgDir folder.gif]]]
+    incr nodeCounter
     
 #     $treeFiles insert end root $rootDir -text "$rootDir" -font $fontNormal \
 #     -data "dir_root" -open 0\
@@ -213,7 +214,6 @@ proc FileTree::GetAllDirs {treeFiles} {
 proc GetFilesSubdir {tree node dir} {
     global  fontNormal projDir workDir activeProject imgDir count
     global backUpFileShow dotFileShow
-    set count 1
     set rList ""
     if {[catch {cd $dir}] != 0} {
         return ""
@@ -252,7 +252,7 @@ proc GetFilesSubdir {tree node dir} {
                     }
                 }
             }
-            incr count            
+            incr count   
         }
     }
     foreach file [lsort [glob -nocomplain *]] {
@@ -285,14 +285,14 @@ proc GetFilesSubdir {tree node dir} {
             }
         }
         incr count
+        incr nodeCouner
     }
     $tree itemconfigure $node -open 1
 }
 ## GETTING FILES FROM PROJECT DIR AND INSERT INTO TREE WIDGET ##
 proc GetFiles {dir project tree} {
-    global  fontNormal backUpFileShow dotFileShow imgDir
+    global  fontNormal backUpFileShow dotFileShow imgDir count
     set rList ""
-    set count 1
     if {[catch {cd $dir}] != 0} {
         return ""
     }
@@ -596,4 +596,5 @@ proc FileNotePageRaise {nb s} {
         return
     }
 }
+
 

@@ -499,7 +499,7 @@ proc AddNewProjectIntoTree {proj} {
 
 ## ADD FILE INTO PROJECTS ##
 proc AddToProj {fileName mode workingTree} {
-    global projDir workDir activeProject noteBook fontNormal imgDir
+    global projDir workDir activeProject noteBook fontNormal imgDir count
     set type [string trim [file extension $fileName] {.}]
     destroy .addtoproj
     
@@ -548,6 +548,11 @@ proc AddToProj {fileName mode workingTree} {
     set name [file rootname $fileName]
     set ext [string range [file extension $fileName] 1 end]
     set subNode "$name$dot$ext"
+    if {[$workingTree exists $subNode] == 1} {
+        puts $count
+        append subNode "_$count"
+        incr count
+    }
     $workingTree insert end $parentNode $subNode -text $fileName \
     -data [file join $dir $fileName] -open 1\
     -image [Bitmap::get [file join $imgDir $img.gif]]\
@@ -996,4 +1001,5 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
 

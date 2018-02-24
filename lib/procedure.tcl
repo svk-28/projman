@@ -328,7 +328,9 @@ proc Quit {} {
             } elseif {[regexp -nocase -all -- {set workingProject} $line match]} {
                puts "set workingProject \"$activeProject\""
                 puts $file1 "set workingProject \"$activeProject\""
+                puts "Current project - $activeProject"
             } else {
+                puts "> $line"
                 puts $file1 "$line"
             }
         }
@@ -662,6 +664,7 @@ proc GetExtention {node} {
     set ext [string range [file extension [file tail [lindex $fileList($node) 0]]] 1 end]
     return $ext
 }
+
 
 
 
