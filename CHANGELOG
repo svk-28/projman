@@ -6,6 +6,9 @@
 ##########################################################
 
 0.4.5
+02.03.2018
+- GoToNumber entry replace
+
 24.02.2018
 - Fixed Add to project procedure
 - Fixed hot key Cntrl+S saved prosedure when saved opened file from File Browser
@@ -398,6 +401,7 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
 
 
 

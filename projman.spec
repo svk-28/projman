@@ -1,6 +1,6 @@
 Name:           projman
 Version:        0.4.5
-Release:        1
+Release:        rh1
 Summary:        Tcl/Tk Project Manager
 License:        GPL
 Group:          Development/Tcl
@@ -21,7 +21,7 @@ This programm is Integrated Development Environment for Tcl/Tk language programm
 %build
 
 %install
-mkdir -p $RPM_BUILD_ROOT{%_bindir,%_datadir/%name/img,%_datadir/%name/msgs,%_datadir/%name/highlight}
+mkdir -p $RPM_BUILD_ROOT{%_bindir,%_datadir/%name/{img,msgs,/lib/highlight}}
 
 install -p -m755 projman.tcl $RPM_BUILD_ROOT%_bindir/%name
 install -p -m644 *.tcl $RPM_BUILD_ROOT%_datadir/%name/
@@ -100,6 +100,7 @@ install -p -m644 msgs/*.* $RPM_BUILD_ROOT%_datadir/%name/msgs/
 
 * Wed Oct 18 2006 Sergey Kalinin <banzaj@altlinux.ru> 0.3.7-alt3
 - Remove SuperText widget now use native TEXT
+
 
 
 

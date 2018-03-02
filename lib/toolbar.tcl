@@ -68,10 +68,11 @@ proc GoToLineButton {w} {
     -bg $editor(bg) -fg $editor(fg)
     entry $w.entGoTo -width 6 -validate key -validatecommand "ValidNumber %W %P" \
     -bg $editor(bg) -fg $editor(fg)
-    pack $w.text $w.entGoTo -side left -anchor nw  -padx 2 -pady 2
+    pack $w.text $w.entGoTo -side left  -padx 2 -pady 2
     bind $w.entGoTo <Return> "+ToolBarGoToLineNumber $w"
     balloon $w.entGoTo set [::msgcat::mc "Goto line"]
 }
+
 
 
 
