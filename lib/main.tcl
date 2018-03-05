@@ -263,14 +263,14 @@ pack $frm6.lblOvwrt -fill x
 ########## PROJECT-FILE-FUNCTION TREE ##################
 
 #set frmCat [frame .frmBody.frmCat -border 1 -relief sunken -bg $editor(bg)]
-set frmCat [frame .frmBody.frmCat -border 1 -relief sunken]
+set frmCat [frame .frmBody.frmCat -border 0 -relief flat]
 pack $frmCat -side left -fill y -fill both
 #set frmWork [frame .frmBody.frmWork -border 1 -relief sunken -bg $editor(bg)]
-set frmWork [frame .frmBody.frmWork -border 1 -relief sunken]
+set frmWork [frame .frmBody.frmWork -border 0 -relief flat]
 pack $frmWork -side left -fill both -expand true
 
 ## CREATE PANE ##
-pane::create .frmBody.frmCat .frmBody.frmWork
+pane::create .frmBody.frmCat .frmBody.frmWork -percent 0.20
 
 # NoteBook - Projects and Files
 #################### WORKING AREA ####################
@@ -285,11 +285,11 @@ set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]   \
 
 # Create FileTree
 #FileTree::create $nbFiles
-set frmTreeFiles [ScrolledWindow $nbFiles.frmTreeFiles -bg $editor(bg) -background $editor(bg) ]
+set frmTreeFiles [ScrolledWindow $nbFiles.frmTreeFiles -bd 0 -bg $editor(bg) -background $editor(bg) ]
 
 set treeFiles [
     Tree $frmTreeFiles.treeFiles \
-    -relief sunken -borderwidth 1 -width 5 -highlightthickness 0\
+    -relief sunken -borderwidth 0 -width 5 -highlightthickness 1\
     -redraw 0 -dropenabled 1 -dragenabled 1 -dragevent 3 \
     -background $editor(bg) -selectbackground $editor(selectbg) -selectforeground white\
     -droptypes {
@@ -314,10 +314,10 @@ GetMenuFileTree [menu .popMenuFileTree -bg $editor(bg) -fg $editor(fg)] ;# pop-u
 bind $frmTreeFiles.treeFiles.c <Button-3> {catch [PopupMenuFileTree $treeFiles %X %Y]}
 
 # Create Project tree
-set frmTree [ScrolledWindow $nbProjects.frmTree -bg $editor(bg)]
+set frmTree [ScrolledWindow $nbProjects.frmTree -bd 0 -bg $editor(bg)]
 global tree noteBook
 set tree [Tree $frmTree.tree \
--relief sunken -borderwidth 1 -width 3 -height 5 -highlightthickness 1\
+-relief sunken -borderwidth 0 -width 3 -height 5 -highlightthickness 1\
 -redraw 0 -dropenabled 1 -dragenabled 1 -dragevent 3 \
 -background $editor(bg) -selectbackground $editor(selectbg) -selectforeground white\
 -droptypes {
@@ -375,7 +375,6 @@ $m add command -label [::msgcat::mc "Add to existing project"] -command {AddToPr
 -font $fontNormal -state disable
 $m add command -label [::msgcat::mc "Add as new project"] -command {OpenProj [$noteBookFiles raise]} -font $fontNormal
 
-
 ## POPUP PROJECT-MENU ##
 set m [menu .popupProj -font $fontNormal -bg $editor(bg) -fg $editor(fg)]
 GetProjMenu $m
@@ -387,7 +386,6 @@ $m add command -label [::msgcat::mc "Close"] -command {FileDialog [$noteBookFile
 -font $fontNormal -accelerator "Ctrl+W"
 $m add command -label [::msgcat::mc "Close all"] -command {FileDialog [$noteBookFiles raise] close_all}\
 -font $fontNormal
-
 
 bind $frmTree.tree.c <Button-3> {catch [PopupMenuTree %X %Y]}
 
@@ -422,7 +420,3 @@ if {[info exists workingProject]} {
         
     }
 }
-
-
-
-

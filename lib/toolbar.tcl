@@ -23,7 +23,7 @@ proc CreateToolBar {} {
     global toolBar fontBold noteBook tree imgDir editor
     if {$toolBar == "Yes"} {
         set bboxFile [ButtonBox .frmTool.bboxFile -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
-        add_toolbar_button $bboxFile new.png {AddToProjDialog file} [::msgcat::mc "Create new file"]
+        add_toolbar_button $bboxFile new.png {AddToProjDialog file [$noteBookFiles raise]} [::msgcat::mc "Create new file"]
         #add_toolbar_button $bboxFile open.png {FileDialog $tree open} [::msgcat::mc "Open file"]
         add_toolbar_button $bboxFile save.png {FileDialog $tree save} [::msgcat::mc "Save file"]
         add_toolbar_button $bboxFile save_as.png {FileDialog $tree save_as} [::msgcat::mc "Save file as"]
@@ -72,9 +72,4 @@ proc GoToLineButton {w} {
     bind $w.entGoTo <Return> "+ToolBarGoToLineNumber $w"
     balloon $w.entGoTo set [::msgcat::mc "Goto line"]
 }
-
-
-
-
-
 

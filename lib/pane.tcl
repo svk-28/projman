@@ -30,7 +30,7 @@ namespace eval pane {
     set pane(2) $f2
     set pane(grip) [frame $master.grip -background $pane(-gripcolor) \
                           -width $width -height $height \
-                          -bd 1 -relief raised -cursor $pane(-gripcursor)]
+                          -bd 0 -relief raised -cursor $pane(-gripcursor)]
 
     if {! [string match v* $pane(-orient)] } {
       set pane(D) Y
@@ -93,6 +93,7 @@ namespace eval pane {
   }
 
 }
+
 
 
 

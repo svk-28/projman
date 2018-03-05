@@ -6,6 +6,10 @@
 ##########################################################
 
 0.4.5
+05.03.2018
+- Fixed "Add new file" toolbar button press
+- Fixed "Control+S" hotkey error
+
 02.03.2018
 - GoToNumber entry replace
 
@@ -401,6 +405,8 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
+
 
 
 

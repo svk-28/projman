@@ -4,7 +4,6 @@
 # Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru #
 # Author: Sergey Kalinin banzaj28@yandex.ru       #
 ###########################################################
-
 ## GETTING OPERATORS FOR COMPLITE PROCEDURE #
 proc GetOp {} {
     global opList
@@ -59,8 +58,15 @@ proc SetDefStyle { text args } {
 
 ## CURSOR POSITION COUNTERED ##
 proc Position {} {
-    global tree noteBook fontNormal fontBold replace
+    global noteBook noteBookFiles fontNormal fontBold replace
     set nodeEdit [$noteBook raise]
+    set tree [GetTreeForNode $nodeEdit]
+    if {$tree eq ".frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles"} {
+        $noteBookFiles raise files
+    } elseif {$tree eq ".frmBody.frmCat.noteBook.fprojects.frmTree.tree"} {
+        $noteBookFiles raise projects
+    }
+    
     if {$nodeEdit == "" || $nodeEdit == "newproj" || $nodeEdit == "debug" || $nodeEdit == "about"} {
         return
     }
@@ -603,6 +609,9 @@ proc EditFile {tree node fileName} {
     #    set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]] \
     #-background $editor(bg) -foreground $editor(fg)]
     set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]]]
+    
+    #set lblEditFileFullPath [label $w.lblEditFileFullPath -text [regsub -all -- {/|\\} $fileName " > "] -anchor w]
+    #pack $lblEditFileFullPath -side top -fill x
     #puts $w 
     # create array with file names #
     if {[info exists fileList($node)] != 1} {
@@ -623,7 +632,7 @@ proc EditFile {tree node fileName} {
 #      pack $w.textLines -side left -fill y -expand true
     # Editor textbox
     set scrwin [ScrolledWindow $w.scrwin -bg $editor(bg)]
-    pack $scrwin -side left -fill both -expand true
+    pack $scrwin -side top -fill both -expand true
     text $w.text -relief sunken -wrap $editor(wrap) -highlightthickness 0 \
     -undo 1 -font $editor(font) -blockcursor true -selectborderwidth 0 \
     -selectbackground $editor(selectbg) -width 10 -background $editor(bg) \
@@ -964,12 +973,13 @@ proc ReadFileStructure {mod line lineNumber tree node} {
             $tree insert end $node $prcNode$dot$lineNumber -text $procName \
             -data "prc_$procName"\
             -image [Bitmap::get [file join $imgDir $img]] -font $fontNormal
+            #$tree insert end $prcNode$dot$lineNumber param_$prcNode$dot$lineNumber -text $params \
+            #-data "prc_$procName" \
+            #-image [Bitmap::get [file join $imgDir param.gif]] -font $fontNormal
+            
         }
     }
 }
 
 #################################### 
 GetOp
-
-
-
