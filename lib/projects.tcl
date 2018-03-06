@@ -885,6 +885,7 @@ proc MakeProj {action t} {
     $w.frame.text tag add bold $lineNum.0 $lineNum.end
     
     # open and manipulate executed program chanel #
+    cd $projDirName 
     if {$action == "compile"} {
         set cmdCompile ""
         CompileOption "$projCompiler $prog"
@@ -1004,6 +1005,7 @@ proc InsertTitle {newFile type} {
     puts $pipe $fileTitle
     close $pipe
 }
+
 
 
 

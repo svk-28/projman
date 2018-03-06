@@ -64,7 +64,18 @@ if {[file exists [file join $workDir projman.conf]] == 0} {
     file copy -force -- projman.conf [file join $workDir projman.conf]
 }
 
-source [file join $workDir projman.conf]
+#source [file join $workDir projman.conf]
+# Read the projman.conf file and setting the variable
+set config [open [file join $workDir projman.conf] RDONLY]
+while {[gets $config line]>=0} {
+    if [regexp -nocase -all -line -- {(set)\s(.+)\s"(.+|)"} $line match op var data] {
+        regsub -all -- {\$env\(HOME\)} $data "$env(HOME)" data
+        regsub -all -- {\$workDir} $data "$workDir" data
+        set $var $data
+    }
+}
+
+
 
 ## CREATE WORK DIR ##
 if {[file exists $rpmDir] != 1} {file mkdir $rpmDir}
@@ -160,8 +171,3 @@ option add *Dialog.msg.background $editor(bg)
 #   option add *Entry.highlightBackground $bg userDefault
 #   option add *Text.HighlightThickness 2 userDefault
 #   option add *Entry.HighlightThickness 1 userDefault
-
-
-
-
-

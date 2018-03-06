@@ -2,7 +2,7 @@
 #                Tcl/Tk Project Manager                   #
 #                  all procedure file                     #
 # Copyright (c) "Sergey Kalinin", 2002, http://nuk-svk.ru #
-# Author: Sergey Kalinin banzaj28@yandex.ru       #
+# Author: Sergey Kalinin banzaj28@yandex.ru               #
 ###########################################################
 ## GETTING OPERATORS FOR COMPLITE PROCEDURE #
 proc GetOp {} {
@@ -610,8 +610,8 @@ proc EditFile {tree node fileName} {
     #-background $editor(bg) -foreground $editor(fg)]
     set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]]]
     
-    #set lblEditFileFullPath [label $w.lblEditFileFullPath -text [regsub -all -- {/|\\} $fileName " > "] -anchor w]
-    #pack $lblEditFileFullPath -side top -fill x
+    EditorFileNavigateMenu $w $fileName
+    
     #puts $w 
     # create array with file names #
     if {[info exists fileList($node)] != 1} {
@@ -932,7 +932,8 @@ proc ReadFileStructure {mod line lineNumber tree node} {
     global projDir workDir imgDir  noteBook fontNormal fontBold fileList replace nodeEdit procList
     global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG activeProject
     global varList
-    
+    set dot "_"
+    	    
     # Insert procedure names into tree #
     regsub -all {\t} $line "        " line
     set w $noteBook.f$node
@@ -959,7 +960,6 @@ proc ReadFileStructure {mod line lineNumber tree node} {
         #puts "proc $procName $params"
     }
     if {$keyWord == "proc" || $keyWord == "let" || $keyWord == "class" || $keyWord == "sub" || $keyWord == "function" || $keyWord == "fun" } {
-        set dot "_"
         set openBrace [string first "\{" $line]
         set closeBrace [expr [string first "\}" $line]-1]
         set var [string range $line $openBrace end]
@@ -971,15 +971,33 @@ proc ReadFileStructure {mod line lineNumber tree node} {
         }
         if {[$tree exists $prcNode$dot$lineNumber] !=1} {
             $tree insert end $node $prcNode$dot$lineNumber -text $procName \
-            -data "prc_$procName"\
-            -image [Bitmap::get [file join $imgDir $img]] -font $fontNormal
-            #$tree insert end $prcNode$dot$lineNumber param_$prcNode$dot$lineNumber -text $params \
-            #-data "prc_$procName" \
-            #-image [Bitmap::get [file join $imgDir param.gif]] -font $fontNormal
-            
+            -data "prc_$procName" -font $fontNormal \
+            -image [Bitmap::get [file join $imgDir $img]]
+            if {[info exists params] == 1 && $params ne ""} {
+                foreach par $params {
+                    $tree insert end $prcNode$dot$lineNumber param_$prcNode$dot$lineNumber$dot$par \
+                    -text $par -data "param_$procName$dot$par" -font $fontNormal \
+                    -image [Bitmap::get [file join $imgDir param.gif]]
+                }
+            }
         }
     }
+    if {$keyWord == "set"} {
+        #         set var $procName
+        #         $tree insert end $node var$dot$lineNumber$dot$var \
+        #         -text $var -data "var_$procName$dot$var" -font $fontNormal \
+        #         -image [Bitmap::get [file join $imgDir var.gif]]
+    }
+}
+
+# View modern notebook tab header for edited file
+# like as : "> dir1 > dir2 > file.tcl"
+proc EditorFileNavigateMenu {w fullPathFile} {
+    set lblEditFileFullPath [label $w.lblEditFileFullPath -text [regsub -all -- {/|\\} $fullPathFile " > "] -anchor w]
+    pack $lblEditFileFullPath -side top -fill x -padx 2 -pady 3
 }
 
 #################################### 
 GetOp
+
+

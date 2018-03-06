@@ -137,6 +137,17 @@ proc FileDialog {nbNode operation} {
             #    Progress start
             #    LabelUpdate .frmStatus.frmProgress.lblProgress "[::msgcat::mc "Opened file in progress"]"
             set linesCount [$text count -lines $lineNumber.0 end]
+            
+            ######## change the active tree if file opened from different tree ######
+            if {[$tree exists $node] == 0 && $tree eq ".frmBody.frmCat.noteBook.fprojects.frmTree.tree"} {
+                set tree .frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles
+            } elseif {[$tree exists $node] == 0 && $tree eq ".frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles" } {
+                set tree .frmBody.frmCat.noteBook.fprojects.frmTree.tree
+            } else {
+                return
+            }
+            ########## end ########
+            
             foreach item [$tree nodes $node] {
                 puts $item
                 $tree delete $item
@@ -610,13 +621,4 @@ proc FileOperation::FileDialog {tree operation} {
         return 0
     }
 }
-
-
-
-
-
-
-
-
-
 

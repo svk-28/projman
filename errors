@@ -1,4 +1,0 @@
-Error in startup script: couldn't read file "/home/svk/projects/tcl/projman/lib/lib/main.tcl": no such file or directory
-    while executing
-"source [file join $dataDir main.tcl]"
-    (file "/home/svk/projects/tcl/projman/projman.tcl" line 98)

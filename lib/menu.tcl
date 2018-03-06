@@ -91,7 +91,3 @@ proc GetMenu {m} {
     $me add command -label [::msgcat::mc "CP1251"] -command {TextEncode cp1251} -font $fontNormal
     $me add command -label [::msgcat::mc "CP866"] -command {TextEncode cp866} -font $fontNormal
 }
-
-
-
-

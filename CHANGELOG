@@ -6,6 +6,11 @@
 ##########################################################
 
 0.4.5
+06.03.2018
+- Added procedure arguments into tree
+- Change read config procedure (error fixed)
+- Fixed error when project running
+
 05.03.2018
 - Fixed "Add new file" toolbar button press
 - Fixed "Control+S" hotkey error
@@ -405,6 +410,7 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
 
 
 
