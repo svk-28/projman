@@ -144,7 +144,7 @@ proc FileDialog {nbNode operation} {
             } elseif {[$tree exists $node] == 0 && $tree eq ".frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles" } {
                 set tree .frmBody.frmCat.noteBook.fprojects.frmTree.tree
             } else {
-                return
+                #return
             }
             ########## end ########
             

@@ -10,6 +10,7 @@
 - Added procedure arguments into tree
 - Change read config procedure (error fixed)
 - Fixed error when project running
+- Added new Menu button into tollbar and Hide/Show options into config
 
 05.03.2018
 - Fixed "Add new file" toolbar button press
@@ -410,6 +411,14 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
+
+
+
+
+
+
+
 
 
 

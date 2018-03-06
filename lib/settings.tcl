@@ -42,7 +42,7 @@ proc ConfigureEnt {col} {
 proc LoadSettings {} {
     global fontNormal imgDir workDir msgDir
     global editor color nb
-    global main editFrm network
+    global main editFrm network menuShow
     global toolBar autoFormat backUpDel backUpCreate backUpShow showDotFiles localeSet localeList wrapSet wrapList
     
     ## load .conf file ##
@@ -68,7 +68,20 @@ proc LoadSettings {} {
                         puts "$var.msg file not found into $msgDir"
                     }
                 }
-                toolBar {if {$var == "Yes"} {set toolBar "true" } else {set toolBar "false"} }
+                menuShow  {
+                    if {$var == "Yes"} {
+                        set menuShow "true"
+                    } else {
+                        set menuShow "false"
+                    }
+                }
+                toolBar {
+                    if {$var == "Yes"} {
+                        set toolBar "true"
+                    } else {
+                        set toolBar "false"
+                    }
+                }
                 backUpFileShow {
                     if {$var == "Yes"} {
                         set backUpShow "true"
@@ -175,6 +188,12 @@ proc SaveSettings {} {
     } else {
         puts $file "set toolBar \"Yes\"\n"
     }
+    puts $file "# Menu on/off \(Yes/No\)"
+    if {$menuShow == "false"} {
+        puts $file "set menuShow \"No\"\n"
+    } else {
+        puts $file "set menuShow \"Yes\"\n"
+    }
     if {$backUpShow == "false"} {
         puts $file "set backUpFileShow \"No\""
     } else {
@@ -258,7 +277,7 @@ proc SaveSettings {} {
 proc Settings {nBook} {
     global fontNormal fontBold imgDir workDir
     global editor color nb topLevelGeometry
-    global main editFrm network
+    global main editFrm network menuShow
     global toolBar autoFormat backUpDel backUpCreate backUpShow showDotFiles localeSet localeList wrapSet wrapList
     set topLevelGeometry [winfo geometry .]
     if {[$nBook index settings] != -1} {
@@ -301,6 +320,12 @@ proc Settings {nBook} {
             puts $file "set toolBar \"No\"\n"
         } else {
             puts $file "set toolBar \"Yes\"\n"
+        }
+        puts $file "# Menu on/off \(Yes/No\)"
+        if {$menuShow == "false"} {
+            puts $file "set menuShow \"No\"\n"
+        } else {
+            puts $file "set menuShow \"Yes\"\n"
         }
         if {$backUpShow == "false"} {
             puts $file "set backUpFileShow \"No\""
@@ -477,6 +502,7 @@ proc Settings {nBook} {
     
     ### BEGIN CheckBox widgets build ####    
     set cbWidgets {
+        MenuShow menuShow {Show the Menu}
         ToolBar toolBar {Toolbar}
         BackUpShow  backUpShow {Show backup files}
         BackUpCreate backUpCreate {Create backup files}
@@ -643,6 +669,3 @@ proc Settings {nBook} {
     # Read a config file #
     LoadSettings
 }
-
-
-

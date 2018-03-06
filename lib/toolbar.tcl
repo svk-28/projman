@@ -20,7 +20,7 @@ proc Separator {} {
 }
 
 proc CreateToolBar {} {
-    global toolBar fontBold noteBook tree imgDir editor
+    global toolBar fontNormal fontBold noteBook tree imgDir editor
     if {$toolBar == "Yes"} {
         set bboxFile [ButtonBox .frmTool.bboxFile -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
         add_toolbar_button $bboxFile new.png {AddToProjDialog file [$noteBookFiles raise]} [::msgcat::mc "Create new file"]
@@ -51,6 +51,30 @@ proc CreateToolBar {} {
         GoToLineButton $frm
         pack $bboxFile [Separator] $bboxEdit [Separator] $bboxProj [Separator] $bboxHelp [Separator] $frm -side left -anchor w
         
+        # Create menubutton and menu 
+        image create photo menu.png -format png -file [file join $imgDir menu.png]
+        menubutton .frmTool.menu -menu .frmTool.menu.m -font $fontNormal -bg $editor(bg) -fg $editor(fg) \
+        -image menu.png
+        set m [menu .frmTool.menu.m -bg $editor(bg) -fg $editor(fg)]
+        GetFileMenu $m
+        $m add separator
+        $m add cascade -label [::msgcat::mc "Project"] -menu $m.project -font $fontNormal
+        GetProjMenu [menu $m.project  -bg $editor(bg) -fg $editor(fg)]
+        
+        $m add cascade -label [::msgcat::mc "Edit"] -menu $m.edit -font $fontNormal
+        GetMenu [menu $m.edit  -bg $editor(bg) -fg $editor(fg)]
+        
+        #$m add cascade -label [::msgcat::mc "View"] -menu $m.view -font $fontNormal
+        #GetViewMenu [menu $m.view  -bg $editor(bg) -fg $editor(fg)]
+        
+        $m add cascade -label [::msgcat::mc "Modules"] -menu $m.modules -font $fontNormal
+        GetModulesMenu [menu $m.modules  -bg $editor(bg) -fg $editor(fg)]
+        
+        $m add cascade -label [::msgcat::mc "Help"] -menu $m.help -font $fontNormal
+        GetHelpMenu [menu $m.help  -bg $editor(bg) -fg $editor(fg)]
+            
+        pack .frmTool.menu -side right
+        
     }
 }
 ## TOOLBAR ##
@@ -72,4 +96,6 @@ proc GoToLineButton {w} {
     bind $w.entGoTo <Return> "+ToolBarGoToLineNumber $w"
     balloon $w.entGoTo set [::msgcat::mc "Goto line"]
 }
+
+
 
