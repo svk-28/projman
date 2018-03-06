@@ -3,7 +3,8 @@
 #                projman
 #        Distributed under GNU Public License
 # Author: Sergey Kalinin s.v.kalinin28@gmail.com
-# Copyright (c) "https://nuk-svk.ru", 2018, https://bitbucket.org/svk28/projman
+# Copyright (c) "https://nuk-svk.ru"
+# 2018, https://bitbucket.org/svk28/projman
 ######################################################
 
 ## FILE OPERATION ##
@@ -621,4 +622,5 @@ proc FileOperation::FileDialog {tree operation} {
         return 0
     }
 }
+
 

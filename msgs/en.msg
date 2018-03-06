@@ -159,6 +159,7 @@
 ::msgcat::mcset en "Settings"
 ::msgcat::mcset en "Show backup files"
 ::msgcat::mcset en "Show dot files"
+::msgcat::mcset en "Show the Menu"
 ::msgcat::mcset en "Split edit window"
 ::msgcat::mcset en "SQL commands"
 ::msgcat::mcset en "Interpretator"
@@ -176,6 +177,7 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
+
 
 
 

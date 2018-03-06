@@ -164,6 +164,7 @@
 ::msgcat::mcset ru "Selection color" "Цвет выделения"
 ::msgcat::mcset ru "Settings" "Установки"
 ::msgcat::mcset ru "Show backup files" "Показывать временные файлы"
+::msgcat::mcset ru "Show the Menu" "Показывать меню"
 ::msgcat::mcset ru "Show dot files" "Показывать скрытые файлы"
 ::msgcat::mcset ru "Split edit window" "Разделить окно редактора"
 ::msgcat::mcset ru "SQL commands" "SQL команды"
@@ -181,10 +182,3 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
-
-
-
-
-
-
-
