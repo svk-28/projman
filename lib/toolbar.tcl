@@ -13,7 +13,7 @@
 
 proc Separator {} {
     global sepIndex editor
-    set f [frame .frmTool.separator$sepIndex -width 10 -border 1 \
+    set f [frame .frmTool.separator$sepIndex -width 15 -border 1 \
     -background $editor(bg) -relief raised]
     incr sepIndex 1
     return $f
@@ -31,7 +31,7 @@ proc CreateToolBar {} {
         add_toolbar_button $bboxFile printer.png {PrintDialog} [::msgcat::mc "Print ..."]
         add_toolbar_button $bboxFile close.png {FileDialog $tree close} [::msgcat::mc "Close"]
         
-        set bboxEdit [ButtonBox .frmTool.bboxEdit -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
+        set bboxEdit [ButtonBox .frmTool.bboxEdit -spacing 0 -padx 5 -pady 1 -bg $editor(bg)]
         add_toolbar_button $bboxEdit copy.png {TextOperation copy} [::msgcat::mc "Copy into clipboard"]
         add_toolbar_button $bboxEdit cut.png {TextOperation cut} [::msgcat::mc "Cut into clipboard"]
         add_toolbar_button $bboxEdit paste.png {TextOperation paste} [::msgcat::mc "Paste from clipboard"]
@@ -47,7 +47,7 @@ proc CreateToolBar {} {
         set bboxHelp [ButtonBox .frmTool.bboxHelp -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
         add_toolbar_button $bboxHelp help.png {ShowHelp} [::msgcat::mc "Help"]
         # GoTo field
-        set frm [frame .frmTool.frmGoto -bg $editor(bg)]
+        set frm [frame .frmTool.frmGoto -bg $editor(bg) -border 0 ]
         GoToLineButton $frm
         pack $bboxFile [Separator] $bboxEdit [Separator] $bboxProj [Separator] $bboxHelp [Separator] $frm -side left -anchor w
         
@@ -91,11 +91,10 @@ proc GoToLineButton {w} {
     label $w.text -text [::msgcat::mc "Line number"] -font $fontNormal \
     -bg $editor(bg) -fg $editor(fg)
     entry $w.entGoTo -width 6 -validate key -validatecommand "ValidNumber %W %P" \
-    -bg $editor(bg) -fg $editor(fg)
+    -bg $editor(bg) -fg $editor(fg) -relief sunken -border 1 -highlightthickness 0
     pack $w.text $w.entGoTo -side left  -padx 2 -pady 2
     bind $w.entGoTo <Return> "+ToolBarGoToLineNumber $w"
     balloon $w.entGoTo set [::msgcat::mc "Goto line"]
 }
-
 
 

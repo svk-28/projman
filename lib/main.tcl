@@ -115,9 +115,9 @@ wm overrideredirect . 0
 wm positionfrom . user
 #wm resizable . 0 0
 
-frame .frmMenu -border 1 -relief raised -background $editor(bg)
-frame .frmTool -border 1 -relief raised -background $editor(bg)
-frame .frmBody -border 1 -relief raised -background $editor(bg)
+frame .frmMenu -border 1 -relief raised -background $editor(bg) -highlightthickness 0
+frame .frmTool -border 1 -relief raised -background $editor(bg) -highlightthickness 0
+frame .frmBody -border 1 -relief raised -background $editor(bg) -highlightthickness 0
 frame .frmStatus -border 1 -relief sunken -bg $editor(bg)
 if {[info exists menuShow]==1 && $menuShow eq "Yes"} {
     pack .frmMenu -side top -padx 1 -fill x
@@ -210,10 +210,10 @@ pack $frm6.lblOvwrt -fill x
 ########## PROJECT-FILE-FUNCTION TREE ##################
 
 #set frmCat [frame .frmBody.frmCat -border 1 -relief sunken -bg $editor(bg)]
-set frmCat [frame .frmBody.frmCat -border 0 -relief flat]
+set frmCat [frame .frmBody.frmCat -border 0 -relief flat -highlightthickness 0]
 pack $frmCat -side left -fill y -fill both
 #set frmWork [frame .frmBody.frmWork -border 1 -relief sunken -bg $editor(bg)]
-set frmWork [frame .frmBody.frmWork -border 0 -relief flat]
+set frmWork [frame .frmBody.frmWork -border 0 -relief flat -highlightthickness 0]
 pack $frmWork -side left -fill both -expand true
 
 ## CREATE PANE ##
@@ -222,7 +222,7 @@ pane::create .frmBody.frmCat .frmBody.frmWork -percent 0.20
 # NoteBook - Projects and Files
 #################### WORKING AREA ####################
 set noteBookFiles [NoteBook $frmCat.noteBook -font $fontNormal -side top -bg $editor(bg) -fg $editor(fg) \
--activebackground $editor(bg) -activeforeground $editor(fg) ]
+-activebackground $editor(bg) -activeforeground $editor(fg)]
 pack $noteBookFiles -fill both -expand true -padx 2 -pady 2
 set nbProjects [$noteBookFiles insert end projects -text [::msgcat::mc "Projects"] \
 -activebackground $editor(bg) -activeforeground $editor(fg)]
@@ -232,7 +232,7 @@ set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]   \
 
 # Create FileTree
 #FileTree::create $nbFiles
-set frmTreeFiles [ScrolledWindow $nbFiles.frmTreeFiles -bd 0 -bg $editor(bg) -background $editor(bg) ]
+set frmTreeFiles [ScrolledWindow $nbFiles.frmTreeFiles -bd 0 -bg $editor(bg) -background $editor(bg)]
 
 set treeFiles [
     Tree $frmTreeFiles.treeFiles \
@@ -367,5 +367,3 @@ if {[info exists workingProject]} {
         
     }
 }
-
-

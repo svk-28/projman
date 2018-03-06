@@ -171,3 +171,4 @@ option add *Dialog.msg.background $editor(bg)
 #   option add *Entry.highlightBackground $bg userDefault
 #   option add *Text.HighlightThickness 2 userDefault
 #   option add *Entry.HighlightThickness 1 userDefault
+
