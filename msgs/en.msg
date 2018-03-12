@@ -81,6 +81,7 @@
 ::msgcat::mcset en "Indent foreground"
 ::msgcat::mcset en "Indent background"
 ::msgcat::mcset en "Interface language"
+::msgcat::mcset en "Insert image"
 ::msgcat::mcset en "Install Tcl/Tk Project Manager"
 ::msgcat::mcset en "Input file name"
 ::msgcat::mcset en "Key bindings"
@@ -177,6 +178,7 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
+
 
 
 

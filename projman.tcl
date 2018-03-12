@@ -15,6 +15,8 @@ set ver "0.4.5"
 
 package require BWidget
 package require msgcat
+package require base64
+package require Img
 
 set wishOpList [info commands]
 ## DO NOT EDIT THIS LINE! USE install.tcl SCRIPT ##
@@ -171,4 +173,6 @@ option add *Dialog.msg.background $editor(bg)
 #   option add *Entry.highlightBackground $bg userDefault
 #   option add *Text.HighlightThickness 2 userDefault
 #   option add *Entry.HighlightThickness 1 userDefault
+
+
 

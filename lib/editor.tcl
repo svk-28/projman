@@ -694,6 +694,7 @@ proc EditFile {tree node fileName} {
     bind $text <Control-icircumflex> "auto_completition_proc $text"
     bind $text <Control-j> "auto_completition_proc $text"
     #bind $text <Control-Tab> "auto_completition_proc $text"
+    bind $text <Control-i> "ImageBase64Encode $text"
     
     bind $text <Control-q> Find
     bind $text <Control-comma> {TextOperation comment}
@@ -933,7 +934,7 @@ proc ReadFileStructure {mod line lineNumber tree node} {
     global backUpFileCreate fileExt progress editor braceHighLightBG braceHighLightFG activeProject
     global varList
     set dot "_"
-    	    
+                
     # Insert procedure names into tree #
     regsub -all {\t} $line "        " line
     set w $noteBook.f$node
@@ -999,5 +1000,7 @@ proc EditorFileNavigateMenu {w fullPathFile} {
 
 #################################### 
 GetOp
+
+
 
 

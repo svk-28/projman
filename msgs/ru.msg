@@ -85,6 +85,7 @@
 ::msgcat::mcset ru "Indent foreground" "Подсветка отступа"
 ::msgcat::mcset ru "Indent background" "Подсветка отступа"
 ::msgcat::mcset ru "Insert" "Вставка"
+::msgcat::mcset ru "Insert image" "Вставить изображение"
 ::msgcat::mcset ru "Interface language" "Язык интерфейса"
 ::msgcat::mcset ru "Interpetator" "Интерпретатор"
 ::msgcat::mcset ru "Install Tcl/Tk Project Manager" "Установка Tcl/Tk Project Manager"
@@ -182,3 +183,4 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
+

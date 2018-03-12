@@ -1,6 +1,3 @@
-package require Img
-
-
 proc ImageViewer {f w node} {
     global tab_label noteBook factor im1 im2 editor
     set factor($node) 1.0
@@ -22,7 +19,7 @@ proc ImageViewer {f w node} {
     #$w.scrwin setwidget $w.scrwin.f
     openImg $f $w.f.c $node
     set tab_label [$noteBook itemcget $node -text]
-    balloon $w.f.c set "Mouse wheel up/down - verti”al scrolling the image\n\
+    balloon $w.f.c set "Mouse wheel up/down - verti√ìal scrolling the image\n\
     Shift + mouse wheel up/down - horizontal image scrolling\n\
     Control + mouse wheel up/down is a scale image -/+"
 }
@@ -53,8 +50,23 @@ proc scale {w {n 1} node} {
     $w config -scrollregion [$w bbox all]
 }
 
-
-
-
+proc ImageBase64Encode {text} {
+    global env
+    set types {
+        {"GIF" {.gif}}
+        {"JPEG" {.jpg}}
+        {"PNG" {.png}}
+        {"BMP" {.bmp}}
+        {"All files" *}
+    }
+    set img [tk_getOpenFile -initialdir $env(HOME) -filetypes $types -parent .]
+    set f [open $img]
+    fconfigure $f -translation binary
+    set data [base64::encode [read $f]]
+    close $f
+    # base name on root name of the image file
+    set name [file root [file tail $img]]
+    $text insert [Position] "image create photo $name -data {\n$data\n}"
+}
 
 

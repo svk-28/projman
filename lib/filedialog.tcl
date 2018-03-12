@@ -622,5 +622,3 @@ proc FileOperation::FileDialog {tree operation} {
         return 0
     }
 }
-
-

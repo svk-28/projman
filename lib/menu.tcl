@@ -90,8 +90,18 @@ proc GetMenu {m} {
     $me add command -label [::msgcat::mc "KOI8-R"] -command {TextEncode koi8-r} -font $fontNormal
     $me add command -label [::msgcat::mc "CP1251"] -command {TextEncode cp1251} -font $fontNormal
     $me add command -label [::msgcat::mc "CP866"] -command {TextEncode cp866} -font $fontNormal
+    $m add separator
+    $m add command -label [::msgcat::mc "Insert image"] -font $fontNormal -accelerator "Ctrl+I" \
+    -command {
+        set nb [$noteBook raise]
+        if {$nb == "" || $nb == "newproj" || $nb == "about" || $nb == "debug"} {
+            return
+        }
+        set nb "$noteBook.f$nb"
+        ImageBase64Encode $nb.text
+        unset nb
+    }
 }
-
 proc GetViewMenu {m} {
     global fontNormal fontBold imgDir editor
     $m add checkbutton -label [::msgcat::mc "Show the Menu"] -font $fontNormal -state normal\
@@ -166,5 +176,7 @@ proc GetFileMenu {m} {
     $m add separator
     $m add command -label [::msgcat::mc "Exit"] -command Quit -font $fontNormal -accelerator "Ctrl+Q"
 }
+
+
 
 
