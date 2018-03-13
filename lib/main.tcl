@@ -230,6 +230,15 @@ set nbFiles [$noteBookFiles insert end files -text [::msgcat::mc "Files"]   \
 -activebackground $editor(bg) -activeforeground $editor(fg)]
 
 
+#set frmButtonBoxTreeProj [frame $nbFiles.frmButtonBoxTreeProj]
+#pack $frmButtonBoxTreeProj -side top -fill both -expand true
+set bBoxProjectTree [ButtonBox $nbProjects.bboxProjectTree -spacing 0 -padx 1 -pady 1 -bg $editor(bg)]
+#add_toolbar_button $bBoxProjectTree new_project.png {NewProj new "" ""} [::msgcat::mc "New project"]
+#add_toolbar_button $bBoxProjectTree del_project.png DelProj [::msgcat::mc "Delete project"]
+add_toolbar_button $bBoxProjectTree project_settings.png {NewProj edit $activeProject ""} [::msgcat::mc "Project settings"]
+add_toolbar_button $bBoxProjectTree sort.png SortTree [::msgcat::mc "Sort tree"]
+pack $bBoxProjectTree -side top -pady 4 -anchor w
+
 # Create FileTree
 #FileTree::create $nbFiles
 set frmTreeFiles [ScrolledWindow $nbFiles.frmTreeFiles -bd 0 -bg $editor(bg) -background $editor(bg)]
@@ -367,4 +376,7 @@ if {[info exists workingProject]} {
         
     }
 }
+
+
+
 

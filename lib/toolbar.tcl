@@ -72,7 +72,7 @@ proc CreateToolBar {} {
         
         $m add cascade -label [::msgcat::mc "Help"] -menu $m.help -font $fontNormal
         GetHelpMenu [menu $m.help  -bg $editor(bg) -fg $editor(fg)]
-            
+        
         pack .frmTool.menu -side right
         
     }
@@ -83,7 +83,7 @@ proc add_toolbar_button {path icon command helptext} {
     image create photo $icon -format png -file [file join $imgDir $icon]
     $path add -image $icon \
     -highlightthickness 0 -takefocus 0 -relief link -bd 1  -activebackground $editor(bg)\
-    -padx 1 -pady 1 -command $command -helptext $helptext
+    -padx 2 -pady 2 -command $command -helptext $helptext
 }
 # Separator for toolbar
 proc GoToLineButton {w} {
@@ -96,5 +96,7 @@ proc GoToLineButton {w} {
     bind $w.entGoTo <Return> "+ToolBarGoToLineNumber $w"
     balloon $w.entGoTo set [::msgcat::mc "Goto line"]
 }
+
+
 
 
