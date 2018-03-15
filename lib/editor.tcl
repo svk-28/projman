@@ -965,6 +965,7 @@ proc ReadFileStructure {mod line lineNumber tree node} {
         set closeBrace [expr [string first "\}" $line]-1]
         set var [string range $line $openBrace end]
         regsub -all ":" $procName "_" prcNode
+        set prcNode [string tolower $prcNode]
         if {$keyWord == "proc" || $keyWord == "sub" || $keyWord == "function"  || $keyWord == "let"} {
             set img "proc.gif"
         } elseif {$keyWord == "class"} {
@@ -1000,6 +1001,7 @@ proc EditorFileNavigateMenu {w fullPathFile} {
 
 #################################### 
 GetOp
+
 
 
 

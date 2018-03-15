@@ -236,7 +236,7 @@ set bBoxProjectTree [ButtonBox $nbProjects.bboxProjectTree -spacing 0 -padx 1 -p
 #add_toolbar_button $bBoxProjectTree new_project.png {NewProj new "" ""} [::msgcat::mc "New project"]
 #add_toolbar_button $bBoxProjectTree del_project.png DelProj [::msgcat::mc "Delete project"]
 add_toolbar_button $bBoxProjectTree project_settings.png {NewProj edit $activeProject ""} [::msgcat::mc "Project settings"]
-add_toolbar_button $bBoxProjectTree sort.png SortTree [::msgcat::mc "Sort tree"]
+add_toolbar_button $bBoxProjectTree sort.png {SortTree [$noteBookFiles raise]} [::msgcat::mc "Sort tree"]
 pack $bBoxProjectTree -side top -pady 4 -anchor w
 
 # Create FileTree
@@ -376,6 +376,7 @@ if {[info exists workingProject]} {
         
     }
 }
+
 
 
 

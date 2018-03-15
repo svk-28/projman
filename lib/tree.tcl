@@ -279,7 +279,7 @@ proc TreeDoubleClick {tree node} {
     } elseif {[file isdirectory $item] ==1} {
         # node is directory
         GetFiles $tree $node $item
-        puts "GetFiles $tree $node $item"
+        #puts "GetFiles $tree $node $item"
     } elseif {[string range $item 0 2] == "prc"} {
         # node is procedure (class, function, etc)
         $tree selection set $node
@@ -300,7 +300,7 @@ proc TreeDoubleClick {tree node} {
     } elseif {[file isfile $item] == 1} {
         #puts [$noteBook index $node]
         if {[$noteBook index $node] != -1} {
-            puts "File тута $node"
+            #puts "File тута $node"
             puts "fileList($node) $fileList($node)"
         } else {
             EditFile $tree $node $item
@@ -338,10 +338,52 @@ proc FileNotePageRaise {nb s} {
     }
 }
 
-
-
-
-
-
-
+proc SortTree {nbNode} {
+    global fontNormal imgDir
+    if {$nbNode eq "files"} {
+        set tree .frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles
+    } elseif {$nbNode eq "projects"} {
+        set tree .frmBody.frmCat.noteBook.fprojects.frmTree.tree 
+    }
+    SortTreeNodes $tree [$tree selection get]
+}
+proc SortTreeNodes {tree rootNode} {
+    global fontNormal imgDir
+    
+    foreach i [lsort [$tree nodes $rootNode]] {
+        #puts "$i [$tree itemcget $i -data]"
+        set nodeData [$tree itemcget $i -data]
+        set nodeText [$tree itemcget $i -text]
+        set nodeImage [$tree itemcget $i -image]
+        set subNodeList [$tree nodes $i]
+        if {$subNodeList ne "" } {
+            foreach j $subNodeList {
+                lappend nodes($j) [$tree itemcget $j -data]
+                lappend nodes($j) [$tree itemcget $j -text]
+                lappend nodes($j) [$tree itemcget $j -image]
+                #puts "--$nodes($i)"
+            }
+        }
+        $tree delete $i
+        $tree insert end $rootNode $i -text "$nodeText" -font $fontNormal \
+        -data $nodeData -open 0\
+        -image $nodeImage
+        #-image [Bitmap::get [file join $imgDir folder.gif]]
+        if {[info exists nodes]} {
+            foreach g [array names nodes] {
+                #puts ">$rootNode >> $nodes($g)"
+                #puts ">>> [lindex $nodes($g) 0] : [lindex $nodes($g) 1] : [lindex $nodes($g) 2]"
+                #puts "$tree insert end $i $g -text [lindex $nodes($g) 1] -font $fontNormal \
+                #-data [lindex $nodes($g) 0] -open 0\
+                #-image [lindex $nodes($g) 2]"
+                $tree insert end $i $g -text [lindex $nodes($g) 1] -font $fontNormal \
+                -data [lindex $nodes($g) 0] -open 0\
+                -image [lindex $nodes($g) 2]
+                #SortTreeNodes $tree $g
+            }
+            unset nodes
+        }
+    }
+    #puts $nodeList
+}
 

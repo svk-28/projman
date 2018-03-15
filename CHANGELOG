@@ -6,6 +6,9 @@
 ##########################################################
 
 0.4.5
+15.03.2018
+- Added sort procedure for projects tree
+
 13.03.2018
 - Added small toolbar into project tree
 
@@ -417,6 +420,7 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
 
 
 
