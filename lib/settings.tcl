@@ -669,3 +669,4 @@ proc Settings {nBook} {
     # Read a config file #
     LoadSettings
 }
+

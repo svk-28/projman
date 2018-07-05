@@ -53,20 +53,23 @@ proc scale {w {n 1} node} {
 proc ImageBase64Encode {text} {
     global env
     set types {
+        {"PNG" {.png}}
         {"GIF" {.gif}}
         {"JPEG" {.jpg}}
-        {"PNG" {.png}}
         {"BMP" {.bmp}}
         {"All files" *}
     }
     set img [tk_getOpenFile -initialdir $env(HOME) -filetypes $types -parent .]
-    set f [open $img]
-    fconfigure $f -translation binary
-    set data [base64::encode [read $f]]
-    close $f
-    # base name on root name of the image file
-    set name [file root [file tail $img]]
-    $text insert [Position] "image create photo $name -data {\n$data\n}"
+    if {$img ne ""} {
+        set f [open $img]
+        fconfigure $f -translation binary
+        set data [base64::encode [read $f]]
+        close $f
+        # base name on root name of the image file
+        set name [file root [file tail $img]]
+        $text insert [Position] "image create photo $name -data {\n$data\n}"
+    }
 }
+
 
 
