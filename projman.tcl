@@ -40,7 +40,7 @@ package require inifile
 package require ctext
 
 # Устанавливаем текущий каталог
-set dir(root) /usr/share/projman
+set dir(root) [pwd]
 
 set dir(doc) [file join $dir(root) doc]
 
