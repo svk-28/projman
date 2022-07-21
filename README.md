@@ -1,9 +1,3 @@
-######################################################
-#              Tcl/Tk Project Manager                #
-#              Distributed under GPL                 #
-# Author: Sergey Kalinin, http://nuk-svk.ru          #
-######################################################
-
 ABOUT
 
 ProjMan (aka "Tcl/Tk Project Manager") is a editor for programming in TCL/Tk (and other language).
