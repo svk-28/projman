@@ -378,11 +378,11 @@ namespace eval Editor {
             $txt highlight $lineBegin.$posBegin $lineEnd.end
             # $txt insert $lineBegin.[expr $posBegin + 1] "$symbol"
         } else {
-            $txt insert $lineNum.[expr $posNum + 1] "$symbol"
-            $txt mark set insert $lineNum.[expr $posNum - 1]
-            # $txt see $lineNum.[expr $posNum - 1]
-            $txt see insert
-            $txt highlight $lineNum.$posNum $lineNum.end
+            # $txt insert $lineNum.[expr $posNum + 1] "$symbol"
+            # $txt mark set insert $lineNum.[expr $posNum - 1]
+            # # $txt see $lineNum.[expr $posNum - 1]
+            # $txt see insert
+            # $txt highlight $lineNum.$posNum $lineNum.end
         }
     }
  
