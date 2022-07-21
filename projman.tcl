@@ -61,7 +61,7 @@ if {[file exists $dir(cfg)] == 0} {
 puts "Config dir is $dir(cfg)"
 
 # каталог с модулями
-set dir(lib) /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# /usr/share/projman/lib ;# "[file join $dir(root) lib]"
+set dir(lib) "[file join $dir(root) lib]"
 
 source [file join $dir(lib) config.tcl]
 
