@@ -161,4 +161,3 @@ if {$cfgVariables(toolBarShow) eq "true"} {
 } 
 .frmBody.panel add $frm_work -weight 1 
 # # 
-

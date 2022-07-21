@@ -12,7 +12,11 @@
 proc Quit {} {
     global dir
     Config::write $dir(cfg)
-    exit
+    if {[FileOper::CloseAll] eq "cancel"} {
+        return "cancel"
+    } else {
+        exit
+    }
 }
 
 proc ViewFilesTree {} {
@@ -69,5 +73,4 @@ proc SetModifiedFlag {w} {
     }
     $nbEditor tab $w -text $lbl
 }
-
 

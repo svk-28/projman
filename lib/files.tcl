@@ -47,13 +47,32 @@ namespace eval FileOper {
        
         return $fullPath
     }
-    
+
+    proc CloseAll {} {
+        global nbEditor modified
+        foreach nbItem [array names modified] {
+            if {$modified($nbItem) eq "true"} {
+                $nbEditor select $nbItem
+                puts "close tab $nbItem"
+                if {[Close] eq "cancel"} {return "cancel"}
+            }
+        }
+    }
+
     proc Close {} {
         global nbEditor modified tree
         set nbItem [$nbEditor select]
+	puts "close tab $nbItem"
         if {$nbItem == ""} {return}
         if {$modified($nbItem) eq "true"} {
-            Save
+            set answer [tk_messageBox -message [::msgcat::mc "File was modifyed"] \
+                -icon question -type yesnocancel \
+                -detail [::msgcat::mc "Do you want to save it?"]]
+            switch $answer {
+                yes Save
+                no {}
+                cancel {return "cancel"}
+            }
         }
         $nbEditor forget $nbItem
         destroy $nbItem
@@ -61,6 +80,7 @@ namespace eval FileOper {
         if {[$tree parent $treeItem] eq "" } {
             $tree delete $treeItem
         }
+        unset modified($nbItem)
     }
     
     proc Save {} {

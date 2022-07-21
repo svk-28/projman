@@ -31,3 +31,7 @@
     - Fixed indent text
     - Fixed insert " and '
     - Added a main window geometry option into config, and autosave current geometry
+
+21/07/2022
+    - Added Save file dialog before tab was closed
+    - Added Save file dialog when exiting, if file was modify
