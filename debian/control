@@ -1,0 +1,14 @@
+Source: projman
+Section: Develop
+Priority: optional
+Maintainer: Sergey Kalinin svk@nuk-svk.ru
+Build-Depends: debhelper
+Standards-Version: 3.9.6
+Homepage: https://nuk-svk.ru
+Vcs-Git: https://git.nuk-svk.ru/projman.git
+
+Package: projman
+Architecture: any
+Depends: tcl(>=8.6), tk(>=8.6), tcllib, tklib ${misc:Depends}
+Description: Projman is a yet another editor
+

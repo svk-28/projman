@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=ProjMan
+GenericName=Text Editor
+Comment=A source editor with syntax highlighting and procedure navigation, a context-sensitive help system, and much more.
+Exec=projman %F
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=text/plain;
+Categories=Development;TextEditor;
+Icon=projman-48
