@@ -47,6 +47,7 @@
 ::msgcat::mcset ru "Delete file" "Удалить файл"
 ::msgcat::mcset ru "Delete backup files" "Удалять временные файлы"
 ::msgcat::mcset ru "Delete project" "Удалить проект"
+::msgcat::mcset ru "Do you want to save it?" "Хотите сохранить его?"
 ::msgcat::mcset ru "with all files" "вместе с файлами"
 ::msgcat::mcset ru "If press \"Yes\" will deleted all files!" "Если нажать \"Да\" будут удалены все файлы"
 ::msgcat::mcset ru  "If press \"No\" will deleted only proj-file" "Если нажать \"Нет\" будет удалён только файл проекта"
@@ -68,7 +69,7 @@
 ::msgcat::mcset ru "Files" "Файлы"
 ::msgcat::mcset ru "File already exists. Overwrite?" "Файл уже существует. Переписать?"
 ::msgcat::mcset ru "File was modifyed. Close?" "Файл был изменен. Закрыть?"
-::msgcat::mcset ru "File was modifyed. Save?" "Файл был изменен. Сохранить?"
+::msgcat::mcset ru "File was modifyed" "Файл был изменен"
 ::msgcat::mcset ru "File modify" "Файл изменен"
 ::msgcat::mcset ru "File saved" "Файл сохранен"
 ::msgcat::mcset ru "Find" "Найти"
@@ -111,6 +112,7 @@
 ::msgcat::mcset ru "New project" "Новый проект"
 ::msgcat::mcset ru "Not implemented yet" "Данная функция пока не реализована"
 ::msgcat::mcset ru "Not found active project" "Не определен активный проект"
+::msgcat::mcset ru "No" "Нет"
 ::msgcat::mcset ru "Open" "Открыть"
 ::msgcat::mcset ru "Open file" "Открыть файл"
 ::msgcat::mcset ru "Open folder" "Открыть папку"
@@ -188,5 +190,5 @@
 ::msgcat::mcset ru "Was replacement" "Было заменено"
 ::msgcat::mcset ru "Word wrapping" "Перенос слов"
 ::msgcat::mcset ru "Work dir" "Рабочий каталог"
-
+::msgcat::mcset ru "Yes" "Да"
 
