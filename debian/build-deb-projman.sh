@@ -1,11 +1,11 @@
 #!/bin/bash
 
-cd projman_2
+cd projman
 
 VERSION=$(grep Version projman.tcl | grep -oE '\b[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\b')
 RELEASE=$(grep Release projman.tcl | grep -oE '\b[0-9A-Za-z]{1,3}\b')
 
-mv projman.tcl projman
+cp projman.tcl projman
 
 sed -i "s+^set\ dir(lib)+set\ dir(lib)\ /usr/share/projman/lib ;#+g" projman
    
@@ -17,4 +17,4 @@ dpkg-buildpackage
 
 #cp ../projman_${VERSION}-${RELEASE}_amd64.deb /files/
 
-mv projman projman.tcl
+rm projman

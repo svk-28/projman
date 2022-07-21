@@ -1,6 +1,5 @@
 debian/.debhelper
 debian/projman
-debian/source
 debian/update-desktop-database
 debian/projman.substvars
 debian/files
