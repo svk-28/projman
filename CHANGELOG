@@ -5,6 +5,11 @@
 # Author: Sergey Kalinin banzaj28@yandex.ru
 ##########################################################
 
+0.4.6
+25.05.2022
+- Added linux shell highlight
+- Added "Close" button into file tab
+
 0.4.5
 15.03.2018
 - Added sort procedure for projects tree
@@ -420,6 +425,8 @@ characters to the right of the insertion cursor.
     - Fix small error with delete project procedure
     - Fix uncorrect cursor position counter into editor    
     
+
+
 
 
 

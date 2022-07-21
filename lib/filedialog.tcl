@@ -329,10 +329,32 @@ proc FileDialog {nbNode operation} {
 
 
 namespace eval FileOperation {
-    global noteBook fontNormal fontBold fileList noteBook projDir activeProject imgDir editor
+    global types noteBook fontNormal fontBold fileList noteBook projDir activeProject imgDir editor rootDir
 }
+set types {
+    {"Tcl files" {.tcl}}
+    {"Tk files" {.tk}}
+    {"Rivet files" {.rvt}}
+    {"TclHttpd Template" {.tml}}
+    {"Sql files" {.sql}}
+    {"Html files" {.html}}
+    {"Text files" {.txt}}
+    {"JAVA files" {.java}}
+    {"PERL files" {.pl}}
+    {"PHP files" {.php}}
+    {"FORTRAN files" {.for}}
+    {"CAML or ML files" {.ml}}
+    {"CAML or ML interface files" {.mli}}
+    {"Ruby files" {.rb}}
+    {"Text files" {} TEXT}
+    {"All files" *}
+}
+set dot "_"
+
 proc FileOperation::Open {} {
-    set dir $projDir
+    global tree node types dot env noteBook fontNormal fontBold fileList noteBook projDir activeProject imgDir editor rootDir
+    #     set dir $projDir
+    set dir $env(HOME)
     set fullPath [tk_getOpenFile -initialdir $dir -filetypes $types -parent $noteBook]
     set file [string range $fullPath [expr [string last "/" $fullPath]+1] end]
     regsub -all "." $file "_" node
@@ -341,7 +363,7 @@ proc FileOperation::Open {} {
     set name [file rootname $file]
     set ext [string range [file extension $file] 1 end]
     set node "$name$dot$ext"
-    EditFile $node $fullPath
+    EditFile .frmBody.frmCat.noteBook.ffiles.frmTreeFiles.treeFiles $node $fullPath
     return 1
 }
 proc FileOperation::Close {} {

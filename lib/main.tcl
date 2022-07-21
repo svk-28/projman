@@ -177,6 +177,9 @@ bind . <Control-eacute> Quit
 bind . <Control-q> Quit
 bind . <Control-ccedilla> PrintDialog
 bind . <Control-p> PrintDialog
+bind . <Control-o> FileOperation::Open
+bind . <Control-O> FileOperation::Open
+
 set sepIndex 0
 
 ########## STATUS BAR ##########
@@ -376,6 +379,8 @@ if {[info exists workingProject]} {
         
     }
 }
+
+
 
 
 

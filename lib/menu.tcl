@@ -25,7 +25,7 @@ proc GetProjMenu {m} {
     $m add command -label [::msgcat::mc "Project settings"] -command {NewProj edit $activeProject ""}\
     -font $fontNormal
     $m add separator
-    $m add command -label [::msgcat::mc "Open project"] -command {OpenProj} -font $fontNormal
+    $m add command -label [::msgcat::mc "Open project"] -command {OpenProj "projects"} -font $fontNormal
     $m add command -label [::msgcat::mc "New project"] -command {NewProj new "" ""} -font $fontNormal
     $m add command -label [::msgcat::mc "Delete project"] -command DelProj -font $fontNormal
     $m add separator
@@ -176,6 +176,7 @@ proc GetFileMenu {m} {
     $m add separator
     $m add command -label [::msgcat::mc "Exit"] -command Quit -font $fontNormal -accelerator "Ctrl+Q"
 }
+
 
 
 

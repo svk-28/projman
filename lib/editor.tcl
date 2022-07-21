@@ -606,9 +606,124 @@ proc EditFile {tree node fileName} {
     set fileExt [string tolower [string range [file extension $fileName] 1 end]]
     set parentNode  [$tree parent $node]
     set project [$tree itemcget $parentNode -data]
+    image create photo close_16x16 -data {
+        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
+        Iyrl5HIg6ot0m4a8jTrPU8pQHmN5mYQ7UnmaPMz/fq99nNWb1vosD4qgbs2pWqMRvD9CZwCrz7B8
+        3ZDV/v22hhmnnvnnG78A3slQYApdFcIAAA+LaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hw
+        YWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/Pgo8eDp4bXBt
+        ZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA0LjQuMC1FeGl2
+        MiI+CiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRm
+        LXN5bnRheC1ucyMiPgogIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICB4bWxuczpp
+        cHRjRXh0PSJodHRwOi8vaXB0Yy5vcmcvc3RkL0lwdGM0eG1wRXh0LzIwMDgtMDItMjkvIgogICAg
+        eG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iCiAgICB4bWxuczpz
+        dEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIgog
+        ICAgeG1sbnM6cGx1cz0iaHR0cDovL25zLnVzZXBsdXMub3JnL2xkZi94bXAvMS4wLyIKICAgIHht
+        bG5zOkdJTVA9Imh0dHA6Ly93d3cuZ2ltcC5vcmcveG1wLyIKICAgIHhtbG5zOmRjPSJodHRwOi8v
+        cHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9i
+        ZS5jb20vdGlmZi8xLjAvIgogICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8x
+        LjAvIgogICB4bXBNTTpEb2N1bWVudElEPSJnaW1wOmRvY2lkOmdpbXA6MGQ3ZjM0YWItOTUzZS00
+        ODY1LWJkYWMtNWZjYzA5MmNjNWVkIgogICB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOmI2MTk2
+        NTlmLWJiZjMtNDBkNi05YWMwLThiMmIyNzc4MGU3YiIKICAgeG1wTU06T3JpZ2luYWxEb2N1bWVu
+        dElEPSJ4bXAuZGlkOjAyODVmOGJjLTU1NjgtNGJmMS1iNDhkLTUwZGM2MGZkYjU5ZCIKICAgR0lN
+        UDpBUEk9IjIuMCIKICAgR0lNUDpQbGF0Zm9ybT0iTGludXgiCiAgIEdJTVA6VGltZVN0YW1wPSIx
+        NjUzNjM5ODc4NjYyNDkwIgogICBHSU1QOlZlcnNpb249IjIuMTAuMjIiCiAgIGRjOkZvcm1hdD0i
+        aW1hZ2UvcG5nIgogICB0aWZmOk9yaWVudGF0aW9uPSIxIgogICB4bXA6Q3JlYXRvclRvb2w9IkdJ
+        TVAgMi4xMCI+CiAgIDxpcHRjRXh0OkxvY2F0aW9uQ3JlYXRlZD4KICAgIDxyZGY6QmFnLz4KICAg
+        PC9pcHRjRXh0OkxvY2F0aW9uQ3JlYXRlZD4KICAgPGlwdGNFeHQ6TG9jYXRpb25TaG93bj4KICAg
+        IDxyZGY6QmFnLz4KICAgPC9pcHRjRXh0OkxvY2F0aW9uU2hvd24+CiAgIDxpcHRjRXh0OkFydHdv
+        cmtPck9iamVjdD4KICAgIDxyZGY6QmFnLz4KICAgPC9pcHRjRXh0OkFydHdvcmtPck9iamVjdD4K
+        ICAgPGlwdGNFeHQ6UmVnaXN0cnlJZD4KICAgIDxyZGY6QmFnLz4KICAgPC9pcHRjRXh0OlJlZ2lz
+        dHJ5SWQ+CiAgIDx4bXBNTTpIaXN0b3J5PgogICAgPHJkZjpTZXE+CiAgICAgPHJkZjpsaQogICAg
+        ICBzdEV2dDphY3Rpb249InNhdmVkIgogICAgICBzdEV2dDpjaGFuZ2VkPSIvIgogICAgICBzdEV2
+        dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjNjMGYyODI4LTRhY2EtNDdmMy1iZjM4LWJjY2YzYTM5MTEz
+        YyIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iR2ltcCAyLjEwIChMaW51eCkiCiAgICAgIHN0
+        RXZ0OndoZW49IiswMzowMCIvPgogICAgPC9yZGY6U2VxPgogICA8L3htcE1NOkhpc3Rvcnk+CiAg
+        IDxwbHVzOkltYWdlU3VwcGxpZXI+CiAgICA8cmRmOlNlcS8+CiAgIDwvcGx1czpJbWFnZVN1cHBs
+        aWVyPgogICA8cGx1czpJbWFnZUNyZWF0b3I+CiAgICA8cmRmOlNlcS8+CiAgIDwvcGx1czpJbWFn
+        ZUNyZWF0b3I+CiAgIDxwbHVzOkNvcHlyaWdodE93bmVyPgogICAgPHJkZjpTZXEvPgogICA8L3Bs
+        dXM6Q29weXJpZ2h0T3duZXI+CiAgIDxwbHVzOkxpY2Vuc29yPgogICAgPHJkZjpTZXEvPgogICA8
+        L3BsdXM6TGljZW5zb3I+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiA8L3JkZjpSREY+CjwveDp4bXBt
+        ZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        IAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAog
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAg
+        Cjw/eHBhY2tldCBlbmQ9InciPz5/607fAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCa
+        nBgAAAAHdElNRQfmBRsIGCYdNEHNAAABw0lEQVQozz3NPUxTURxA8XPvfe1TFKRFo8UIRT40GqNh
+        QdEYFReNg4tx00QDC9HBzcQRJ6ODMcbZuDg4OBLTaKIYQgcDVUClDfGjUKClYGn7Xvvu3wU98y85
+        SiNEyTu9+zuOLJ0txku+PxWMlabIbaCwKI1FN14b7Lux3PnZSasS1lrPSxYflkepW4xA4/2Ry7fz
+        bRPOnL6u2/S6KYRNR7hfFqrTCJjhO/PFWbkpB+WSZGRNxmVETku7xL65Z1wY6HmbKkhNvsgjeSae
+        iIh4kpCL0iotr3SzM3DY66rSzCHi1AkDEELIoXD6t3U7S+dnnCrH2UUD/1rlJb8xqKhuN53DftcL
+        naaJVswmCMiSYR2xtaTZeaV+oKBn+EgfezZBiF7OEWXV/hzVK5Mrtg7E2P1/oQjRw1VitpJ11j7g
+        +SHhAlHA8pUCR9lOmdckcm5a51OlCYshggOUecAQj5nlPc+DSsL7brZuVPLuCYksYNhHgif4JJnk
+        jUynKvf0vPHwMnrRHMtFxtUy7/hBmDDZ+q+Uf7c2JqIMhpp2TzXdMidtC0qjrV0sJ0pPg09YUAYH
+        jy34Oxq6TVz2ipCtpatz5k8AwF+X6NHCM54kXAAAAABJRU5ErkJggg==
+    }
     #    set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]] \
     #-background $editor(bg) -foreground $editor(fg)]
-    set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]]]
+    set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir [GetImage $fileName].gif]] \
+    -ractiveimage  close_16x16 -rimage close_16x16  -rimagecmd CloseFileNB]
+    # set w [$noteBook insert end $node -text "$file" -image [Bitmap::get [file join $imgDir close.png]]]
     
     EditorFileNavigateMenu $w $fileName
     
@@ -995,14 +1110,17 @@ proc ReadFileStructure {mod line lineNumber tree node} {
 # View modern notebook tab header for edited file
 # like as : "> dir1 > dir2 > file.tcl"
 proc EditorFileNavigateMenu {w fullPathFile} {
-    set lblEditFileFullPath [label $w.lblEditFileFullPath -text [regsub -all -- {/|\\} $fullPathFile " > "] -anchor w]
+    set lblEditFileFullPath [label $w.lblEditFileFullPath -text [regsub -all -- {/|\\} $fullPathFile " > "] -anchor w ]
     pack $lblEditFileFullPath -side top -fill x -padx 2 -pady 3
 }
 
 #################################### 
 GetOp
 
-
+proc CloseFileNB {node nodeItem} {
+    global tree
+    FileDialog $tree close
+}
 
 
 

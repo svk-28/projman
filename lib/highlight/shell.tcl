@@ -8,8 +8,9 @@
 set beginQuote "0.0"
 set endQuote "2.0"
 set endQuotePrev "0.0"
-proc HighLightPERL {text line lineNumber node} {
-    global fontNormal fontBold editorFontBold tree imgDir noteBook
+
+proc HighLightSHELL {text line lineNumber node} {
+    global fontNormal fontBold editorFontBold tree imgDir noteBook systemCmdList
     global editor color
     global beginQuote endQuote endQuotePrev
     set startIndex 0
@@ -28,8 +29,11 @@ proc HighLightPERL {text line lineNumber node} {
     $text tag configure sql -font $editor(fontBold) -foreground $color(sql)
     
     set keyWord [info commands]
+    
+    foreach n  $systemCmdList {lappend keyWord $n}
+    
     # for OOP extention
-    foreach n {print my use sub printf substr ord class method attribute constructor destructor invariant attribute binding new delete extends final finally implements import interface native new private protected public static super this throw synchronized throws transient try volatile void else } {lappend keyWord $n}
+    foreach n {if else then fi for done do while lt gt} {lappend keyWord $n}
     set dataType {list abstract boolean byte char double float int long short}
     set sqlOperators {select from where and or count sum in order cast as by}
     set a ""
@@ -61,29 +65,30 @@ proc HighLightPERL {text line lineNumber node} {
             break
         }
     }
-    
-    # key binding highlight
+        # string " " highlight
     set startPos 0
     set workLine $line
     while {$workLine != ""} {
-        if {[regexp "<.*?>" $workLine a b]} {
+        if {[regexp "\".*?\"" $workLine a b] || [regexp "\'.*?\'" $workLine a b]} {
             set start [string first $a $workLine]
             set end $start
             incr end [string length $a]
             set workLine [string range $workLine $end end]
             incr start $startPos
             incr end $startPos
-            $text tag add bindKey $lineNumber.$start $lineNumber.$end
+            $text tag add string $lineNumber.$start $lineNumber.$end
             set startPos $end
         } else {
             break
         }        
     }
-    # variable highlight #
+    
+    # variable highlight #regexp -nocase -all -- {\$({|)[a-zA-Z0-9]+(:-|)(.+?}|)} string match v1 v2 v3
+    #[regexp "\\$\[a-zA-Z0-9\\_\-\]+" $workLine a] || 
     set startPos 0
     set workLine $line
     while {$workLine != ""} {
-        if {[regexp "\\$\[a-zA-Z\\_:\]+" $workLine a]} {
+        if [regexp -nocase -all -- {\$({|)([a-zA-Z0-9_\-]+)(:-|)(.+?}|\}|)} $workLine match v1 a v3  v4] {
             set start [string first $a $workLine]
             set end $start
             incr end [string length $a]
@@ -116,23 +121,7 @@ proc HighLightPERL {text line lineNumber node} {
             break
         }        
     }
-    # string " " highlight
-    set startPos 0
-    set workLine $line
-    while {$workLine != ""} {
-        if {[regexp "\".*?\"" $workLine a b] || [regexp "\'.*?\'" $workLine a b]} {
-            set start [string first $a $workLine]
-            set end $start
-            incr end [string length $a]
-            set workLine [string range $workLine $end end]
-            incr start $startPos
-            incr end $startPos
-            $text tag add string $lineNumber.$start $lineNumber.$end
-            set startPos $end
-        } else {
-            break
-        }        
-    }
+
     # persent % highlight
     set startPos 0
     set workLine $line
@@ -171,11 +160,11 @@ proc HighLightPERL {text line lineNumber node} {
         }
     }
     
-    # parameter for command hightlight
+    # parameter for command hightlight  regexp -nocase -all -- {\s-+\w+(?=\s)} string match
     set startPos 0
     set workLine $line
     while {$workLine != ""} {
-        if {[regexp -- {\s-\w+(?=\s)} $workLine a b]} {
+        if {[regexp -nocase -all -- {\s-+\w+(?=\s)} $workLine a b]} {
             set start [expr [string first $a $workLine] + 1]
             set end $start
             incr end [string length $a]
@@ -198,4 +187,16 @@ proc HighLightPERL {text line lineNumber node} {
         $text tag remove comments $lineNumber.0 $lineNumber.end
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 

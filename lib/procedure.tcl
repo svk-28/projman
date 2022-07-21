@@ -587,6 +587,8 @@ proc HighLight {ext text line lineNumber node} {
         HighLightPHP $text $line $lineNumber $node
     } elseif {($ext == "rb")} {
         HighLightRUBY $text $line $lineNumber $node
+    } elseif {($ext == "sh")} {
+        HighLightSHELL $text $line $lineNumber $node
     } else {
         HighLightTCL $text $line $lineNumber $node
     }
@@ -665,8 +667,26 @@ proc GetExtention {node} {
     return $ext
 }
 
-
-
+# Get system command name from PATH environment variable
+proc GetSystemCommand {} {
+    global tcl_platform env systemCmdList
+    switch  -exact -- $tcl_platform(platform) {
+        "unix" {
+            foreach path [split  $env(PATH) ":"] {
+                foreach commandName [lsort [glob -nocomplain [file join $path *]]] {
+                    lappend systemCmdList [file tail $commandName]
+                }
+            }
+        }
+        "windows" {
+            foreach path [split  $env(PATH) ";"] {
+                foreach commandName [lsort [glob -nocomplain [file join $path *]]] {
+                    lappend systemCmdList [file tail $commandName]
+                }
+            }
+        }
+    }
+}
 
 
 

@@ -11,7 +11,7 @@ exec wish "$0" -- "$@"
 ###############################################
 
 ########## VERSION INFORMATION ##########
-set ver "0.4.5"
+set ver "0.4.6"
 
 package require BWidget
 package require msgcat
@@ -174,7 +174,6 @@ option add *Dialog.msg.background $editor(bg)
 #   option add *Text.HighlightThickness 2 userDefault
 #   option add *Entry.HighlightThickness 1 userDefault
 
-
-
+GetSystemCommand
 
 
