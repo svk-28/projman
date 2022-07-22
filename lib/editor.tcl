@@ -173,7 +173,7 @@ namespace eval Editor {
             set shouldBeSpaces 0
             for {set i 0} {$i < $len} {incr i} {
                 if {[string index $prevSpaces $i] == "\t"} {
-                    incr shouldBeSpaces $tabSize
+                    incr shouldBeSpaces $cfgVariables(tabSize) 
                 } else  {
                     incr shouldBeSpaces
                 }            
@@ -424,8 +424,9 @@ namespace eval Editor {
             $txt configure -linemap 0
         }
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
-        
-        if  {[info procs Highlight::$fileType] ne ""} {
+        # puts ">$fileType<"
+        # puts [info procs Highlight::GO]
+        if  {[info procs ::Highlight::$fileType] ne ""} {
             Highlight::$fileType $txt
         } else {
             Highlight::Default $txt
