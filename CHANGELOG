@@ -35,3 +35,6 @@
 21/07/2022
     - Added Save file dialog before tab was closed
     - Added Save file dialog when exiting, if file was modify
+    
+22/07/2022
+    - Added GO highlight
