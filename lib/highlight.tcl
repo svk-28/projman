@@ -41,11 +41,13 @@ namespace eval Highlight {} {
         ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
         ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
     }
+    
     proc GO {txt} {
         ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
-        ctext::addHighlightClass $txt stackControl #19a2a6 {if else while case switch func import return interface map}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {if else for while case switch func import return interface map make}
         ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 float bool byte}
         ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\&"
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\*"
         # ctext::addHighlightClassForRegexp $txt vars_extended #4471ca {\$\{[a-zA-Z0-9\_\-:\./\$\{\}]+\}}
         ctext::addHighlightClass $txt variable_funcs gold {var type struct}
         ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
