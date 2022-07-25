@@ -93,8 +93,10 @@ namespace eval FileOper {
                 return
             }
             set fileName [string range $filePath [expr [string last "/" $filePath]+1] end]
-            puts "$filePath, $fileName"
-            set treeitem [Tree::InsertItem $tree {} $filePath "file" $fileName]
+            puts ">>>>>$filePath, $fileName"
+            # set treeitem [Tree::InsertItem $tree {} $filePath "file" $fileName]
+            # Close
+            # Edit $filePath
         } else {
             set treeItem "file::[string range $nbEditorItem [expr [string last "." $nbEditorItem] +1] end ]"
             set filePath [Tree::GetItemID $tree $treeItem]

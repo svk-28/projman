@@ -20,7 +20,7 @@ namespace eval Editor {
             set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
             set posBegin [lindex [split [lindex $selIndex 1] "."] 0]
             set posEnd [lindex [split [lindex $selIndex 1] "."] 1]
-            if {$lineEnd == $lineNum || $posEnd == 0} {
+            if {$lineEnd == $lineNum && $posEnd == 0} {
                 set lineEnd [expr $lineEnd - 1]
             }
             for {set i $lineBegin} {$i <=$lineEnd} {incr i} {
@@ -401,6 +401,7 @@ namespace eval Editor {
         set nbEditorItem [NB::InsertItem $nbEditor  $fileFullPath "file"]
         puts "$nbEditorItem, $nbEditor"
         Editor $fileFullPath $nbEditor $nbEditorItem
+        SetModifiedFlag $nbEditorItem
     }
     proc Editor {fileFullPath nb itemName} {
         global cfgVariables
@@ -442,3 +443,40 @@ namespace eval Editor {
         return $fr
     }
 }
+
+# ctextBindings.tcl
+#
+# Copyright (C) 2012 Sedat Serper
+# A similar script and functionality is implemented in tG² as of v1.06.01.41 
+#
+# proc ctext_binding4Tag {w tags} {
+  # # foreach tag $tags {
+    # $w tag bind $tag <Enter> {%W config -cursor hand2}
+    # $w tag bind $tag <Leave> {%W config -cursor xterm}
+    # $w tag bind $tag <ButtonRelease-1> {
+      # set cur [::tk::TextClosestGap %W %x %y]
+      # if {[catch {%W index anchor}]} {%W mark set anchor $cur}
+      # set anchor [%W index anchor]
+      # set last  [::tk::TextNextPos %W "$cur - 1c" tcl_wordBreakAfter]
+      # set first [::tk::TextPrevPos %W anchor tcl_wordBreakBefore]
+      # if {![catch {set tmp [%W get $first $last]}]} {
+        # ctext_execTagCmd $tmp
+      # }
+    # }
+  # }
+# }
+# 
+# 
+# THE DEMO
+# 
+# # ----------------------- demo -------------------------------------------
+# # Open a new wish console and copy/paste the following complete script.
+# # Clicking on parts that are highlighted and observe the console output...
+# # Adjust procedure 'ctext_execTagCmd' to customize the handling 4 your application.
+# package require ctext
+# pack [ctext .t] -fill both -expand 1
+# ctext::addHighlightClass .t bindings purple [list <Enter> <Leave> <ButtonRelease-1>]
+# ctext::addHighlightClass .t commands orange [list foreach proc if set catch]
+# .t fastinsert end [info body ctext_binding4Tag]
+# .t highlight 1.0 end
+# ctext_binding4Tag .t {bindings commands}
