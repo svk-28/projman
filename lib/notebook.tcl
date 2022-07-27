@@ -28,11 +28,10 @@ namespace eval NB {
         puts "NB item - $fm"
         return $fm
     }
+
     proc CloseTab {w x y} {
         if {[$w identify $x $y] == "close_button"} {
-            puts "Hurrah! Close tab [$w index @$x,$y] plz."
             FileOper::Close
         }
     }
 }
-

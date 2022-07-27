@@ -38,3 +38,7 @@
     
 22/07/2022
     - Added GO highlight
+    
+27/07/2022
+    - Fixed comment/uncomment procedure (last line in selected text)
+    - Fixed error with save new (untitled) file

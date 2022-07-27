@@ -77,8 +77,10 @@ namespace eval FileOper {
         $nbEditor forget $nbItem
         destroy $nbItem
         set treeItem "file::[string range $nbItem [expr [string last "." $nbItem] +1] end ]"
-        if {[$tree parent $treeItem] eq "" } {
-            $tree delete $treeItem
+        if [$tree exists $treeItem] {
+            if {[$tree parent $treeItem] eq ""} {
+                $tree delete $treeItem
+            }
         }
         unset modified($nbItem)
     }
@@ -92,11 +94,12 @@ namespace eval FileOper {
             if {$filePath eq ""} {
                 return
             }
-            set fileName [string range $filePath [expr [string last "/" $filePath]+1] end]
-            puts ">>>>>$filePath, $fileName"
+            # set fileName [string range $filePath [expr [string last "/" $filePath]+1] end]
+            set fileName [file tail $filePath]
+            $nbEditor tab $nbEditorItem -text $fileName
             # set treeitem [Tree::InsertItem $tree {} $filePath "file" $fileName]
-            # Close
-            # Edit $filePath
+            set lblName "lbl[string range $nbEditorItem [expr [string last "." $nbEditorItem] +1] end]"
+            $nbEditorItem.$lblName configure -text $filePath
         } else {
             set treeItem "file::[string range $nbEditorItem [expr [string last "." $nbEditorItem] +1] end ]"
             set filePath [Tree::GetItemID $tree $treeItem]

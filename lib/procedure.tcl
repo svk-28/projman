@@ -73,4 +73,3 @@ proc SetModifiedFlag {w} {
     }
     $nbEditor tab $w -text $lbl
 }
-

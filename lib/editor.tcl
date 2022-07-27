@@ -47,7 +47,7 @@ namespace eval Editor {
             set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
             set posBegin [lindex [split [lindex $selIndex 1] "."] 0]
             set posEnd [lindex [split [lindex $selIndex 1] "."] 1]
-            if {$lineEnd == $lineNum || $posEnd == 0} {
+            if {$lineEnd == $lineNum && $posEnd == 0} {
                 set lineEnd [expr $lineEnd - 1]
             }            
             for {set i $lineBegin} {$i <=$lineEnd} {incr i} {
@@ -394,23 +394,28 @@ namespace eval Editor {
         } else {
             set untitledNumber 0
         }
-        set filePath untitled-$untitledNumber
-        set fileName untitled-$untitledNumber
+        # set filePath untitled-$untitledNumber
+        # set fileName untitled-$untitledNumber
         set fileFullPath untitled-$untitledNumber
         #puts [Tree::InsertItem $tree {} $fileFullPath "file" $fileName]
         set nbEditorItem [NB::InsertItem $nbEditor  $fileFullPath "file"]
-        puts "$nbEditorItem, $nbEditor"
+        # puts "$nbEditorItem, $nbEditor"
         Editor $fileFullPath $nbEditor $nbEditorItem
         SetModifiedFlag $nbEditorItem
     }
+
     proc Editor {fileFullPath nb itemName} {
         global cfgVariables
         set fr $itemName
         if ![string match "*untitled*" $itemName] {
-            set lblName "lbl[string range $itemName [expr [string last "." $itemName] +1] end]"
-            ttk::label $fr.$lblName -text $fileFullPath
-            pack $fr.$lblName  -side top  -anchor w -fill x  
+             set lblText $fileFullPath
+        } else {
+             set lblText ""
         }
+        
+        set lblName "lbl[string range $itemName [expr [string last "." $itemName] +1] end]"
+        ttk::label $fr.$lblName -text $lblText
+        pack $fr.$lblName  -side top  -anchor w -fill x
         
         set frmText [ttk::frame $fr.frmText -border 1]
         set txt $frmText.t
@@ -420,7 +425,7 @@ namespace eval Editor {
         ctext $txt -yscrollcommand "$frmText.s set" -font $cfgVariables(font) -linemapfg $cfgVariables(lineNumberFG) \
         -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true
         pack $txt -fill both -expand 1
-        puts ">>>>>>> [bindtags $txt]"
+        # puts ">>>>>>> [bindtags $txt]"
         if {$cfgVariables(lineNumberShow) eq "false"} {
             $txt configure -linemap 0
         }
