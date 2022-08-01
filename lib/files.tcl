@@ -189,7 +189,7 @@ namespace eval FileOper {
         set fileName [file tail $fileFullPath]
         regsub -all {\.|/|\\|\s} $fileFullPath "_" itemName
         set itemName "$nbEditor.$itemName"
-        puts [Tree::InsertItem $tree {} $fileFullPath "file" $fileName]
+        set treeItemName [Tree::InsertItem $tree {} $fileFullPath "file" $fileName]
         if {[winfo exists $itemName] == 0} {
             NB::InsertItem $nbEditor $fileFullPath "file"
             Editor::Editor $fileFullPath $nbEditor $itemName
@@ -198,6 +198,7 @@ namespace eval FileOper {
             ResetModifiedFlag $itemName
         }
         $nbEditor select $itemName
+        Editor::ReadStructure $itemName.frmText.t $treeItemName
         focus -force $itemName.frmText.t
         
         return $itemName

@@ -42,3 +42,10 @@
 27/07/2022
     - Fixed comment/uncomment procedure (last line in selected text)
     - Fixed error with save new (untitled) file
+
+01/08/2022
+    - Added inserting base64 encoded image
+    - Added read the file structure and inserting into tree
+    - Added GUI font, and GUI foreground color setting
+    - Added tcl and go files images
+    - Added image for file type (extention)

@@ -351,6 +351,7 @@ namespace eval Editor {
         #bind $txt <Shift-Button-5> "%W xview scroll  2 units"
         bind $txt <<Modified>> "SetModifiedFlag $w"
         bind $txt <<Selection>> "Editor::SelectionGet $txt"
+        bind $txt <Control-i> ImageBase64Encode
     }
 
     proc QuotSelection {txt symbol} {
@@ -403,6 +404,39 @@ namespace eval Editor {
         Editor $fileFullPath $nbEditor $nbEditorItem
         SetModifiedFlag $nbEditorItem
     }
+    
+    proc ReadStructure {txt treeItemName} {
+        global tree nbEditor
+        for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
+            set line [$txt get $lineNumber.0 $lineNumber.end]
+            # TCL procedure
+            if {[regexp -nocase -all -- {^\s*?(proc) (::|)(\w+)(::|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
+                set procName "$v2$v3$v4$v5"
+                # lappend procList($activeProject) [list $procName [string trim $params]]
+                puts "$treeItemName proc $procName $params"
+                # tree parent item type text
+                puts [Tree::InsertItem $tree $treeItemName $procName  "func" "$procName ($params)"]
+            }
+            # GO function
+            if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?\((.*?)\)} $line match v1 funcName params returns]} {
+                # set procName "$v2$v3$v4$v5"
+                # lappend procList($activeProject) [list $procName [string trim $params]]
+                if {$v1 ne ""} {
+                    set linkName [lindex [split $v1 " "] 1]
+                    set funcName "\($linkName\).$funcName"
+                }
+                puts "$treeItemName proc $funcName $params"
+                # tree parent item type text
+                puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
+            }
+            if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\) (\(\w+\)|\w+|)\s*?\{} $line match funcName params returns]} {
+                puts "$treeItemName proc $funcName $params"
+                # tree parent item type text
+                puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
+            }
+            
+        }
+    }
 
     proc Editor {fileFullPath nb itemName} {
         global cfgVariables
@@ -411,6 +445,7 @@ namespace eval Editor {
              set lblText $fileFullPath
         } else {
              set lblText ""
+
         }
         
         set lblName "lbl[string range $itemName [expr [string last "." $itemName] +1] end]"

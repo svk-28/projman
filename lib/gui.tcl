@@ -160,4 +160,8 @@ if {$cfgVariables(toolBarShow) eq "true"} {
     .frmBody.panel add $frmTree -weight 0
 } 
 .frmBody.panel add $frm_work -weight 1 
-# # 
+
+ttk::style configure . \
+    -foreground $::cfgVariables(guiFG) \
+    -font $::cfgVariables(guiFont)
+

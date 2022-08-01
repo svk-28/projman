@@ -11,7 +11,7 @@ package require Tk
 namespace eval ttk::theme::dark {
     variable version 0.0.1
     variable dir [file dirname [info script]]
-    
+    global cfgVariables
     package provide ttk::theme::dark $version
     
     # NB: These colors must be in sync with the ones in black.rdb
@@ -46,7 +46,7 @@ namespace eval ttk::theme::dark {
         -selectbackground $colors(-selectbg) \
         -selectforeground $colors(-selectfg) \
         -selectborderwidth 0 \
-        -font "{Droid Sans Mono} 10" 
+        -font "{Droid Sans Mono} 9" 
         
         ttk::style map "." \
         -background [list disabled $colors(-frame) \
@@ -121,46 +121,3 @@ namespace eval ttk::theme::dark {
     #     option add *Entry.Background $colors(-frame) interactive
     #     option add *Entry.Foreground $colors(-foreground) interactive
 }
-
-# A few tricks for Tablelist.
-
-namespace eval ::tablelist:: {
-    proc blackTheme {} {
-        variable themeDefaults
-        
-        array set colors [array get ttk::theme::dark::colors]
-        
-        array set themeDefaults [list \
-        -background      "#000000" \
-        -foreground      "#ffffff" \
-        -disabledforeground $colors(-disabledfg) \
-        -stripebackground      "#191919" \
-        -selectbackground      "#4a6984" \
-        -selectforeground      "#8b8b00" \
-        -selectborderwidth 0 \
-        -font        TkTextFont \
-        -labelbackground    $colors(-frame) \
-        -labeldisabledBg    "#dcdad5" \
-        -labelactiveBg    "#eeebe7" \
-        -labelpressedBg    "#eeebe7" \
-        -labelforeground    #ffffff \
-        -labeldisabledFg    "#999999" \
-        -labelactiveFg    #ffffff \
-        -labelpressedFg    #ffffff \
-        -labelfont    TkDefaultFont \
-        -labelborderwidth    2 \
-        -labelpady    1 \
-        -arrowcolor    "" \
-        -arrowstyle    sunken10x9 ]
-    }
-}
-
-
-
-
-
-
-
-
-
-

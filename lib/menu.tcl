@@ -54,6 +54,9 @@ proc GetEditMenu {m} {
     -accelerator "Ctrl+Shift+F"
     $m add command -label [::msgcat::mc "Replace in files"] -command File::Replace\
     -accelerator "Ctrl+Shift+RV"
+    $m add separator
+    $m add command -label [::msgcat::mc "Insert image"] -accelerator "Ctrl+I"\
+        -command ImageBase64Encode
     
 }
 
@@ -61,4 +64,3 @@ proc GetViewMenu {m} {
     $m add command -label [::msgcat::mc "View files tree"] -command ViewFilesTree
     $m add command -label [::msgcat::mc "View line numbers"] -command ViewLineNumbers
 }
-

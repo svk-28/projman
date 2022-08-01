@@ -35,9 +35,11 @@ if { $::argc > 0 } {
     }
     puts $opened
 }
+
 package require msgcat
 package require inifile
 package require ctext
+package require base64
 
 # Устанавливаем текущий каталог
 set dir(root) [pwd]

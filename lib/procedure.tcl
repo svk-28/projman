@@ -73,3 +73,34 @@ proc SetModifiedFlag {w} {
     }
     $nbEditor tab $w -text $lbl
 }
+
+proc ImageBase64Encode {} {
+    global env nbEditor
+    set types {
+        {"PNG" {.png}}
+        {"GIF" {.gif}}
+        {"JPEG" {.jpg}}
+        {"BMP" {.bmp}}
+        {"All files" *}
+    }
+    set txt "[$nbEditor select].frmText.t"
+    set img [tk_getOpenFile -initialdir $env(HOME) -filetypes $types -parent .]
+    if {$img ne ""} {
+        set f [open $img]
+        fconfigure $f -translation binary
+        set data [base64::encode [read $f]]
+        close $f
+        # base name on root name of the image file
+        set name [file root [file tail $img]]
+        $txt insert insert "image create photo $name -data {\n$data\n}"
+    }
+}
+proc FindImage {ext} {
+    foreach img [image names] {
+        if [regexp -nocase -all -- "^($ext)(_)" $img match v1 v2] {
+            puts "\nFindinig images: $img \n"
+            return $img
+        }
+    }
+}
+

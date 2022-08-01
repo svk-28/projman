@@ -19,21 +19,33 @@ namespace eval Tree {
         switch $type  {
             file {
                 regsub -all {\.|/|\\|\s} $item "_" subNode
-                puts $subNode
-                set image imgFile
+                puts "Inserted tree node: $subNode"
+                set fileExt [string trimleft [file extension $text] "."]
+                set findImg [::FindImage $fileExt]
+                puts "Extention $fileExt, find image: $findImg"
+                if {$fileExt ne "" && $findImg ne ""} {
+                    set image $findImg
+                } else {
+                    set image imgFile
+                }
             }
             directory {
                 regsub -all {\.|/|\\|\s} $item "_" subNode
                 puts $subNode
                 set image folder
             }
+            func {
+                regsub -all {:} $item "_" subNode
+                puts $subNode
+                set image proc_10x10                
+            }
         }
         append id $type "::" $subNode
-        puts $id
+        puts "Tree ID: $id, tree item: $item"
         if ![$tree exists $id] {
-            $tree insert $parent end -id "$id" -text $text -values "$item" -image $image
+            $tree insert $parent end -id "$id" -text " $text" -values "$item" -image $image
         }
-            return "$id"
+        return "$id"
     }
     proc DoublePressItem {tree} {
         set id [$tree selection]
