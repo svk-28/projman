@@ -30,6 +30,9 @@ toolBarShow=true
 menuShow=true
 filesPanelShow=true
 geometry=1024x768
+guiFont={Droid Sans Mono} 9
+guiFontBold={Droid Sans Mono} 9 bold
+guiFG=#cccccc
 \[Editor\]
 autoFormat=true
 font=courier 10 normal roman
