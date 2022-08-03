@@ -98,7 +98,7 @@ proc ImageBase64Encode {} {
 proc FindImage {ext} {
     foreach img [image names] {
         if [regexp -nocase -all -- "^($ext)(_)" $img match v1 v2] {
-            puts "\nFindinig images: $img \n"
+            # puts "\nFindinig images: $img \n"
             return $img
         }
     }

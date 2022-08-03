@@ -49,3 +49,9 @@
     - Added GUI font, and GUI foreground color setting
     - Added tcl and go files images
     - Added image for file type (extention)
+
+03/08/2022
+    - Added some files icon
+    - Fix finded procedure (function) (tree click)
+    - Fix showing position in statusbar 
+    

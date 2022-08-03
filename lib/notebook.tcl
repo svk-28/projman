@@ -10,7 +10,6 @@
 ######################################################
 
 namespace eval NB {
-    
     proc InsertItem {nb item type} {
         switch $type {
             file {

@@ -93,31 +93,31 @@ namespace eval ttk::theme::dark {
         -fieldbackground $colors(-lightframe)
         
         ttk::style configure Text \
-        -linemapbg [list active $colors(-frame)]\
+        -linemapbg [list active $colors(-lightframe)]\
         -linemapbg [list active $colors(-disabledfg)]\
         -background [list active $colors(-lighter)] \
         -foreground [list disabled $colors(-disabledfg)]
         
         ttk::style configure TLabel -foreground  $colors(-disabledfg)  -padding {2 0}
        
-        #         ttk::style configure TreeCtrl \
-        #         -background gray30 -itembackground {gray60 gray50} \
-        #         -itemfill #ffffff -itemaccentfill yellow
+        # ttk::style configure TreeCtrl \
+        # -background gray30 -itembackground {gray60 gray50} \
+        # -itemfill #ffffff -itemaccentfill yellow
         option add *Toplevel.Background $colors(-dark) interactive
         option add *Text.Foreground $colors(-foreground) interactive
         option add *Text.Background $colors(-frame) interactive
         
-        # option add *Text.Insertbackground yellow interactive
+        option add *Text.Insertbackground yellow interactive
         # option add *Text.BorderWidth -2 interactive
         # option add *Text.selectBorderWidth -2 interactive
         # option add *Text.Relief flat interactive
-        option add *Text.Font "{Noto Sans Mono} 10" interactive
+        # option add *Text.Font "{Noto Sans Mono} 10" interactive
         #option add *BorderWidth -2 interactive
     }
-    #option add *Treeview.Background red interactive
-    #     option add *Frame.Background $colors(-frame) interactive
-    #     option add *Label.Background $colors(-frame) interactive
-    #     option add *Label.Foreground $colors(-foreground) interactive
-    #     option add *Entry.Background $colors(-frame) interactive
-    #     option add *Entry.Foreground $colors(-foreground) interactive
+    # option add *Treeview.Background red interactive
+    # option add *Frame.Background $colors(-frame) interactive
+    # option add *Label.Background $colors(-frame) interactive
+    # option add *Label.Foreground $colors(-foreground) interactive
+    # option add *Entry.Background $colors(-frame) interactive
+    # option add *Entry.Foreground $colors(-foreground) interactive
 }

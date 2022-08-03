@@ -252,9 +252,9 @@ namespace eval Editor {
         }
     }
     proc ReleaseKey {k txt} {
+        set pos [$txt index insert]
         switch $k {
             Return {
-                set pos [$txt index insert]
                 set lineNum [lindex [split $pos "."] 0]
                 set posNum [lindex [split $pos "."] 1]
                 regexp {^(\s*)} [$txt get [expr $lineNum - 1].0 [expr $lineNum - 1].end] -> spaceStart
@@ -263,6 +263,10 @@ namespace eval Editor {
                 Editor::Indent $txt
             }
         }
+        set lpos [split $pos "."]
+        set lblText "[::msgcat::mc "Row"]: [lindex $lpos 0], [::msgcat::mc "Column"]: [lindex $lpos 1]"
+        .frmStatus.lblPosition configure -text $lblText
+        unset lpos
     }
     proc PressKey {k txt} {
         # puts [Editor::Key $k]
@@ -413,24 +417,24 @@ namespace eval Editor {
             if {[regexp -nocase -all -- {^\s*?(proc) (::|)(\w+)(::|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
                 set procName "$v2$v3$v4$v5"
                 # lappend procList($activeProject) [list $procName [string trim $params]]
-                puts "$treeItemName proc $procName $params"
+                # puts "$treeItemName proc $procName $params"
                 # tree parent item type text
-                puts [Tree::InsertItem $tree $treeItemName $procName  "func" "$procName ($params)"]
+                puts [Tree::InsertItem $tree $treeItemName $procName  "procedure" "$procName ($params)"]
             }
             # GO function
-            if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?\((.*?)\)} $line match v1 funcName params returns]} {
+            if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?(\(\w+\)|\w+|)\s*?\{} $line match v1 funcName params returns]} {
                 # set procName "$v2$v3$v4$v5"
                 # lappend procList($activeProject) [list $procName [string trim $params]]
                 if {$v1 ne ""} {
                     set linkName [lindex [split $v1 " "] 1]
-                    set funcName "\($linkName\).$funcName"
+                    set functionName "\($linkName\).$funcName"
                 }
-                puts "$treeItemName proc $funcName $params"
+                # puts "$treeItemName func $funcName $params"
                 # tree parent item type text
-                puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
+                puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$functionName ($params)"]
             }
             if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\) (\(\w+\)|\w+|)\s*?\{} $line match funcName params returns]} {
-                puts "$treeItemName proc $funcName $params"
+                # puts "$treeItemName func $funcName $params"
                 # tree parent item type text
                 puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
             }
@@ -438,6 +442,32 @@ namespace eval Editor {
         }
     }
 
+    proc FindFunction {findString} {
+        global nbEditor
+        puts $findString
+        set pos "0.0"
+        set txt [$nbEditor select].frmText.t
+        $txt see $pos
+        set line [lindex [split $pos "."] 0]
+        set x [lindex [split $pos "."] 1]
+        # set pos [$txt search -nocase $findString $line.$x end]
+        set pos [$txt search -nocase -regexp $findString $line.$x end]
+        $txt mark set insert $pos
+        $txt see $pos
+        puts $pos
+        # highlight the found word
+        set line [lindex [split $pos "."] 0]
+        # set x [lindex [split $pos "."] 1]
+        # set x [expr {$x + [string length $findString]}]
+        $txt tag remove sel 1.0 end
+        $txt tag add sel $pos $line.end
+        # #$text tag configure sel -background $editor(selectbg) -foreground $editor(fg)
+        $txt tag raise sel
+        focus -force $txt
+        # Position
+        return 1
+    }
+    
     proc Editor {fileFullPath nb itemName} {
         global cfgVariables
         set fr $itemName
@@ -458,7 +488,8 @@ namespace eval Editor {
         pack $frmText  -side top -expand true -fill both 
         pack [ttk::scrollbar $frmText.s -command "$frmText.t yview"] -side right -fill y
         ctext $txt -yscrollcommand "$frmText.s set" -font $cfgVariables(font) -linemapfg $cfgVariables(lineNumberFG) \
-        -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true
+            -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true 
+            
         pack $txt -fill both -expand 1
         # puts ">>>>>>> [bindtags $txt]"
         if {$cfgVariables(lineNumberShow) eq "false"} {

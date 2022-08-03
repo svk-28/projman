@@ -68,7 +68,7 @@ if [info exists cfgVariables(theme)] {
 
 frame .frmMenu -border 1 -relief raised  -highlightthickness 0
 frame .frmBody -border 1 -relief raised -highlightthickness 0
-frame .frmStatus -border 1 -relief sunken 
+ttk::frame .frmStatus -border 0 -relief sunken 
 pack .frmMenu -side top -padx 1 -fill x
 pack .frmBody -side top -padx 1 -fill both -expand true
 pack .frmStatus -side top -padx 1 -fill x
@@ -76,7 +76,7 @@ pack .frmStatus -side top -padx 1 -fill x
 # pack .panel -expand true -fill both
 # pack propagate .panel false
 #pack [label .frmMenu.lbl -text "ddd"]
-pack [label .frmStatus.lbl2 -text "ddd"]
+pack [ttk::label .frmStatus.lblPosition -justify right] -side right
 
 menubutton .frmMenu.mnuFile -text [::msgcat::mc "File"] -menu .frmMenu.mnuFile.m
 GetFileMenu [menu .frmMenu.mnuFile.m]
@@ -100,7 +100,7 @@ pack propagate .frmBody.panel false
 pack .frmBody.frmTool -side left -fill y
 pack .frmBody.panel -side left -fill both -expand true
 
-ttk::button $frmTool.btn_tree  -command  ViewFilesTree  -image tree_32x32
+ttk::button $frmTool.btn_tree  -command  ViewFilesTree  -image tree_24x24
 
 pack $frmTool.btn_tree -side top -padx 1 -pady 1
 # #label $frmTool.lbl_logo -image tcl
@@ -110,17 +110,20 @@ pack $frmTool.btn_tree -side top -padx 1 -pady 1
 # # Дерево с полосами прокрутки
 set frmTree [ttk::frame .frmBody.frmTree]
 
-ttk::scrollbar $frmTree.hsb1 -orient horizontal -command {$frmTree.tree xview}
-ttk::scrollbar $frmTree.vsb1 -orient vertical -command [list $frmTree.tree yview]
 set tree [ttk::treeview $frmTree.tree -show tree \
--xscrollcommand {$frmTree.hsb1 set} -yscrollcommand [list $frmTree.vsb1 set]]
+    -xscrollcommand [list .frmBody.frmTree.h set] -yscrollcommand [list .frmBody.frmTree.v set]]
+    
+ttk::scrollbar $frmTree.h -orient horizontal -command [list $frmTree.tree xview]
+ttk::scrollbar $frmTree.v -orient vertical -command [list $frmTree.tree yview]
+
+
 
 bind $tree <Double-ButtonPress-1> {Tree::DoublePressItem $tree}
 bind $tree  <ButtonRelease> {Tree::PressItem $tree}
 
 grid $tree -row 0 -column 0 -sticky nsew
-grid $frmTree.vsb1 -row 0 -column 1 -sticky nsew
-grid $frmTree.hsb1 -row 1 -column 0 -sticky nsew
+grid $frmTree.v -row 0 -column 1 -sticky nsew
+# grid $frmTree.h -row 1 -column 0 -sticky nsew
 grid columnconfigure $frmTree 0 -weight 1
 grid rowconfigure $frmTree 0 -weight 1
 

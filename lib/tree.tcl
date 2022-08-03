@@ -15,14 +15,14 @@ namespace eval Tree {
     proc InsertItem {tree parent item type text} {
         # set img [GetImage $fileName]
         set dot "_"
-        puts "$tree $parent $item $type $text"
+        # puts "$tree $parent $item $type $text"
         switch $type  {
             file {
                 regsub -all {\.|/|\\|\s} $item "_" subNode
-                puts "Inserted tree node: $subNode"
+                # puts "Inserted tree node: $subNode"
                 set fileExt [string trimleft [file extension $text] "."]
                 set findImg [::FindImage $fileExt]
-                puts "Extention $fileExt, find image: $findImg"
+                # puts "Extention $fileExt, find image: $findImg"
                 if {$fileExt ne "" && $findImg ne ""} {
                     set image $findImg
                 } else {
@@ -31,12 +31,17 @@ namespace eval Tree {
             }
             directory {
                 regsub -all {\.|/|\\|\s} $item "_" subNode
-                puts $subNode
-                set image folder
+                # puts $subNode
+                set image pixel
             }
             func {
                 regsub -all {:} $item "_" subNode
-                puts $subNode
+                # puts $subNode
+                set image proc_10x10                
+            }
+            procedure {
+                regsub -all {:} $item "_" subNode
+                # puts $subNode
                 set image proc_10x10                
             }
         }
@@ -69,6 +74,7 @@ namespace eval Tree {
     }
 
     proc PressItem {tree} {
+        global nbEditor
         set id [$tree selection]
         $tree tag remove selected
         $tree item $id -tags selected
@@ -77,7 +83,7 @@ namespace eval Tree {
         set key [lindex [split $id "::"] 0]
         if {$values eq "" || $key eq ""} {return}
         
-        puts "$key $tree $values"
+        # puts "$key $tree $values"
         switch $key {
             directory {
                 FileOper::ReadFolder  $values
@@ -86,9 +92,18 @@ namespace eval Tree {
             file {
                 FileOper::Edit $values
             }
+            func {
+                set parentItem [$tree parent $id]
+                $nbEditor select $nbEditor.[string range $parentItem [expr [string last "::" $parentItem] + 2] end]
+                Editor::FindFunction "func $values"
+            }
+            procedure {
+                set parentItem [$tree parent $id]
+                $nbEditor select $nbEditor.[string range $parentItem [expr [string last "::" $parentItem] + 2] end]
+                Editor::FindFunction "proc $values"
+            }
         }
-        # 
-}
+    }
 
     proc GetItemID {tree item} {
         if [$tree exists $item] {
