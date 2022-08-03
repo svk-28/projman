@@ -348,9 +348,9 @@ namespace eval Editor {
         #bind . <Control-udiaeresis> PageTab
         bind $txt <Insert> {OverWrite}
         bind $txt <ButtonRelease-1> []
-        bind $txt <Button-3> {catch [PopupMenuEditor %X %Y]}
-        bind $txt <Button-4> "%W yview scroll -3 units"
-        bind $txt <Button-5> "%W yview scroll  3 units"
+        # bind $txt <Button-3> {catch [PopupMenuEditor %X %Y]}
+        # bind $txt <Button-4> "%W yview scroll -3 units"
+        # bind $txt <Button-5> "%W yview scroll  3 units"
         #bind $txt <Shift-Button-4> "%W xview scroll -2 units"
         #bind $txt <Shift-Button-5> "%W xview scroll  2 units"
         bind $txt <<Modified>> "SetModifiedFlag $w"

@@ -119,7 +119,7 @@ ttk::scrollbar $frmTree.v -orient vertical -command [list $frmTree.tree yview]
 
 
 bind $tree <Double-ButtonPress-1> {Tree::DoublePressItem $tree}
-bind $tree  <ButtonRelease> {Tree::PressItem $tree}
+bind $tree  <ButtonRelease-1> {Tree::PressItem $tree}
 
 grid $tree -row 0 -column 0 -sticky nsew
 grid $frmTree.v -row 0 -column 1 -sticky nsew
@@ -167,4 +167,3 @@ if {$cfgVariables(toolBarShow) eq "true"} {
 ttk::style configure . \
     -foreground $::cfgVariables(guiFG) \
     -font $::cfgVariables(guiFont)
-

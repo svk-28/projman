@@ -94,8 +94,9 @@ namespace eval Tree {
             }
             func {
                 set parentItem [$tree parent $id]
+                puts $values
                 $nbEditor select $nbEditor.[string range $parentItem [expr [string last "::" $parentItem] + 2] end]
-                Editor::FindFunction "func $values"
+                Editor::FindFunction "func.*?$values"
             }
             procedure {
                 set parentItem [$tree parent $id]
