@@ -9,11 +9,25 @@
 
 namespace eval Editor {
     variable selectionTex
-    proc Comment {txt} {
+    proc Comment {txt fileType} {
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set PosNum [lindex [split $pos "."] 1]
+        switch $fileType {
+            TCL {
+                set symbol "#"
+            }
+            GO {
+                set symbol "//"
+            }
+            Unknown {
+                set symbol "#"
+            }
+            default {
+                set symbol "#"
+            }
+        }
         puts "Select : $selIndex"
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
@@ -26,22 +40,29 @@ namespace eval Editor {
             for {set i $lineBegin} {$i <=$lineEnd} {incr i} {
                 #$txt insert $i.0 "# "
                 regexp -nocase -indices -- {^(\s*)(.*?)} [$txt get $i.0 $i.end] match v1 v2
-                $txt insert  $i.[lindex [split $v2] 0] "# "
+                $txt insert  $i.[lindex [split $v2] 0] "$symbol "
             }
             $txt tag add comments $lineBegin.0 $lineEnd.end
             $txt tag raise comments
         } else {
             regexp -nocase -indices -- {^(\s*)(.*?)} [$txt get $lineNum.0 $lineNum.end] match v1 v2
-            $txt insert  $lineNum.[lindex [split $v2] 0] "# "
+            $txt insert  $lineNum.[lindex [split $v2] 0] "$symbol "
             $txt tag add comments $lineNum.0 $lineNum.end
             $txt tag raise comments
         }
     }
-    proc Uncomment {txt} {
+    proc Uncomment {txt fileType} {
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set posNum [lindex [split $pos "."] 1]
+        
+        if  {[info procs GetComment:$fileType] ne ""} {
+            set commentProcedure "GetComment:$fileType"
+        } else {
+            set commentProcedure {GetComment:Unknown}
+        }
+        # puts "$fileType, $commentProcedure"
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
             set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
@@ -52,23 +73,46 @@ namespace eval Editor {
             }            
             for {set i $lineBegin} {$i <=$lineEnd} {incr i} {
                 set str [$txt get $i.0 $i.end]
-                if {[regexp -nocase -indices -- {(^| )(#\s)(.+)} $str match v1 v2 v3]} {
-                    $txt delete $i.[lindex [split $v2] 0] $i.[lindex [split $v3] 0]
+                set commentSymbolIndex [$commentProcedure $str]
+                if {$commentSymbolIndex != 0} {
+                    $txt delete $i.[lindex $commentSymbolIndex 0] $i.[lindex $commentSymbolIndex 1]
                 }
             }
            $txt tag remove comments $lineBegin.0 $lineEnd.end
            $txt tag add	sel $lineBegin.0 $lineEnd.end
            $txt highlight $lineBegin.0 $lineEnd.end
         } else {
-            #set posNum [lindex [split $pos "."] 1]
+            set posNum [lindex [split $pos "."] 1]
             set str [$txt get $lineNum.0 $lineNum.end]
-            if {[regexp -nocase -indices -- {(^| )(#\s)(.+)} $str match v1 v2 v3]} {
-                puts ">>>>> $v1, $v2, $v3"
-                    $txt delete $lineNum.[lindex [split $v2] 0] $lineNum.[lindex [split $v3] 0]
-                    #$txt insert $i.0 $v3
+            set commentSymbolIndex [$commentProcedure $str]
+            if {$commentSymbolIndex != 0} {
+                $txt delete $lineNum.[lindex $commentSymbolIndex 0] $lineNum.[lindex $commentSymbolIndex 1]
             }
             $txt tag remove comments $lineNum.0 $lineNum.end
             $txt highlight $lineNum.0 $lineNum.end
+        }
+    }
+    proc GetComment:TCL {str} {
+        if {[regexp -nocase -indices -- {(^| )(#\s)(.+)} $str match v1 v2 v3]} {
+            return [list [lindex [split $v2] 0] [lindex [split $v3] 0]]
+        } else {
+            return 0
+        }
+    }
+    proc GetComment:GO {str} {
+        # puts ">>>>>>>$str"
+        if {[regexp -nocase -indices -- {(^| |\t)(//\s)(.+)} $str match v1 v2 v3]} {
+            # puts ">>>> $match $v1 $v2 $v3"
+            return [list [lindex [split $v2] 0] [lindex [split $v3] 0]]
+        } else {
+            return 0
+        }
+    }
+    proc GetComment:Unknown	{str} {
+        if {[regexp -nocase -indices -- {(^| )(#\s)(.+)} $str match v1 v2 v3]} {
+            return [list [lindex [split $v2] 0] [lindex [split $v3] 0]]
+        } else {
+            return 0
         }
     }
 
@@ -302,7 +346,7 @@ namespace eval Editor {
         if {$key == 63 || $key == 107 || $key == 108 || $key == 112} {return "true"}
     }
     
-    proc BindKeys {w} {
+    proc BindKeys {w fileType} {
         global cfgVariables
         #  variable txt
         set txt $w.frmText.t
@@ -341,8 +385,8 @@ namespace eval Editor {
         bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
         bind $txt <Control-bracketright> "Editor::DeleteTabular $txt"
         
-        bind $txt <Control-comma> "Editor::Comment $txt"
-        bind $txt <Control-period> "Editor::Uncomment $txt"
+        bind $txt <Control-comma> "Editor::Comment $txt $fileType"
+        bind $txt <Control-period> "Editor::Uncomment $txt $fileType"
         bind $txt <Control-eacute> Find
         #bind . <Control-m> PageTab
         #bind . <Control-udiaeresis> PageTab
@@ -414,7 +458,7 @@ namespace eval Editor {
         for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
             set line [$txt get $lineNumber.0 $lineNumber.end]
             # TCL procedure
-            if {[regexp -nocase -all -- {^\s*?(proc) (::|)(\w+)(::|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
+            if {[regexp -nocase -all -- {^\s*?(proc) (::|)(\w+)(::|:|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
                 set procName "$v2$v3$v4$v5"
                 # lappend procList($activeProject) [list $procName [string trim $params]]
                 # puts "$treeItemName proc $procName $params"
@@ -496,6 +540,8 @@ namespace eval Editor {
             $txt configure -linemap 0
         }
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
+        if {$fileType eq ""} {set fileType "Unknown"}
+        
         # puts ">$fileType<"
         # puts [info procs Highlight::GO]
         if  {[info procs ::Highlight::$fileType] ne ""} {
@@ -504,7 +550,7 @@ namespace eval Editor {
             Highlight::Default $txt
         }
         
-        BindKeys $itemName
+        BindKeys $itemName $fileType
         # bind $txt <Return> {
             # regexp {^(\s*)} [%W get "insert linestart" end] -> spaceStart
             # %W insert insert "\n$spaceStart"

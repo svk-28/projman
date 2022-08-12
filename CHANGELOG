@@ -54,4 +54,10 @@
     - Added some files icon
     - Fix finded procedure (function) (tree click)
     - Fix showing position in statusbar 
+
+12/08/2022
+    - Fixed comment/uncomment procedure depending on the file type
+    - Added About dialog
+    - Fixed read structure (procedure names like Proc:Name)
+    
     
