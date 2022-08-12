@@ -64,3 +64,7 @@ proc GetViewMenu {m} {
     $m add command -label [::msgcat::mc "View files tree"] -command ViewFilesTree
     $m add command -label [::msgcat::mc "View line numbers"] -command ViewLineNumbers
 }
+
+proc GetHelpMenu {m} {
+    $m add command -label [::msgcat::mc "About ..."] -command Help::About
+}

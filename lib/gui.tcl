@@ -13,7 +13,7 @@ if {[info exists cfgVariables(geometry)]} {
     wm geometry . 1024x768
 }
 # Заголовок окна
-wm title . "ProjMan \($projmanVersion-$projmanRelease\)"
+wm title . "ProjMan \($projman(Version)-$projman(Release)\)"
 wm iconname . "ProjMan"
 # иконка окна (берется из файла lib/imges.tcl)
 wm iconphoto . projman
@@ -90,6 +90,7 @@ GetViewMenu [menu .frmMenu.mnuView.m]
 pack .frmMenu.mnuFile .frmMenu.mnuEdit .frmMenu.mnuView -side left
 
 menubutton .frmMenu.mnuHelp -text [::msgcat::mc "Help"] -menu .frmMenu.mnuHelp.m
+GetHelpMenu [menu .frmMenu.mnuHelp.m]
 pack .frmMenu.mnuHelp -side right
 
 

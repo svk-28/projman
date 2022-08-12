@@ -104,3 +104,24 @@ proc FindImage {ext} {
     }
 }
 
+namespace eval Help {
+    proc About {} {
+        global projman
+        set msg "Tcl/Tk project Manager\n\n"
+        append msg  "Version: " $projman(Version) "\n" \
+            "Release: " $projman(Release) "\n" \
+            "Build: " $projman(Build) "\n\n" \
+            "Author: " $projman(Author) "\n" \
+            "Home page: " $projman(Homepage)
+        # foreach name [array names projman] {
+            # append msg $name ": " $projman($name) "\n"
+        # }
+        set answer [
+            tk_messageBox -message "[::msgcat::mc "About ..."] ProjMan" \
+            -icon info -type ok -detail $msg
+        ]
+        switch $answer {
+            ok {return}
+        }
+    }
+}
