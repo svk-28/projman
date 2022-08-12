@@ -13,7 +13,7 @@ namespace eval FileOper {
     
     set ::types {
         {"All files" *}
-    }
+    }        
     
     proc OpenDialog {} {
         global env
@@ -134,14 +134,14 @@ namespace eval FileOper {
         }
     }
     
-    proc ReadFolder {dir} {
-        global tree
-        puts "Read the folder $dir"
+    proc ReadFolder {directory} {
+        global tree dir
+        puts "Read the folder $directory"
         set rList ""
-        if {[catch {cd $dir}] != 0} {
+        if {[catch {cd $directory}] != 0} {
             return ""
         }
-        set parent [Tree::InsertItem $tree {} $dir "directory" $dir]
+        set parent [Tree::InsertItem $tree {} $directory "directory" $directory]
         # if {[ $tree  item $parent -open] eq "false"} {
             # $tree  item $parent -open true
         # } else {
@@ -149,7 +149,7 @@ namespace eval FileOper {
         # }
         # Getting an files and directorues lists
         foreach file [glob -nocomplain *] {
-            lappend rList [list [file join $dir $file]]
+            lappend rList [list [file join $directory $file]]
             if [file isdirectory $file] {
                 lappend lstDir $file
             } else {
@@ -159,14 +159,17 @@ namespace eval FileOper {
         # Sort  lists and insert into tree
         if {[info exists lstDir] && [llength $lstDir] > 0} {
             foreach f [lsort $lstDir] {
-                puts " Tree insert item: [Tree::InsertItem $tree $parent [file join $dir $f] "directory" $f]"
+                puts " Tree insert item: [Tree::InsertItem $tree $parent [file join $directory $f] "directory" $f]"
             }
         }
         if {[info exists lstFiles] && [llength $lstFiles] > 0} {
             foreach f [lsort $lstFiles] {
-                puts "Tree insert item: [Tree::InsertItem $tree $parent [file join $dir $f] "file" $f]"
+                puts "Tree insert item: [Tree::InsertItem $tree $parent [file join $directory $f] "file" $f]"
             }
         }
+        # Чтение структуры файлов в каталоге
+        #  пока криво работает
+        # Accept $dir(lib) $directory
     }
     
     proc ReadFile {fileFullPath itemName} {
