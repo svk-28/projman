@@ -5,29 +5,34 @@ exec wish "$0" -- "$@"
 ######################################################
 #        Tcl/Tk Project manager 2.0
 #        Distributed under GNU Public License
-# Author: Sergey Kalinin svk@nuk-svl.ru
+# Author: Sergey Kalinin svk@nuk-svk.ru
 # Home page: https://nuk-svk.ru
 ######################################################
 # Version: 2.0.0
 # Release: alpha
+# Build: 12082022151702
 ######################################################
 
-# определим текущую версию и релиз
+# определим текущую версию, релиз и т.д.
 set f [open [info script] "RDONLY"]
 while {[gets $f line] >=0} {
     if [regexp -nocase -all -- {version:\s+([0-9]+?.[0-9]+?.[0-9]+?)} $line match v1] {
-        
-
-        set projmanVersion $v1
+        set projman(Version) $v1
     }
     if [regexp -nocase -all -- {release:\s+([a-z0-9]+?)} $line match v1] {
-        set projmanRelease $v1
+        set projman(Release) $v1
+    }
+    if [regexp -nocase -all -- {build:\s+([a-z0-9]+?)} $line match v1] {
+        set projman(Build) $v1
+    }
+    if [regexp -nocase -all -- {author:\s+(.+?)} $line match v1] {
+        set projman(Author) $v1
+    }
+    if [regexp -nocase -all -- {home page:\s+(.+?)} $line match v1] {
+        set projman(Homepage) $v1
     }
 }
 close $f
-
-puts "Projman version $projmanVersion-$projmanRelease"
-
 
 if { $::argc > 0 } {
     foreach arg $::argv {
@@ -40,6 +45,8 @@ package require msgcat
 package require inifile
 package require ctext
 package require base64
+package require fileutil
+package require Thread
 
 # Устанавливаем текущий каталог
 set dir(root) [pwd]
@@ -60,7 +67,7 @@ if {[file exists $dir(cfg)] == 0} {
     file mkdir $dir(cfg)    
 }
 
-puts "Config dir is $dir(cfg)"
+# puts "Config dir is $dir(cfg)"
 
 # каталог с модулями
 set dir(lib) "[file join $dir(root) lib]"
