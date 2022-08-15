@@ -488,7 +488,7 @@ namespace eval Editor {
                 puts [Tree::InsertItem $tree $treeItemName $procName  "procedure" "$procName ($params)"]
             }
             # GO function
-            if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?(\(\w+\)|\w+|)\s*?\{} $line match v1 funcName params returns]} {
+            if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match v1 funcName params returns]} {
                 # set procName "$v2$v3$v4$v5"
                 # lappend procList($activeProject) [list $procName [string trim $params]]
                 if {$v1 ne ""} {
@@ -499,7 +499,7 @@ namespace eval Editor {
                 # tree parent item type text
                 puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$functionName ($params)"]
             }
-            if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\) (\(\w+\)|\w+|)\s*?\{} $line match funcName params returns]} {
+            if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match funcName params returns]} {
                 # puts "$treeItemName func $funcName $params"
                 # tree parent item type text
                 puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
