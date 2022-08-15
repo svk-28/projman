@@ -297,6 +297,7 @@ namespace eval Editor {
     }
     proc ReleaseKey {k txt} {
         set pos [$txt index insert]
+        SearchBrackets $txt
         switch $k {
             Return {
                 set lineNum [lindex [split $pos "."] 0]
@@ -391,7 +392,8 @@ namespace eval Editor {
         #bind . <Control-m> PageTab
         #bind . <Control-udiaeresis> PageTab
         bind $txt <Insert> {OverWrite}
-        bind $txt <ButtonRelease-1> []
+        bind $txt <ButtonRelease-1> "Editor::SearchBrackets $txt"
+        # bind <Button-1> [bind sysAfter <Any-Key>]
         # bind $txt <Button-3> {catch [PopupMenuEditor %X %Y]}
         # bind $txt <Button-4> "%W yview scroll -3 units"
         # bind $txt <Button-5> "%W yview scroll  3 units"
@@ -400,8 +402,28 @@ namespace eval Editor {
         bind $txt <<Modified>> "SetModifiedFlag $w"
         bind $txt <<Selection>> "Editor::SelectionGet $txt"
         bind $txt <Control-i> ImageBase64Encode
+        bind $txt <Control-u> "Editor::SearchBrackets %W"
     }
-
+    
+    proc SearchBrackets {txt} {
+        set i -1
+        catch {
+            switch -- [$txt get "insert - 1 chars"] {
+                \{ {set i [Editor::_searchCloseBracket $txt \{ \} insert end]}
+                \[ {set i [Editor::_searchCloseBracket $txt \[ \] insert end]}
+                ( {set i [Editor::_searchCloseBracket $txt (   ) insert end]}
+                \} {set i [Editor::_searchOpenBracket $txt \{ \} insert 1.0]}
+                \] {set i [Editor::_searchOpenBracket $txt \[ \] insert 1.0]}
+                ) {set i [Editor::_searchOpenBracket $txt (  ) insert 1.0]}
+            } ;# switch
+            catch { $txt tag remove lightBracket 1.0 end }
+            if { $i != -1 } {
+                # puts $i
+                $txt tag add lightBracket "$i - 1 chars" $i
+            };#if
+        };#catch
+    }
+    
     proc QuotSelection {txt symbol} {
         variable selectionText
         set selIndex [$txt tag ranges sel]
@@ -458,7 +480,7 @@ namespace eval Editor {
         for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
             set line [$txt get $lineNumber.0 $lineNumber.end]
             # TCL procedure
-            if {[regexp -nocase -all -- {^\s*?(proc) (::|)(\w+)(::|:|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
+            if {[regexp -nocase -all -- {^\s*?(proc) (::|_|)(\w+)(::|:|_|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
                 set procName "$v2$v3$v4$v5"
                 # lappend procList($activeProject) [list $procName [string trim $params]]
                 # puts "$treeItemName proc $procName $params"
@@ -511,7 +533,53 @@ namespace eval Editor {
         # Position
         return 1
     }
+        # "Alexander Dederer (aka Korwin)
+    ## Search close bracket in editor widget
+    proc _searchCloseBracket { widget o_bracket c_bracket start_pos end_pos } {
+        # puts "_searchCloseBracket: $widget $o_bracket $c_bracket $start_pos $end_pos"
+        set o_count 1
+        set c_count 0
+        set found 0
+        set pattern "\[\\$o_bracket\\$c_bracket\]"
+        set pos [$widget search -regexp -- $pattern $start_pos $end_pos]
+        while { ! [string equal $pos {}] } {
+            set char [$widget get $pos]
+            #tk_messageBox -title $pattern -message "char: $char; $pos; o_count=$o_count; c_count=$c_count"
+            if {[string equal $char $o_bracket]} {incr o_count ; set found 1}
+            if {[string equal $char $c_bracket]} {incr c_count ; set found 1}
+            if {($found == 1) && ($o_count == $c_count) } { return [$widget index "$pos + 1 chars"] }
+            set found 0
+            set start_pos "$pos + 1 chars"
+            set pos [$widget search -regexp -- $pattern $start_pos $end_pos]
+        } ;# while search
+        
+        return -1
+    } ;# proc _searchCloseBracket
     
+    # "Alexander Dederer (aka Korwin)
+    ## Search open bracket in editor widget
+    proc _searchOpenBracket { widget o_bracket c_bracket start_pos end_pos } {
+        # puts "_searchOpenBracket: $widget $o_bracket $c_bracket $start_pos $end_pos"
+        set o_count 0
+        set c_count 1
+        set found 0
+        set pattern "\[\\$o_bracket\\$c_bracket\]"
+        set pos [$widget search -backward -regexp -- $pattern "$start_pos - 1 chars" $end_pos]
+        # puts "$pos"
+        while { ! [string equal $pos {}] } {
+            set char [$widget get $pos]
+            # tk_messageBox -title $pattern -message "char: $char; $pos; o_count=$o_count; c_count=$c_count"
+            if {[string equal $char $o_bracket]} {incr o_count ; set found 1}
+            if {[string equal $char $c_bracket]} {incr c_count ; set found 1}
+            if {($found == 1) && ($o_count == $c_count) } { return [$widget index "$pos + 1 chars"] }
+            set found 0
+            set start_pos "$pos - 0 chars"
+            set pos [$widget search -backward -regexp -- $pattern $start_pos $end_pos]
+        } ;# while search
+        return -1
+    } ;# proc _searchOpenBracket
+    
+
     proc Editor {fileFullPath nb itemName} {
         global cfgVariables
         set fr $itemName
@@ -539,6 +607,7 @@ namespace eval Editor {
         if {$cfgVariables(lineNumberShow) eq "false"} {
             $txt configure -linemap 0
         }
+        $txt tag configure lightBracket -background #000000 -foreground #00ffff
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
         if {$fileType eq ""} {set fileType "Unknown"}
         

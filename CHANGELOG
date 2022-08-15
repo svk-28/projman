@@ -60,4 +60,6 @@
     - Added About dialog
     - Fixed read structure (procedure names like Proc:Name)
     
-    
+15/08/2022
+    - Added open/close braces highlight
+
