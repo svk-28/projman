@@ -286,15 +286,46 @@ namespace eval Editor {
             #tk_textPaste $txt
         }
     }
+
     proc SelectionGet {txt} {
         variable selectionText
-        
         set selBegin [lindex [$txt tag ranges sel] 0]
         set selEnd [lindex [$txt tag ranges sel] 1]
         if {$selBegin ne "" && $selEnd ne ""} {
             set selectionText [$txt get $selBegin $selEnd]
         }
     }
+    
+    proc SelectionHighlight {txt} {
+        variable selectionText
+
+        $txt tag remove lightSelected 1.0 end 
+
+        set selBegin [lindex [$txt tag ranges sel] 0]
+        set selEnd [lindex [$txt tag ranges sel] 1]
+        if {$selBegin ne "" && $selEnd ne ""} {
+            set selectionText [$txt get $selBegin $selEnd]
+            # set selBeginRow [lindex [split $selBegin "."] 1]
+            # set selEndRow [lindex [split $selEnd "."] 1]
+            # puts "$selBegin, $selBeginRow; $selEnd, $selEndRow"
+            # set symNumbers [expr $selEndRow - $selBeginRow]
+            set symNumbers [expr [lindex [split $selEnd "."] 1] - [lindex [split $selBegin "."] 1]]
+            # puts "Selection $selectionText"
+            if {$selectionText eq "-"} {
+                set selectionText "\\$selectionText"
+            }
+            set lstFindIndex [$txt search -all "$selectionText" 0.0]
+            foreach ind $lstFindIndex {
+                set selFindLine [lindex [split $ind "."] 0]
+                set selFindRow [lindex [split $ind "."] 1]
+                set endInd "$selFindLine.[expr $selFindRow + $symNumbers]"
+                # puts "$ind;  $symNumbers; $selFindLine, $selFindRow; $endInd "
+                $txt tag add lightSelected $ind $endInd 
+            }
+        }
+
+    }
+    
     proc ReleaseKey {k txt} {
         set pos [$txt index insert]
         SearchBrackets $txt
@@ -312,6 +343,7 @@ namespace eval Editor {
         set lblText "[::msgcat::mc "Row"]: [lindex $lpos 0], [::msgcat::mc "Column"]: [lindex $lpos 1]"
         .frmStatus.lblPosition configure -text $lblText
         unset lpos
+        $txt tag remove lightSelected 1.0 end 
     }
     proc PressKey {k txt} {
         # puts [Editor::Key $k]
@@ -399,6 +431,7 @@ namespace eval Editor {
         # bind $txt <Button-5> "%W yview scroll  3 units"
         #bind $txt <Shift-Button-4> "%W xview scroll -2 units"
         #bind $txt <Shift-Button-5> "%W xview scroll  2 units"
+        bind $txt <Button-1><ButtonRelease-1> "Editor::SelectionHighlight $txt"
         bind $txt <<Modified>> "SetModifiedFlag $w"
         bind $txt <<Selection>> "Editor::SelectionGet $txt"
         bind $txt <Control-i> ImageBase64Encode
@@ -608,6 +641,8 @@ namespace eval Editor {
             $txt configure -linemap 0
         }
         $txt tag configure lightBracket -background #000000 -foreground #00ffff
+        $txt tag configure lightSelected -background #000000 -foreground #00ffff
+        
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
         if {$fileType eq ""} {set fileType "Unknown"}
         

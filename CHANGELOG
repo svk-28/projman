@@ -63,4 +63,7 @@
 15/08/2022
     - Added open/close braces highlight
     - Fixed GO structure reader
-    
+
+16/08/2022
+    - Added selection of all words in the text by clicking on the any word
+
