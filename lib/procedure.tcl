@@ -21,12 +21,22 @@ proc Quit {} {
 
 proc ViewFilesTree {} {
     global cfgVariables
-    if {$cfgVariables(toolBarShow) eq "true"} {
+    if {$cfgVariables(filesPanelShow) eq "true"} {
         .frmBody.panel forget .frmBody.frmTree
-        set cfgVariables(toolBarShow) false
+        set cfgVariables(filesPanelShow) false
     } else {
-        .frmBody.panel insert 0 .frmBody.frmTree
-        set cfgVariables(toolBarShow) true
+        switch $cfgVariables(filesPanelPlace) {
+        "left" {        
+                .frmBody.panel insert 0 .frmBody.frmTree
+            }
+            "right" {
+                .frmBody.panel add .frmBody.frmTree
+            }
+            default {
+                .frmBody.panel insert 0 .frmBody.frmTree
+            }
+        }
+        set cfgVariables(filesPanelShow) true
     }
 }
 

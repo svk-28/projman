@@ -66,4 +66,10 @@
 
 16/08/2022
     - Added selection of all words in the text by clicking on the any word
+    
+17/08/2022
+    - Added "Vew Panel" menu and "Panel side" (left/right)
+    - Changed standard Tk menu on TTK::menu
+    - Added config options filesPanelPlace (left/right)
+    - Fixed ViewFilesTree procedure with rigth variable filesPanelShow (true/false)
 

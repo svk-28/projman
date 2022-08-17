@@ -640,8 +640,8 @@ namespace eval Editor {
         if {$cfgVariables(lineNumberShow) eq "false"} {
             $txt configure -linemap 0
         }
-        $txt tag configure lightBracket -background #000000 -foreground #00ffff
-        $txt tag configure lightSelected -background #000000 -foreground #00ffff
+        $txt tag configure lightBracket -background $cfgVariables(selectLightBg) -foreground #00ffff
+        $txt tag configure lightSelected -background $cfgVariables(selectLightBg) -foreground #00ffff
         
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
         if {$fileType eq ""} {set fileType "Unknown"}

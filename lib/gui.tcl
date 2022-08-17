@@ -66,7 +66,7 @@ if [info exists cfgVariables(theme)] {
     ttk::style theme use $cfgVariables(theme)
 }
 
-frame .frmMenu -border 1 -relief raised  -highlightthickness 0
+ttk::frame .frmMenu -border 1 -relief raised
 frame .frmBody -border 1 -relief raised -highlightthickness 0
 ttk::frame .frmStatus -border 0 -relief sunken 
 pack .frmMenu -side top -padx 1 -fill x
@@ -78,18 +78,18 @@ pack .frmStatus -side top -padx 1 -fill x
 #pack [label .frmMenu.lbl -text "ddd"]
 pack [ttk::label .frmStatus.lblPosition -justify right] -side right
 
-menubutton .frmMenu.mnuFile -text [::msgcat::mc "File"] -menu .frmMenu.mnuFile.m
+ttk::menubutton .frmMenu.mnuFile -text [::msgcat::mc "File"] -menu .frmMenu.mnuFile.m
 GetFileMenu [menu .frmMenu.mnuFile.m]
 
-menubutton .frmMenu.mnuEdit -text [::msgcat::mc "Edit"] -menu .frmMenu.mnuEdit.m
+ttk::menubutton .frmMenu.mnuEdit -text [::msgcat::mc "Edit"] -menu .frmMenu.mnuEdit.m
 GetEditMenu [menu .frmMenu.mnuEdit.m]
 
-menubutton .frmMenu.mnuView -text [::msgcat::mc "View"] -menu .frmMenu.mnuView.m
+ttk::menubutton .frmMenu.mnuView -text [::msgcat::mc "View"] -menu .frmMenu.mnuView.m
 GetViewMenu [menu .frmMenu.mnuView.m]
 
 pack .frmMenu.mnuFile .frmMenu.mnuEdit .frmMenu.mnuView -side left
 
-menubutton .frmMenu.mnuHelp -text [::msgcat::mc "Help"] -menu .frmMenu.mnuHelp.m
+ttk::menubutton .frmMenu.mnuHelp -text [::msgcat::mc "Help"] -menu .frmMenu.mnuHelp.m
 GetHelpMenu [menu .frmMenu.mnuHelp.m]
 pack .frmMenu.mnuHelp -side right
 
@@ -128,9 +128,9 @@ grid $frmTree.v -row 0 -column 1 -sticky nsew
 grid columnconfigure $frmTree 0 -weight 1
 grid rowconfigure $frmTree 0 -weight 1
 
-set frm_work [ttk::frame .frm_work]
+set frmWork [ttk::frame .frmWork]
 
-set nbEditor [ttk::notebook $frm_work.nbEditor]
+set nbEditor [ttk::notebook $frmWork.nbEditor]
 
 #grid $nbEditor -row 0 -column 0 -sticky nsew
 pack $nbEditor -fill both -expand true
@@ -160,11 +160,24 @@ bind TNotebook <Button-1> "NB::CloseTab %W %x %y\;[bind TNotebook <Button-1>]"
 # bind $frm_tree.tree <ButtonRelease> "TreePress $frm_tree.tree"
 
 #.panel add $frmTool -weight 1
-if {$cfgVariables(toolBarShow) eq "true"} {        
-    .frmBody.panel add $frmTree -weight 0
+
+
+if {$cfgVariables(filesPanelShow) eq "true"} {
+    switch $cfgVariables(filesPanelPlace) {
+        "left" {        
+            .frmBody.panel add $frmTree -weight 0
+            .frmBody.panel add $frmWork -weight 1
+       }
+        "right" {
+            .frmBody.panel add $frmWork -weight 1
+            .frmBody.panel add $frmTree	
+        }
+    }	
+} else {
+   .frmBody.panel add $frmWork -weight 1
 } 
-.frmBody.panel add $frm_work -weight 1 
 
 ttk::style configure . \
     -foreground $::cfgVariables(guiFG) \
     -font $::cfgVariables(guiFont)
+

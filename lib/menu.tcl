@@ -61,7 +61,14 @@ proc GetEditMenu {m} {
 }
 
 proc GetViewMenu {m} {
-    $m add command -label [::msgcat::mc "View files tree"] -command ViewFilesTree
+    global cfgVariables
+    $m add command -label [::msgcat::mc "View panel"] -command ViewFilesTree
+    menu $m.panelSide 
+    $m add cascade -label [::msgcat::mc "Panel side"] -menu $m.panelSide 
+    
+    $m.panelSide  add radiobutton -label [::msgcat::mc "Left"] -variable cfgVariables(filesPanelPlace) -value left
+    $m.panelSide  add radiobutton -label [::msgcat::mc "Right"]  -variable cfgVariables(filesPanelPlace) -value right
+    
     $m add command -label [::msgcat::mc "View line numbers"] -command ViewLineNumbers
 }
 

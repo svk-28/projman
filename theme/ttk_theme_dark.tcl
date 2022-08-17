@@ -58,8 +58,7 @@ namespace eval ttk::theme::dark {
         # ttk widgets.
         ttk::style configure TButton \
         -width -8 -padding {5 1} -relief link
-        ttk::style configure TMenubutton \
-        -width -11 -padding {5 1} -relief raised
+        ttk::style configure TMenubutton -relief flat -arrowsize 0
         ttk::style configure TCheckbutton \
         -indicatorbackground "#ffffff" -indicatormargin {1 1 4 1}
         ttk::style configure TRadiobutton \
@@ -69,12 +68,13 @@ namespace eval ttk::theme::dark {
         ttk::style configure TEntry -fieldbackground $colors(-lightframe) -foreground #ffffff -padding {2 0}
         
         ttk::style configure TCombobox \
-        -fieldbackground $colors(-lightframe) \
-        -foreground #ffffff \
-        -padding {2 0}
+            -fieldbackground $colors(-lightframe) \
+            -foreground #ffffff \
+            -padding {2 0}
+
         ttk::style configure TSpinbox \
-        -fieldbackground $colors(-lightframe) \
-        -foreground #ffffff
+            -fieldbackground $colors(-lightframe) \
+            -foreground #ffffff
         
         ttk::style configure TNotebook.Tab \
         -padding {6 2 6 2}
@@ -88,16 +88,19 @@ namespace eval ttk::theme::dark {
         -foreground [list disabled $colors(-disabledfg)]
         
         ttk::style configure Treeview \
-        -background $colors(-lightframe) -itembackground {gray60 gray50} \
-        -itemfill #ffffff -itemaccentfill yellow \
-        -fieldbackground $colors(-lightframe)
-        
+            -background $colors(-lightframe) -itembackground {gray60 gray50} \
+            -itemfill #ffffff -itemaccentfill yellow \
+            -fieldbackground $colors(-lightframe) 
+            # -indicatormargins 0 \
+            # -indicatorsize -1 \
+            # -padding 0
+
         ttk::style configure Text \
-        -linemapbg [list active $colors(-lightframe)]\
-        -linemapbg [list active $colors(-disabledfg)]\
-        -background [list active $colors(-lighter)] \
-        -foreground [list disabled $colors(-disabledfg)]
-        
+            -linemapbg [list active $colors(-lightframe)]\
+            -linemapbg [list active $colors(-disabledfg)]\
+            -background [list active $colors(-lighter)] \
+            -foreground [list disabled $colors(-disabledfg)]
+            
         ttk::style configure TLabel -foreground  $colors(-disabledfg)  -padding {2 0}
        
         # ttk::style configure TreeCtrl \

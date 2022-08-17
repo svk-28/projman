@@ -10,7 +10,7 @@ exec wish "$0" -- "$@"
 ######################################################
 # Version: 2.0.0
 # Release: alpha
-# Build: 16082022151910
+# Build: 17082022162534
 ######################################################
 
 # определим текущую версию, релиз и т.д.
@@ -64,7 +64,7 @@ if [info exists env(XDG_CONFIG_HOME)] {
 }
 
 if {[file exists $dir(cfg)] == 0} {
-    file mkdir $dir(cfg)    
+    file mkdir $dir(cfg)
 }
 
 # puts "Config dir is $dir(cfg)"
@@ -97,7 +97,7 @@ foreach modFile [lsort [glob -nocomplain [file join $dir(theme) *]]] {
 # загружаем пользовательский конфиг, если он отсутствует, то копируем дефолтный
 if {[file exists [file join $dir(cfg) projman.ini]] ==0} {
     Config::create $dir(cfg)
-} 
+}
 Config::read $dir(cfg)
 
 ::msgcat::mclocale $cfgVariables(locale)
