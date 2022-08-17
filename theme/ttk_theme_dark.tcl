@@ -112,7 +112,7 @@ namespace eval ttk::theme::dark {
         option add *Text.Foreground $colors(-foreground) interactive
         option add *Text.Background $colors(-frame) interactive
         
-        option add *Text.Insertbackground yellow interactive
+        # option add *Text.Insertbackground yellow interactive
         # option add *Text.BorderWidth -2 interactive
         # option add *Text.selectBorderWidth -2 interactive
         # option add *Text.Relief flat interactive

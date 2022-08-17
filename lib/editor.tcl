@@ -633,7 +633,8 @@ namespace eval Editor {
         pack $frmText  -side top -expand true -fill both 
         pack [ttk::scrollbar $frmText.s -command "$frmText.t yview"] -side right -fill y
         ctext $txt -yscrollcommand "$frmText.s set" -font $cfgVariables(font) -linemapfg $cfgVariables(lineNumberFG) \
-            -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true 
+            -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true \
+            -relief flat
             
         pack $txt -fill both -expand 1
         # puts ">>>>>>> [bindtags $txt]"
