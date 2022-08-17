@@ -63,7 +63,7 @@ namespace eval ttk::theme::dark {
         -indicatorbackground "#ffffff" -indicatormargin {1 1 4 1}
         ttk::style configure TRadiobutton \
         -indicatorbackground "#ffffff" -indicatormargin {1 1 4 1}
-        
+        ttk::style configure TFrame -relief flat -border -1
         # ttk::style configure TEntry -fieldbackground #ffffff -foreground #000000 -padding {2 0}
         ttk::style configure TEntry -fieldbackground $colors(-lightframe) -foreground #ffffff -padding {2 0}
         
@@ -76,6 +76,8 @@ namespace eval ttk::theme::dark {
             -fieldbackground $colors(-lightframe) \
             -foreground #ffffff
         
+        ttk::style configure TNotebook 
+            # -bordercolor $colors(-frame)
         ttk::style configure TNotebook.Tab \
         -padding {6 2 6 2}
         

@@ -66,8 +66,8 @@ if [info exists cfgVariables(theme)] {
     ttk::style theme use $cfgVariables(theme)
 }
 
-ttk::frame .frmMenu -border 1 -relief raised
-frame .frmBody -border 1 -relief raised -highlightthickness 0
+ttk::frame .frmMenu -border 0 -relief raised
+ttk::frame .frmBody -border 1 -relief raised
 ttk::frame .frmStatus -border 0 -relief sunken 
 pack .frmMenu -side top -padx 1 -fill x
 pack .frmBody -side top -padx 1 -fill both -expand true
@@ -128,7 +128,7 @@ grid $frmTree.v -row 0 -column 1 -sticky nsew
 grid columnconfigure $frmTree 0 -weight 1
 grid rowconfigure $frmTree 0 -weight 1
 
-set frmWork [ttk::frame .frmWork]
+set frmWork [ttk::frame .frmWork -border 0 -relief flat]
 
 set nbEditor [ttk::notebook $frmWork.nbEditor]
 
@@ -180,4 +180,3 @@ if {$cfgVariables(filesPanelShow) eq "true"} {
 ttk::style configure . \
     -foreground $::cfgVariables(guiFG) \
     -font $::cfgVariables(guiFont)
-
