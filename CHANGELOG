@@ -73,3 +73,12 @@
     - Added config options filesPanelPlace (left/right)
     - Fixed ViewFilesTree procedure with rigth variable filesPanelShow (true/false)
 
+22/08/2022
+    - Fixed clicking on proc or func names into tree if file was closed
+
+23/08/2022
+    - Added procedure and function navigation window by Ctrl+j pressed on editor
+    - Fixed correctly focused on editor text widget
+
+24/08/2022
+    - Fixed ReadStructure procedure (added lexer)

@@ -29,6 +29,9 @@ namespace eval ttk::theme::dark {
         -selectbg   "#4a6984"
         -selectfg   "#ffffff"
         -foreground "#cecbc9"
+        -linemapbg  "#121212"
+        -linemapfg  "#2c2c2c"
+        -treebg     "#2c2c2c"
     }
     
     ttk::style theme create dark -parent clam -settings {
@@ -90,16 +93,16 @@ namespace eval ttk::theme::dark {
         -foreground [list disabled $colors(-disabledfg)]
         
         ttk::style configure Treeview \
-            -background $colors(-lightframe) -itembackground {gray60 gray50} \
+            -background $colors(-treebg) -itembackground {gray60 gray50} \
             -itemfill #ffffff -itemaccentfill yellow \
-            -fieldbackground $colors(-lightframe) 
+            -fieldbackground $colors(-treebg)
             # -indicatormargins 0 \
             # -indicatorsize -1 \
             # -padding 0
 
         ttk::style configure Text \
-            -linemapbg [list active $colors(-lightframe)]\
-            -linemapbg [list active $colors(-disabledfg)]\
+            -linemapbg [list active $colors(-linemapbg)]\
+            -linemapfg [list active $colors(-linemapfg)]\
             -background [list active $colors(-lighter)] \
             -foreground [list disabled $colors(-disabledfg)]
             

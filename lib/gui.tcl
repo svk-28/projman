@@ -68,7 +68,7 @@ if [info exists cfgVariables(theme)] {
 
 ttk::frame .frmMenu -border 0 -relief raised
 ttk::frame .frmBody -border 1 -relief raised
-ttk::frame .frmStatus -border 0 -relief sunken 
+ttk::frame .frmStatus -border 0 -relief raised 
 pack .frmMenu -side top -padx 1 -fill x
 pack .frmBody -side top -padx 1 -fill both -expand true
 pack .frmStatus -side top -padx 1 -fill x
@@ -113,14 +113,16 @@ set frmTree [ttk::frame .frmBody.frmTree]
 
 set tree [ttk::treeview $frmTree.tree -show tree \
     -xscrollcommand [list .frmBody.frmTree.h set] -yscrollcommand [list .frmBody.frmTree.v set]]
-    
+# $tree heading #0 -text "Files tree"
+# $tree column #0 -anchor e
+
 ttk::scrollbar $frmTree.h -orient horizontal -command [list $frmTree.tree xview]
 ttk::scrollbar $frmTree.v -orient vertical -command [list $frmTree.tree yview]
 
 
 
 bind $tree <Double-ButtonPress-1> {Tree::DoublePressItem $tree}
-bind $tree  <ButtonRelease-1> {Tree::PressItem $tree}
+bind $tree  <ButtonRelease-1> {Tree::PressItem $tree; break}
 
 grid $tree -row 0 -column 0 -sticky nsew
 grid $frmTree.v -row 0 -column 1 -sticky nsew
@@ -175,7 +177,7 @@ if {$cfgVariables(filesPanelShow) eq "true"} {
     }	
 } else {
    .frmBody.panel add $frmWork -weight 1
-} 
+}
 
 ttk::style configure . \
     -foreground $::cfgVariables(guiFG) \

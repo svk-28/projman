@@ -411,8 +411,8 @@ namespace eval Editor {
         
         #bind $txt <Control-adiaeresis> "auto_completition $txt"
         #bind $txt <Control-l> "auto_completition $txt"
-        bind $txt <Control-icircumflex> "auto_completition_proc $txt"
-        bind $txt <Control-j> "auto_completition_proc $txt"
+        # bind $txt <Control-icircumflex> ""
+        # bind $txt <Control-j> ""
         bind $txt <Control-i> "ImageBase64Encode $txt"
 
         bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
@@ -436,6 +436,8 @@ namespace eval Editor {
         bind $txt <<Selection>> "Editor::SelectionGet $txt"
         bind $txt <Control-i> ImageBase64Encode
         bind $txt <Control-u> "Editor::SearchBrackets %W"
+        bind $txt <Control-F> "Editor::GoToFunction $w"
+        bind $txt <Control-f> "Editor::GoToFunction $w"
     }
     
     proc SearchBrackets {txt} {
@@ -509,16 +511,21 @@ namespace eval Editor {
     }
     
     proc ReadStructure {txt treeItemName} {
-        global tree nbEditor
+        global tree nbEditor editors lexers
+        set fileType [dict get $editors $txt fileType]
+        set l ""
+        if {[dict exists $lexers $fileType] == 0} {return}
         for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
             set line [$txt get $lineNumber.0 $lineNumber.end]
             # TCL procedure
-            if {[regexp -nocase -all -- {^\s*?(proc) (::|_|)(\w+)(::|:|_|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
+            # puts "[dict get $lexers $fileType procRegexpCommand]"
+            if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
                 set procName "$v2$v3$v4$v5"
                 # lappend procList($activeProject) [list $procName [string trim $params]]
                 # puts "$treeItemName proc $procName $params"
                 # tree parent item type text
                 puts [Tree::InsertItem $tree $treeItemName $procName  "procedure" "$procName ($params)"]
+                lappend l [list $procName $params]
             }
             # GO function
             if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match v1 funcName params returns]} {
@@ -531,17 +538,20 @@ namespace eval Editor {
                 # puts "$treeItemName func $funcName $params"
                 # tree parent item type text
                 puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$functionName ($params)"]
+                lappend l [list $functionName $params]
             }
             if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match funcName params returns]} {
                 # puts "$treeItemName func $funcName $params"
                 # tree parent item type text
                 puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
+                lappend l [list $funcName $params]
             }
-            
         }
+        dict set editors $txt procedureList $l
+
     }
 
-    proc FindFunction {findString} {
+proc FindFunction {findString} {
         global nbEditor
         puts $findString
         set pos "0.0"
@@ -562,7 +572,7 @@ namespace eval Editor {
         $txt tag add sel $pos $line.end
         # #$text tag configure sel -background $editor(selectbg) -foreground $editor(fg)
         $txt tag raise sel
-        focus -force $txt
+        focus -force $txt.t
         # Position
         return 1
     }
@@ -604,17 +614,126 @@ namespace eval Editor {
             # tk_messageBox -title $pattern -message "char: $char; $pos; o_count=$o_count; c_count=$c_count"
             if {[string equal $char $o_bracket]} {incr o_count ; set found 1}
             if {[string equal $char $c_bracket]} {incr c_count ; set found 1}
-            if {($found == 1) && ($o_count == $c_count) } { return [$widget index "$pos + 1 chars"] }
+            if {($found == 1) && ($o_count == $c_count) } { return [$widget index "$pos + 1 chars"]}
             set found 0
             set start_pos "$pos - 0 chars"
             set pos [$widget search -backward -regexp -- $pattern $start_pos $end_pos]
         } ;# while search
         return -1
-    } ;# proc _searchOpenBracket
-    
+    }
 
+    # ----------------------------------------------------------------------
+    # Вызов диалога со списком процедур или функций присутствующих в тексте
+    
+    proc GoToFunction { w } {
+        global tree editors
+        set txt $w.frmText.t
+        # set start_word [$txt get "insert - 1 chars wordstart" insert]
+        set box        [$txt bbox insert]
+        set box_x      [expr [lindex $box 0] + [winfo rootx $txt] ]
+        set box_y      [expr [lindex $box 1] + [winfo rooty $txt] + [lindex $box 3] ]
+        set l ""
+        bindtags $txt [list GoToFunctionBind [winfo toplevel $txt] $txt Text sysAfter all]
+        bind GoToFunctionBind <Escape> "bindtags $txt {[list [winfo toplevel $txt] $txt Text sysAfter all]}; catch { destroy .gotofunction; break}"
+        bind GoToFunctionBind <Key> { Editor::GoToFunctionKey %W %K %A ; break}
+        # puts [array names editors]
+
+        foreach item [dict get $editors $txt procedureList] {
+            # puts $item
+            lappend l [lindex $item 0]
+        }
+        if {$l ne ""} {
+            eval GotoFunctionDialog $w $box_x $box_y [lsort $l]
+            focus .gotofunction.lBox
+        }
+    }
+
+    # proc GoToFunctionKey { txt K A } {
+        # set win .gotofunction
+        # set ind [$win.lBox curselection]
+        # puts "$txt $K $A"
+        # switch -- $K {
+            # Prior   {
+                # set up   [expr [$win.lBox index active] - [$win.lBox cget -height]]
+                # if { $up < 0 } { set up 0 }
+                # $win.lBox activate $up
+                # $win.lBox selection clear 0 end
+                # $win.lBox selection set $up $up
+            # }
+            # Next    {
+                # set down [expr [$win.lBox index active] + [$win.lBox cget -height]]
+                # if { $down >= [$win.lBox index end] }  { set down end }
+                # $win.lBox activate $down
+                # $win.lBox selection clear 0 end
+                # $win.lBox selection set $down $down
+            # }
+            # Up      {
+                # set up   [expr [$win.lBox index active] - 1]
+                # if { $up < 0 } { set up 0 }
+                # $win.lBox activate $up
+                # $win.lBox selection clear 0 end
+                # $win.lBox selection set $up $up
+            # }
+            # Down    {
+                # set down [expr [$win.lBox index active] + 1]
+                # if { $down >= [$win.lBox index end] }  { set down end }
+                # $win.lBox activate $down 
+                # $win.lBox selection clear 0 end 
+                # $win.lBox selection set $down $down 
+            # }
+            # Return  {
+                # Editor::FindFunction "proc $values"
+                # eval [bind GoToFunctionBind <Escape>]
+            # }
+            # default {
+                # $txt insert "insert" $A
+                # eval [bind GoToFunctionBind <Escape>] 
+            # }
+        # }
+    # }
+    
+    # ------------------------------------------------------------------------
+    # Диалоговое окно со списком процедур или функций в редактируемом тексте
+    proc GotoFunctionDialog {w x y args} {
+        global editors lexers
+        variable txt 
+        set txt $w.frmText.t
+        set win .gotofunction
+
+        if { [winfo exists $win] }  { destroy $win }
+        toplevel $win
+        wm transient $win .
+        wm overrideredirect $win 1
+        
+        listbox $win.lBox -width 30 -border 2 -yscrollcommand "$win.yscroll set" -border 1
+        scrollbar $win.yscroll -orient vertical -command  "$win.lBox yview" -width 13 -border 1
+        pack $win.lBox -expand true -fill y -side left
+        pack $win.yscroll -side left -expand false -fill y
+        
+        foreach { word } $args {
+            $win.lBox insert end $word
+        }
+        
+        catch { $win.lBox activate 0 ; $win.lBox selection set 0 0 }
+        
+        if { [set height [llength $args]] > 10 } { set height 10 }
+        $win.lBox configure -height $height
+
+        bind $win      <Escape> " destroy $win; focus $w.frmText.t; break	"
+        bind $win.lBox <Escape> " destroy $win; focus $w.frmText.t; break"
+        bind $win.lBox <Return> {
+            Editor::FindFunction "[dict get $lexers [dict get $editors $Editor::txt fileType] procFindString][.gotofunction.lBox get [.gotofunction.lBox curselection]]"
+            destroy .gotofunction
+            $Editor::txt tag remove sel 1.0 end
+            # focus $Editor::txt.t
+            break
+        }
+
+        wm geom $win +$x+$y
+    }
+    
     proc Editor {fileFullPath nb itemName} {
-        global cfgVariables
+        global cfgVariables editors
         set fr $itemName
         if ![string match "*untitled*" $itemName] {
              set lblText $fileFullPath
@@ -632,7 +751,8 @@ namespace eval Editor {
 
         pack $frmText  -side top -expand true -fill both 
         pack [ttk::scrollbar $frmText.s -command "$frmText.t yview"] -side right -fill y
-        ctext $txt -yscrollcommand "$frmText.s set" -font $cfgVariables(font) -linemapfg $cfgVariables(lineNumberFG) \
+        ctext $txt -yscrollcommand "$frmText.s set" -font $cfgVariables(font) \
+            -linemapfg $cfgVariables(lineNumberFG) -linemapbg $cfgVariables(lineNumberBG) \
             -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true \
             -relief flat
             
@@ -646,9 +766,16 @@ namespace eval Editor {
         
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
         if {$fileType eq ""} {set fileType "Unknown"}
-        
+
         # puts ">$fileType<"
         # puts [info procs Highlight::GO]
+        dict set editors $txt fileType $fileType
+        dict set editors $txt procedureList [list]
+        
+        # puts ">>[dict get $editors $txt fileType]"
+        # puts ">>[dict get $editors $txt procedureList]"
+		# puts ">>>>> $editors"
+        
         if  {[info procs ::Highlight::$fileType] ne ""} {
             Highlight::$fileType $txt
         } else {

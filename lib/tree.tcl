@@ -74,7 +74,7 @@ namespace eval Tree {
     }
 
     proc PressItem {tree} {
-        global nbEditor
+        global nbEditor lexers editors
         set id [$tree selection]
         $tree tag remove selected
         $tree item $id -tags selected
@@ -92,16 +92,13 @@ namespace eval Tree {
             file {
                 FileOper::Edit $values
             }
-            func {
+            default {
                 set parentItem [$tree parent $id]
-                puts $values
-                $nbEditor select $nbEditor.[string range $parentItem [expr [string last "::" $parentItem] + 2] end]
-                Editor::FindFunction "func.*?$values"
-            }
-            procedure {
-                set parentItem [$tree parent $id]
-                $nbEditor select $nbEditor.[string range $parentItem [expr [string last "::" $parentItem] + 2] end]
-                Editor::FindFunction "proc $values"
+                # puts $values
+                set nbItem "$nbEditor.[string range $parentItem [expr [string last "::" $parentItem] + 2] end]"
+                $nbEditor select $nbItem
+                set txt $nbItem.frmText.t
+                Editor::FindFunction "[dict get $lexers [dict get $editors $txt fileType] procFindString]$values"
             }
         }
     }

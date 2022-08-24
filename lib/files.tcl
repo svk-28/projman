@@ -62,7 +62,8 @@ namespace eval FileOper {
     proc Close {} {
         global nbEditor modified tree
         set nbItem [$nbEditor select]
-	puts "close tab $nbItem"
+	    puts "close tab $nbItem"
+    	   
         if {$nbItem == ""} {return}
         if {$modified($nbItem) eq "true"} {
             set answer [tk_messageBox -message [::msgcat::mc "File was modifyed"] \
@@ -78,6 +79,13 @@ namespace eval FileOper {
         destroy $nbItem
         set treeItem "file::[string range $nbItem [expr [string last "." $nbItem] +1] end ]"
         if [$tree exists $treeItem] {
+            # delete all functions from tree item
+            set children [$tree children $treeItem]
+            if {$children ne ""} {
+                foreach i $children {
+                    $tree delete $i
+                }
+            }
             if {[$tree parent $treeItem] eq ""} {
                 $tree delete $treeItem
             }
@@ -176,7 +184,7 @@ namespace eval FileOper {
         set txt $itemName.frmText.t
         if ![string match "*untitled*" $itemName] {
             set file [open "$fileFullPath" r]
-            $txt insert end  [chan read -nonewline $file]  
+            $txt insert end [chan read -nonewline $file]  
             close $file
         }
         # Delete emty last line
@@ -184,6 +192,7 @@ namespace eval FileOper {
             $txt delete {end-1 line} end
             puts ">[$txt get {end-1 line} end]<"
         }
+        $txt see 1.0
     }
     
     proc Edit {fileFullPath} {
@@ -199,10 +208,12 @@ namespace eval FileOper {
             ReadFile $fileFullPath $itemName
             $itemName.frmText.t highlight 1.0 end
             ResetModifiedFlag $itemName
+            $itemName.frmText.t see 1.1
         }
         $nbEditor select $itemName
         Editor::ReadStructure $itemName.frmText.t $treeItemName
-        focus -force $itemName.frmText.t
+
+        focus -force $itemName.frmText.t.t
         
         return $itemName
     }
