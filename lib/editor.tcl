@@ -10,23 +10,29 @@
 namespace eval Editor {
     variable selectionTex
     proc Comment {txt fileType} {
+        global lexers
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set PosNum [lindex [split $pos "."] 1]
-        switch $fileType {
-            TCL {
-                set symbol "#"
-            }
-            GO {
-                set symbol "//"
-            }
-            Unknown {
-                set symbol "#"
-            }
-            default {
-                set symbol "#"
-            }
+        # switch $fileType {
+            # TCL {
+                # set symbol "#"
+            # }
+            # GO {
+                # set symbol "//"
+            # }
+            # Unknown {
+                # set symbol "#"
+            # }
+            # default {
+                # set symbol "#"
+            # }
+        # }
+        if [dict exists $lexers $fileType commentSymbol] {
+            set symbol [dict get $lexers $fileType commentSymbol]
+        } else {
+            set symbol "#"
         }
         puts "Select : $selIndex"
         if {$selIndex != ""} {
@@ -62,6 +68,8 @@ namespace eval Editor {
         } else {
             set commentProcedure {GetComment:Unknown}
         }
+        # set commentProcedure "GetComment"
+        
         # puts "$fileType, $commentProcedure"
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
@@ -78,9 +86,9 @@ namespace eval Editor {
                     $txt delete $i.[lindex $commentSymbolIndex 0] $i.[lindex $commentSymbolIndex 1]
                 }
             }
-           $txt tag remove comments $lineBegin.0 $lineEnd.end
-           $txt tag add	sel $lineBegin.0 $lineEnd.end
-           $txt highlight $lineBegin.0 $lineEnd.end
+            $txt tag remove comments $lineBegin.0 $lineEnd.end
+            $txt tag add	sel $lineBegin.0 $lineEnd.end
+            $txt highlight $lineBegin.0 $lineEnd.end
         } else {
             set posNum [lindex [split $pos "."] 1]
             set str [$txt get $lineNum.0 $lineNum.end]
@@ -92,6 +100,22 @@ namespace eval Editor {
             $txt highlight $lineNum.0 $lineNum.end
         }
     }
+    proc GetComment {fileType str} {
+        global lexers
+        puts [dict get $lexers $fileType commentSymbol]
+        if {[dict exists $lexers $fileType commentSymbol] == 0} {
+            return
+        }
+        
+        if {[regexp -nocase -indices -- {(^| )([dict get $lexers $fileType commentSymbol]\s)(.+)} $str match v1 v2 v3]} {
+            puts "$match, $v1, $v2, $v3"
+            return [list [lindex [split $v2] 0] [lindex [split $v3] 0]]
+        } else {
+            puts "FUCK"
+            return 0
+        }
+    }
+
     proc GetComment:TCL {str} {
         if {[regexp -nocase -indices -- {(^| )(#\s)(.+)} $str match v1 v2 v3]} {
             return [list [lindex [split $v2] 0] [lindex [split $v3] 0]]
@@ -519,32 +543,36 @@ namespace eval Editor {
             set line [$txt get $lineNumber.0 $lineNumber.end]
             # TCL procedure
             # puts "[dict get $lexers $fileType procRegexpCommand]"
-            if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
-                set procName "$v2$v3$v4$v5"
-                # lappend procList($activeProject) [list $procName [string trim $params]]
-                # puts "$treeItemName proc $procName $params"
-                # tree parent item type text
-                puts [Tree::InsertItem $tree $treeItemName $procName  "procedure" "$procName ($params)"]
-                lappend l [list $procName $params]
-            }
-            # GO function
-            if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match v1 funcName params returns]} {
-                # set procName "$v2$v3$v4$v5"
-                # lappend procList($activeProject) [list $procName [string trim $params]]
-                if {$v1 ne ""} {
-                    set linkName [lindex [split $v1 " "] 1]
-                    set functionName "\($linkName\).$funcName"
+            # 
+            if {[dict exists $lexers $fileType procRegexpCommand] != 0 } {
+                if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
+                    set procName "$v2$v3$v4$v5"
+                    # lappend procList($activeProject) [list $procName [string trim $params]]
+                    # puts "$treeItemName proc $procName $params"
+                    # tree parent item type text
+                    puts [Tree::InsertItem $tree $treeItemName $procName  "procedure" "$procName ($params)"]
+                    lappend l [list $procName $params]
                 }
-                # puts "$treeItemName func $funcName $params"
-                # tree parent item type text
-                puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$functionName ($params)"]
-                lappend l [list $functionName $params]
-            }
-            if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match funcName params returns]} {
-                # puts "$treeItemName func $funcName $params"
-                # tree parent item type text
-                puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
-                lappend l [list $funcName $params]
+            } else {
+                # GO function
+                if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match v1 funcName params returns]} {
+                    # set procName "$v2$v3$v4$v5"
+                    # lappend procList($activeProject) [list $procName [string trim $params]]
+                    if {$v1 ne ""} {
+                        set linkName [lindex [split $v1 " "] 1]
+                        set functionName "\($linkName\).$funcName"
+                    }
+                    # puts "$treeItemName func $funcName $params"
+                    # tree parent item type text
+                    puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$functionName ($params)"]
+                    lappend l [list $functionName $params]
+                }
+                if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match funcName params returns]} {
+                    # puts "$treeItemName func $funcName $params"
+                    # tree parent item type text
+                    puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
+                    lappend l [list $funcName $params]
+                }
             }
         }
         dict set editors $txt procedureList $l
