@@ -44,7 +44,8 @@ selectbg=#10a410a410a4
 selectLightBg=grey
 nbNormal=#000000
 nbModify=#ffff5d705d70
-lineNumberFG=#a9a9a9
+lineNumberFG=#444444
+lineNumberBG=#151515
 selectBorder=0
 # must be: none, word or char
 editorWrap=word
