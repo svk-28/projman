@@ -114,6 +114,9 @@ namespace eval ttk::theme::dark {
         option add *Toplevel.Background $colors(-dark) interactive
         option add *Text.Foreground $colors(-foreground) interactive
         option add *Text.Background $colors(-frame) interactive
+
+        option add *Listbox.Background $colors(-treebg) interactive
+        option add *Listbox.Foreground $colors(-lighter) interactive
         
         # option add *Text.Insertbackground yellow interactive
         # option add *Text.BorderWidth -2 interactive
