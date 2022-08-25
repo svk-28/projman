@@ -98,7 +98,10 @@ namespace eval Tree {
                 set nbItem "$nbEditor.[string range $parentItem [expr [string last "::" $parentItem] + 2] end]"
                 $nbEditor select $nbItem
                 set txt $nbItem.frmText.t
-                Editor::FindFunction "[dict get $lexers [dict get $editors $txt fileType] procFindString]$values"
+                set findString [dict get $lexers [dict get $editors $txt fileType] procFindString]
+                regsub -all {PROCNAME} $findString $values str
+
+                Editor::FindFunction "$str"
             }
         }
     }

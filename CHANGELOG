@@ -82,3 +82,10 @@
 
 24/08/2022
     - Fixed ReadStructure procedure (added lexer)
+
+25/08/2022
+    - Fixed focus on the editor window after clicking Escape in the function selection dialog
+    - Change color scheme for FindFunction dialog
+    - Added sh icon (for shell scripts)
+    - Fixed lexers for find procedures and functions
+    

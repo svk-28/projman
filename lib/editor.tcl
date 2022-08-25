@@ -541,45 +541,18 @@ namespace eval Editor {
         if {[dict exists $lexers $fileType] == 0} {return}
         for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
             set line [$txt get $lineNumber.0 $lineNumber.end]
-            # TCL procedure
-            # puts "[dict get $lexers $fileType procRegexpCommand]"
-            # 
             if {[dict exists $lexers $fileType procRegexpCommand] != 0 } {
                 if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
-                    set procName "$v2$v3$v4$v5"
-                    # lappend procList($activeProject) [list $procName [string trim $params]]
-                    # puts "$treeItemName proc $procName $params"
-                    # tree parent item type text
                     puts [Tree::InsertItem $tree $treeItemName $procName  "procedure" "$procName ($params)"]
                     lappend l [list $procName $params]
                 }
-            } else {
-                # GO function
-                if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match v1 funcName params returns]} {
-                    # set procName "$v2$v3$v4$v5"
-                    # lappend procList($activeProject) [list $procName [string trim $params]]
-                    if {$v1 ne ""} {
-                        set linkName [lindex [split $v1 " "] 1]
-                        set functionName "\($linkName\).$funcName"
-                    }
-                    # puts "$treeItemName func $funcName $params"
-                    # tree parent item type text
-                    puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$functionName ($params)"]
-                    lappend l [list $functionName $params]
-                }
-                if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match funcName params returns]} {
-                    # puts "$treeItemName func $funcName $params"
-                    # tree parent item type text
-                    puts [Tree::InsertItem $tree $treeItemName $funcName  "func" "$funcName ($params)"]
-                    lappend l [list $funcName $params]
-                }
-            }
+            } 
         }
         dict set editors $txt procedureList $l
 
     }
 
-proc FindFunction {findString} {
+    proc FindFunction {findString} {
         global nbEditor
         puts $findString
         set pos "0.0"
@@ -661,9 +634,9 @@ proc FindFunction {findString} {
         set box_x      [expr [lindex $box 0] + [winfo rootx $txt] ]
         set box_y      [expr [lindex $box 1] + [winfo rooty $txt] + [lindex $box 3] ]
         set l ""
-        bindtags $txt [list GoToFunctionBind [winfo toplevel $txt] $txt Text sysAfter all]
-        bind GoToFunctionBind <Escape> "bindtags $txt {[list [winfo toplevel $txt] $txt Text sysAfter all]}; catch { destroy .gotofunction; break}"
-        bind GoToFunctionBind <Key> { Editor::GoToFunctionKey %W %K %A ; break}
+        # bindtags $txt [list GoToFunctionBind [winfo toplevel $txt] $txt Text sysAfter all]
+        # bind GoToFunctionBind <Escape> "bindtags $txt {[list [winfo toplevel $txt] $txt Text sysAfter all]}; catch { destroy .gotofunction; break}"
+        # bind GoToFunctionBind <Key> { Editor::GoToFunctionKey %W %K %A ; break}
         # puts [array names editors]
 
         foreach item [dict get $editors $txt procedureList] {
@@ -725,6 +698,7 @@ proc FindFunction {findString} {
     proc GotoFunctionDialog {w x y args} {
         global editors lexers
         variable txt 
+        variable win
         set txt $w.frmText.t
         set win .gotofunction
 
@@ -734,7 +708,7 @@ proc FindFunction {findString} {
         wm overrideredirect $win 1
         
         listbox $win.lBox -width 30 -border 2 -yscrollcommand "$win.yscroll set" -border 1
-        scrollbar $win.yscroll -orient vertical -command  "$win.lBox yview" -width 13 -border 1
+        ttk::scrollbar $win.yscroll -orient vertical -command  "$win.lBox yview"
         pack $win.lBox -expand true -fill y -side left
         pack $win.yscroll -side left -expand false -fill y
         
@@ -747,10 +721,21 @@ proc FindFunction {findString} {
         if { [set height [llength $args]] > 10 } { set height 10 }
         $win.lBox configure -height $height
 
-        bind $win      <Escape> " destroy $win; focus $w.frmText.t; break	"
-        bind $win.lBox <Escape> " destroy $win; focus $w.frmText.t; break"
+        bind $win      <Escape> { 
+            destroy $Editor::win
+            focus -force $Editor::txt.t
+            break
+        }
+        bind $win.lBox <Escape> {
+            destroy $Editor::win
+            focus -force $Editor::txt.t
+            break
+        }
         bind $win.lBox <Return> {
-            Editor::FindFunction "[dict get $lexers [dict get $editors $Editor::txt fileType] procFindString][.gotofunction.lBox get [.gotofunction.lBox curselection]]"
+            set findString [dict get $lexers [dict get $editors $Editor::txt fileType] procFindString]
+            set values [.gotofunction.lBox get [.gotofunction.lBox curselection]]
+            regsub -all {PROCNAME} $findString $values str
+            Editor::FindFunction "$str"
             destroy .gotofunction
             $Editor::txt tag remove sel 1.0 end
             # focus $Editor::txt.t
