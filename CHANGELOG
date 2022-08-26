@@ -88,4 +88,14 @@
     - Change color scheme for FindFunction dialog
     - Added sh icon (for shell scripts)
     - Fixed lexers for find procedures and functions
-    
+
+26/08/2022
+    - Update image library (added some icons)
+    - Added hot keys:
+        - Alt+p - Show/Hide additional panel
+        - Alt+w - delete word on the cursor below
+        - Alt+r - delete row
+        - Alt+b - delete text beetween line Begin and cursor
+        - Alt+e - delete text between cursor and line End
+    - Fix close braces indent
+

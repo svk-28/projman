@@ -56,6 +56,7 @@ bind . <Control-K> {
 }
 bind . <Control-s> {FileOper::Save}
 bind . <Control-S> {FileOper::Save}
+bind . <Alt-t> ViewFilesTree
 #ttk::style configure TPanedwindow -background blue
 #ttk::style configure Sash -sashthickness 5
 #ttk::style configure TButton  -padding 60  -relief flat -bg black
