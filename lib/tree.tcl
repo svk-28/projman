@@ -37,9 +37,9 @@ namespace eval Tree {
             directory {
                 regsub -all {\.|/|\\|\s} $item "_" subNode
                 # puts $subNode
-                if {[string match {*debian*} [string tolower $item]]} {
+                if {[string match {*debian*} [string tolower [file tail $item]]]} {
                     set image [::FindImage debian]
-                } elseif {[string match {*redhat*} [string tolower $item]]} {
+                } elseif {[string match {*redhat*} [string tolower [file tail $item]]]} {
                     set image [::FindImage redhat]
                 } else {
                     set image pixel
