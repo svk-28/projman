@@ -543,8 +543,9 @@ namespace eval Editor {
             set line [$txt get $lineNumber.0 $lineNumber.end]
             if {[dict exists $lexers $fileType procRegexpCommand] != 0 } {
                 if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
-                    puts [Tree::InsertItem $tree $treeItemName $procName  "procedure" "$procName ($params)"]
-                    lappend l [list $procName $params]
+                    set procName_ [string trim $procName]
+                    puts [Tree::InsertItem $tree $treeItemName $procName_  "procedure" "$procName_ ($params)"]
+                    lappend l [list $procName_ $params]
                 }
             } 
         }

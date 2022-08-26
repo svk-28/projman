@@ -21,9 +21,14 @@ namespace eval Tree {
                 regsub -all {\.|/|\\|\s} $item "_" subNode
                 # puts "Inserted tree node: $subNode"
                 set fileExt [string trimleft [file extension $text] "."]
+                #set fileName [string trimleft [file extension $text] "."]
                 set findImg [::FindImage $fileExt]
                 # puts "Extention $fileExt, find image: $findImg"
-                if {$fileExt ne "" && $findImg ne ""} {
+                # puts ">>>>>>>>>>> [string tolower $text]; [string match {*docker*} [string tolower $text]]"
+                if {[string match {*docker*} [string tolower $text]]} {
+                    set findImg [::FindImage docker]
+                }
+                if {$fileExt ne "" || $findImg ne ""} {
                     set image $findImg
                 } else {
                     set image imgFile
@@ -32,7 +37,13 @@ namespace eval Tree {
             directory {
                 regsub -all {\.|/|\\|\s} $item "_" subNode
                 # puts $subNode
-                set image pixel
+                if {[string match {*debian*} [string tolower $item]]} {
+                    set image [::FindImage debian]
+                } elseif {[string match {*redhat*} [string tolower $item]]} {
+                    set image [::FindImage redhat]
+                } else {
+                    set image pixel
+                }
             }
             func {
                 regsub -all {:} $item "_" subNode

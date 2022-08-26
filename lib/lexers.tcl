@@ -21,3 +21,8 @@ dict set lexers SH commentSymbol {#}
 dict set lexers SH procFindString {(function |)\s*?PROCNAME\(\)}
 dict set lexers SH procRegexpCommand {regexp -nocase -all -- {^\s*?(function |)\s*?(.*?)\(()\)} $line match keyWord procName params}
 
+#--------------------------------------------------
+# Python 
+dict set lexers PY commentSymbol {#}
+dict set lexers PY procFindString {(def )\s*?PROCNAME}
+dict set lexers PY procRegexpCommand {regexp -nocase -all -- {^\s*?(def)\s*?(.*?)\((.*?)\):} $line match keyWord procName params}

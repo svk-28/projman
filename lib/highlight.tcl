@@ -55,4 +55,17 @@ namespace eval Highlight {} {
         ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
         ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
     }
+    
+    proc PY {txt} {
+        ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {if else for while case switch def import from return make break defer continue package len print with open}
+        ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 float bool byte}
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\&"
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\*"
+        # ctext::addHighlightClass $txt variable_funcs gold {var type struct}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+    }
 }
