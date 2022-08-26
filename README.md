@@ -20,9 +20,6 @@ Laurent Riesterer - VisualREGEXP and TkDIFF+ parts
 laurent.riesterer@free.fr
 http://laurent.riesterer.free.fr
 
-Alexander Danilov - rewrite all documentation
-daapp@chat.ru
-
 
 
 
