@@ -146,11 +146,11 @@ namespace eval Editor {
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
 
-        puts "Select : $selIndex"
+        # puts "Select : $selIndex"
         for {set i 0} {$i < $cfgVariables(tabSize)} { incr i} {
             append tabInsert " "
         }
-        puts ">$tabInsert<"
+        # puts ">$tabInsert<"
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
             set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
@@ -162,7 +162,7 @@ namespace eval Editor {
             if {$lineEnd == $lineNum || $posEnd == 0} {
                 set lineEnd [expr $lineEnd - 1]
             }
-            puts "Pos: $pos, Begin: $lineBegin, End: $lineEnd"
+            # puts "Pos: $pos, Begin: $lineBegin, End: $lineEnd"
             for {set i $lineBegin} {$i <=$lineEnd} {incr i} {
                 #$txt insert $i.0 "# "
                 regexp -nocase -indices -- {^(\s*)(.*?)} [$txt get $i.0 $i.end] match v1 v2
@@ -175,7 +175,7 @@ namespace eval Editor {
             # set pos [$txt index insert]
             # set lineNum [lindex [split $pos "."] 0]
             regexp -nocase -indices -- {^(\s*)(.*?)} [$txt get $lineNum.0 $lineNum.end] match v1 v2
-            puts "$v1<>$v2"
+            # puts "$v1<>$v2"
             $txt insert  $lineNum.[lindex [split $v2] 0] $tabInsert
         }
     }
@@ -207,6 +207,7 @@ namespace eval Editor {
             $txt highlight $lineBegin.0 $lineEnd.end
         } else {
             set str [$txt get $lineNum.0 $lineNum.end]
+            puts ">>>>> $str"
             if {[regexp -nocase -indices -- {(^\s*)(.*?)} $str match v1]} {
                     set posBegin [lindex [split $v1] 0]
                     set posEnd [lindex [split $v1] 1]
@@ -369,10 +370,11 @@ namespace eval Editor {
         unset lpos
         $txt tag remove lightSelected 1.0 end 
     }
+
     proc PressKey {k txt} {
         # puts [Editor::Key $k]
         switch $k {
-           apostrophe {
+            apostrophe {
                QuotSelection $txt {'}
             }
             quotedbl {
@@ -389,6 +391,21 @@ namespace eval Editor {
             }
             braceleft {
                 # {QuotSelection} $txt {\}}
+            }
+            parentright {
+                if [string is space [$txt get {insert linestart} {insert - 1c}]] {
+                    Editor::DeleteTabular $txt
+                }
+            }
+            bracketright {
+                if [string is space [$txt get {insert linestart} {insert - 1c}]] {
+                    Editor::DeleteTabular $txt
+                }
+            }
+            braceright {
+                if [string is space [$txt get {insert linestart} {insert - 1c}]] {
+                    Editor::DeleteTabular $txt
+                }
             }
         }
     }
@@ -439,9 +456,9 @@ namespace eval Editor {
         # bind $txt <Control-j> ""
         bind $txt <Control-i> "ImageBase64Encode $txt"
 
-        bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
-        bind $txt <Control-bracketright> "Editor::DeleteTabular $txt"
-        
+        # bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
+        # bind $txt <Control-bracketright> "Editor::DeleteTabular $txt"
+
         bind $txt <Control-comma> "Editor::Comment $txt $fileType"
         bind $txt <Control-period> "Editor::Uncomment $txt $fileType"
         bind $txt <Control-eacute> Find
@@ -462,6 +479,10 @@ namespace eval Editor {
         bind $txt <Control-u> "Editor::SearchBrackets %W"
         bind $txt <Control-F> "Editor::GoToFunction $w"
         bind $txt <Control-f> "Editor::GoToFunction $w"
+        bind $txt <Alt-w> "$txt delete {insert wordstart} {insert wordend}"
+        bind $txt <Alt-r> "$txt delete {insert linestart} {insert lineend}"
+        bind $txt <Alt-b> "$txt delete {insert linestart} insert"
+        bind $txt <Alt-e> "$txt delete insert {insert lineend}"
     }
     
     proc SearchBrackets {txt} {
@@ -498,7 +519,7 @@ namespace eval Editor {
             set posEnd [lindex [split [lindex $selIndex 1] "."] 1]
             # set selText [$txt get $lineBegin.$posBegin $lineEnd.$posEnd]
             set selText $selectionText
-            puts "Selected text: $selText, pos: $pos, lineBegin: $lineBegin, posBegin: $posBegin, pos end: $posEnd"
+            # puts "Selected text: $selText, pos: $pos, lineBegin: $lineBegin, posBegin: $posBegin, pos end: $posEnd"
             if {$posNum == $posEnd} {
                 $txt insert $lineBegin.$posBegin "$symbol"
             }
