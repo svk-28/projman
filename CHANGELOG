@@ -99,3 +99,9 @@
         - Alt+e - delete text between cursor and line End
     - Fix close braces indent
 
+30/08/2022
+    - Fix the clicked by the close button on a tab
+    - Added "View"->"Editors word wrap" menu and procedure
+    - Added bindings "Ctrl+PgUp" and "Ctrl+PgDown" for next or prior tab selecting
+    - Added "Close file" dialog
+

@@ -17,14 +17,18 @@ proc GetFileMenu {m} {
             FileOper::Edit $filePath
         }
     }
+    $m add command -label [::msgcat::mc "Save file"] -command {FileOper::Save}\
+        -accelerator "Ctrl+S"
+    $m add command -label [::msgcat::mc "Close file"] -command {FileOper::Close}\
+        -accelerator "Ctrl+w"
     $m add command -label [::msgcat::mc "Open folder"] -accelerator "Ctrl+K" -command {
         set folderPath [FileOper::OpenFolderDialog]
         if {$folderPath != ""} {
             FileOper::ReadFolder $folderPath
         }
     }    
-    $m add command -label [::msgcat::mc "Save file"] -command {FileOper::Save}\
-    -accelerator "Ctrl+S"
+    $m add command -label [::msgcat::mc "Close folder"] -command {FileOper::CloseFolder}
+    
     #$m add command -label [::msgcat::mc "Open"] -command {FileDialog $tree open}\
     #-font $fontNormal -accelerator "Ctrl+O"        -state disable
     $m add separator
@@ -68,8 +72,18 @@ proc GetViewMenu {m} {
     
     $m.panelSide  add radiobutton -label [::msgcat::mc "Left"] -variable cfgVariables(filesPanelPlace) -value left
     $m.panelSide  add radiobutton -label [::msgcat::mc "Right"]  -variable cfgVariables(filesPanelPlace) -value right
-    
+
+    $m add separator
     $m add command -label [::msgcat::mc "View line numbers"] -command ViewLineNumbers
+    
+    menu $m.editorWrap
+    $m add cascade -label [::msgcat::mc "Editors word wrapping"] -menu $m.editorWrap
+    $m.editorWrap  add radiobutton -label [::msgcat::mc "None"] -variable cfgVariables(editorWrap) -value none \
+        -command "Editor::SetOption wrap $cfgVariables(editorWrap)"
+    $m.editorWrap  add radiobutton -label [::msgcat::mc "Char"] -variable cfgVariables(editorWrap) -value char \
+        -command "Editor::SetOption wrap $cfgVariables(editorWrap)"
+    $m.editorWrap  add radiobutton -label [::msgcat::mc "Word"] -variable cfgVariables(editorWrap) -value word \
+        -command "Editor::SetOption wrap $cfgVariables(editorWrap)"
 }
 
 proc GetHelpMenu {m} {

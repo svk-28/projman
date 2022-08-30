@@ -24,13 +24,31 @@ namespace eval NB {
                 }
             }
         }
-        puts "NB item - $fm"
+        # puts "NB item - $fm"
         return $fm
     }
 
-    proc CloseTab {w x y} {
+    proc PressTab {w x y} {
+        $w select [$w identify tab $x $y]
         if {[$w identify $x $y] == "close_button"} {
             FileOper::Close
+        } else {
+            set txt [$w select].frmText.t
+            focus -force $txt.t
         }
+    }
+
+    proc NextTab {w step} {
+        set i [expr [$w index end] - 1]
+        set nbItemIndex [$w index [$w select]]
+        if {$nbItemIndex eq 0 && $step eq "-1"} {
+            $w select $i
+        } elseif {$nbItemIndex eq $i && $step eq "1"} {
+            $w select 0
+        } else {
+            $w select [expr $nbItemIndex + $step]
+        }
+        set txt [$w select].frmText.t
+        focus -force $txt.t
     }
 }

@@ -48,6 +48,28 @@ namespace eval FileOper {
         return $fullPath
     }
 
+    proc CloseFolder {} {
+        global tree nbEditor
+        set treeItem [$tree selection]
+        set parent [$tree parent $treeItem]
+        while {$parent ne ""} {
+            set treeItem $parent
+            set parent [$tree parent $treeItem]
+        }
+        if {$parent eq "" && [string match "directory::*" $treeItem] == 1} {
+            # puts "tree root item: $treeItem"
+            foreach nbItem [$nbEditor tabs] {
+                set item [string trimleft [file extension $nbItem] "."]
+                # puts $item
+                if [$tree exists "file::$item"] {
+                    $nbEditor select $nbItem
+                    Close
+                }
+            }
+            $tree delete $treeItem
+        }
+    }
+
     proc CloseAll {} {
         global nbEditor modified
         foreach nbItem [array names modified] {
@@ -150,6 +172,7 @@ namespace eval FileOper {
             return ""
         }
         set parent [Tree::InsertItem $tree {} $directory "directory" [file tail $directory]]
+        $tree selection set $parent
         # if {[ $tree  item $parent -open] eq "false"} {
             # $tree  item $parent -open true
         # } else {

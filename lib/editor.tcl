@@ -9,26 +9,23 @@
 
 namespace eval Editor {
     variable selectionTex
+    # Set the editor option
+    proc SetOption {optionName value} {
+        global cfgVariables nbEditor
+        # apply changes for opened tabs
+        foreach node [$nbEditor tabs] {
+            $node.frmText.t configure -$optionName $value
+        }
+    }
+    
+    # Comment one string or selected string
     proc Comment {txt fileType} {
         global lexers
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set PosNum [lindex [split $pos "."] 1]
-        # switch $fileType {
-            # TCL {
-                # set symbol "#"
-            # }
-            # GO {
-                # set symbol "//"
-            # }
-            # Unknown {
-                # set symbol "#"
-            # }
-            # default {
-                # set symbol "#"
-            # }
-        # }
+
         if [dict exists $lexers $fileType commentSymbol] {
             set symbol [dict get $lexers $fileType commentSymbol]
         } else {
@@ -57,6 +54,8 @@ namespace eval Editor {
             $txt tag raise comments
         }
     }
+
+    # Uncomment one string selected strings
     proc Uncomment {txt fileType} {
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
@@ -456,8 +455,8 @@ namespace eval Editor {
         # bind $txt <Control-j> ""
         bind $txt <Control-i> "ImageBase64Encode $txt"
 
-        # bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
-        # bind $txt <Control-bracketright> "Editor::DeleteTabular $txt"
+        bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
+        bind $txt <Control-bracketright> "Editor::DeleteTabular $txt"
 
         bind $txt <Control-comma> "Editor::Comment $txt $fileType"
         bind $txt <Control-period> "Editor::Uncomment $txt $fileType"
@@ -785,13 +784,15 @@ namespace eval Editor {
         set txt $frmText.t
 
         pack $frmText  -side top -expand true -fill both 
-        pack [ttk::scrollbar $frmText.s -command "$frmText.t yview"] -side right -fill y
-        ctext $txt -yscrollcommand "$frmText.s set" -font $cfgVariables(font) \
+        pack [ttk::scrollbar $frmText.v -command "$frmText.t yview"] -side right -fill y
+        ttk::scrollbar $frmText.h -orient horizontal -command "$frmText.t xview"
+        ctext $txt -xscrollcommand "$frmText.h set" -yscrollcommand "$frmText.v set" \
+            -font $cfgVariables(font) -relief flat -wrap $cfgVariables(editorWrap) \
             -linemapfg $cfgVariables(lineNumberFG) -linemapbg $cfgVariables(lineNumberBG) \
-            -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true \
-            -relief flat
+            -tabs "[expr {4 * [font measure $cfgVariables(font) 0]}] left" -tabstyle tabular -undo true
             
         pack $txt -fill both -expand 1
+        pack $frmText.h -side bottom -fill x
         # puts ">>>>>>> [bindtags $txt]"
         if {$cfgVariables(lineNumberShow) eq "false"} {
             $txt configure -linemap 0

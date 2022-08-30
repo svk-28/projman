@@ -56,7 +56,9 @@ bind . <Control-K> {
 }
 bind . <Control-s> {FileOper::Save}
 bind . <Control-S> {FileOper::Save}
-bind . <Alt-t> ViewFilesTree
+bind . <Alt-p> ViewFilesTree
+
+
 #ttk::style configure TPanedwindow -background blue
 #ttk::style configure Sash -sashthickness 5
 #ttk::style configure TButton  -padding 60  -relief flat -bg black
@@ -149,9 +151,12 @@ ttk::style layout TNotebook.Tab {
         }
     }
 }
+bind TNotebook <Button-1> "catch {NB::PressTab %W %x %y}\;[bind TNotebook <Button-1>];break"
+# bind <<NotebookTabChanged>> "NB::PressTab %W %x %y"
 
-bind TNotebook <Button-1> "NB::CloseTab %W %x %y\;[bind TNotebook <Button-1>]"
-
+# bind . <Control-Tab> "NB::NextTab $nbEditor"
+bind . <Control-Next> "NB::NextTab $nbEditor 1"
+bind . <Control-Prior> "NB::NextTab $nbEditor -1"
 # ttk::scrollbar $nbEditor.hsb1 -orient horizontal -command [list $frm_tree.work xview]
 # ttk::scrollbar $fbEditor.vsb1 -orient vertical -command [list $frm_tree.work yview]
 # set tree [ttk::treeview $frm_tree.tree -show tree \
