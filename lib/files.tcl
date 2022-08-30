@@ -149,7 +149,7 @@ namespace eval FileOper {
         if {[catch {cd $directory}] != 0} {
             return ""
         }
-        set parent [Tree::InsertItem $tree {} $directory "directory" $directory]
+        set parent [Tree::InsertItem $tree {} $directory "directory" [file tail $directory]]
         # if {[ $tree  item $parent -open] eq "false"} {
             # $tree  item $parent -open true
         # } else {
