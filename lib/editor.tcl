@@ -430,8 +430,9 @@ namespace eval Editor {
         #bind $txt <Control-slash> {puts "/////////////////"}
         #     #bind $txt <Control-g> GoToLine
         #     bind $txt <Control-g> {focus .frmTool.frmGoto.entGoTo; .frmTool.frmGoto.entGoTo delete 0 end}
-        #     bind $txt <Control-agrave> Find
-        #     bind $txt <Control-f> Find
+        bind $txt <Control-agrave> "Editor::FindDialog $w"
+        bind $txt <Control-f> "Editor::FindDialog $w"
+        bind $txt <Control-F> "Editor::FindDialog $w"
         #     bind $txt <F3> {FindNext $w.text 1}
         #     bind $txt <Control-ecircumflex> ReplaceDialog
         #     bind $txt <Control-r> ReplaceDialog
@@ -476,8 +477,8 @@ namespace eval Editor {
         bind $txt <<Selection>> "Editor::SelectionGet $txt"
         bind $txt <Control-i> ImageBase64Encode
         bind $txt <Control-u> "Editor::SearchBrackets %W"
-        bind $txt <Control-F> "Editor::GoToFunction $w"
-        bind $txt <Control-f> "Editor::GoToFunction $w"
+        bind $txt <Control-J> "Editor::GoToFunction $w"
+        bind $txt <Control-j> "Editor::GoToFunction $w"
         bind $txt <Alt-w> "$txt delete {insert wordstart} {insert wordend}"
         bind $txt <Alt-r> "$txt delete {insert linestart} {insert lineend}"
         bind $txt <Alt-b> "$txt delete {insert linestart} insert"
@@ -765,7 +766,149 @@ namespace eval Editor {
 
         wm geom $win +$x+$y
     }
-    
+    proc FindReplaceText {findString replaceString case regexp} {
+        global nbEditor
+        set txt [$nbEditor select].frmText.t
+        # $txt see $pos
+        # set pos [$txt search -nocase $findString $line.$x end]
+        set options ""
+        # $txt see 1.0
+        set pos [$txt index insert]
+        set allLines [$txt count -lines 1.0 end]
+        puts "$pos $allLines"
+        set line [lindex [split $pos "."] 0]
+
+        if [expr $line == $allLines] {
+            set pos "0.0"
+            set line [lindex [split $pos "."] 0]
+        }
+        set x [lindex [split $pos "."] 1]
+        # incr x $incr 
+
+        puts "$findString -> $replaceString, $case, $regexp, $pos"
+
+        if {$case ne ""} {
+            lappend options $case
+        }
+        if {$regexp ne ""} {
+            lappend options $regexp
+        }
+
+        # set pos [$txt search $options $findString $pos end]
+        set pos [$txt search $options $findString $line.$x end]
+        
+        $txt mark set insert $pos
+        $txt see $pos
+        puts $pos
+        # highlight the found word
+        set line [lindex [split $pos "."] 0]
+        # set x [lindex [split $pos "."] 1]
+        # set x [expr {$x + [string length $findString]}]
+        # $txt tag remove sel 1.0 end
+        # $txt tag add sel $pos $line.end
+        # #$text tag configure sel -background $editor(selectbg) -foreground $editor(fg)
+        # $txt tag raise sel
+        # focus -force $txt.t
+        # Position
+        return 1
+    }
+
+    # Find and replace text dialog
+    proc FindDialog {w} {
+        global editors lexers nbEditor nocaseSet regexpSet
+        variable txt 
+        variable win
+        variable show
+
+        
+        set findString ""
+        set replaceString ""
+        
+        set txt $w.frmText.t
+        set win .finddialog
+        set regexpSet ""
+        set nocaseSet "-nocase"
+        
+        if { [winfo exists $win] }  { destroy $win }
+        toplevel $win
+        wm transient $win .
+        wm overrideredirect $win 1
+        
+        ttk::entry $win.entryFind -width 30 -textvariable findString
+        ttk::entry $win.entryReplace -width 30 -textvariable replaceString
+        
+        set show($win.entryReplace) false
+        
+        
+        ttk::button $win.bForward -image forward_20x20 -command  "puts $findString"
+        ttk::button $win.bBackward -image backward_20x20 -command "puts $replaceString"
+        ttk::button $win.bDone -image done_20x20 -command {
+            puts "$findString -> $replaceString, $nocaseSet, $regexpSet"
+        }
+        ttk::button $win.bDoneAll -image doneall_20x20
+        ttk::button $win.bReplace -image replace_20x20 \
+            -command {
+                puts $Editor::show($Editor::win.entryReplace)
+                if {$Editor::show($Editor::win.entryReplace) eq "false"} {
+                    grid $Editor::win.entryReplace -row 1 -column 0 -columnspan 2 -sticky nsew
+                    grid $Editor::win.bDone -row 1 -column 3 -sticky e
+                    grid $Editor::win.bDoneAll -row 1 -column 4 -sticky e
+                    set Editor::show($Editor::win.entryReplace) "true"
+                } else {
+                    grid remove $Editor::win.entryReplace $Editor::win.bDone $Editor::win.bDoneAll
+                    set Editor::show($Editor::win.entryReplace) "false"
+                }
+            }
+        ttk::checkbutton $win.chkRegexp -text "Regexp" \
+            -variable regexpSet -onvalue "-regexp" -offvalue ""
+        ttk::checkbutton $win.chkCase -text "Case Sensitive" \
+            -variable nocaseSet -onvalue "" -offvalue "-nocase"
+
+        grid $win.entryFind -row 0 -column 0  -columnspan 2 -sticky nsew
+        grid $win.bForward -row 0 -column 3 -sticky e
+        grid $win.bBackward -row 0 -column 4 -sticky e
+        grid $win.bReplace -row 0 -column 5 -sticky e
+        grid $win.chkRegexp -row 2 -column 0 -sticky w
+        grid $win.chkCase -row 2 -column 1  -sticky w
+
+        # puts "[grid bbox $win] [grid size $win]"
+        # pack $win.lBox -expand true -fill y -side left
+        # pack $win.yscroll -side left -expand false -fill y
+        
+        set boxX      [expr [winfo rootx $w] + [expr [winfo width $nbEditor] - 350]]
+        set boxY      [expr [winfo rooty $w] + 10]
+
+        bind $win <Escape> { 
+            destroy $Editor::win
+            focus -force $Editor::txt.t
+            break
+        }
+        bind $win.entryFind <Escape> {
+            destroy $Editor::win
+            focus -force $Editor::txt.t
+            break
+        }
+        bind $win.entryFind <Return> {
+            # set findString [$win.entryFind get]
+            Editor::FindReplaceText "$findString" "" $nocaseSet $regexpSet
+            # destroy .gotofunction
+            # $Editor::txt tag remove sel 1.0 end
+            # focus $Editor::txt.t
+            break
+        }
+        bind $win.entryReplace <Return> {
+            # set findString [$win.entryFind get]
+            Editor::FindReplaceText {$findString} {$replaceString} $nocaseSet $regexpSet
+            # destroy .gotofunction
+            # $Editor::txt tag remove sel 1.0 end
+            # focus $Editor::txt.t
+            break
+        }
+
+        wm geom $win +$boxX+$boxY
+        focus -force $win.entryFind
+    }
+
     proc Editor {fileFullPath nb itemName} {
         global cfgVariables editors
         set fr $itemName
