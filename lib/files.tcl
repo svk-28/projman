@@ -187,6 +187,16 @@ namespace eval FileOper {
                 lappend lstFiles $file
             }
         }
+        foreach file [glob -nocomplain .?*] {
+            if {$file ne ".."} {
+                lappend rList [list [file join $directory $file]]
+                if [file isdirectory $file] {
+                    lappend lstDir $file
+                } else {
+                    lappend lstFiles $file
+                }
+            }
+        }
         # Sort  lists and insert into tree
         if {[info exists lstDir] && [llength $lstDir] > 0} {
             foreach f [lsort $lstDir] {

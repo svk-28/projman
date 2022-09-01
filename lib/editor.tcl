@@ -335,8 +335,8 @@ namespace eval Editor {
             # set symNumbers [expr $selEndRow - $selBeginRow]
             set symNumbers [expr [lindex [split $selEnd "."] 1] - [lindex [split $selBegin "."] 1]]
             # puts "Selection $selectionText"
-            if {$selectionText eq "-"} {
-                set selectionText "\\$selectionText"
+            if [string match "-*" $selectionText] {
+                set selectionText "\$selectionText"
             }
             set lstFindIndex [$txt search -all "$selectionText" 0.0]
             foreach ind $lstFindIndex {
@@ -473,12 +473,13 @@ namespace eval Editor {
         #bind $txt <Shift-Button-4> "%W xview scroll -2 units"
         #bind $txt <Shift-Button-5> "%W xview scroll  2 units"
         bind $txt <Button-1><ButtonRelease-1> "Editor::SelectionHighlight $txt"
+        # bind $txt <<Selection>> "Editor::SelectionHighlight $txt"
         bind $txt <<Modified>> "SetModifiedFlag $w"
-        bind $txt <<Selection>> "Editor::SelectionGet $txt"
+        # bind $txt <<Selection>> "Editor::SelectionGet $txt"
         bind $txt <Control-i> ImageBase64Encode
         bind $txt <Control-u> "Editor::SearchBrackets %W"
-        bind $txt <Control-J> "Editor::GoToFunction $w"
-        bind $txt <Control-j> "Editor::GoToFunction $w"
+        bind $txt <Control-J> "catch {Editor::GoToFunction $w}"
+        bind $txt <Control-j> "catch {Editor::GoToFunction $w}"
         bind $txt <Alt-w> "$txt delete {insert wordstart} {insert wordend}"
         bind $txt <Alt-r> "$txt delete {insert linestart} {insert lineend}"
         bind $txt <Alt-b> "$txt delete {insert linestart} insert"
@@ -574,7 +575,7 @@ namespace eval Editor {
 
     }
 
-    proc FindFunction {findString} {
+proc FindFunction {findString} {
         global nbEditor
         puts $findString
         set pos "0.0"
@@ -714,7 +715,27 @@ namespace eval Editor {
             # }
         # }
     # }
-    
+
+    #---------------------------------------------------------
+    # Поиск по списку по первой букве
+    # Richard Suchenwirth 2001-03-1
+    # https://wiki.tcl-lang.org/page/Listbox+navigation+by+keyboard
+    proc ListBoxSearch {w key} {
+        if [regexp {[-A-Za-z0-9_]} $key] {
+            set n 0   
+            foreach i [$w get 0 end] {
+                if [string match -nocase $key* $i] {
+                    $w see $n
+                    $w selection clear 0 end
+                    $w selection set $n
+                    $w activate $n
+                    break
+                } else {
+                    incr n
+                }
+            }               
+        }
+    }
     # ------------------------------------------------------------------------
     # Диалоговое окно со списком процедур или функций в редактируемом тексте
     proc GotoFunctionDialog {w x y args} {
@@ -763,19 +784,28 @@ namespace eval Editor {
             # focus $Editor::txt.t
             break
         }
-
+        bind $win.lBox <Any-Key> {Editor::ListBoxSearch %W %A}
+        # Определям расстояние до края экрана (основного окна) и если
+        # оно меньше размера окна со списком то сдвигаем его вверх
+        set winGeom [winfo reqheight $win]
+        set topHeight [winfo height .]
+        # puts "$x, $y, $winGeom, $topHeight"
+        if [expr [expr $topHeight - $y] < $winGeom] {
+            set y [expr $topHeight - $winGeom]
+        }
         wm geom $win +$x+$y
     }
-    proc FindReplaceText {findString replaceString case regexp} {
+    proc FindReplaceText {findString replaceString regexp} {
         global nbEditor
         set txt [$nbEditor select].frmText.t
+        $txt tag remove sel 1.0 end
         # $txt see $pos
         # set pos [$txt search -nocase $findString $line.$x end]
         set options ""
         # $txt see 1.0
         set pos [$txt index insert]
         set allLines [$txt count -lines 1.0 end]
-        puts "$pos $allLines"
+        # puts "$pos $allLines"
         set line [lindex [split $pos "."] 0]
 
         if [expr $line == $allLines] {
@@ -785,37 +815,54 @@ namespace eval Editor {
         set x [lindex [split $pos "."] 1]
         # incr x $incr 
 
-        puts "$findString -> $replaceString, $case, $regexp, $pos"
-
-        if {$case ne ""} {
-            lappend options $case
+        # puts "$findString -> $replaceString, $regexp, $pos, $line.$x"
+        set matchIndexPair ""
+        if {$regexp eq "-regexp"} {
+            # puts "$txt search -all -nocase -regexp {$findString} $line.$x end"
+            set lstFindIndex [$txt search -all -nocase -regexp -count matchIndexPair "$findString" $line.$x end]
+        } else {
+            # puts "$txt search -all -nocase {$findString} $line.$x end"
+            set lstFindIndex [$txt search -all -nocase -count matchIndexPair $findString $line.$x end]
+            # set symNumbers [string length "$findString"]
         }
-        if {$regexp ne ""} {
-            lappend options $regexp
+        puts $lstFindIndex
+        puts $matchIndexPair
+        # set lstFindIndex [$txt search -all "$selectionText" 0.0]
+        set i 0
+        foreach ind $lstFindIndex {
+            set selFindLine [lindex [split $ind "."] 0]
+            set selFindRow [lindex [split $ind "."] 1]
+            # set endInd "$selFindLine.[expr $selFindRow + $symNumbers]"
+            set endInd "$selFindLine.[expr [lindex $matchIndexPair $i] + $selFindRow]"
+            puts "$ind; $selFindLine, $selFindRow; $endInd "
+            if {$replaceString ne ""} {
+                $txt replace $ind $endInd $replaceString
+            }
+            $txt tag add sel $ind $endInd
+            incr i
         }
-
         # set pos [$txt search $options $findString $pos end]
-        set pos [$txt search $options $findString $line.$x end]
+
         
-        $txt mark set insert $pos
+        # $txt mark set insert $pos
         $txt see $pos
-        puts $pos
-        # highlight the found word
-        set line [lindex [split $pos "."] 0]
+        # puts $pos
+        # # highlight the found word
+        # set line [lindex [split $pos "."] 0]
         # set x [lindex [split $pos "."] 1]
         # set x [expr {$x + [string length $findString]}]
         # $txt tag remove sel 1.0 end
         # $txt tag add sel $pos $line.end
         # #$text tag configure sel -background $editor(selectbg) -foreground $editor(fg)
-        # $txt tag raise sel
-        # focus -force $txt.t
-        # Position
-        return 1
+        $txt tag raise sel
+        # # focus -force $txt.t
+        # # Position
+        # return 1
     }
 
     # Find and replace text dialog
     proc FindDialog {w} {
-        global editors lexers nbEditor nocaseSet regexpSet
+        global editors lexers nbEditor regexpSet
         variable txt 
         variable win
         variable show
@@ -827,7 +874,7 @@ namespace eval Editor {
         set txt $w.frmText.t
         set win .finddialog
         set regexpSet ""
-        set nocaseSet "-nocase"
+        # set nocaseSet "-nocase"
         
         if { [winfo exists $win] }  { destroy $win }
         toplevel $win
@@ -840,12 +887,16 @@ namespace eval Editor {
         set show($win.entryReplace) false
         
         
-        ttk::button $win.bForward -image forward_20x20 -command  "puts $findString"
-        ttk::button $win.bBackward -image backward_20x20 -command "puts $replaceString"
-        ttk::button $win.bDone -image done_20x20 -command {
-            puts "$findString -> $replaceString, $nocaseSet, $regexpSet"
+        ttk::button $win.bForward -image forward_20x20 -command  {
+            Editor::FindReplaceText "$findString" "" $regexpSet
         }
-        ttk::button $win.bDoneAll -image doneall_20x20
+        ttk::button $win.bBackward -state disable -image backward_20x20 -command "puts $replaceString"
+        ttk::button $win.bDone -image done_20x20 -state disable -command {
+            puts "$findString -> $replaceString, $regexpSet"
+        }
+        ttk::button $win.bDoneAll -image doneall_20x20 -command {
+            Editor::FindReplaceText "$findString" "$replaceString" $regexpSet
+        }
         ttk::button $win.bReplace -image replace_20x20 \
             -command {
                 puts $Editor::show($Editor::win.entryReplace)
@@ -861,20 +912,17 @@ namespace eval Editor {
             }
         ttk::checkbutton $win.chkRegexp -text "Regexp" \
             -variable regexpSet -onvalue "-regexp" -offvalue ""
-        ttk::checkbutton $win.chkCase -text "Case Sensitive" \
-            -variable nocaseSet -onvalue "" -offvalue "-nocase"
+        # ttk::checkbutton $win.chkCase -text "Case Sensitive" \
+            # -variable nocaseSet -onvalue "" -offvalue "-nocase"
 
         grid $win.entryFind -row 0 -column 0  -columnspan 2 -sticky nsew
         grid $win.bForward -row 0 -column 3 -sticky e
         grid $win.bBackward -row 0 -column 4 -sticky e
         grid $win.bReplace -row 0 -column 5 -sticky e
         grid $win.chkRegexp -row 2 -column 0 -sticky w
-        grid $win.chkCase -row 2 -column 1  -sticky w
+        # grid $win.chkCase -row 2 -column 1  -sticky w
 
-        # puts "[grid bbox $win] [grid size $win]"
-        # pack $win.lBox -expand true -fill y -side left
-        # pack $win.yscroll -side left -expand false -fill y
-        
+        # set reqWidth [winfo reqwidth $win]
         set boxX      [expr [winfo rootx $w] + [expr [winfo width $nbEditor] - 350]]
         set boxY      [expr [winfo rooty $w] + 10]
 
@@ -889,19 +937,11 @@ namespace eval Editor {
             break
         }
         bind $win.entryFind <Return> {
-            # set findString [$win.entryFind get]
-            Editor::FindReplaceText "$findString" "" $nocaseSet $regexpSet
-            # destroy .gotofunction
-            # $Editor::txt tag remove sel 1.0 end
-            # focus $Editor::txt.t
+            Editor::FindReplaceText "$findString" "" $regexpSet
             break
         }
         bind $win.entryReplace <Return> {
-            # set findString [$win.entryFind get]
-            Editor::FindReplaceText {$findString} {$replaceString} $nocaseSet $regexpSet
-            # destroy .gotofunction
-            # $Editor::txt tag remove sel 1.0 end
-            # focus $Editor::txt.t
+            Editor::FindReplaceText "$findString" "$replaceString" $regexpSet
             break
         }
 

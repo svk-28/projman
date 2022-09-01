@@ -27,6 +27,10 @@ namespace eval Tree {
                 # puts ">>>>>>>>>>> [string tolower $text]; [string match {*docker*} [string tolower $text]]"
                 if {[string match {*docker*} [string tolower $text]]} {
                     set findImg [::FindImage docker]
+                } elseif {[string match {*gitlab*} [string tolower $text]]} {
+                    set findImg [::FindImage gitlab]
+                } elseif {[string match {*bitbucket*} [string tolower $text]]} {
+                    set findImg [::FindImage bitbucket]
                 }
                 if {$fileExt ne "" || $findImg ne ""} {
                     set image $findImg
@@ -41,6 +45,8 @@ namespace eval Tree {
                     set image [::FindImage debian]
                 } elseif {[string match {*redhat*} [string tolower [file tail $item]]]} {
                     set image [::FindImage redhat]
+                } elseif {[string match {*gitlab*} [string tolower [file tail $item]]]} {
+                    set image [::FindImage gitlab]
                 } else {
                     set image pixel
                 }

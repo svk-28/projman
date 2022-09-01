@@ -104,3 +104,8 @@
     - Added "View"->"Editors word wrap" menu and procedure
     - Added bindings "Ctrl+PgUp" and "Ctrl+PgDown" for next or prior tab selecting
     - Added "Close file" dialog
+
+01/09/2022
+   - Added search function name into Function navigation whem press key
+   - Added find and replace dialog
+   - Fixed correct placement the Function dialog 
