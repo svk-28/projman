@@ -57,7 +57,7 @@ namespace eval Tree {
                 set image proc_10x10                
             }
             procedure {
-                regsub -all {:} $item "_" subNode
+                regsub -all {\.|/|\\|\s|"|\{|\}|\(|\)} $item "_" subNode
                 # puts $subNode
                 set image proc_10x10                
             }

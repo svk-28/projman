@@ -164,20 +164,28 @@ namespace eval FileOper {
         }
     }
     
-    proc ReadFolder {directory} {
-        global tree dir
+    proc ReadFolder {directory {parent ""}} {
+        global tree dir lexers
         puts "Read the folder $directory"
         set rList ""
         if {[catch {cd $directory}] != 0} {
             return ""
         }
-        set parent [Tree::InsertItem $tree {} $directory "directory" [file tail $directory]]
+        set parent [Tree::InsertItem $tree $parent $directory "directory" [file tail $directory]]
         $tree selection set $parent
         # if {[ $tree  item $parent -open] eq "false"} {
             # $tree  item $parent -open true
         # } else {
             # $tree  item $parent -open false
         # }
+        # Проверяем наличие списка каталогов для спецобработки
+        # и если есть читаем в список (ножно для ansible)
+        if {[dict exists $lexers ALL varDirectory] == 1} {
+            foreach i [split [dict get $lexers ALL varDirectory] " "] {
+                # puts "-------- $i"
+                lappend dirListForCheck [string trim $i]
+            }
+        }
         # Getting an files and directorues lists
         foreach file [glob -nocomplain *] {
             lappend rList [list [file join $directory $file]]
@@ -200,7 +208,7 @@ namespace eval FileOper {
         # Sort  lists and insert into tree
         if {[info exists lstDir] && [llength $lstDir] > 0} {
             foreach f [lsort $lstDir] {
-                puts " Tree insert item: [Tree::InsertItem $tree $parent [file join $directory $f] "directory" $f]"
+                puts "Tree insert item: [Tree::InsertItem $tree $parent [file join $directory $f] "directory" $f]"
             }
         }
         if {[info exists lstFiles] && [llength $lstFiles] > 0} {

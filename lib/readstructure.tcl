@@ -12,46 +12,67 @@ package require fileutil
 package require Thread
 
 # TCL procedure
-proc ReadFileStructureTCL {fileFullName} {
-    global procList
-    set f [open "$fileFullName" r]
-    while {[gets $f line] >=0} {
-        if {[regexp -nocase -all -- {^\s*?(proc) (::|)(\w+)(::|:|)(\w+)\s*?(\{|\()(.*)(\}|\)) \{} $line match v1 v2 v3 v4 v5 v6 params v8]} {
-            set procName "$v2$v3$v4$v5"
-            lappend procList($fileFullName) [list $procName $params]
+
+proc GetVariablesFromFile {fileName} {
+    global tree nbEditor editors lexers project
+    set fileType [string toupper [string trimleft [file extension $fileName] "."]]
+    set procList ""
+    set varList ""
+    set params ""
+    set f [open "$fileName" r]
+    if {[dict exists $lexers $fileType] == 0} {return}
+    while {[gets $f line] >=0 } {
+        # Выбираем процедуры (функции, классы и т.д.)
+        # if {[dict exists $lexers $fileType procRegexpCommand] != 0 } {
+            # if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
+                # set procName_ [string trim $procName]
+                # # puts [Tree::InsertItem $tree $treeItemName $procName_  "procedure" "$procName_ ($params)"]
+                # lappend procList [list $procName_ $params]
+                # unset procName_
+            # }
+        # }
+        # Выбираем переменные
+        if {[dict exists $lexers $fileType varRegexpCommand] != 0 } {
+            if {[eval [dict get $lexers $fileType varRegexpCommand]]} {
+                set varName [string trim $varName]
+                set varValue [string trim $varValue]
+                # puts "variable: $varName, value: $varValue"
+                lappend varList [list $varName $varValue]
+            }
         }
     }
+    # puts $procList
+    # puts $varList
     close $f
+    return $varList
 }
 
- # GO function
-proc ReadFileStructureGO {fileName} {
-    if {[regexp -nocase -all -- {^\s*?func\s*?\((\w+\s*?\*\w+)\)\s*?(\w+)\((.*?)\)\s*?(\(\w+\)|\w+|)\s*?\{} $line match v1 funcName params returns]} {
-        # set procName "$v2$v3$v4$v5"
-        # lappend procList($activeProject) [list $procName [string trim $params]]
-        if {$v1 ne ""} {
-            set linkName [lindex [split $v1 " "] 1]
-            set functionName "\($linkName\).$funcName"
-        }
 
-        # tree parent item type text
-       lappend procList($fuleFullName) [list $functionName $params]
+proc ReadFilesFromDirectory {directory root {type ""}} {
+    global procList project lexers variables
+    foreach i [split [dict get $lexers ALL varDirectory] " "] {
+        lappend l [string trim $i]
+        # puts $i
     }
-    if {[regexp -nocase -all -- {^\s*?func\s*?(\w+)\((.*?)\) (\(\w+\)|\w+|)\s*?\{} $line match funcName params returns]} {
-        lappend procList($fuleFullName) [list $functonName $params]
+    if {[catch {cd $directory}] != 0} {
+        return ""
     }
-}
-
-proc ReadFilesFromDirectory {directory} {
-    global procList
-    puts $directory
-    foreach fileName [fileutil::findByPattern $directory *.tcl] {
+    foreach fileName [glob -nocomplain *] {
         puts "Find file: $fileName"
-        ReadFileStructureTCL $fileName
-    }
-        set f [open "/tmp/test" w]
-    foreach name [array names procList] {
-        puts $f "$name: $procList($name)"
+        if {[lsearch $l [file tail $fileName]] != -1 && [file isdirectory $fileName] == 1} {
+            # puts "--- $root $fileName"
+            ReadFilesFromDirectory [file join $directory $fileName] $root "var"
+        } elseif {[file isdirectory $fileName] == 1} {
+            # set type ""
+            ReadFilesFromDirectory [file join $directory $fileName] $root
+        }   
+        if {$type eq "var"} {
+            # puts ">>>>>$root $fileName"
+            # puts "[GetVariablesFromFile $fileName]"
+            dict set project $root $fileName "[GetVariablesFromFile $fileName]"
+            set variables([file join $root $directory $fileName]) [GetVariablesFromFile $fileName]
+            puts "[file join $root $directory $fileName]---$variables([file join $root $directory $fileName])"
+        }
     }
 }
 

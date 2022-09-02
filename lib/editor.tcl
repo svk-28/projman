@@ -140,13 +140,18 @@ namespace eval Editor {
     }
 
     proc InsertTabular {txt} {
-        global cfgVariables
+        global cfgVariables lexers editors
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
-
+        set fileType [dict get $editors $txt fileType]
+        if {[dict exists $lexers $fileType tabSize] != 0 } {
+            set tabSize [dict get $lexers $fileType tabSize]
+        } else {
+            set tabSize $cfgVariables(tabSize)
+        }
         # puts "Select : $selIndex"
-        for {set i 0} {$i < $cfgVariables(tabSize)} { incr i} {
+        for {set i 0} {$i < $tabSize} { incr i} {
             append tabInsert " "
         }
         # puts ">$tabInsert<"
@@ -179,9 +184,15 @@ namespace eval Editor {
         }
     }
     proc DeleteTabular {txt} {
-        global cfgVariables
+        global cfgVariables lexers editors
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
+        set fileType [dict get $editors $txt fileType]
+        if {[dict exists $lexers $fileType tabSize] != 0 } {
+            set tabSize [dict get $lexers $fileType tabSize]
+        } else {
+            set tabSize $cfgVariables(tabSize)
+        }
         set lineNum [lindex [split $pos "."] 0]
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
@@ -196,8 +207,8 @@ namespace eval Editor {
                 if {[regexp -nocase -indices -- {(^\s*)(.*?)} $str match v1 v2]} {
                     set posBegin [lindex [split $v1] 0]
                     set posEnd [lindex [split $v1] 1]
-                    if {[expr $posEnd + 1] >= $cfgVariables(tabSize)} {
-                        $txt delete $i.$posBegin $i.$cfgVariables(tabSize)
+                    if {[expr $posEnd + 1] >= $tabSize} {
+                        $txt delete $i.$posBegin $i.$tabSize
                     }
                 }
             }
@@ -210,17 +221,23 @@ namespace eval Editor {
             if {[regexp -nocase -indices -- {(^\s*)(.*?)} $str match v1]} {
                     set posBegin [lindex [split $v1] 0]
                     set posEnd [lindex [split $v1] 1]
-                    if {[expr $posEnd + 1] >= $cfgVariables(tabSize)} {
-                        $txt delete $lineNum.$posBegin $lineNum.$cfgVariables(tabSize)
+                    if {[expr $posEnd + 1] >= $tabSize} {
+                        $txt delete $lineNum.$posBegin $lineNum.$tabSize
                     }
              }
         }
     }
     ## TABULAR INSERT (auto indent)##
     proc Indent {txt} {
-        global cfgVariables
+        global cfgVariables lexers editors
         # set tabSize 4
-        set indentSize $cfgVariables(tabSize)
+        set fileType [dict get $editors $txt fileType]
+        if {[dict exists $lexers $fileType tabSize] != 0 } {
+            set tabSize [dict get $lexers $fileType tabSize]
+        } else {
+            set tabSize $cfgVariables(tabSize)
+        }
+        set indentSize $tabSize
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set posNum [lindex [split $pos "."] 1]
@@ -241,7 +258,7 @@ namespace eval Editor {
             set shouldBeSpaces 0
             for {set i 0} {$i < $len} {incr i} {
                 if {[string index $prevSpaces $i] == "\t"} {
-                    incr shouldBeSpaces $cfgVariables(tabSize) 
+                    incr shouldBeSpaces $tabSize 
                 } else  {
                     incr shouldBeSpaces
                 }            
@@ -451,7 +468,7 @@ namespace eval Editor {
         bind $txt <Control-v> "Editor::SelectionPaste $txt"
         
         #bind $txt <Control-adiaeresis> "auto_completition $txt"
-        #bind $txt <Control-l> "auto_completition $txt"
+        bind $txt <Control-l> "SearchVariable {$txt get {insert wordstart} {insert wordend}}"
         # bind $txt <Control-icircumflex> ""
         # bind $txt <Control-j> ""
         bind $txt <Control-i> "ImageBase64Encode $txt"
@@ -559,20 +576,33 @@ namespace eval Editor {
     proc ReadStructure {txt treeItemName} {
         global tree nbEditor editors lexers
         set fileType [dict get $editors $txt fileType]
-        set l ""
+        set procList ""
+        set varList ""
+        set params ""
         if {[dict exists $lexers $fileType] == 0} {return}
         for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
             set line [$txt get $lineNumber.0 $lineNumber.end]
+            # Выбираем процедуры (функции, классы и т.д.)
             if {[dict exists $lexers $fileType procRegexpCommand] != 0 } {
                 if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
                     set procName_ [string trim $procName]
                     puts [Tree::InsertItem $tree $treeItemName $procName_  "procedure" "$procName_ ($params)"]
-                    lappend l [list $procName_ $params]
+                    lappend procList [list $procName_ $params]
+                    unset procName_
                 }
-            } 
+            }
+            # Выбираем переменные
+            if {[dict exists $lexers $fileType varRegexpCommand] != 0 } {
+                if {[eval [dict get $lexers $fileType varRegexpCommand]]} {
+                    set varName [string trim $varName]
+                    set varValue [string trim $varValue]
+                    puts "variable: $varName, value: $varValue"
+                    lappend varList [list $varName $varValue]
+                }
+            }
         }
-        dict set editors $txt procedureList $l
-
+        dict set editors $txt procedureList $procList
+        dict set editors $txt variableList $varList
     }
 
 proc FindFunction {findString} {

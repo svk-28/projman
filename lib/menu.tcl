@@ -25,6 +25,7 @@ proc GetFileMenu {m} {
         set folderPath [FileOper::OpenFolderDialog]
         if {$folderPath != ""} {
             FileOper::ReadFolder $folderPath
+            ReadFilesFromDirectory $folderPath $folderPath
         }
     }    
     $m add command -label [::msgcat::mc "Close folder"] -command {FileOper::CloseFolder}

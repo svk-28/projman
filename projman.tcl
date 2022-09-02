@@ -115,8 +115,22 @@ if [info exists opened] {
     foreach path $opened {
         if [file isdirectory $path] {
             FileOper::ReadFolder $path
+            ReadFilesFromDirectory $path $path
+            # puts "aaa[dict values $project "ansible*"]"
         } elseif [file exists $path] {
             ResetModifiedFlag [FileOper::Edit $path]
         }
     }
 }
+
+    foreach key [dict keys $project] {
+        foreach f [dict get $project $key] {
+            puts "----$f"
+
+            # dict set project $root fileName $fileName
+            # puts "--- [dict get $project $key fileName]"
+            # foreach v [dict get $project $key fileName] {
+                # puts "--$v"
+            # }
+        }
+    }

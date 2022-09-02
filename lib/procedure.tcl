@@ -135,3 +135,15 @@ namespace eval Help {
         }
     }
 }
+
+proc SearchVariable {varName} {
+    global fileStructure project variables
+    # puts "$fileStructure"
+    foreach key [dict keys $project] {
+        foreach f [dict get $project $key] {
+            foreach v [dict get $project $key $f] {
+                puts "--$v"
+            }
+        }
+    }
+}
