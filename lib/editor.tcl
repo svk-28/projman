@@ -468,7 +468,7 @@ namespace eval Editor {
         bind $txt <Control-v> "Editor::SelectionPaste $txt"
         
         #bind $txt <Control-adiaeresis> "auto_completition $txt"
-        bind $txt <Control-l> "SearchVariable {$txt get {insert wordstart} {insert wordend}}"
+        bind $txt <Control-l> "SearchVariable $txt"
         # bind $txt <Control-icircumflex> ""
         # bind $txt <Control-j> ""
         bind $txt <Control-i> "ImageBase64Encode $txt"
@@ -679,7 +679,7 @@ proc FindFunction {findString} {
     # ----------------------------------------------------------------------
     # Вызов диалога со списком процедур или функций присутствующих в тексте
     
-    proc GoToFunction { w } {
+        proc GoToFunction { w } {
         global tree editors
         set txt $w.frmText.t
         # set start_word [$txt get "insert - 1 chars wordstart" insert]

@@ -43,6 +43,5 @@ dict set lexers YML procFindString {(- name:)\s*?PROCNAME}
 dict set lexers YML procRegexpCommand {regexp -nocase -all -- {^\s*?- (name):\s(.+?)$} $line match keyWord procName}
 dict set lexers YML varRegexpCommand {regexp -nocase -all -- {^\s*?([a-zA-Z0-9\-_$]+):\s+(.+?)(\s*$)} $line match varName varValue lineEnd}
 
-dict set lexers ALL varDirectory {vars group_vars host_vars}
-
+dict set lexers ALL varDirectory {variables vars group_vars host_vars}
 

@@ -10,7 +10,7 @@ exec wish "$0" -- "$@"
 ######################################################
 # Version: 2.0.0
 # Release: alpha
-# Build: 01092022165308
+# Build: 02092022214055
 ######################################################
 
 # определим текущую версию, релиз и т.д.
@@ -123,14 +123,12 @@ if [info exists opened] {
     }
 }
 
-    foreach key [dict keys $project] {
-        foreach f [dict get $project $key] {
-            puts "----$f"
-
-            # dict set project $root fileName $fileName
-            # puts "--- [dict get $project $key fileName]"
-            # foreach v [dict get $project $key fileName] {
-                # puts "--$v"
-            # }
-        }
-    }
+# if [info exists project] {
+   # foreach f [array names project] {
+       # puts "--$f"
+       # puts "----"
+       # foreach a [split $project($f) " "] {
+           # puts $variables($a)
+       # }
+   # }
+# 

@@ -50,16 +50,17 @@ proc GetVariablesFromFile {fileName} {
 
 proc ReadFilesFromDirectory {directory root {type ""}} {
     global procList project lexers variables
+    
     foreach i [split [dict get $lexers ALL varDirectory] " "] {
         lappend l [string trim $i]
-        # puts $i
+        # puts "---->$i"
     }
     if {[catch {cd $directory}] != 0} {
         return ""
     }
     foreach fileName [glob -nocomplain *] {
-        puts "Find file: $fileName"
-        if {[lsearch $l [file tail $fileName]] != -1 && [file isdirectory $fileName] == 1} {
+        puts "Find file: $fileName [lsearch -exact -nocase $l $fileName]"
+        if {[lsearch -exact $l $fileName] != -1 && [file isdirectory [file join $root $directory $fileName]] == 1} {
             # puts "--- $root $fileName"
             ReadFilesFromDirectory [file join $directory $fileName] $root "var"
         } elseif {[file isdirectory $fileName] == 1} {
@@ -69,9 +70,10 @@ proc ReadFilesFromDirectory {directory root {type ""}} {
         if {$type eq "var"} {
             # puts ">>>>>$root $fileName"
             # puts "[GetVariablesFromFile $fileName]"
-            dict set project $root $fileName "[GetVariablesFromFile $fileName]"
+            # dict set project $root [file join $root $directory $fileName];# "[GetVariablesFromFile $fileName]"
+            lappend project($root) [file join $root $directory $fileName]
             set variables([file join $root $directory $fileName]) [GetVariablesFromFile $fileName]
-            puts "[file join $root $directory $fileName]---$variables([file join $root $directory $fileName])"
+            # puts "[file join $root $directory $fileName]---$variables([file join $root $directory $fileName])"
         }
     }
 }

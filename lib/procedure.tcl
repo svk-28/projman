@@ -136,14 +136,86 @@ namespace eval Help {
     }
 }
 
-proc SearchVariable {varName} {
+proc SearchVariable {txt} {
     global fileStructure project variables
-    # puts "$fileStructure"
-    foreach key [dict keys $project] {
-        foreach f [dict get $project $key] {
-            foreach v [dict get $project $key $f] {
-                puts "--$v"
+    set varName [$txt get {insert wordstart} {insert wordend}]
+    puts ">>>$varName<<<"
+    if {[info exists project] == 0} {return}
+    foreach f [array names project] {
+        puts "--$f"
+        puts "----"
+        foreach a $project($f) {
+            puts "-----$variables($a)"
+            foreach b $variables($a) {
+                puts "------$b -- [lindex $b 0]"
+                if {$varName eq [lindex $b 0]} {
+                    puts "УРААААААА $varName = $b в файле $a \n\t [lindex $b 0]"
+                    FindVariablesDialog $txt "$varName: $a"
+                }
             }
         }
     }
 }
+proc FindVariablesDialog {txt args} {
+    global editors lexers
+    # variable txt 
+    variable win
+    # set txt $w.frmText.t
+    set box        [$txt bbox insert]
+    set x      [expr [lindex $box 0] + [winfo rootx $txt] ]
+    set y      [expr [lindex $box 1] + [winfo rooty $txt] + [lindex $box 3] ]
+
+    set win .findVariables
+
+    if { [winfo exists $win] }  { destroy $win }
+    toplevel $win
+    wm transient $win .
+    wm overrideredirect $win 1
+    
+    listbox $win.lBox -width 50 -border 2 -yscrollcommand "$win.yscroll set" -border 1
+    ttk::scrollbar $win.yscroll -orient vertical -command  "$win.lBox yview"
+    pack $win.lBox -expand true -fill y -side left
+    pack $win.yscroll -side left -expand false -fill y
+    
+    foreach { word } $args {
+        $win.lBox insert end $word
+    }
+    
+    catch { $win.lBox activate 0 ; $win.lBox selection set 0 0 }
+    
+    if { [set height [llength $args]] > 10 } { set height 10 }
+    $win.lBox configure -height $height
+
+    bind $win      <Escape> { 
+        destroy $win
+        # focus -force $txt.t
+        break
+    }
+    bind $win.lBox <Escape> {
+        destroy $win
+        # focus -force $txt.t
+        break
+    }
+    bind $win.lBox <Return> {
+        # set findString [dict get $lexers [dict get $editors $Editor::txt fileType] procFindString]
+        set values [.findVariables.lBox get [.findVariables.lBox curselection]]
+        # regsub -all {PROCNAME} $findString $values str
+        # Editor::FindFunction "$str"
+        destroy .findVariables
+        # $txt tag remove sel 1.0 end
+        # focus $Editor::txt.t
+        break
+    }
+    bind $win.lBox <Any-Key> {Editor::ListBoxSearch %W %A}
+    # Определям расстояние до края экрана (основного окна) и если
+    # оно меньше размера окна со списком то сдвигаем его вверх
+    set winGeom [winfo reqheight $win]
+    set topHeight [winfo height .]
+    # puts "$x, $y, $winGeom, $topHeight"
+    if [expr [expr $topHeight - $y] < $winGeom] {
+        set y [expr $topHeight - $winGeom]
+    }
+    wm geom $win +$x+$y
+}
+
+   
