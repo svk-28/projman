@@ -1,3 +1,11 @@
+projman (2.0.0-alpha17) stable; urgency=medium
+
+  *  Косметические изменения.
+  *  Исправлены ошибки при вставке кавычек
+  *  Обновить README.md
+
+ -- svk <svk@nuk-svk.ru>  Thu, 31 Oct 2024 19:48:30 +0300
+
 projman (2.0.0-alpha16) stable; urgency=medium
 
   *  build-deb-projman.sh: добавлена генерация changelog  из  git log
@@ -335,4 +343,5 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
