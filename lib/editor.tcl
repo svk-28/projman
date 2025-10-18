@@ -459,6 +459,11 @@ namespace eval Editor {
         # блокировка открытия диалога если запущен другой
         set txt $w
         # set win .varhelper
+        # Проверяем если есть выделение то блокировать появление диалога
+        if {[$txt tag ranges sel] != ""} {
+            puts "You have selected text [$txt tag ranges sel]"
+            return            
+        }
         puts "$x $y $w $word $wordType"
         set fileType [dict get $editors $txt fileType]
 
@@ -883,20 +888,31 @@ namespace eval Editor {
         set lineNum [lindex [split $pos "."] 0]
         set posNum [lindex [split $pos "."] 1]
         set symbol [string trim [string trimleft $symbol "\\"]]
-        # puts "Selindex : $selIndex, cursor position: $pos"
+        puts "Selindex : $selIndex, cursor position: $pos, Symbol: $symbol"
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
             set posBegin [lindex [split [lindex $selIndex 0] "."] 1]
             set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
             set posEnd [lindex [split [lindex $selIndex 1] "."] 1]
-            # set selText [$txt get $lineBegin.$posBegin $lineEnd.$posEnd]
-            set selText $selectionText
-            # puts "Selected text: $selText, pos: $pos, lineBegin: $lineBegin, posBegin: $posBegin, pos end: $posEnd"
+            set selText [$txt get $lineBegin.$posBegin $lineEnd.$posEnd]
+            # set selText $selectionText
+            puts "Selected text: $selText, pos: $pos, lineBegin: $lineBegin, posBegin: $posBegin, pos end: $posEnd"
             if {$posNum == $posEnd} {
                 $txt insert $lineBegin.$posBegin "$symbol"
             }
             if {$posNum == $posBegin} {
-                $txt insert $lineBegin.$posEnd "$symbol"
+               if {$symbol == {"} || $symbol == {_}} {
+                    $txt insert $lineEnd.$posEnd "$selText$symbol"
+                } else {
+                    $txt insert $lineEnd.$posEnd "$symbol"
+                }
+            }
+            if {$symbol == "'"} {
+                if {$posBegin == 0} {
+                    $txt insert $pos "$symbol"
+                } else {
+                    $txt insert "$pos + 1 chars" "$symbol"
+                }
             }
             $txt highlight $lineBegin.$posBegin $lineEnd.end
             # $txt insert $lineBegin.[expr $posBegin + 1] "$symbol"
