@@ -1,5 +1,14 @@
 projman (2.0.0-alpha17) stable; urgency=medium
 
+  *  Added the "Open Recent" menu.
+  *  The "recentlyEditedFolders" option in the configuration file contains a list of recently opened directories.
+  *  The procedures for working with this list have also been added.
+  *  Новая сборка
+
+ -- svk <svk@nuk-svk.ru>  Sat, 18 Oct 2025 16:29:50 +0300
+
+projman (2.0.0-alpha17) stable; urgency=medium
+
   *  Косметические изменения.
   *  Исправлены ошибки при вставке кавычек
   *  Обновить README.md
