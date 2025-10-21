@@ -141,6 +141,7 @@
 ::msgcat::mcset ru "Open folder" "Открыть каталог"
 ::msgcat::mcset ru "Open project" "Открыть проект"
 ::msgcat::mcset ru "Opened file in progress" "Открытие файла"
+::msgcat::mcset ru "Open recent" "Открыть недавнее"
 ::msgcat::mcset ru "Operators" "Операторы"
 ::msgcat::mcset ru "Overwrite" "Замена"
 ::msgcat::mcset ru "Parameters" "Параметры"

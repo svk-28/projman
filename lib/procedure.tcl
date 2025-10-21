@@ -683,3 +683,35 @@ proc SetActiveProject {path} {
     .frmStatus.lblGitLogo configure -image git_logo_20x20
     .frmStatus.lblGit configure -text "[::msgcat::mc "Branch"]: [Git::Branches current]"
 }
+
+# Added recently opened folder into menu "File"->"Open recent"
+proc OpenRecentProject {path} {
+    SetActiveProject $path
+    FileOper::ReadFolder $path
+    ReadFilesFromDirectory $path $path 
+}
+
+proc AddRecentEditedFolder {path} {
+    global cfgVariables
+    if {$path == ""} {
+        return
+    }
+    if {[info exists cfgVariables(recentFolder)] == 0} {
+        set cfgVariables(recentFolder) [list $path]
+    } else {
+        # check if path already in a list
+        foreach item $cfgVariables(recentFolder) {
+            if {$item == $path} {
+                return
+            }
+        }
+        # check list length, and remove 0 element if length is 10
+        if {[llength $cfgVariables(recentFolder)] == 10} {
+            # lremove $cfgVariables(recentFolder) 0; # tcl 8.7
+            set cfgVariables(recentFolder) [lrange $cfgVariables(recentFolder) 1 end]
+        }
+        lappend cfgVariables(recentFolder) $path
+    }
+    .frmMenu.mnuFile.m.openRecent add command -label $path -command [list OpenRecentProject $path]
+}
+

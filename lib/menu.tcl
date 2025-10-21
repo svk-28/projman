@@ -9,7 +9,7 @@
 ######################################################
 
 proc GetFileMenu {m} {
-    global activeProject
+    global activeProject cfgVariables
     $m add command -label [::msgcat::mc "New file"] -command Editor::New\
     -accelerator "Ctrl+N"
     $m add command -label [::msgcat::mc "Open file"] -accelerator "Ctrl+O" -command {
@@ -23,6 +23,13 @@ proc GetFileMenu {m} {
     $m add command -label [::msgcat::mc "Close file"] -command {FileOper::Close}\
         -accelerator "Ctrl+w"
     $m add command -label [::msgcat::mc "Close all"] -command {FileOper::CloseAll}
+
+    $m add separator
+    menu $m.openRecent
+    $m add cascade -label [::msgcat::mc "Open recent"] -menu $m.openRecent
+    foreach item $cfgVariables(recentFolder) {
+        $m.openRecent add command -label $item -command [list FileOper::ReadFolder $item]
+    }
 
     $m add separator
 

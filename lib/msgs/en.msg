@@ -108,6 +108,7 @@
 ::msgcat::mcset en "Open file"
 ::msgcat::mcset en "Open project"
 ::msgcat::mcset en "Opened file in progress" 
+::msgcat::mcset en "Open recent"
 ::msgcat::mcset en "Operators"
 ::msgcat::mcset en "Overwrite"
 ::msgcat::mcset en "Parameters"
@@ -178,7 +179,6 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
-
 
 
 

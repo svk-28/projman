@@ -149,6 +149,7 @@ namespace eval FileOper {
         # }
         # .frmStatus.lblGitLogo configure -image git_logo_20x20
         # .frmStatus.lblGit configure -text "[::msgcat::mc "Branch"]: [Git::Branches current]"
+        AddRecentEditedFolder $fullPath
         return $fullPath
     }
     

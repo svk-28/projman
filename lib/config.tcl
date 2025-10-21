@@ -64,6 +64,7 @@ multilineComments=true
 \[UserSession\]
 opened=
 editedFiles=
+recentlyEditedFolders=
 "
 proc Config::create {dir} {
     set cfgFile [open [file join $dir projman.ini]  "w+"]
