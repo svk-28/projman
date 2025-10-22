@@ -580,7 +580,7 @@ namespace eval Editor {
         if { [set height [llength $findedVars]] > 10 } { set height 10 }
         $win.lBox configure -height $height
 
-        focus $win.lBox
+        # focus $win.lBox
         
         bind $win <Escape> {
             destroy $Editor::win
@@ -592,7 +592,7 @@ namespace eval Editor {
             focus -force $Editor::txt.t
             break
         }
-        bind $win <Control-Return> {
+        bind VarHelperBind <Control-Return> {
             $Editor::txt delete "insert - 1 chars wordstart" "insert wordend - 1 chars"
             $Editor::txt insert "insert" [.varhelper.lBox get [.varhelper.lBox curselection]]
             # eval [bind VarHelperBind <Escape>]
