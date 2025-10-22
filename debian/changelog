@@ -1,3 +1,10 @@
+projman (2.0.0-alpha18) stable; urgency=medium
+
+  *  Bug fix with varhelper
+  *  Новая сборка
+
+ -- Калинин Сергей Валерьевич <svkalinin@samsonpost.ru>  Tue, 21 Oct 2025 15:47:02 +0300
+
 projman (2.0.0-alpha17) stable; urgency=medium
 
   *  Added the "Open Recent" menu.
@@ -352,5 +359,6 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
