@@ -1,9 +1,9 @@
 projman (2.0.0-alpha18) stable; urgency=medium
 
-  *  Bug fix with varhelper
-  *  Новая сборка
+  *  Исправлено чтение структуры проекта при открытии из меню 'Открыть недавнее'
+  *  Исправление работы процедуры varhelper
 
- -- Калинин Сергей Валерьевич <svkalinin@samsonpost.ru>  Tue, 21 Oct 2025 15:47:02 +0300
+ -- svk <svk@nuk-svk.ru>  Tue, 21 Oct 2025 15:47:02 +0300
 
 projman (2.0.0-alpha17) stable; urgency=medium
 
