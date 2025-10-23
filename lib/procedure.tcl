@@ -688,7 +688,7 @@ proc SetActiveProject {path} {
 proc OpenRecentProject {path} {
     SetActiveProject $path
     FileOper::ReadFolder $path
-    ReadFilesFromDirectory $path $path 
+    ReadFilesFromDirectory $path $path
 }
 
 proc AddRecentEditedFolder {path} {
@@ -714,4 +714,3 @@ proc AddRecentEditedFolder {path} {
     }
     .frmMenu.mnuFile.m.openRecent add command -label $path -command [list OpenRecentProject $path]
 }
-

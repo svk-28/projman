@@ -28,7 +28,7 @@ proc GetFileMenu {m} {
     menu $m.openRecent
     $m add cascade -label [::msgcat::mc "Open recent"] -menu $m.openRecent
     foreach item $cfgVariables(recentFolder) {
-        $m.openRecent add command -label $item -command [list FileOper::ReadFolder $item]
+        $m.openRecent add command -label $item -command [list OpenRecentProject $item]
     }
 
     $m add separator
