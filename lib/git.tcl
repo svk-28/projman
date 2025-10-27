@@ -11,7 +11,29 @@
 
 namespace eval Git {
     variable gitCommand
-    
+
+    # Определим путь до команды git в зависимсти от платформы
+    proc CommandPathSetting {} {
+        global cfgVariables tcl_platform
+        if {$cfgVariables(gitCommand) == ""} {
+            if {$tcl_platform(platform) eq "windows"} {
+                set cmd {where git}
+            } else {
+                set cmd {which git}
+            }
+            if {[catch {exec {*}$cmd} git_path]} {
+                puts "Git не найден в системе"
+                set cfgVariables(gitCommand) "Git not found"
+                return
+            }
+            set git_path [string trim $git_path]
+            set first_path [lindex [split $git_path "\n"] 0]
+            
+            # puts "Git найден: $first_path"
+            set cfgVariables(gitCommand) $first_path
+        }
+    }
+
     proc GetConfig {option} {
         global activeProject cfgVariables
         set confOptions {

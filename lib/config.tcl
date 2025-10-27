@@ -25,7 +25,7 @@ set ::configDefault "\[General\]
 cfgModifyDate=''
 searchCommand=/usr/bin/grep
 searchCommandOptions=-r -n -H
-gitCommand=/usr/bin/git
+gitCommand=
 # must return a mime type of file
 fileTypeCommand=/usr/bin/file
 fileTypeCommandOptions=-i -b

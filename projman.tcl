@@ -112,6 +112,8 @@ puts "Setting the locale... [::msgcat::mclocale]"
 
 source [file join $dir(lib) gui.tcl]
 
+Git::CommandPathSetting
+
 # Open the PATH if command line argument has been setting
 if [info exists opened] {
     foreach path $opened {
@@ -147,3 +149,4 @@ if [info exists opened] {
         }
     }
 }
+
