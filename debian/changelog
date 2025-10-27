@@ -1,15 +1,12 @@
 projman (2.0.0-alpha18) stable; urgency=medium
 
-  *  Новая сборка
-
- -- Калинин Сергей Валерьевич <svkalinin@samsonpost.ru>  Thu, 23 Oct 2025 13:58:22 +0300
-
-projman (2.0.0-alpha18) stable; urgency=medium
-
+  *  Исправлено создание файла конфигурации.
+  *  Добавлены номера версий в вызов tclsh8.6 и wish8.6.
+  *  Убрана зависимостить на Threads.
   *  Исправлено чтение структуры проекта при открытии из меню 'Открыть недавнее'
   *  Исправление работы процедуры varhelper
 
- -- svk <svk@nuk-svk.ru>  Tue, 21 Oct 2025 15:47:02 +0300
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Mon, 27 Oct 2025 14:05:40 +0300
 
 projman (2.0.0-alpha17) stable; urgency=medium
 

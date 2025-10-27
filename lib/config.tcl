@@ -37,7 +37,7 @@ menuShow=true
 statusBarShow=true
 filesPanelShow=true
 filesPanelPlace=left
-geometry=1024x768
+geometry=800x600
 guiFont={Droid Sans Mono} 9
 guiFontBold={Droid Sans Mono} 9 bold
 guiFG=#cccccc
@@ -64,7 +64,7 @@ multilineComments=true
 \[UserSession\]
 opened=
 editedFiles=
-recentlFolder=
+recentFolder=
 "
 proc Config::create {dir} {
     set cfgFile [open [file join $dir projman.ini]  "w+"]
