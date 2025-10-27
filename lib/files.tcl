@@ -395,6 +395,7 @@ namespace eval FileOper {
     
     proc Edit {fileFullPath {nbEditor .frmWork.nbEditor}} {
         global tree
+        puts "$fileFullPath"
         if {[file exists $fileFullPath] == 0} {
             return false
         } else {
@@ -414,7 +415,9 @@ namespace eval FileOper {
         }
         set filePath [file dirname $fileFullPath]
         set fileName [file tail $fileFullPath]
-        regsub -all {\.|/|\\|\s} $fileFullPath "_" itemName
+        
+        regsub -all {\.|/|\\|\s|:} $fileFullPath "_" itemName
+        set itemName [string tolower $itemName]
         set itemName "$nbEditor.$itemName"
         set treeItemName [Tree::InsertItem $tree {} $fileFullPath "file" $fileName]
         
@@ -437,6 +440,7 @@ namespace eval FileOper {
         focus -force $itemName.frmText.t.t
         .frmStatus.lblSize configure -text [GetFileAttr $fileFullPath "size"]
         .frmStatus.lblEncoding configure -text [GetFileMimeType $fileFullPath "charset"]
+        puts ">> $itemName"
         return $itemName
     }
     

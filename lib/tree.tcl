@@ -18,7 +18,8 @@ namespace eval Tree {
         # puts "$tree $parent $item $type $text"
         switch $type  {
             file {
-                regsub -all {\.|/|\\|\s} $item "_" subNode
+                regsub -all {\.|/|\\|\s|:} $item "_" subNode
+                set subNode [string tolower $subNode]
                 # puts "Inserted tree node: $subNode"
                 set fileExt [string trimleft [file extension $text] "."]
                 #set fileName [string trimleft [file extension $text] "."]
@@ -41,7 +42,8 @@ namespace eval Tree {
                 }
             }
             directory {
-                regsub -all {\.|/|\\|\s} $item "_" subNode
+                regsub -all {\.|/|\\|\s|:} $item "_" subNode
+                set subNode [string tolower $subNode]
                 # puts $subNode
                 if {[string match {*debian*} [string tolower [file tail $item]]]} {
                     set image [::FindImage debian]
@@ -104,7 +106,7 @@ namespace eval Tree {
         set key [lindex [split $id "::"] 0]
         if {$values eq "" || $key eq ""} {return}
         
-        # puts "$key $tree $values"
+        puts "$key $tree $values"
         switch -regexp $key {
             directory {
                 FileOper::ReadFolder  $values
@@ -112,6 +114,7 @@ namespace eval Tree {
             }
             file {
                 set v [FileOper::Edit $values $nbEditor]
+                puts $v
                 if {$v eq false} {
                     $tree delete $id
                 }

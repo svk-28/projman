@@ -13,7 +13,9 @@ namespace eval NB {
     proc InsertItem {nb item type} {
         switch $type {
             file {
-                regsub -all {\.|/|\\|\s} $item "_" itemName
+                set item [string tolower $item]
+                regsub -all {\.|/|\\|\s|:} $item "_" itemName
+                # puts "$item -> $itemName"
                 if [winfo exists $nb.$itemName] {
                     set fm $nb.$itemName
                 } else {

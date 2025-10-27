@@ -1515,6 +1515,7 @@ namespace eval Editor {
             ICO
             XPM
         }
+        # puts "$itemName"
         set fr $itemName
         if ![string match "*untitled*" $itemName] {
              set lblText $fileFullPath
