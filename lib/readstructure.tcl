@@ -9,7 +9,7 @@
 # 
 ######################################################
 package require fileutil
-package require Thread
+# package require Thread
 
 # TCL procedure
 

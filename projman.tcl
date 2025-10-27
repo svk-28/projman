@@ -1,6 +1,6 @@
 #!/bin/sh
 # Tcl ignores the next line -*- tcl -*- \
-exec wish "$0" -- "$@"
+exec wish8.6 "$0" -- "$@"
 
 ######################################################
 #        Tcl/Tk Project manager 2.0
@@ -10,7 +10,7 @@ exec wish "$0" -- "$@"
 ######################################################
 # Version: 2.0.0
 # Release: alpha18
-# Build: 22102025093435
+# Build: 27102025140309
 ######################################################
 
 # определим текущую версию, релиз и т.д.
@@ -40,7 +40,7 @@ package require inifile
 package require ctext
 package require base64
 package require fileutil
-package require Thread
+# package require Thread
 package require fileutil::magic::filetype
 
 # Устанавливаем текущий каталог

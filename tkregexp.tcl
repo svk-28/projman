@@ -1,7 +1,7 @@
 #!/bin/sh  
 #-*-tcl-*-  
 # the next line restarts using wish \
-exec wish "$0" -- ${1+"$@"}
+exec wish8.6 "$0" -- ${1+"$@"}
 
 
 set version 3.0
@@ -1365,6 +1365,5 @@ proc make-regexp::make-regexp {words} {
         set regexp
 }
 #==============================================================================================
-
 
 

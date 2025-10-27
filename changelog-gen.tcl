@@ -1,6 +1,6 @@
 #!/bin/sh
 # Tcl ignores the next line -*- tcl -*- \
-exec tclsh "$0" -- "$@"
+exec tclsh8.6 "$0" -- "$@"
 
 ######################################################################
 #                ProjMan 2
@@ -334,4 +334,3 @@ if [info exists args(--txt)] {
         StoreChangeLog $outText
     }
 }
-
