@@ -47,7 +47,7 @@ namespace eval FileOper {
         # линуксовый file не всегда корректно определяет тип файла
         # используем пакет из tcl
         lassign [::fileutil::fileType $fileFullPath] fType fBinaryType fBinaryInterp
-        puts "File type is $fType, $fBinaryType, $fBinaryInterp"
+        # puts "File type is $fType, $fBinaryType, $fBinaryInterp"
 
         switch $fType {
             "binary" {
@@ -268,7 +268,7 @@ namespace eval FileOper {
         }
         
         set nbEditorItem [$nbEditor select]
-        puts "Saved editor text: $nbEditorItem"
+        # puts "Saved editor text: $nbEditorItem"
         if [string match "*untitled*" $nbEditorItem] {
             set filePath [tk_getSaveFile -initialdir $dir -filetypes $::types -parent .]
             if {$filePath eq ""} {
@@ -287,7 +287,7 @@ namespace eval FileOper {
         set editedText [$nbEditorItem.frmText.t get 0.0 end]
         set f [open $filePath "w+"]
         puts -nonewline $f $editedText
-        puts "$f was saved"
+        # puts "$f was saved"
         close $f
         ResetModifiedFlag $nbEditorItem $nbEditor
     }
@@ -316,7 +316,7 @@ namespace eval FileOper {
     
     proc ReadFolder {directory {parent ""}} {
         global tree dir lexers  project
-        puts "Read the folder $directory"
+        # puts "Read the folder $directory"
         set rList ""
         if {[catch {cd $directory}] != 0} {
             return ""
@@ -388,7 +388,7 @@ namespace eval FileOper {
         # Delete emty last line
         if {[$txt get {end-1 line} end] eq "\n" || [$txt get {end-1 line} end] eq "\r\n"} {
             $txt delete {end-1 line} end
-            puts ">[$txt get {end-1 line} end]<"
+            # puts ">[$txt get {end-1 line} end]<"
         }
         $txt see 1.0
     }
@@ -398,7 +398,7 @@ namespace eval FileOper {
         if {[file exists $fileFullPath] == 0} {
             return false
         } else {
-            puts "$fileFullPath File type [::fileutil::magic::filetype $fileFullPath]"
+            # puts "$fileFullPath File type [::fileutil::magic::filetype $fileFullPath]"
             set fileType [FileOper::GetFileMimeType $fileFullPath]
         }
         switch $fileType {

@@ -277,17 +277,17 @@ namespace eval Help {
 proc SearchVariable {txt} {
     global fileStructure project variables
     set varName [$txt get {insert wordstart} {insert wordend}]
-    puts ">>>$varName<<<"
+    # puts ">>>$varName<<<"
     if {[info exists project] == 0} {return}
     foreach f [array names project] {
-        puts "--$f"
-        puts "----"
+        # puts "--$f"
+        # puts "----"
         foreach a $project($f) {
-            puts "-----$variables($a)"
+            # puts "-----$variables($a)"
             foreach b $variables($a) {
-                puts "------$b -- [lindex $b 0]"
+                # puts "------$b -- [lindex $b 0]"
                 if {$varName eq [lindex $b 0]} {
-                    puts "УРААААААА $varName = $b в файле $a \n\t [lindex $b 0]"
+                    # puts "УРААААААА $varName = $b в файле $a \n\t [lindex $b 0]"
                     # FindVariablesDialog $txt "$varName: \[...\][file tail $a]"
                     lappend l [list $varName [lindex $b 1] $a]
                 }
@@ -355,7 +355,7 @@ proc FindVariablesDialog {txt args} {
     foreach { word } $args {
         foreach lst $word {
             # set l [split $lst " "]
-            puts "[lindex $lst 0] -[lindex $lst 1] -[lindex $lst 2]"
+            # puts "[lindex $lst 0] -[lindex $lst 1] -[lindex $lst 2]"
             # lappend l2 [lindex $l 0] [lindex $l 1] [file tail [lindex $l 2]]
             # $win.lBox insert {} end -values $lst -text {1 2 3}
             $win.lBox insert end "[lindex $lst 0] > [lindex $lst 1] > [lindex $lst 2]\n"
@@ -441,7 +441,7 @@ proc SearchStringInFolder {str} {
     if {$tcl_platform(platform) == "windows"} {
     } elseif {$tcl_platform(platform) == "mac"} {
     } elseif {$tcl_platform(platform) == "unix"} {
-        puts "$cfgVariables(searchCommand) $cfgVariables(searchCommandOptions) $str $activeProject"
+        # puts "$cfgVariables(searchCommand) $cfgVariables(searchCommandOptions) $str $activeProject"
         # Составляем строку (точнее список) для запуска команды
         set cmd exec
         regsub -all {\[} $str {\\[} str

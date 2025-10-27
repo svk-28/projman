@@ -94,7 +94,7 @@ namespace eval Editor {
         # }
         set commentProcedure "GetComment"
         
-        puts "$fileType, $commentProcedure"
+        # puts "$fileType, $commentProcedure"
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
             set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
@@ -140,10 +140,10 @@ namespace eval Editor {
         
         set cmd "regexp -nocase -indices -- {(^|\s+)\\s*($symbol\\s*)(.*)} {$str} match v1 v2 v3"
         
-        puts $cmd
+        # puts $cmd
         # puts [eval $cmd]
         if [eval $cmd] {
-            puts "$match, $v2, $v3"
+            # puts "$match, $v2, $v3"
             return [list [lindex [split $v2] 0] [lindex [split $v3] 0]]
         } else {
             return 0
@@ -253,7 +253,7 @@ namespace eval Editor {
             $txt highlight $lineBegin.0 $lineEnd.end
         } else {
             set str [$txt get $lineNum.0 $lineNum.end]
-            puts ">>>>> $str"
+            # puts ">>>>> $str"
             if {[regexp -nocase -indices -- {(^\s*)(.*?)} $str match v1]} {
                     set posBegin [lindex [split $v1] 0]
                     set posEnd [lindex [split $v1] 1]
@@ -277,7 +277,7 @@ namespace eval Editor {
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set posNum [lindex [split $pos "."] 1]
-        puts "$pos"
+        # puts "$pos"
         if {$lineNum > 1} {
             # get current text
             set curText [$txt get $lineNum.0 "$lineNum.0 lineend"]
@@ -398,7 +398,7 @@ namespace eval Editor {
         set win .varhelper
         # if { [winfo exists $win] == 0 	} { return }
         set ind [$win.lBox curselection]
-        puts ">>>>>>>>>>>> VarHelperBind <<<<<<<<<<<<<<<<"
+        # puts ">>>>>>>>>>>> VarHelperBind <<<<<<<<<<<<<<<<"
         
         switch -- $K {
             Prior   {
@@ -443,7 +443,7 @@ namespace eval Editor {
         }
     } ;# proc auto_completition_key
     proc VarHelperEscape {w} {
-        puts ">>>>>>>>>>>> VarHelperEscape <<<<<<<<<<<<<<<<"
+        # puts ">>>>>>>>>>>> VarHelperEscape <<<<<<<<<<<<<<<<"
         # bindtags $w [list [winfo parent $w] $w Text sysAfter all]
         bindtags $w [list [winfo toplevel $w] $w Ctext sysAfter all]
         catch { destroy .varhelper }
@@ -464,7 +464,7 @@ namespace eval Editor {
             puts "You have selected text [$txt tag ranges sel]"
             return            
         }
-        puts "$x $y $w $word $wordType"
+        # puts "$x $y $w $word $wordType"
         set fileType [dict get $editors $txt fileType]
 
         if {[dict exists $editors $txt variableList] != 0} {
@@ -762,7 +762,7 @@ namespace eval Editor {
     }
     ## GET KEYS CODE ##
     proc Key {key str} {
-        puts "Pressed key code: $key, $str"
+        # puts "Pressed key code: $key, $str"
         if {$key >= 10 && $key <= 22} {return "true"}
         if {$key >= 24 && $key <= 36} {return "true"}
         if {$key >= 38 && $key <= 50} {return "true"}
@@ -890,7 +890,7 @@ namespace eval Editor {
         set lineNum [lindex [split $pos "."] 0]
         set posNum [lindex [split $pos "."] 1]
         set symbol [string trim [string trimleft $symbol "\\"]]
-        puts "Selindex : $selIndex, cursor position: $pos, Symbol: $symbol"
+        # puts "Selindex : $selIndex, cursor position: $pos, Symbol: $symbol"
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
             set posBegin [lindex [split [lindex $selIndex 0] "."] 1]
@@ -898,7 +898,7 @@ namespace eval Editor {
             set posEnd [lindex [split [lindex $selIndex 1] "."] 1]
             set selText [$txt get $lineBegin.$posBegin $lineEnd.$posEnd]
             # set selText $selectionText
-            puts "Selected text: $selText, pos: $pos, lineBegin: $lineBegin, posBegin: $posBegin, pos end: $posEnd"
+            # puts "Selected text: $selText, pos: $pos, lineBegin: $lineBegin, posBegin: $posBegin, pos end: $posEnd"
             if {$posNum == $posEnd} {
                 $txt insert $lineBegin.$posBegin "$symbol"
             }
@@ -960,7 +960,7 @@ namespace eval Editor {
                 if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
                     set procName_ [string trim $procName]
                     if {$treeItemName ne ""} {
-                        puts [Tree::InsertItem $tree $treeItemName $procName_  "procedure" "$procName_ ($params)"]
+                        Tree::InsertItem $tree $treeItemName $procName_  "procedure" "$procName_ ($params)"
                     }
                     lappend procList [list $procName_ $params]
                     unset procName_
@@ -984,7 +984,7 @@ namespace eval Editor {
                     } else {
                         set varType ""
                     }
-                    puts "variable: $varName, value: $varValue, type: $varType"
+                    # puts "variable: $varName, value: $varValue, type: $varType"
                     lappend varList [list $varName $varValue]
                 }
             }
@@ -994,7 +994,7 @@ namespace eval Editor {
     }
     
     proc FindFunction {txt findString} {
-        puts "txt: $txt, $findString"
+        # puts "txt: $txt, $findString"
         set pos "0.0"
         $txt see $pos
         set line [lindex [split $pos "."] 0]
@@ -1061,7 +1061,7 @@ namespace eval Editor {
     # Вызов диалога со списком процедур или функций присутствующих в тексте
     proc GoToFunction { w } {
         global tree editors
-        puts $w
+        # puts $w
         # set txt $w.frmText.t
         set txt $w
         set box        [$txt bbox insert]
@@ -1071,7 +1071,7 @@ namespace eval Editor {
         # puts "--$txt"
         # puts $editors($txt)
         foreach item [dict get $editors $txt procedureList] {
-            puts $item
+            # puts $item
             lappend l [lindex $item 0]
         }
         if {$l ne ""} {
@@ -1163,7 +1163,7 @@ namespace eval Editor {
     
     proc FindReplaceText {txt findString replaceString regexp} {
         global nbEditor
-        puts [focus]
+        # puts [focus]
         # set txt [$nbEditor select].frmText.t
         $txt tag remove sel 1.0 end
         # $txt see $pos
@@ -1192,7 +1192,7 @@ namespace eval Editor {
             set lstFindIndex [$txt search -all -nocase -count matchIndexPair $findString $line.$x end]
             # set symNumbers [string length "$findString"]
         }
-        puts $lstFindIndex
+        # puts $lstFindIndex
         # puts $matchIndexPair
         # set lstFindIndex [$txt search -all "$selectionText" 0.0]
         
@@ -1206,7 +1206,7 @@ namespace eval Editor {
             set selFindRow [lindex [split $ind "."] 1]
             # set endInd "$selFindLine.[expr $selFindRow + $symNumbers]"
             set endInd "$selFindLine.[expr [lindex $matchIndexPair $i] + $selFindRow]"
-            puts "$ind; $selFindLine, $selFindRow; $endInd "
+            # puts "$ind; $selFindLine, $selFindRow; $endInd "
             if {$replaceString ne ""} {
                 $txt replace $ind $endInd $replaceString
                 # Вычисляем индекс вхождения строки после замены для выделения в тексте
@@ -1259,7 +1259,7 @@ namespace eval Editor {
         } else {
             if {[$nbEditor select] ne ""} {
                 set txt [$nbEditor select].frmText.t
-                puts $txt
+                # puts $txt
             } else {
                 return
             }
@@ -1347,7 +1347,7 @@ namespace eval Editor {
     # Horizontal split the Editor text widget
     proc SplitEditorH {w fileType nb} {
         global cfgVariables
-        puts [$w.panelTxt panes]
+        # puts [$w.panelTxt panes]
         if [winfo exists $w.frmText2] {
             $w.panelTxt forget $w.frmText2
             destroy $w.frmText2
@@ -1489,8 +1489,8 @@ namespace eval Editor {
         dict set editors $txt fileType $fileType
         dict set editors $txt procedureList [list]
         
-        puts ">>[dict get $editors $txt fileType]"
-        puts ">>[dict get $editors $txt procedureList]"
+        # puts ">>[dict get $editors $txt fileType]"
+        # puts ">>[dict get $editors $txt procedureList]"
 		# puts ">>>>> $editors"
         
         if {[info procs ::Highlight::$fileType] ne ""} {

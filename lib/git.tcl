@@ -91,8 +91,8 @@ namespace eval Git {
             }
         }
         catch $cmd pipe
-        puts $cmd
-        puts $pipe
+        # puts $cmd
+        # puts $pipe
         if [regexp -nocase -- {^error:} $pipe match] {
             ShowMessage "Command: '$cmd' error" $pipe
             return 
@@ -122,7 +122,7 @@ namespace eval Git {
         } else {
             return ""
         }
-        puts $activeProject
+        # puts $activeProject
         lappend cmd $cfgVariables(gitCommand)
         lappend cmd "branch"
         # lappend cmd "-s"
@@ -167,7 +167,7 @@ namespace eval Git {
         lappend cmd "--"
         lappend cmd $activeProject
         catch $cmd pipe
-        puts $cmd
+        # puts $cmd
         if [regexp -nocase -- {^fatal:} $pipe match] {
             ShowMessage "Command: '$cmd' error" $pipe
             return 
@@ -189,7 +189,7 @@ namespace eval Git {
         lappend cmd "--"
         lappend cmd [file join $activeProject [string trimleft $f "../"]]
         catch $cmd pipe
-        puts $cmd
+        # puts $cmd
         if [regexp -nocase -- {^fatal:} $pipe match] {
             ShowMessage "Command: '$cmd' error" $pipe
             return 
@@ -250,7 +250,7 @@ namespace eval Git {
         # set cmd exec
         cd $activeProject
         set url [Git::GetConfig remote.origin.url]
-        puts $url
+        # puts $url
         if [regexp -nocase -all -- {^(http|https)://(.+)} $url match proto address] {
             Git::AuthorizationDialog "[::msgcat::mc "Authorization required"] [::msgcat::mc "for"] Git" $url
         } else {
@@ -270,7 +270,7 @@ namespace eval Git {
         # lappend cmd "$activeProject"
         # puts "$cmd"
         catch $cmd pipe
-        puts $pipe
+        # puts $pipe
         if [regexp -nocase -- {^fatal:} $pipe match] {
             ShowMessage "Command: '$cmd' error" $pipe
             return 
@@ -323,7 +323,7 @@ namespace eval Git {
             $w.body.lCommit delete $itemNumber
         }
         catch $cmd pipe
-        puts $cmd
+        # puts $cmd
         $w.body.t delete 1.0 end
     }
 
@@ -379,7 +379,7 @@ namespace eval Git {
         $w.body.t delete 1.0 end
         set i 0
         foreach line [Git::Diff $fileName] {
-            puts $line
+            # puts $line
             if {$i > 3} {
                 $w.body.t inser end "$line\n"
             }
@@ -403,7 +403,7 @@ namespace eval Git {
             $w.body.lBox delete $itemNumber
         }
         catch $cmd pipe
-        puts $cmd
+        # puts $cmd
         $w.body.t delete 1.0 end
     }
     
@@ -418,7 +418,7 @@ namespace eval Git {
         puts $cmd
 
         catch $cmd pipe
-        puts $pipe
+        # puts $pipe
         return
     }
     proc Config {repo user email} {
@@ -429,7 +429,7 @@ namespace eval Git {
         lappend cmd "config"
         lappend cmd $repo
         lappend cmd $dir
-        puts $cmd
+        # puts $cmd
 
         # catch $cmd pipe
         # puts $pipe
@@ -447,7 +447,7 @@ namespace eval Git {
         lappend cmd $cfgVariables(gitCommand)
         lappend cmd "init"
         lappend cmd $activeProject
-        puts $cmd
+        # puts $cmd
 
         catch $cmd pipe
         if [regexp -nocase -- {^fatal:} $pipe match] {

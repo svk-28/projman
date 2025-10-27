@@ -20,7 +20,7 @@ proc GetVariablesFromFile {fileName} {
     set varList ""
     set params ""
     set varsBegin false
-    puts $fileName
+    # puts $fileName
     set f [open "$fileName" r]
     if {[dict exists $lexers $fileType] == 0} {return}
     while {[gets $f line] >=0 } {
@@ -32,7 +32,7 @@ proc GetVariablesFromFile {fileName} {
                     set indentSize 0
                 }
                 set varsBegin true
-                puts "====== $varsBegin $indentSize"
+                # puts "$varsBegin $indentSize"
                 continue
                 # lappend varList [list $varName $varValue]
             }
@@ -41,13 +41,13 @@ proc GetVariablesFromFile {fileName} {
             set l [GetVarFromLine $line $fileType]
             if {$line eq ""} {
                set varsBegin false
-               puts "====== $varsBegin $indentSize [lindex $l 3]"
+               # puts "$varsBegin $indentSize [lindex $l 3]"
                continue
             }
             if {[lindex $l 3] ne ""} {
                 if [expr [lindex $l 3] <= $indentSize] {
                    set varsBegin false
-                   puts "====== $varsBegin $indentSize >[lindex $l 3]<"
+                   # puts "$varsBegin $indentSize >[lindex $l 3]<"
                    continue
                 }
             }
@@ -79,7 +79,7 @@ proc GetVarFromLine {line fileType} {
                 set varType ""
             }
             set indentLength  [string length $indent]
-            puts "variable: $varName, value: $varValue, type: $varType, indent: >$indent< $indentLength"
+            # puts "variable: $varName, value: $varValue, type: $varType, indent: >$indent< $indentLength"
             return [list $varName $varValue $varType $indentLength]
         }
     }
@@ -90,7 +90,7 @@ proc GetVariablesFromVarFile {fileName} {
     set procList ""
     set varList ""
     set params ""
-    puts $fileName
+    # puts $fileName
     set f [open "$fileName" r]
     if {[dict exists $lexers $fileType] == 0} {return}
     while {[gets $f line] >=0 } {
@@ -122,7 +122,7 @@ proc ReadFilesFromDirectory {directory root {type ""}} {
         return ""
     }
     foreach fileName [glob -nocomplain *] {
-        puts "Find file: $fileName [lsearch -exact -nocase $l $fileName]"
+        # puts "Find file: $fileName [lsearch -exact -nocase $l $fileName]"
         if {[lsearch -exact $l $fileName] != -1 && [file isdirectory [file join $root $directory $fileName]] == 1} {
             # puts "--- $root $fileName"
             ReadFilesFromDirectory [file join $directory $fileName] $root "var"
@@ -179,8 +179,8 @@ proc ReadFilesFromDirectory {directory root {type ""}} {
 # 
 proc Accept { dirLib directory } {
     global dir
-    puts $dir(lib)
-   puts $dirLib
+    # puts $dir(lib)
+    # puts $dirLib
   # переменная с указанием ваших действия перед порождением потока
     set threadinit {
         # если необходимо, загружаем исходный tcl код, расположенный в других файлах
