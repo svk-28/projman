@@ -1,5 +1,11 @@
 projman (2.0.0-alpha18) stable; urgency=medium
 
+  *  Новая сборка
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Mon, 27 Oct 2025 21:01:15 +0300
+
+projman (2.0.0-alpha18) stable; urgency=medium
+
   *  Исправлена работа в windows
   *  Уменьшил колдичество выводимой отладочной информации
   *  Добавлено определение пути до git в зависимости от платформы.
@@ -365,6 +371,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 

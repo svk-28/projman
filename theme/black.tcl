@@ -39,6 +39,7 @@ namespace eval ttk::theme::black {
     -lightest 	"#ffffff"
     -selectbg	"#4a6984"
     -selectfg	"#ffffff"
+    -font "#c8c8c8"
   }
   if {[info commands ::ttk::style] ne ""} {
     set styleCmd ttk::style
@@ -46,77 +47,78 @@ namespace eval ttk::theme::black {
     set styleCmd style
   }
 
-  $styleCmd theme create black -parent clam -settings {
+    $styleCmd theme create black -parent clam -settings {
 
-    # -----------------------------------------------------------------
-    # Theme defaults
-    #
-    $styleCmd configure "." \
-        -background $colors(-frame) \
-        -foreground white \
-        -bordercolor $colors(-darkest) \
-        -darkcolor $colors(-dark) \
-        -lightcolor $colors(-lighter) \
-        -troughcolor $colors(-darker) \
-        -selectbackground $colors(-selectbg) \
-        -selectforeground $colors(-selectfg) \
-        -selectborderwidth 0 \
-        -font "{Droid Sans Mono} 9" \
-        ;
-
-    $styleCmd map "." \
-        -background [list disabled $colors(-frame) \
-        active $colors(-lighter)] \
-        -foreground [list disabled $colors(-disabledfg)] \
-        -selectbackground [list  !focus $colors(-darkest)] \
-        -selectforeground [list  !focus white] \
-        ;
-
-    # ttk widgets.
-    $styleCmd configure TButton \
-        -width -8 -padding {5 1} -relief link
-    $styleCmd configure TMenubutton\
-        -relief flat -arrowsize 0
-    $styleCmd configure TCheckbutton \
-        -indicatorbackground $colors(-lighter) -indicatormargin {1 1 4 1}
-    $styleCmd configure TRadiobutton \
-        -indicatorbackground $colors(-lighter) -indicatormargin {1 1 4 1}
-
-    $styleCmd configure TEntry \
-        -fieldbackground gray20 -foreground black \
-        -padding {2 0} -border -1
-    $styleCmd configure TCombobox \
-        -fieldbackground white -foreground black \
-        -padding {2 0}
-    $styleCmd configure TSpinbox \
-        -fieldbackground white -foreground black \
-        -padding {2 0}
-
-    $styleCmd configure TNotebook \
-        -border -1
-    $styleCmd configure TNotebook.Tab \
-        -padding {6 2 6 2} \
-        -border -1
-
-    $styleCmd map TNotebook.Tab -background [list \
-        selected $colors(-lighter)]
-
-    # tk widgets.
-    $styleCmd map Menu \
-        -background [list active $colors(-lighter)] \
-        -foreground [list disabled $colors(-disabledfg)]
-
-    $styleCmd configure TreeCtrl \
-        -background gray30 -itembackground {gray60 gray50} \
-        -itemfill white -itemaccentfill yellow -border -1
-
-    $styleCmd map Treeview\
-        -background [list selected $colors(-lighter)] \
-        -foreground [list selected $colors(-selectfg)]
-        # -background [list selected $colors(-selectbg)] \
-
-    $styleCmd configure Treeview -fieldbackground gray25
-  }
+        # -----------------------------------------------------------------
+        # Theme defaults
+        #
+        $styleCmd configure "." \
+            -background $colors(-frame) \
+            -foreground white \
+            -bordercolor $colors(-darkest) \
+            -darkcolor $colors(-dark) \
+            -lightcolor $colors(-lighter) \
+            -troughcolor $colors(-darker) \
+            -selectbackground $colors(-selectbg) \
+            -selectforeground $colors(-selectfg) \
+            -selectborderwidth 0 \
+            -font "{Droid Sans Mono} 9" \
+            ;
+    
+        $styleCmd map "." \
+            -background [list disabled $colors(-frame) \
+            active $colors(-lighter)] \
+            -foreground [list disabled $colors(-disabledfg)] \
+            -selectbackground [list  !focus $colors(-darkest)] \
+            -selectforeground [list  !focus white] \
+            ;
+    
+        # ttk widgets.
+        $styleCmd configure TButton \
+            -width -8 -padding {5 1} -relief link
+        $styleCmd configure TMenubutton \
+            -relief flat -arrowsize 0 
+    
+        $styleCmd configure TCheckbutton \
+            -indicatorbackground $colors(-lighter) -indicatormargin {1 1 4 1}
+        $styleCmd configure TRadiobutton \
+            -indicatorbackground $colors(-lighter) -indicatormargin {1 1 4 1}
+    
+        $styleCmd configure TEntry \
+            -fieldbackground gray20 -foreground $colors(-font) \
+            -padding {2 0} -border -1
+        $styleCmd configure TCombobox \
+            -fieldbackground white -foreground  $colors(-font)\
+            -padding {2 0}
+        $styleCmd configure TSpinbox \
+            -fieldbackground white -foreground $colors(-font) \
+            -padding {2 0}
+    
+        $styleCmd configure TNotebook \
+            -border -1
+        $styleCmd configure TNotebook.Tab \
+            -padding {6 2 6 2} \
+            -border -1
+    
+        $styleCmd map TNotebook.Tab -background [list \
+            selected $colors(-lighter)]
+    
+        # tk widgets.
+        $styleCmd map Menu \
+            -background [list active $colors(-dark)] \
+            -foreground [list disabled $colors(-lightest)] \
+    
+        $styleCmd configure TreeCtrl \
+            -background gray30 -itembackground {gray60 gray50} \
+            -itemfill white -itemaccentfill yellow -border -1
+    
+        $styleCmd map Treeview\
+            -background [list selected $colors(-lighter)] \
+            -foreground [list selected $colors(-selectfg)]
+            # -background [list selected $colors(-selectbg)] \
+    
+        $styleCmd configure Treeview -fieldbackground gray25
+    }
   puts [ttk::style element names]
 }
 
