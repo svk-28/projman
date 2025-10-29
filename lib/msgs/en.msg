@@ -59,6 +59,7 @@
 ::msgcat::mcset en "Editor font bold"
 ::msgcat::mcset en "Error open URL"
 ::msgcat::mcset en "Editor settings"
+::msgcat::mcset en "Enter command for execute file"
 ::msgcat::mcset en "Exit"
 ::msgcat::mcset en "File"
 ::msgcat::mcset en "File already exists. Overwrite?"
@@ -182,7 +183,6 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
-
 
 
 

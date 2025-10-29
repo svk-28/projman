@@ -714,3 +714,272 @@ proc AddRecentEditedFolder {path} {
     }
     .frmMenu.mnuFile.m.openRecent add command -label $path -command [list OpenRecentProject $path]
 }
+
+# ================== OLD ====================
+proc launchBrowser {url} {
+    global tcl_platform
+    if {$tcl_platform(platform) eq "windows"} {
+        set command [list {*}[auto_execok start] {}]
+        if {[file isdirectory $url]} {
+            set url [file nativename [file join $url .]]
+        }
+    } elseif {$tcl_platform(os) eq "Darwin"} {
+        set command [list open]
+    } else {
+        set command [list xdg-open]
+    }
+    exec {*}$command $url &
+}
+## EXEC EXTERNAL BROWSER AND GOTO URL ##
+proc GoToURL {url} {
+    global env tcl_platform
+    if {$tcl_platform(platform) == "windows"} {
+        set pipe [open "|iexplore $url" "r"]
+    } elseif {$tcl_platform(platform) == "mac"} {
+        set pipe [open "|iexplore $url" "r"]
+    } elseif {$tcl_platform(platform) == "unix"} {
+        #$env(BROWSER)
+        #set pipe [open "|$env(BROWSER) $url" "r"]
+        launchBrowser $url
+        return
+    }
+    fileevent $pipe readable
+    fconfigure $pipe -buffering none -blocking no
+}
+## MAKING TAR ARCHIVE ##
+proc MakeTGZ {} {
+    global activeProject tgzDir tgzNamed workDir projDir env tcl_platform
+    if {$activeProject == ""} {
+        set answer [tk_messageBox\
+                -message [::msgcat::mc "Not found active project"]\
+                -type ok -icon warning\
+                -title [::msgcat::mc "Warning"]]
+        case $answer {
+            ok {return 0}
+        }
+    }
+    FileDialog tree save_all
+    set file [open [file join $workDir $activeProject.proj] r]
+    while {[gets $file line]>=0} {
+        scan $line "%s" keyWord
+        set string [string range $line [string first "\"" $line] [string last "\"" $line]]
+        set string [string trim $string "\""]
+        if {$keyWord == "ProjectDirName"} {
+            set dir "$string"
+        }  
+        if {$keyWord == "ProjectVersion"} {
+            set version "$string"
+        }  
+        if {$keyWord == "ProjectRelease"} {
+            set release "$string"
+        }  
+    }
+    close $file
+    set res [split $tgzNamed "-"]
+    set name [lindex $res 0]
+    set ver [lindex $res 1]
+    set rel [lindex $res 2]
+    if {$name == "projectName"} {
+        set name $activeProject
+    }
+    if {$ver == "version"} {
+        append name "-$version"
+    }
+    if {$rel == "release"} {
+        append name "-$release"
+    }
+    # multiplatform featuring #
+    if {$tcl_platform(platform) == "windows"} {
+        append name ".zip"
+    } elseif {$tcl_platform(platform) == "mac"} {
+        append name ".zip"
+    } elseif {$tcl_platform(platform) == "unix"} {
+        append name ".tar.gz"
+    }
+    catch {cd $projDir} res
+    if {[file exists [file join $tgzDir $name]] == 1} {
+        set answer [tk_messageBox\
+                -message "[::msgcat::mc "File already exists. Overwrite?"] \"$name\" ?"\
+                -type yesno -icon question -default yes\
+                -title [::msgcat::mc "Question"]]
+        case $answer {
+            yes {file delete [file join $tgzDir $name]}
+            no {return 0}
+        }
+    }
+    # multiplatform featuring #
+    if {$tcl_platform(platform) == "windows"} {
+        catch [exec pkzip -r -p [file join $tgzDir $name] [file join $activeProject *]] err
+    } elseif {$tcl_platform(platform) == "mac"} {
+        catch [exec zip -c [file join $tgzDir $name] $activeProject] err
+    } elseif {$tcl_platform(platform) == "unix"} {
+        catch [exec tar -czvf [file join $tgzDir $name] $activeProject] err
+    }
+    # message dialog #
+    set msg "[::msgcat::mc "Archive created in"] [file join $tgzDir $name]"
+    set icon info
+    set answer [tk_messageBox\
+            -message "$msg"\
+            -type ok -icon $icon]
+            case $answer {
+        ok {return 0}
+    }
+}
+
+## MAKE PROJ PROCEDURE (RUNNING PROJECT) ##
+proc Execute {filePath w} {
+    global activeProject cfgVariables
+    if {$activeProject == ""} {
+        set answer [tk_messageBox\
+        -message "[::msgcat::mc "Not found active project"]"\
+        -type ok -icon warning\
+        -title [::msgcat::mc "Warning"]]
+        case $answer {
+            ok {return 0}
+        }
+    }
+    FileOper::Save
+    set file $filePath
+    set action run
+    # if {$action == "compile"} {
+      
+        # if {$t == "proj"} {
+            # set prog [file join $projDirName $projFileName.java]
+        # } elseif {$t == "file"} {
+            # set node [$tree selection get]
+            # set fullPath [$tree itemcget $node -data]
+            # set dir [file dirname $fullPath]
+            # set file [file tail $fullPath]
+            # set prog $fullPath
+        # }
+    # } elseif {$action == "run"} {
+        # if {$t == "proj"} {
+            # set prog [file join $projDirName $projFileName]
+        # } elseif {$t == "file"} {
+            # set node [$tree selection get]
+            # set fullPath [$tree itemcget $node -data]
+            # set dir [file dirname $fullPath]
+            # set file [file tail $fullPath]
+            # set prog $fullPath
+        # }
+    # }
+    
+    # set node "debug"
+    # if {[$noteBook index $node] != -1} {
+        # $noteBook delete debug
+    # }
+    # set w [$noteBook insert end $node -text [::msgcat::mc "Running project"]]
+    # create array with file names #
+    frame $w.frame -borderwidth 2 -relief ridge -background $cfgVariables(backGround)
+    pack $w.frame -side top -fill both -expand true
+    
+    
+    text $w.frame.text -yscrollcommand "$w.frame.yscroll set" \
+    -bg $cfgVariables(backGround) -fg $cfgVariables(foreground) \
+    -relief sunken -wrap word -highlightthickness 0 -font $cfgVariables(font)\
+    -selectborderwidth 0 -selectbackground $cfgVariables(selectbg) -width 10 -height 10
+    scrollbar $w.frame.yscroll -relief sunken -borderwidth {1} -width {10} -takefocus 0 \
+    -command "$w.frame.text yview" -background $cfgVariables(backGround)
+    
+    pack $w.frame.text -side left -fill both -expand true
+    pack $w.frame.yscroll -side left -fill y 
+    
+    # frame $w.frmBtn -borderwidth 2 -relief ridge -bg $cfgVariables(backGround)
+    # pack $w.frmBtn -side top -fill x
+    # button $w.frmBtn.btnOk -text [::msgcat::mc "Close"] -borderwidth {1} \
+    # -bg $cfgVariables(backGround) -fg $cfgVariables(backGround) -command {
+        # $noteBook delete debug
+        # $noteBook  raise [$noteBook page end]
+        # return 0
+    # }
+    # pack $w.frmBtn.btnOk -pady 2
+    # key bindings #
+    # bind $w.frmBtn.btnOk <Escape> {
+        # $noteBook delete debug
+        # $noteBook  raise [$noteBook page end]
+        # #        return 0
+    # }
+    
+    bind $w.frame.text <Return> [list Run $w $filePath]
+    bind $w.frame.text <Control-r> [list destroy $w]
+    bind $w.frame.text <Control-Cyrillic_er> [list destroy $w]
+    # focus -force $w.frmBtn.btnOk
+    # $noteBook raise $node
+    # insert debug data into text widget #
+    $w.frame.text tag configure bold -font $cfgVariables(fontBold)
+    $w.frame.text tag configure error -font $cfgVariables(fontBold) -foreground red
+    $w.frame.text tag add bold 0.0 0.end
+    # if {$action == "compile"} {
+        # $w.frame.text insert end "[::msgcat::mc "Compile project"] - $activeProject\n"
+        # $w.frame.text insert end "[::msgcat::mc "Compile"] - $prog\n\n"
+    # } elseif {$action == "run"} {
+        # $w.frame.text insert end "[::msgcat::mc "Running project"] - $activeProject\n"
+        # $w.frame.text insert end "[::msgcat::mc "Run"] - $prog\n\n"
+    # }
+     $w.frame.text insert end "[::msgcat::mc "Enter command for execute file"] $filePath >\n"
+    set pos [$w.frame.text index insert]
+    set lineNum [lindex [split $pos "."] 0]
+    $w.frame.text insert 0.0 "^^^^^^^^^^^^^^^^^^^^^ [::msgcat::mc "Programm output"] ^^^^^^^^^^^^^^^^^\n"
+    $w.frame.text tag add bold $lineNum.0 $lineNum.end
+    focus -force $w.frame.text
+    # open and manipulate executed program chanel #
+    # cd $projDirName 
+    # if {$action == "compile"} {
+        # set cmdCompile ""
+        # CompileOption "$projCompiler $prog"
+        # vwait cmdCompile
+        # puts "string - $projCompiler $prog" ;# debug info
+        # set pipe [open "|$cmdCompile 2> [file join $projDirName errors]" "r"]
+        # set f [open [file join $projDirName errors] "r"]
+    # } elseif {$action == "run"} {
+        # set pipe [open "|$command $filePath" "r"]
+        # set f [open [file join $projDirName errors] "r"]
+    # }
+    
+    
+}
+
+proc Run {w filePath} {
+    # Получаем индекс конца последней строки
+    set endIndex [$w.frame.text index "end-1c"];  # или "end-1l lineend"
+    
+    # Получаем индекс начала последней строки  
+    set startIndex [$w.frame.text index "end-1l linestart"]
+
+    set command [$w.frame.text get $startIndex $endIndex end]
+    set pipe [open "|$command $filePath 2> [file join [file dirname $filePath] errors]" "r"]
+    set f [open [file join [file dirname $filePath] errors] "r"]
+
+    # set pipe [open "|$command $filePath" "r"]
+    # set f [open [file join ~ tmp errors] "r"]
+    fileevent $pipe readable [list DebugInfo $w.frame.text $pipe $f]
+    fconfigure $pipe -buffering none -blocking no
+}
+
+## INSERT DEBUG INFORMATION INTO TEXT WIDGET ##
+proc DebugInfo {widget file f} {
+    $widget configure -state normal
+    if {[eof $file]} {
+        catch [close $file] msg
+        if {$msg != ""} {
+            puts $msg
+            $widget insert "end-4l linestart" "[::msgcat::mc "Program failed"]: $msg\n";
+        } else {
+            puts $msg
+            $widget see "end-1l lineend"
+            $widget delete "end-1l lineend" end
+          #  $widget insert end "\n-------------------------------------------------\n"
+           # $widget insert end "[::msgcat::mc "Program finished successfully"]\n"
+        }
+    } else {
+        $widget insert "end-4l linestart" [read $file]
+    }
+    while {[gets $f line]>=0} {
+        $widget insert "end-4l linestart" "$line\n"
+        puts $line
+    }
+    # close $f
+    $widget see end
+    $widget tag add error 0.0 0.end
+    # $widget configure -state disabled
+}

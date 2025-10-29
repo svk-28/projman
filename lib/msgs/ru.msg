@@ -77,6 +77,7 @@
 ::msgcat::mcset ru "Editor settings" "Настройки редактора"
 ::msgcat::mcset ru "Editor helpers" "Подсказки при вводе"
 ::msgcat::mcset ru "Encode" "Перекодировка"
+::msgcat::mcset ru "Enter command for execute file" "Введите команду для запуска текущего файла"
 ::msgcat::mcset ru "Authorisation required" "Требуется авторизация"
 ::msgcat::mcset ru "Error open URL" "Ошибка открытия URL"
 ::msgcat::mcset ru "Exit" "Выход"

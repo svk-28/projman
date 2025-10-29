@@ -786,8 +786,11 @@ namespace eval Editor {
         bind $txt <Control-eacute> Quit
         bind $txt <Control-igrave> "Editor::SelectionPaste $txt"
         bind $txt <Control-v> "Editor::SelectionPaste $txt"
+        bind $txt <Control-Cyrillic_em> "Editor::SelectionPaste $txt"
         bind $txt <Control-l> "SearchVariable $txt; break"
+        bind $txt <Control-Cyrillic_de> "SearchVariable $txt; break"
         bind $txt <Control-i> "ImageBase64Encode $txt"
+        bind $txt <Control-Cyrillic_sha> "ImageBase64Encode $txt"
         bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
         bind $txt <Control-bracketright> "Editor::DeleteTabular $txt"
         bind $txt <Control-comma> "Editor::Comment $txt $fileType"
@@ -797,25 +800,35 @@ namespace eval Editor {
         bind $txt <ButtonRelease-1> "Editor::SearchBrackets $txt"
         bind $txt <Button-1><ButtonRelease-1> "Editor::SelectionHighlight $txt"
         bind $txt <<Modified>> "SetModifiedFlag $w $nb"
-        bind $txt <Control-i> ImageBase64Encode
         bind $txt <Control-u> "Editor::SearchBrackets %W"
+        bind $txt <Control-Cyrillic_ghe> "Editor::SearchBrackets %W"
         bind $txt <Control-J> "catch {Editor::GoToFunction $txt}"
         bind $txt <Control-j> "catch {Editor::GoToFunction $txt}; break"
+        bind $txt <Control-Cyrillic_o> "catch {Editor::GoToFunction $txt}; break"
         bind $txt <Alt-w>           "$txt delete {insert wordstart} {insert wordend}"
         bind $txt <Alt-odiaeresis>  "$txt delete {insert wordstart} {insert wordend}"
+        bind $txt <Alt-Cyrillic_tse> "$txt delete {insert wordstart} {insert wordend}"
         bind $txt <Alt-r>           "$txt delete {insert linestart} {insert lineend + 1char}"
         bind $txt <Alt-ecircumflex> "$txt delete {insert linestart} {insert lineend + 1char}"
+        bind $txt <Alt-Cyrillic_er> "$txt delete {insert linestart} {insert lineend + 1char}"
         bind $txt <Alt-b> "$txt delete {insert linestart} insert"
+        bind $txt <Alt-Cyrillic_i> "$txt delete {insert linestart} insert"
         bind $txt <Alt-e> "$txt delete insert {insert lineend}"
+        bind $txt <Alt-Cyrillic_u> "$txt delete insert {insert lineend}"
         bind $txt <Alt-s>           "Editor::SplitEditorH $w $fileType"
         bind $txt <Alt-ucircumflex> "Editor::SplitEditorH $w $fileType"
+        bind $txt <Alt-Cyrillic_hardsign> "Editor::SplitEditorH $w $fileType"
         bind $txt <Alt-y> "Editor::TextCopy $txt"
+        bind $txt <Alt-Cyrillic_en> "Editor::TextCopy $txt"
         bind $txt <Control-g> "Editor::GoToLineNumberDialog $txt"
+        bind $txt <Control-Cyrillic_pe> "Editor::GoToLineNumberDialog $txt"
         bind $txt <Control-agrave> "Editor::FindDialog $w"
         bind $txt <Control-f> "Editor::FindDialog $txt"
+        bind $txt <Control-Cyrillic_a> "Editor::FindDialog $txt"
         bind $txt <Control-F> "Editor::FindDialog $txt"
         bind $txt <Control-odiaeresis> FileOper::Close
         bind $txt <Control-w> FileOper::Close
+        bind $txt <Control-Cyrillic_tse> FileOper::Close
         bind $txt <Control-o> {
             set filePath [FileOper::OpenDialog]
             if {$filePath != ""} {
@@ -830,6 +843,16 @@ namespace eval Editor {
             }
             break
         }
+        bind $txt <Control-Cyrillic_shcha> {
+            set filePath [FileOper::OpenDialog]
+            if {$filePath != ""} {
+                FileOper::Edit $filePath
+            }
+            break
+        }
+        bind $txt <Control-r> "Editor::SplitEditorForExecute $w $fileType $nb "
+        bind $txt <Control-Cyrillic_ka> "Editor::SplitEditorForExecute $w $fileType $nb "
+
         # bind $txt.t <KeyRelease> "Editor::ReleaseKey %K $txt.t $fileType"
         # bind $txt.t <KeyPress> "Editor::PressKey %K $txt.t"
         # bind $txt <KeyRelease> "Editor::Key %k %K" 
@@ -939,7 +962,7 @@ namespace eval Editor {
         # set fileName untitled-$untitledNumber
         set fileFullPath untitled-$untitledNumber
         #puts [Tree::InsertItem $tree {} $fileFullPath "file" $fileName]
-        set nbEditorItem [NB::InsertItem $nbEditor  $fileFullPath "file"]
+        set nbEditorItem [NB::InsertItem $nbEditor $fileFullPath "file"]
         # puts "$nbEditorItem, $nbEditor"
         Editor $fileFullPath $nbEditor $nbEditorItem
         SetModifiedFlag $nbEditorItem $nbEditor
@@ -1367,7 +1390,7 @@ namespace eval Editor {
     
     proc SplitEditorV {fileFullPath} {
         global cfgVariables
-        regsub -all {\.|/|\\|\s} $fileFullPath "_" itemName
+        regsub -all {\.|/|\\|\s|:} $fileFullPath "_" itemName
         set itemName ".frmWork.nbEditor2.$itemName"
         # puts $itemName
         if {[winfo exists $itemName] == 1} {
@@ -1390,8 +1413,6 @@ namespace eval Editor {
         # grid rowconfigure .frmWork .frmWork.nbEditor2 -weight 1
         .frmWork.panelNB add .frmWork.nbEditor2 -weight 0
         puts [FileOper::Edit $fileFullPath .frmWork.nbEditor2]
-        
-
     }
     
     proc GoToLineNumber {text lineNumber} {
@@ -1537,9 +1558,13 @@ namespace eval Editor {
             -command "Editor::SplitEditorH $fr $fileType $nb"
         ttk::button $fr.header.$btnSplitV -image split_vertical_11x11 \
             -command "Editor::SplitEditorV $fileFullPath"
+
+        set btnSplitExecute "btnSplitExec[string range $itemName [expr [string last "." $itemName] +1] end]"
+        ttk::button $fr.header.$btnSplitExecute -image execute_11x11 \
+            -command "Editor::SplitEditorForExecute $fr $fileType $nb $fileFullPath"
         # pack $fr.$btnSplitH $fr.$btnSplitV  -side right  -anchor e
         pack $fr.header.$lblName -side left -expand true -fill x
-        pack $fr.header.$btnSplitV $fr.header.$btnSplitH -side right
+        pack $fr.header.$btnSplitV $fr.header.$btnSplitH $fr.header.$btnSplitExecute -side right
         
         pack $fr.header -side top -fill x
         
@@ -1557,4 +1582,27 @@ namespace eval Editor {
 
         return $fr
     }
+
+    proc SplitEditorForExecute {w fileType nb {fileFullPath ""}} {
+        global cfgVariables tree
+        if {$fileFullPath eq ""} {
+            set treeItem "file::[string range $w [expr [string last "." $w] +1] end ]"
+            set fileFullPath [Tree::GetItemID $tree $treeItem]
+            puts $fileFullPath
+        }
+        # puts [$w.panelTxt panes]
+        puts "$w $fileType $nb $fileFullPath"
+        if [winfo exists $w.frmText2] {
+            $w.panelTxt forget $w.frmText2
+            destroy $w.frmText2
+            focus -force $w.frmText.t.t
+            return
+        }
+
+        set frmText [ttk::frame $w.frmText2 -border 1]
+        $w.panelTxt add $frmText -weight 1
+        # focus -force $frmText.t.t
+        Execute $fileFullPath $frmText
+    }
+
 }

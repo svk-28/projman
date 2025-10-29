@@ -23,12 +23,14 @@ wm overrideredirect . 0
 
 bind . <Control-q> Quit
 bind . <Control-Q> Quit
+bind . <Control-Cyrillic_shorti> Quit
 bind . <Control-eacute> Quit
 bind . <Insert> Add
 bind . <Delete> Del
 bind . <F1> ShowHelpDialog
 bind . <Control-n> Editor::New
 bind . <Control-N> Editor::New
+bind . <Control-Cyrillic_te> Editor::New
 bind . <Control-o> {
     set filePath [FileOper::OpenDialog]
     if {$filePath != ""} {
@@ -41,21 +43,30 @@ bind . <Control-O> {
         FileOper::Edit $filePath
     }
 }
-bind . <Control-k> {
+bind . <Alt-k> {
     set folderPath [FileOper::OpenFolderDialog]
     if {$folderPath != ""} {
         FileOper::ReadFolder $folderPath
     }
 }
-bind . <Control-K> {
+bind . <Alt-K> {
     set folderPath [FileOper::OpenFolderDialog]
     if {$folderPath != ""} {
         FileOper::ReadFolder $folderPath
     }
 }
+bind . <Alt-Cyrillic_el> {
+    set folderPath [FileOper::OpenFolderDialog]
+    if {$folderPath != ""} {
+        FileOper::ReadFolder $folderPath
+    }
+}
+
 bind . <Control-s> {FileOper::Save}
 bind . <Control-S> {FileOper::Save}
+bind . <Control-Cyrillic_hardsign> {FileOper::Save}
 bind . <Alt-p> {ViewFilesTree true}
+bind . <Alt-Cyrillic_ze> {ViewFilesTree true}
 bind . <Button-3> {catch [PopupMenu %X %Y]}
 
 #ttk::style configure TPanedwindow -background blue

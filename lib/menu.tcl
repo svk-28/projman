@@ -33,7 +33,7 @@ proc GetFileMenu {m} {
 
     $m add separator
 
-    $m add command -label [::msgcat::mc "Open folder"] -accelerator "Ctrl+K" -command {
+    $m add command -label [::msgcat::mc "Open folder"] -accelerator "Alt+K" -command {
         set folderPath [FileOper::OpenFolderDialog]
         if {$folderPath != ""} {
             # set activeProject $folderPath
