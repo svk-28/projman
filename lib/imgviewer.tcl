@@ -1,8 +1,9 @@
 proc ImageViewer {f w node} {
+    global factor cfgVariables
     set factor($node) 1.0
     ttk::frame $w.f
     pack $w.f -side left -fill both -expand true
-    canvas $w.f.c -xscrollcommand "$w.f.x set" -yscrollcommand "$w.y set"
+    canvas $w.f.c -xscrollcommand "$w.f.x set" -yscrollcommand "$w.y set" -bg $cfgVariables(backGround)
     ttk::scrollbar $w.f.x -ori hori -command "$w.f.c xview"
     ttk::scrollbar $w.y -ori vert -command "$w.f.c yview"
     
@@ -20,15 +21,15 @@ proc ImageViewer {f w node} {
 }
         
 proc openImg {fn w node} {
-    global im1
+    global im1 factor
     set im1 [image create photo -file $fn]
-    #scale $w
+    scale $w  $factor($node) $node
     list [file size $fn] bytes, [image width $im1]x[image height $im1]
     $w create image 1 1 -image $im1 -anchor nw -tag img
 }
 
 proc scale {w {n 1} node} {
-    global im1 im2 factor noteBook tab_label
+    global im1 im2 factor tab_label
     set factor($node) [expr {$factor($node) * $n}]
     $w delete img
     catch {image delete $im2}
@@ -41,7 +42,8 @@ proc scale {w {n 1} node} {
         $im2 copy $im1 -subsample $f $f
     }
     $w create image 1 1 -image $im2 -anchor nw -tag img
-    $noteBook itemconfigure $node -text "$tab_label (size x$factor($node))"
+    set noteBook [file extension $node]
+    # $noteBook itemconfigure $node -text "(size x$factor($node))"
     $w config -scrollregion [$w bbox all]
 }
 
@@ -52,6 +54,7 @@ proc ImageBase64Encode {text} {
         {"GIF" {.gif}}
         {"JPEG" {.jpg}}
         {"BMP" {.bmp}}
+        # {"SVG" {.svg}}
         {"All files" *}
     }
     set img [tk_getOpenFile -initialdir $env(HOME) -filetypes $types -parent .]
@@ -65,5 +68,3 @@ proc ImageBase64Encode {text} {
         $text insert [Position] "image create photo $name -data {\n$data\n}"
     }
 }
-
-

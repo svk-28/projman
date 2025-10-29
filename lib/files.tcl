@@ -48,16 +48,69 @@ namespace eval FileOper {
         # используем пакет из tcl
         lassign [::fileutil::fileType $fileFullPath] fType fBinaryType fBinaryInterp
         puts "File type is $fType, $fBinaryType, $fBinaryInterp"
+        set ext [string tolower [file extension $fileFullPath]]
+        
+        # Установка корректного типа для svg
+        # Но для новых версий tcl
+        switch $ext {
+            ".svg" {
+                set fType "binary"
+                set fBinaryInterp "svg"
+                set fBinaryType "graphic"
+            }
+            ".torrent" {
+                set fType "binary"
+                set fBinaryInterp "torrent"
+                set fBinaryType "x-bittorrent"
+            }
+            ".pdf" {
+                set fType "binary"
+                set fBinaryInterp "pdf"
+                set fBinaryType "binary"
+            }
+        }
+        puts "File type is $fType, $fBinaryType, $fBinaryInterp, $ext"
 
         switch $fType {
             "binary" {
-                return binary
+                if {$fBinaryType ne ""} {
+                    switch $fBinaryType {
+                        "graphic" {
+                            if {$fBinaryInterp ne "png" && $fBinaryInterp ne "gif" && $fBinaryInterp ne "ppm" && $fBinaryInterp ne "pgm"} {
+                                set answer [tk_messageBox -message [::msgcat::mc "The file looks like a image. Support not implemented yet."] -icon question -type ok]
+                                switch $answer {
+                                    ok {
+                                        return false
+                                    }
+                                }
+                            } else {
+                                return image
+                            }
+                        }
+                        default {
+                            return binary
+                        }
+                    }
+                } else {
+                    return binary
+                }
             }
             "text" {
                 return text
             }
             "image" {
-                return image
+                if {$fBinaryInterp ne "png" && $fBinaryInterp ne "gif" && $fBinaryInterp ne "ppm" && $fBinaryInterp ne "pgm" && $fBinaryInterp} {
+                    set answer [tk_messageBox -message [::msgcat::mc "The file looks like a image. Support not implemented yet."] -icon question -type ok]
+                    switch $answer {
+                        ok {
+                            return false
+                        }
+                    }
+                    return image
+                }
+            }
+            "empty" {
+                return text
             }
             default {
                 return false
@@ -402,24 +455,39 @@ namespace eval FileOper {
             # puts "$fileFullPath File type [::fileutil::magic::filetype $fileFullPath]"
             set fileType [FileOper::GetFileMimeType $fileFullPath]
         }
+
+        # puts "$fileType <<<<<<<<<<<"
+
         switch $fileType {
             "text" {
                 # return text
             }
             "image" {
-                if {[tk_messageBox -message [::msgcat::mc "The file looks like a image file"] -icon question -type ok] == "Yes"} {
-                    return
-                }
             }
             "binary" {
-                if {[tk_dialog .question [::msgcat::mc "Open file"] [::msgcat::mc "The file looks like a binary file. Open anyway?"] questhead 0 Yes No] == 1} {
-                    return
+                 set answer [tk_messageBox -message [::msgcat::mc "The file looks like a binary file. Open anyway?"] \
+                    -icon question -type yesno]
+                switch $answer {
+                    yes {}
+                    no {return}
                 }
             }
             false {
                 return
             }
         }
+        # Проверяем размер файла и если он больше 1мб вывести предупреждение
+        # puts " File size = [file size $fileFullPath]"
+        if {[file size $fileFullPath] > 1000000} {
+             set answer [tk_messageBox -message [::msgcat::mc "The file size to big. Open anyway?"] \
+                -detail [GetFileAttr $fileFullPath "size"] \
+                -icon question -type yesno]
+            switch $answer {
+                yes {}
+                no {return}
+            }
+        }
+
         set filePath [file dirname $fileFullPath]
         set fileName [file tail $fileFullPath]
         
@@ -433,6 +501,11 @@ namespace eval FileOper {
         
         if {[winfo exists $itemName] == 0} {
             NB::InsertItem $nbEditor $fileFullPath "file"
+            if {$fileType eq "image"} {
+                ImageViewer $fileFullPath $itemName $itemName
+                return $itemName
+            }
+            
             Editor::Editor $fileFullPath $nbEditor $itemName
             ReadFile $fileFullPath $itemName
             $itemName.frmText.t highlight 1.0 end
@@ -440,6 +513,11 @@ namespace eval FileOper {
             $itemName.frmText.t see 1.1
         }
         $nbEditor select $itemName
+        focus -force $itemName
+        if {$fileType eq "image"} {
+            # ImageViewer $fileFullPath $itemName $itemName
+            return $itemName
+        }
         Editor::ReadStructure $itemName.frmText.t $treeItemName
         GetVariablesFromFile $fileFullPath
         $itemName.frmText.t.t mark set insert 1.0
@@ -447,7 +525,8 @@ namespace eval FileOper {
         focus -force $itemName.frmText.t.t
         .frmStatus.lblSize configure -text [GetFileAttr $fileFullPath "size"]
         .frmStatus.lblEncoding configure -text [GetFileMimeType $fileFullPath "charset"]
-        puts ">> $itemName"
+        # puts ">> $itemName"
+
         return $itemName
     }
     

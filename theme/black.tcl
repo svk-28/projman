@@ -118,6 +118,11 @@ namespace eval ttk::theme::black {
             # -background [list selected $colors(-selectbg)] \
     
         $styleCmd configure Treeview -fieldbackground gray25
+
+        $styleCmd map Canvas \
+            -background [list selected $colors(-lighter)] \
+            -foreground [list selected $colors(-selectfg)] \
+            -highlightbackground [list selected $colors(-lighter)]
     }
   puts [ttk::style element names]
 }
