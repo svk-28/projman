@@ -1,5 +1,11 @@
 projman (2.0.0-alpha19) stable; urgency=medium
 
+  *  Добавлен диалог настроек
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Wed, 29 Oct 2025 20:48:52 +0300
+
+projman (2.0.0-alpha19) stable; urgency=medium
+
   *  Добавил псевдо-терминал
   *  Исправлен  changelog
 
@@ -377,6 +383,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 

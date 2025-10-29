@@ -841,64 +841,21 @@ proc Execute {filePath w} {
     FileOper::Save
     set file $filePath
     set action run
-    # if {$action == "compile"} {
-      
-        # if {$t == "proj"} {
-            # set prog [file join $projDirName $projFileName.java]
-        # } elseif {$t == "file"} {
-            # set node [$tree selection get]
-            # set fullPath [$tree itemcget $node -data]
-            # set dir [file dirname $fullPath]
-            # set file [file tail $fullPath]
-            # set prog $fullPath
-        # }
-    # } elseif {$action == "run"} {
-        # if {$t == "proj"} {
-            # set prog [file join $projDirName $projFileName]
-        # } elseif {$t == "file"} {
-            # set node [$tree selection get]
-            # set fullPath [$tree itemcget $node -data]
-            # set dir [file dirname $fullPath]
-            # set file [file tail $fullPath]
-            # set prog $fullPath
-        # }
-    # }
-    
-    # set node "debug"
-    # if {[$noteBook index $node] != -1} {
-        # $noteBook delete debug
-    # }
-    # set w [$noteBook insert end $node -text [::msgcat::mc "Running project"]]
     # create array with file names #
     frame $w.frame -borderwidth 2 -relief ridge -background $cfgVariables(backGround)
     pack $w.frame -side top -fill both -expand true
     
     
-    text $w.frame.text -yscrollcommand "$w.frame.yscroll set" \
+    ctext $w.frame.text -yscrollcommand "$w.frame.yscroll set" \
     -bg $cfgVariables(backGround) -fg $cfgVariables(foreground) \
     -relief sunken -wrap word -highlightthickness 0 -font $cfgVariables(font)\
     -selectborderwidth 0 -selectbackground $cfgVariables(selectbg) -width 10 -height 10
     scrollbar $w.frame.yscroll -relief sunken -borderwidth {1} -width {10} -takefocus 0 \
     -command "$w.frame.text yview" -background $cfgVariables(backGround)
+    Highlight::ExecuteColorized $w.frame.text
     
     pack $w.frame.text -side left -fill both -expand true
     pack $w.frame.yscroll -side left -fill y 
-    
-    # frame $w.frmBtn -borderwidth 2 -relief ridge -bg $cfgVariables(backGround)
-    # pack $w.frmBtn -side top -fill x
-    # button $w.frmBtn.btnOk -text [::msgcat::mc "Close"] -borderwidth {1} \
-    # -bg $cfgVariables(backGround) -fg $cfgVariables(backGround) -command {
-        # $noteBook delete debug
-        # $noteBook  raise [$noteBook page end]
-        # return 0
-    # }
-    # pack $w.frmBtn.btnOk -pady 2
-    # key bindings #
-    # bind $w.frmBtn.btnOk <Escape> {
-        # $noteBook delete debug
-        # $noteBook  raise [$noteBook page end]
-        # #        return 0
-    # }
     
     bind $w.frame.text <Return> [list Run $w $filePath]
     bind $w.frame.text <Control-r> [list destroy $w]
@@ -909,34 +866,15 @@ proc Execute {filePath w} {
     $w.frame.text tag configure bold -font $cfgVariables(fontBold)
     $w.frame.text tag configure error -font $cfgVariables(fontBold) -foreground red
     $w.frame.text tag add bold 0.0 0.end
-    # if {$action == "compile"} {
-        # $w.frame.text insert end "[::msgcat::mc "Compile project"] - $activeProject\n"
-        # $w.frame.text insert end "[::msgcat::mc "Compile"] - $prog\n\n"
-    # } elseif {$action == "run"} {
-        # $w.frame.text insert end "[::msgcat::mc "Running project"] - $activeProject\n"
-        # $w.frame.text insert end "[::msgcat::mc "Run"] - $prog\n\n"
-    # }
-     $w.frame.text insert end "[::msgcat::mc "Enter command for execute file"] $filePath >\n"
+
+    $w.frame.text insert end "[::msgcat::mc "Enter command for execute file"] $filePath >\n"
     set pos [$w.frame.text index insert]
     set lineNum [lindex [split $pos "."] 0]
-    $w.frame.text insert 0.0 "^^^^^^^^^^^^^^^^^^^^^ [::msgcat::mc "Programm output"] ^^^^^^^^^^^^^^^^^\n"
+    $w.frame.text insert 0.0 "======================================================================================\n"
     $w.frame.text tag add bold $lineNum.0 $lineNum.end
-    focus -force $w.frame.text
-    # open and manipulate executed program chanel #
-    # cd $projDirName 
-    # if {$action == "compile"} {
-        # set cmdCompile ""
-        # CompileOption "$projCompiler $prog"
-        # vwait cmdCompile
-        # puts "string - $projCompiler $prog" ;# debug info
-        # set pipe [open "|$cmdCompile 2> [file join $projDirName errors]" "r"]
-        # set f [open [file join $projDirName errors] "r"]
-    # } elseif {$action == "run"} {
-        # set pipe [open "|$command $filePath" "r"]
-        # set f [open [file join $projDirName errors] "r"]
-    # }
-    
-    
+    Highlight::ExecuteColorized $w.frame.text
+    # focus -force $w.frame.text
+    focus -force $w.frame.text.t
 }
 
 proc Run {w filePath} {
@@ -947,7 +885,13 @@ proc Run {w filePath} {
     set startIndex [$w.frame.text index "end-1l linestart"]
 
     set command [$w.frame.text get $startIndex $endIndex end]
-    set pipe [open "|$command $filePath 2> [file join [file dirname $filePath] errors]" "r"]
+    # Заменяем знак %f  на имя текущего файла
+    regsub -all "%f" $command "$filePath" fullCommand
+    $w.frame.text replace $startIndex $endIndex $fullCommand
+
+    # $w.frame.text insert "end-4l linestart"
+    cd [file dirname $filePath]
+    set pipe [open "|$fullCommand 2> [file join [file dirname $filePath] errors]" "r"]
     set f [open [file join [file dirname $filePath] errors] "r"]
 
     # set pipe [open "|$command $filePath" "r"]
@@ -965,18 +909,22 @@ proc DebugInfo {widget file f} {
             puts $msg
             $widget insert "end-4l linestart" "[::msgcat::mc "Program failed"]: $msg\n";
         } else {
+            Highlight::ExecuteColorized $widget
             puts $msg
             $widget see "end-1l lineend"
             $widget delete "end-1l lineend" end
           #  $widget insert end "\n-------------------------------------------------\n"
            # $widget insert end "[::msgcat::mc "Program finished successfully"]\n"
         }
+        Highlight::ExecuteColorized $widget
     } else {
+        Highlight::ExecuteColorized $widget
         $widget insert "end-4l linestart" [read $file]
     }
     while {[gets $f line]>=0} {
+        Highlight::ExecuteColorized $widget
         $widget insert "end-4l linestart" "$line\n"
-        puts $line
+        # puts $line
     }
     # close $f
     $widget see end
