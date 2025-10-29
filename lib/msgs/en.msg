@@ -65,6 +65,8 @@
 ::msgcat::mcset en "File modify"
 ::msgcat::mcset en "File was modifyed. Close?"
 ::msgcat::mcset en "File was modifyed. Save?"
+::msgcat::mcset en "The file looks like a binary file. Open anyway?"
+::msgcat::mcset en "The file looks like a image. Support not implemented yet."
 ::msgcat::mcset en "File saved"
 ::msgcat::mcset en "Files"
 ::msgcat::mcset en "Find"
@@ -179,7 +181,6 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
-
 
 
 

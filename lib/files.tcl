@@ -47,17 +47,17 @@ namespace eval FileOper {
         # линуксовый file не всегда корректно определяет тип файла
         # используем пакет из tcl
         lassign [::fileutil::fileType $fileFullPath] fType fBinaryType fBinaryInterp
-        # puts "File type is $fType, $fBinaryType, $fBinaryInterp"
+        puts "File type is $fType, $fBinaryType, $fBinaryInterp"
 
         switch $fType {
             "binary" {
-                return false
+                return binary
             }
             "text" {
                 return text
             }
             "image" {
-                return false
+                return image
             }
             default {
                 return false
@@ -407,7 +407,14 @@ namespace eval FileOper {
                 # return text
             }
             "image" {
-                # return image
+                if {[tk_messageBox -message [::msgcat::mc "The file looks like a image file"] -icon question -type ok] == "Yes"} {
+                    return
+                }
+            }
+            "binary" {
+                if {[tk_dialog .question [::msgcat::mc "Open file"] [::msgcat::mc "The file looks like a binary file. Open anyway?"] questhead 0 Yes No] == 1} {
+                    return
+                }
             }
             false {
                 return

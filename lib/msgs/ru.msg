@@ -88,6 +88,8 @@
 ::msgcat::mcset ru "File was modifyed" "Файл был изменен"
 ::msgcat::mcset ru "File modify" "Файл изменен"
 ::msgcat::mcset ru "File saved" "Файл сохранен"
+::msgcat::mcset ru "The file looks like a binary file. Open anyway?" "Файл похож на двоичный. Открыть все равно?"
+::msgcat::mcset en "The file looks like a image. Support not implemented yet." "Файл выглядит как изображение. Поддержка пока не реализована."
 ::msgcat::mcset ru "Find" "Найти"
 ::msgcat::mcset ru "Found" "Найдено"
 ::msgcat::mcset ru "Find in files" "Найти  в файлах"
