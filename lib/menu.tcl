@@ -76,7 +76,8 @@ proc GetEditMenu {m} {
     $m add separator
     $m add command -label [::msgcat::mc "Insert image"] -accelerator "Ctrl+I"\
         -command ImageBase64Encode
-    
+    $m add separator
+    $m add command -label [::msgcat::mc "Settings"] -command Settings
 }
 
 proc GetViewMenu {m} {

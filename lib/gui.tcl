@@ -145,11 +145,15 @@ grid .frmBody.panel -row 0 -column 1 -sticky nesw
 grid columnconfigure .frmBody .frmBody.panel -weight 1
 grid rowconfigure .frmBody .frmBody.panel -weight 1
 
+# Панель инстурментов
 ttk::button $frmTool.btn_tree  -command ToolBtnTreePress -image tree_24x24
 ttk::button $frmTool.btn_search  -command FileOper::FindInFiles -image search_24x24
 ttk::button $frmTool.btn_git -command Git::Dialog -image git_24x24
+ttk::button $frmTool.btn_settings -command Settings -image settings_24x24
 
 pack $frmTool.btn_tree $frmTool.btn_search $frmTool.btn_git -side top -padx 1 -pady 1
+pack $frmTool.btn_settings -side bottom -padx 1 -pady 10
+
 # #label $frmTool.lbl_logo -image tcl
 # pack $frmTool.btn_quit -side bottom -padx 5 -pady 5
 # #pack $frmTool.lbl_logo -side bottom -padx 5 -pady 5

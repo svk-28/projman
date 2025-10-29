@@ -200,7 +200,7 @@
 ::msgcat::mcset ru "Select directory" "Выбор директории"
 ::msgcat::mcset ru "Selected directory" "Директория"
 ::msgcat::mcset ru "Selection color" "Цвет выделения"
-::msgcat::mcset ru "Settings" "Установки"
+::msgcat::mcset ru "Settings" "Настройки"
 ::msgcat::mcset ru "Statusbar" "Строка статуса"
 ::msgcat::mcset ru "Show backup files" "Показывать временные файлы"
 ::msgcat::mcset ru "Show the Menu" "Показывать меню"

@@ -983,3 +983,11 @@ proc DebugInfo {widget file f} {
     $widget tag add error 0.0 0.end
     # $widget configure -state disabled
 }
+
+# Правка файла настроек
+proc Settings {} {
+    global dir
+    
+    FileOper::Edit [file join $dir(cfg) projman.ini]
+    # Config::read $dir(cfg)
+}

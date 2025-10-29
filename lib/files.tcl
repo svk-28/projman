@@ -312,18 +312,18 @@ namespace eval FileOper {
     }
     
     proc Save {} {
-        global nbEditor tree env activeProject
+        global nbEditor tree env activeProject dir
 
         if [info exists activeProject] {
-            set dir $activeProject
+            set dirProject $activeProject
         } else {
-            set dir $env(HOME)
+            set dirProject $env(HOME)
         }
         
         set nbEditorItem [$nbEditor select]
         # puts "Saved editor text: $nbEditorItem"
         if [string match "*untitled*" $nbEditorItem] {
-            set filePath [tk_getSaveFile -initialdir $dir -filetypes $::types -parent .]
+            set filePath [tk_getSaveFile -initialdir $dirProject -filetypes $::types -parent .]
             if {$filePath eq ""} {
                 return
             }
@@ -343,6 +343,9 @@ namespace eval FileOper {
         # puts "$f was saved"
         close $f
         ResetModifiedFlag $nbEditorItem $nbEditor
+        if {[file tail $filePath] eq "projman.ini"} {
+            Config::read $dir(cfg)
+        }
     }
     
     proc SaveAll {} {
