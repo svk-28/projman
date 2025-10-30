@@ -69,6 +69,17 @@ tcllib, tklib
 
 ![projman_global_search.png](https://nuk-svk.ru/images/projman_global_search.png)
 
+- A pseudo-terminal for launching the edited file and other command
+
+![projman_global_search.png](https://nuk-svk.ru/images/projman_terminal_1.png)
+
+![projman_global_search.png](https://nuk-svk.ru/images/projman_terminal_2.png)
+
+- Image viewer
+
+![projman_imageviewer.png](https://nuk-svk.ru/images/projman_imageviewer.png)
+
+
 ## Getting source code
 
 Download the source code https://git.nuk-svk.ru/svk/projman/

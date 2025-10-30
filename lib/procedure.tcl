@@ -930,7 +930,7 @@ proc DebugInfo {widget file f} {
         # close $f
     } else {
         # Highlight::ExecuteColorized $widget
-        $widget insert "end-4l linestart" "-->> [read $file]"
+        $widget insert "end-4l linestart" "[read $file]"
     }
     while {[gets $f line]>=0} {
         Highlight::ExecuteColorized $widget

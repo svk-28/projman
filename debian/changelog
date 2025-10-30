@@ -1,5 +1,11 @@
 projman (2.0.0-alpha19) stable; urgency=medium
 
+  *  Поправил changelog
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Thu, 30 Oct 2025 13:12:49 +0300
+
+projman (2.0.0-alpha19) stable; urgency=medium
+
   *  Добавлен перевод фокуса ввода на прежнее окно после закрытия диалога выполнения.
   *  Добавлена передача сигналов для закрытия запущенного процесса
   *  Изменил виджет текста в окне псевдо-терминала. Добавил подстановку имени файла к командную строку по шаблону %f
@@ -380,6 +386,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
