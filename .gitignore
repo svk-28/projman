@@ -5,4 +5,6 @@ debian/projman.substvars
 debian/files
 debian/projman.debhelper.log
 debian/*.tmp
+debian/errors
 *.tmp
+errors

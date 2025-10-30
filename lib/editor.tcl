@@ -1602,7 +1602,7 @@ namespace eval Editor {
         set frmText [ttk::frame $w.frmText2 -border 1]
         $w.panelTxt add $frmText -weight 1
         # focus -force $frmText.t.t
-        Execute $fileFullPath $frmText
+        Execute $fileFullPath $frmText $w
     }
 
 }

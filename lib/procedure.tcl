@@ -827,7 +827,7 @@ proc MakeTGZ {} {
 }
 
 ## MAKE PROJ PROCEDURE (RUNNING PROJECT) ##
-proc Execute {filePath w} {
+proc Execute {filePath w activeEditor} {
     global activeProject cfgVariables
     if {$activeProject == ""} {
         set answer [tk_messageBox\
@@ -858,8 +858,8 @@ proc Execute {filePath w} {
     pack $w.frame.yscroll -side left -fill y 
     
     bind $w.frame.text <Return> [list Run $w $filePath]
-    bind $w.frame.text <Control-r> [list destroy $w]
-    bind $w.frame.text <Control-Cyrillic_er> [list destroy $w]
+    bind $w.frame.text <Control-r> [list CloseExecuteDialog $w $activeEditor]
+    bind $w.frame.text <Control-Cyrillic_er> [list CloseExecuteDialog $w $activeEditor]
     # focus -force $w.frmBtn.btnOk
     # $noteBook raise $node
     # insert debug data into text widget #
@@ -875,6 +875,11 @@ proc Execute {filePath w} {
     Highlight::ExecuteColorized $w.frame.text
     # focus -force $w.frame.text
     focus -force $w.frame.text.t
+}
+
+proc CloseExecuteDialog {w activeEditor} {
+    destroy $w
+    focus $activeEditor.frmText.t.t
 }
 
 proc Run {w filePath} {
