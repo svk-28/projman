@@ -900,9 +900,9 @@ proc Run {w filePath} {
     set f [open [file join [file dirname $filePath] errors] "r"]
     set processPID [pid $pipe]
     
-    bind $w.frame.text <Control-c> [list SendSignal $processPID "SIGKILL"]
+    bind $w.frame.text <Control-c> [list SendSignal $processPID "SIGINT"]
     bind $w.frame.text <Control-z> [list SendSignal $processPID "SIGTSTP"]
-    bind $w.frame.text <Control-d> [list SendSignal $processPID "SIGINT"]
+    bind $w.frame.text <Control-d> [list SendSignal $processPID "SIGKILL"]
      
     # set pipe [open "|$command $filePath" "r"]
     # set f [open [file join ~ tmp errors] "r"]
