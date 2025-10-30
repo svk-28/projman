@@ -893,7 +893,12 @@ proc Run {w filePath} {
     cd [file dirname $filePath]
     set pipe [open "|$fullCommand 2> [file join [file dirname $filePath] errors]" "r"]
     set f [open [file join [file dirname $filePath] errors] "r"]
-
+    set processPID [pid $pipe]
+    
+    bind $w.frame.text <Control-c> [list SendSignal $processPID "SIGKILL"]
+    bind $w.frame.text <Control-z> [list SendSignal $processPID "SIGTSTP"]
+    bind $w.frame.text <Control-d> [list SendSignal $processPID "SIGINT"]
+     
     # set pipe [open "|$command $filePath" "r"]
     # set f [open [file join ~ tmp errors] "r"]
     fileevent $pipe readable [list DebugInfo $w.frame.text $pipe $f]
@@ -909,7 +914,7 @@ proc DebugInfo {widget file f} {
             puts $msg
             $widget insert "end-4l linestart" "[::msgcat::mc "Program failed"]: $msg\n";
         } else {
-            Highlight::ExecuteColorized $widget
+            # Highlight::ExecuteColorized $widget
             puts $msg
             $widget see "end-1l lineend"
             $widget delete "end-1l lineend" end
@@ -917,9 +922,10 @@ proc DebugInfo {widget file f} {
            # $widget insert end "[::msgcat::mc "Program finished successfully"]\n"
         }
         Highlight::ExecuteColorized $widget
+        # close $f
     } else {
-        Highlight::ExecuteColorized $widget
-        $widget insert "end-4l linestart" [read $file]
+        # Highlight::ExecuteColorized $widget
+        $widget insert "end-4l linestart" "-->> [read $file]"
     }
     while {[gets $f line]>=0} {
         Highlight::ExecuteColorized $widget
@@ -930,6 +936,33 @@ proc DebugInfo {widget file f} {
     $widget see end
     $widget tag add error 0.0 0.end
     # $widget configure -state disabled
+}
+
+# Функция для отправки сигнала процессу
+proc SendSignal {pid signal} {
+    global tcl_platform
+    
+    if {$tcl_platform(platform) eq "unix"} {
+        # На Unix-системах
+        switch -- $signal {
+            "SIGINT" { exec kill -INT $pid }  ; # Ctrl+C
+            "SIGTERM" { exec kill -TERM $pid } ; # Завершение
+            "SIGTSTP" { exec kill -TSTP $pid } ; # Ctrl+Z (приостановка)
+            "SIGKILL" { exec kill -KILL $pid } ; # Принудительное завершение
+        }
+    } else {
+        # На Windows
+        switch -- $signal {
+            "SIGINT" - "SIGTERM" { 
+                # Используем taskkill для завершения
+                catch {exec taskkill /PID $pid /T} 
+            }
+            "SIGKILL" { 
+                # Принудительное завершение на Windows
+                catch {exec taskkill /PID $pid /T /F} 
+            }
+        }
+    }
 }
 
 # Правка файла настроек

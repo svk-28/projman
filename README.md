@@ -120,7 +120,6 @@ Or type "projman" into terminal, Or choose the name of the program "Projman" on 
 - Ctrl-N - Create new file
 - Ctrl-O - Open file
 - Ctrl-W - Close editor (file)
-- Ctrl-K - Open folder
 - Ctrl-Q - Quit from ProjMan
 - Ctrl-J - Show procedures (functions) list for navigation in open editor
 - Ctrl-L - Find and display files where the variable is defined, the name of which is located under the cursor in the editor
@@ -134,6 +133,10 @@ Or type "projman" into terminal, Or choose the name of the program "Projman" on 
 - Ctrl-G - Go to line dialog
 - Ctrl-C - Copy selected text into buffer
 - Ctrl-V - Paste text from buffer
+- Ctrl-R - Open terminal for edited file
+- Ctrl-Z - Send SIGTSTP signal 
+- Ctrl-D - Send SIGINT signal 
+- Ctrl-C - Send SIGKILL signal 
 
 - Alt-P - Show/Hide the file tree panel
 - Alt-W - Delete the current word
@@ -142,6 +145,7 @@ Or type "projman" into terminal, Or choose the name of the program "Projman" on 
 - Alt-R - Delete current line
 - Alt-Y - Copy current line into buffer
 - Alt-S - Split the edited window horizontally
+- Alt-K - Open folder
 
 ## Credits
 

@@ -191,18 +191,24 @@ namespace eval Highlight {} {
         ctext::addHighlightClass $txt bool #3e803b {null false true}
     }
     proc ExecuteColorized {txt} {
-        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
-        ctext::addHighlightClass $txt stackControl #19a2a6 [info commands]
-        ctext::addHighlightClass $txt widgets #9d468d [list canvas ctext button entry label text labelframe frame toplevel scrollbar checkbutton canvas listbox menu menubar menubutton  radiobutton scale entry message tk_chooseDir tk_getSaveFile  tk_getOpenFile tk_chooseColor tk_optionMenu ttk::button ttk::checkbutton ttk::combobox ttk::entry ttk::frame ttk::intro ttk::label ttk::labelframe ttk::menubutton ttk::treeview ttk::notebook ttk::panedwindow ttk::progressbar ttk::radiobutton ttk::scale ttk::scrollbar ttk::separator ttk::sizegrip ttk::spinbox ]
-        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\$"
-        ctext::addHighlightClass $txt variable_funcs gold {set global variable unset}
-        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
-        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
-        ctext::addHighlightClassForRegexp $txt namespaces #4f64ff {::}
-        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
-        ctext::addHighlightClassForRegexp $txt colors #68ceff {(#)(\w)+?(\s|$)} 
-        ctext::addHighlightClassForRegexp $txt comments #666666 {(^|;)\s*(#)[^\n\r]*}
-        ctext::addHighlightClass $txt bool #3e803b {null false true}
+        # ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
+        # ctext::addHighlightClass $txt stackControl #19a2a6 [info commands]
+        # ctext::addHighlightClass $txt widgets #9d468d [list canvas ctext button entry label text labelframe frame toplevel scrollbar checkbutton canvas listbox menu menubar menubutton  radiobutton scale entry message tk_chooseDir tk_getSaveFile  tk_getOpenFile tk_chooseColor tk_optionMenu ttk::button ttk::checkbutton ttk::combobox ttk::entry ttk::frame ttk::intro ttk::label ttk::labelframe ttk::menubutton ttk::treeview ttk::notebook ttk::panedwindow ttk::progressbar ttk::radiobutton ttk::scale ttk::scrollbar ttk::separator ttk::sizegrip ttk::spinbox ]
+        # ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\$"
+        # ctext::addHighlightClass $txt variable_funcs gold {set global variable unset}
+        # # ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        # ctext::addHighlightClassForRegexp $txt namespaces #4f64ff {::}
+        # ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).+("|'|`)}
+        # ctext::addHighlightClassForRegexp $txt colors #68ceff {(#)(\w)+?(\s|$)} 
+        # ctext::addHighlightClassForRegexp $txt comments #666666 {(^|;)\s*(#)[^\n\r]*}
+        # ctext::addHighlightClass $txt bool #3e803b {null false true}
+        # ctext::addHighlightClassForRegexp $txt paths lightblue {(\s)([\w]+)(=)}
+        # ctext::addHighlightClassForSpecialChars $txt tags lightgreen {<>/}
+        # ctext::addHighlightClassForRegexp $txt tags #199100 {/.+\s}
+        ctext::addHighlightClassForRegexp $txt gopaths lightblue {(.+?):(\d+):(\d+):}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {(\\|/|\.|^)((\w)|(\.)|(/)|([\.\w]))+?\s}
+        ctext::addHighlightClass $txt compile_errors #ff5050 {error Error ERROR invalid undefined cannot}
+        ctext::addHighlightClassForRegexp $txt url lightblue {\w+://\w.+\w+}
     }
 
 }
