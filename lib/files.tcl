@@ -279,14 +279,16 @@ namespace eval FileOper {
                     -icon question -type yesnocancel \
                     -detail [::msgcat::mc "Do you want to save it?"]]
                 switch $answer {
-                    yes Save
+                    yes {Save close}
                     no {}
                     cancel {return "cancel"}
                 }
             }
         }
-        $nbEditor forget $nbItem
-        destroy $nbItem
+        if {[$nbEditor select] eq $nbItem} {
+            $nbEditor forget $nbItem
+            destroy $nbItem
+        }
         set treeItem "file::[string range $nbItem [expr [string last "." $nbItem] +1] end ]"
         if [$tree exists $treeItem] {
             # delete all functions from tree item
@@ -311,7 +313,7 @@ namespace eval FileOper {
         NB::NextTab $nbEditor 0
     }
     
-    proc Save {} {
+    proc Save {{type ""}} {
         global nbEditor tree env activeProject dir
 
         if [info exists activeProject] {
@@ -345,6 +347,12 @@ namespace eval FileOper {
         ResetModifiedFlag $nbEditorItem $nbEditor
         if {[file tail $filePath] eq "projman.ini"} {
             Config::read $dir(cfg)
+        }
+        if [string match "*untitled*" $nbEditorItem] {
+            FileOper::Close
+            if {$type ne "close"} {
+                FileOper::Edit $filePath
+            }
         }
     }
     
