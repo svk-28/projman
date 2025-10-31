@@ -1,11 +1,12 @@
+projman (2.0.0-alpha20) stable; urgency=medium
+
+  *  Исправил сохранение и закрытие нового файла. Теперь при сохранении файл будет переоткрыт под новым именем.
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Fri, 31 Oct 2025 18:56:38 +0300
+
 projman (2.0.0-alpha19) stable; urgency=medium
 
-  *  Небольшие исправления
-
- -- Sergey Kalinin <svk@nuk-svk.ru>  Thu, 30 Oct 2025 14:47:05 +0300
-
-projman (2.0.0-alpha19) stable; urgency=medium
-
+  *  Переделал сигналы и сочетния
   *  Добавлен перевод фокуса ввода на прежнее окно после закрытия диалога выполнения.
   *  Добавлена передача сигналов для закрытия запущенного процесса
   *  Изменил виджет текста в окне псевдо-терминала. Добавил подстановку имени файла к командную строку по шаблону %f
@@ -386,6 +387,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
