@@ -1,6 +1,6 @@
 #!/bin/sh
 # Tcl ignores the next line -*- tcl -*- \
-exec wish8.6 "$0" -- "$@"
+exec wish9.0 "$0" -- "$@"
 
 ######################################################
 #        Tcl/Tk Project manager 2.0
@@ -42,6 +42,24 @@ package require base64
 package require fileutil
 # package require Thread
 package require fileutil::magic::filetype
+
+# Определим установлен ли пакет Img для расширенной поддержки изображений
+proc PackagePresent {pkg} {
+    # puts $pkg
+    foreach item [package names] {
+        # puts [string match -nocase Img $item]
+        if {[string match -nocase Img $item] == 1} {
+            puts "The $pkg package was found"
+            return true
+        }
+    }
+}
+
+if {[PackagePresent "Img"] eq "true"} {
+    package require Img
+} else {
+    puts "Img not present"
+}
 
 # Устанавливаем текущий каталог
 set dir(root) [pwd]

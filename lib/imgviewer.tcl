@@ -54,7 +54,7 @@ proc ImageBase64Encode {text} {
         {"GIF" {.gif}}
         {"JPEG" {.jpg}}
         {"BMP" {.bmp}}
-        # {"SVG" {.svg}}
+        {"SVG" {.svg}}
         {"All files" *}
     }
     set img [tk_getOpenFile -initialdir $env(HOME) -filetypes $types -parent .]
