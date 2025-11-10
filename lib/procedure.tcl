@@ -254,11 +254,13 @@ proc FindImage {ext} {
 
 namespace eval Help {
     proc About {} {
-        global projman
+        global projman tcl_version tk_version
         set msg "Tcl/Tk project Manager\n\n"
         append msg  "Version: " $projman(Version) "\n" \
             "Release: " $projman(Release) "\n" \
-            "Build: " $projman(Build) "\n\n" \
+            "Build: " $projman(Build) "\n" \
+            "Tcl Version: " $tcl_version "\n" \
+            "Tk Version: " $tk_version "\n\n" \
             "Author: " $projman(Author) "\n" \
             "Home page: " $projman(Homepage)
         # foreach name [array names projman] {

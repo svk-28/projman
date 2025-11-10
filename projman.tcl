@@ -8,9 +8,9 @@ exec wish9.0 "$0" -- "$@"
 # Author: Sergey Kalinin svk@nuk-svk.ru
 # Home page: https://nuk-svk.ru
 ######################################################
-# Version: 2.0.0
-# Release: alpha19
-# Build: 30102025145246
+# Version: 2.1.0
+# Release: alpha0
+# Build: 10112025130218
 ######################################################
 
 # определим текущую версию, релиз и т.д.
