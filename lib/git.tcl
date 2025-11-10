@@ -23,7 +23,7 @@ namespace eval Git {
             }
             if {[catch {exec {*}$cmd} git_path]} {
                 puts "Git не найден в системе"
-                set cfgVariables(gitCommand) "Git not found"
+                set cfgVariables(gitCommand) ""
                 return
             }
             set git_path [string trim $git_path]

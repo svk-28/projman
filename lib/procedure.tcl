@@ -826,6 +826,44 @@ proc MakeTGZ {} {
     }
 }
 
+
+# Процедура для проверки, находится ли редактирование в последней строке
+proc IsLastLine {widget} {
+    set current_line [lindex [split [$widget index insert] .] 0]
+    set last_line [lindex [split [$widget index end-1c] .] 0]
+    return [expr {$current_line == $last_line}]
+}
+
+# Процедура для проверки выделения в последней строке
+proc IsSelectionInLastLine {widget} {
+    if {![$widget tag ranges sel]} {
+        return 0
+    }
+    
+    set last_line [lindex [split [$widget index end-1c] .] 0]
+    set sel_start_line [lindex [split [$widget index sel.first] .] 0]
+    set sel_end_line [lindex [split [$widget index sel.last] .] 0]
+    
+    return [expr {$sel_start_line == $last_line && $sel_end_line == $last_line}]
+}
+
+# Процедура-обертка для проверки последней строки
+proc CheckLastLineAndRun {txt w filePath} {
+    # Проверяем, находится ли курсор в последней строке
+    set current_line [lindex [split [$txt index insert] .] 0]
+    set last_line [lindex [split [$txt index end-1c] .] 0]
+    
+    if {$current_line == $last_line} {
+        # Разрешаем выполнение в последней строке
+        $txt insert insert "\n"
+        Run $w $filePath
+    } else {
+        # Запрещаем в других строках
+        bell
+        $txt mark set insert end
+    }
+}
+
 ## MAKE PROJ PROCEDURE (RUNNING PROJECT) ##
 proc Execute {filePath w activeEditor} {
     global activeProject cfgVariables
@@ -845,35 +883,98 @@ proc Execute {filePath w activeEditor} {
     frame $w.frame -borderwidth 2 -relief ridge -background $cfgVariables(backGround)
     pack $w.frame -side top -fill both -expand true
     
-    
-    ctext $w.frame.text -yscrollcommand "$w.frame.yscroll set" \
+    set txt $w.frame.text
+    ctext $txt -yscrollcommand "$w.frame.yscroll set" -linemap 0 \
     -bg $cfgVariables(backGround) -fg $cfgVariables(foreground) \
-    -relief sunken -wrap word -highlightthickness 0 -font $cfgVariables(font)\
+    -relief sunken -wrap word -highlightthickness 0 -font $cfgVariables(font) \
     -selectborderwidth 0 -selectbackground $cfgVariables(selectbg) -width 10 -height 10
+
     scrollbar $w.frame.yscroll -relief sunken -borderwidth {1} -width {10} -takefocus 0 \
-    -command "$w.frame.text yview" -background $cfgVariables(backGround)
-    Highlight::ExecuteColorized $w.frame.text
+    -command "$txt yview" -background $cfgVariables(backGround)
+    Highlight::ExecuteColorized $txt
     
-    pack $w.frame.text -side left -fill both -expand true
+    pack $txt -side left -fill both -expand true
     pack $w.frame.yscroll -side left -fill y 
     
-    bind $w.frame.text <Return> [list Run $w $filePath]
-    bind $w.frame.text <Control-r> [list CloseExecuteDialog $w $activeEditor]
-    bind $w.frame.text <Control-Cyrillic_er> [list CloseExecuteDialog $w $activeEditor]
+    bind $txt <Return> [list Run $w $filePath]
+    bind $txt <Control-r> [list CloseExecuteDialog $w $activeEditor]
+    bind $txt <Control-Cyrillic_er> [list CloseExecuteDialog $w $activeEditor]
     # focus -force $w.frmBtn.btnOk
     # $noteBook raise $node
     # insert debug data into text widget #
-    $w.frame.text tag configure bold -font $cfgVariables(fontBold)
-    $w.frame.text tag configure error -font $cfgVariables(fontBold) -foreground red
-    $w.frame.text tag add bold 0.0 0.end
+    $txt tag configure bold -font $cfgVariables(fontBold)
+    $txt tag configure error -font $cfgVariables(fontBold) -foreground red
+    $txt tag add bold 0.0 0.end
 
-    $w.frame.text insert end "[::msgcat::mc "Enter command for execute file"] $filePath >\n"
+    $txt insert end "[::msgcat::mc "Enter command for execute file"] $filePath >\n"
     set pos [$w.frame.text index insert]
     set lineNum [lindex [split $pos "."] 0]
-    $w.frame.text insert 0.0 "======================================================================================\n"
-    $w.frame.text tag add bold $lineNum.0 $lineNum.end
-    Highlight::ExecuteColorized $w.frame.text
+    $txt insert 0.0 "======================================================================================\n"
+    $txt tag add bold $lineNum.0 $lineNum.end
+    Highlight::ExecuteColorized $txt
     # focus -force $w.frame.text
+    
+    # Привязки событий для защиты от редактирования
+    # bind $txt <KeyPress> {
+        # if {![IsLastLine %W]} {
+            # break
+        # }
+    # }
+    # bind $txt <KeyPress-Return> {
+        # # Разрешаем Enter только в последней строке
+        # if {![IsLastLine %W]} {
+            # break
+        # } else {
+            # list Run $w $filePath
+        # }
+    # }
+    # bind $txt <KeyPress-Return> [list CheckLastLineAndRun $txt $w $filePath]
+    # 
+    # bind $txt <BackSpace> {
+        # if {[%W tag ranges sel] ne ""} {
+            # if {![IsSelectionInLastLine %W]} {
+                # break
+            # }
+        # } else {
+            # if {![IsLastLine %W]} {
+                # break
+            # }
+        # }
+    # }
+    # bind $txt <Delete> {
+        # if {[%W tag ranges sel] ne ""} {
+            # if {![IsSelectionInLastLine %W]} {
+                # break
+            # }
+        # } else {
+            # if {![IsLastLine %W]} {
+                # break
+            # }
+        # }
+    # }
+    # # Защита от вставки
+    # bind $txt <<Paste>> {
+        # if {[%W tag ranges sel] ne ""} {
+            # if {![IsSelectionInLastLine %W]} {
+                # break
+            # }
+        # } else {
+            # if {![IsLastLine %W]} {
+                # break
+            # }
+        # }
+    # }
+    # # Защита от вырезания
+    # bind $txt <<Cut>> {
+        # if {[%W tag ranges sel] ne ""} {
+            # if {![IsSelectionInLastLine %W]} {
+                # break
+            # }
+        # } else {
+            # break
+        # }
+    # }
+    
     focus -force $w.frame.text.t
 }
 
@@ -969,6 +1070,8 @@ proc SendSignal {pid signal} {
         }
     }
 }
+
+
 
 # Правка файла настроек
 proc Settings {} {
