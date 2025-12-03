@@ -873,6 +873,16 @@ proc Execute {filePath w activeEditor} {
     set pos [$w.frame.text index insert]
     set lineNum [lindex [split $pos "."] 0]
     $w.frame.text insert 0.0 "======================================================================================\n"
+
+    # Added executor from config
+    set fileType [string toupper [string trimleft [file extension $filePath] "."]]
+    if {[info exists cfgVariables(fileType)] == 0} {
+         $w.frame.text insert end "$cfgVariables($fileType) "
+    }
+    unset fileType
+    # $w.frame.text insert end [string toupper [string trimleft [file extension $filePath] "."]]
+    # $w.frame.text insert end cfgVariables($fileType)
+
     $w.frame.text tag add bold $lineNum.0 $lineNum.end
     Highlight::ExecuteColorized $w.frame.text
     # focus -force $w.frame.text
@@ -978,4 +988,35 @@ proc Settings {} {
     
     FileOper::Edit [file join $dir(cfg) projman.ini]
     # Config::read $dir(cfg)
+}
+
+# Определяем пути до программ для запуска исходников
+proc ExecutorCommandPathSetting {fileType} {
+    global cfgVariables tcl_platform
+    # puts $cfgVariables($fileType)
+    if {[info exists cfgVariables($fileType)] == 1 && $cfgVariables($fileType) ne ""} {
+        if {$tcl_platform(platform) eq "windows"} {
+            set cmd "where $cfgVariables($fileType)"
+        } else {
+            set cmd "which $cfgVariables($fileType)"
+        }
+        puts "ExecutorCommandPathSetting $fileType"
+        puts [catch {exec {*}$cmd} executor_path]
+        puts "executor_path $executor_path"
+        if {[catch {exec {*}$cmd} executor_path]} {
+            puts "Программа $cfgVariables($fileType) для выполнения файлов $fileType не найдена в системе"
+            set cfgVariables($fileType) ""
+            return
+        }
+        set full_path [string trim $executor_path]
+        set first_path [lindex [split $executor_path "\n"] 0]
+        
+        # puts "Git найден: $first_path"
+        set cfgVariables($fileType) $first_path
+        puts "first_path $first_path"
+    }
+    if {[info exists cfgVariables($fileType)] == 0} {
+        set cfgVariables($fileType) ""
+        puts $cfgVariables($fileType)
+    }
 }

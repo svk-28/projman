@@ -65,6 +65,16 @@ multilineComments=true
 opened=
 editedFiles=
 recentFolder=
+\[Executor\]
+TCL=tclsh
+GO=go
+PY=python3
+SH=bash
+PL=perl
+RB=ruby
+HTM=firefox
+HTML=firefox
+LUA=lua
 "
 proc Config::create {dir} {
     set cfgFile [open [file join $dir projman.ini]  "w+"]
