@@ -6,8 +6,8 @@
 #
 # $Id: black.tcl,v 1.2 2009/10/25 19:21:30 oberdorfer Exp $
 
-package require Tk 8.4;                 # minimum version for Tile
-package require tile 0.8;               # depends upon tile
+package require Tk;                 # minimum version for Tile
+package require tile;               # depends upon tile
 
 
 namespace eval ttk {

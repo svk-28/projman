@@ -1546,6 +1546,8 @@ namespace eval Editor {
         }
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
         if {$fileType eq ""} {set fileType "Unknown"}
+
+        ExecutorCommandPathSetting $fileType
         
         ttk::frame $fr.header
         set lblName "lbl[string range $itemName [expr [string last "." $itemName] +1] end]"

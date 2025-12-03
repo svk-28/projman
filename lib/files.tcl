@@ -9,12 +9,42 @@
 
 
 namespace eval FileOper {
-    variable  types
+    global packages
+    variable types
     
     set ::types {
         {"All files" *}
     }
-    
+    #  Проверка поддерживаемых типов изображений
+    # в зависимости устновлен пакет или нет
+    proc SupportImageType {type} {
+        if {[PackagePresent Img] eq "true"} { 
+            switch $type {
+                jpeg { return true }
+                png { return true }
+                gif { return true }
+                bmp { return true }
+                svg { return true }
+                ppm { return true }
+                pgm { return true }
+                tiff { return true }
+                xbm { return true }
+                xpm { return true }
+                default { return false}
+            }
+        } else {
+            switch $type {
+                png { return true }
+                gif { return true }
+                bmp { return true }
+                svg { return true }
+                ppm { return true }
+                pgm { return true }
+                default { return false}
+            }
+        }
+    }
+
     proc GetFileMimeType {fileFullPath {opt ""}} {
         global cfgVariables
         # Проверям наличие программы в системе, если есть то добавляем опции
@@ -76,15 +106,15 @@ namespace eval FileOper {
                 if {$fBinaryType ne ""} {
                     switch $fBinaryType {
                         "graphic" {
-                            if {$fBinaryInterp ne "png" && $fBinaryInterp ne "gif" && $fBinaryInterp ne "ppm" && $fBinaryInterp ne "pgm"} {
+                            if {[SupportImageType $fBinaryInterp] eq "true"} {
+                                return image
+                            } else {
                                 set answer [tk_messageBox -message [::msgcat::mc "The file looks like a image. Support not implemented yet."] -icon question -type ok]
                                 switch $answer {
                                     ok {
                                         return false
                                     }
                                 }
-                            } else {
-                                return image
                             }
                         }
                         default {
@@ -99,14 +129,15 @@ namespace eval FileOper {
                 return text
             }
             "image" {
-                if {$fBinaryInterp ne "png" && $fBinaryInterp ne "gif" && $fBinaryInterp ne "ppm" && $fBinaryInterp ne "pgm" && $fBinaryInterp} {
+                if {[SupportImageType $fBinaryInterp] eq "true"} {
+                    return image
+                } else {
                     set answer [tk_messageBox -message [::msgcat::mc "The file looks like a image. Support not implemented yet."] -icon question -type ok]
                     switch $answer {
                         ok {
                             return false
                         }
                     }
-                    return image
                 }
             }
             "empty" {

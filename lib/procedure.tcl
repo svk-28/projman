@@ -258,7 +258,11 @@ namespace eval Help {
         set msg "Tcl/Tk project Manager\n\n"
         append msg  "Version: " $projman(Version) "\n" \
             "Release: " $projman(Release) "\n" \
+<<<<<<< HEAD
             "Build: " $projman(Build) "\n\n" \
+=======
+            "Build: " $projman(Build) "\n" \
+>>>>>>> tcltk9.0
             "Tcl Version: " $tcl_version "\n" \
             "Tk Version: " $tk_version "\n\n" \
             "Author: " $projman(Author) "\n" \
@@ -911,9 +915,25 @@ proc Execute {filePath w activeEditor} {
     $txt insert end "[::msgcat::mc "Enter command for execute file"] $filePath >\n"
     set pos [$w.frame.text index insert]
     set lineNum [lindex [split $pos "."] 0]
+<<<<<<< HEAD
     $txt insert 0.0 "======================================================================================\n"
     $txt tag add bold $lineNum.0 $lineNum.end
     Highlight::ExecuteColorized $txt
+=======
+    $w.frame.text insert 0.0 "======================================================================================\n"
+
+    # Added executor from config
+    set fileType [string toupper [string trimleft [file extension $filePath] "."]]
+    if {[info exists cfgVariables(fileType)] == 0} {
+         $w.frame.text insert end "$cfgVariables($fileType) "
+    }
+    unset fileType
+    # $w.frame.text insert end [string toupper [string trimleft [file extension $filePath] "."]]
+    # $w.frame.text insert end cfgVariables($fileType)
+
+    $w.frame.text tag add bold $lineNum.0 $lineNum.end
+    Highlight::ExecuteColorized $w.frame.text
+>>>>>>> tcltk9.0
     # focus -force $w.frame.text
     
     # Привязки событий для защиты от редактирования
@@ -1081,4 +1101,35 @@ proc Settings {} {
     
     FileOper::Edit [file join $dir(cfg) projman.ini]
     # Config::read $dir(cfg)
+}
+
+# Определяем пути до программ для запуска исходников
+proc ExecutorCommandPathSetting {fileType} {
+    global cfgVariables tcl_platform
+    # puts $cfgVariables($fileType)
+    if {[info exists cfgVariables($fileType)] == 1 && $cfgVariables($fileType) ne ""} {
+        if {$tcl_platform(platform) eq "windows"} {
+            set cmd "where $cfgVariables($fileType)"
+        } else {
+            set cmd "which $cfgVariables($fileType)"
+        }
+        puts "ExecutorCommandPathSetting $fileType"
+        puts [catch {exec {*}$cmd} executor_path]
+        puts "executor_path $executor_path"
+        if {[catch {exec {*}$cmd} executor_path]} {
+            puts "Программа $cfgVariables($fileType) для выполнения файлов $fileType не найдена в системе"
+            set cfgVariables($fileType) ""
+            return
+        }
+        set full_path [string trim $executor_path]
+        set first_path [lindex [split $executor_path "\n"] 0]
+        
+        # puts "Git найден: $first_path"
+        set cfgVariables($fileType) $first_path
+        puts "first_path $first_path"
+    }
+    if {[info exists cfgVariables($fileType)] == 0} {
+        set cfgVariables($fileType) ""
+        puts $cfgVariables($fileType)
+    }
 }

@@ -1,4 +1,21 @@
+<<<<<<< HEAD
 projman (2.0.0-alpha20) stable; urgency=medium
+=======
+projman (2.1.0-alpha0) stable; urgency=medium
+
+  *  Добавил вывод информации о версиях tcl и tk
+  *  Добавил вывод номера версии tcl/tl в О Программе
+
+ -- Sergey Kalinin <svkalinin@samsonpost.ru>  Mon, 10 Nov 2025 13:13:44 +0300
+
+projman (2.1.0-alpha0) stable; urgency=medium
+
+  *  Незначительные изменения
+
+ -- Sergey Kalinin <svkalinin@samsonpost.ru>  Mon, 10 Nov 2025 13:00:43 +0300
+
+projman (2.0.0-alpha19) stable; urgency=medium
+>>>>>>> tcltk9.0
 
   *  Исправил сохранение и закрытие нового файла. Теперь при сохранении файл будет переоткрыт под новым именем.
   *  Добавил проверку пакета Img. И поправил проверку типов изображений
@@ -408,6 +425,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
