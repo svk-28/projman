@@ -258,11 +258,7 @@ namespace eval Help {
         set msg "Tcl/Tk project Manager\n\n"
         append msg  "Version: " $projman(Version) "\n" \
             "Release: " $projman(Release) "\n" \
-<<<<<<< HEAD
-            "Build: " $projman(Build) "\n\n" \
-=======
             "Build: " $projman(Build) "\n" \
->>>>>>> tcltk9.0
             "Tcl Version: " $tcl_version "\n" \
             "Tk Version: " $tk_version "\n\n" \
             "Author: " $projman(Author) "\n" \
@@ -915,11 +911,6 @@ proc Execute {filePath w activeEditor} {
     $txt insert end "[::msgcat::mc "Enter command for execute file"] $filePath >\n"
     set pos [$w.frame.text index insert]
     set lineNum [lindex [split $pos "."] 0]
-<<<<<<< HEAD
-    $txt insert 0.0 "======================================================================================\n"
-    $txt tag add bold $lineNum.0 $lineNum.end
-    Highlight::ExecuteColorized $txt
-=======
     $w.frame.text insert 0.0 "======================================================================================\n"
 
     # Added executor from config
@@ -933,7 +924,7 @@ proc Execute {filePath w activeEditor} {
 
     $w.frame.text tag add bold $lineNum.0 $lineNum.end
     Highlight::ExecuteColorized $w.frame.text
->>>>>>> tcltk9.0
+
     # focus -force $w.frame.text
     
     # Привязки событий для защиты от редактирования

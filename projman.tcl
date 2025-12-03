@@ -1,6 +1,6 @@
 #!/bin/sh
 # Tcl ignores the next line -*- tcl -*- \
-exec wish9.0 "$0" -- "$@"
+exec wish8.6 "$0" -- "$@"
 
 ######################################################
 #        Tcl/Tk Project manager 2.0
@@ -8,15 +8,9 @@ exec wish9.0 "$0" -- "$@"
 # Author: Sergey Kalinin svk@nuk-svk.ru
 # Home page: https://nuk-svk.ru
 ######################################################
-<<<<<<< HEAD
-# Version: 2.0.0
-# Release: alpha20
-# Build: 07112025145212
-=======
 # Version: 2.1.0
 # Release: alpha0
-# Build: 10112025132121
->>>>>>> tcltk9.0
+# Build: 03122025172242
 ######################################################
 
 # определим текущую версию, релиз и т.д.
