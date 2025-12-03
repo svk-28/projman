@@ -915,8 +915,8 @@ proc Execute {filePath w activeEditor} {
 
     # Added executor from config
     set fileType [string toupper [string trimleft [file extension $filePath] "."]]
-    if {[info exists cfgVariables(fileType)] == 0} {
-         $w.frame.text insert end "$cfgVariables($fileType) "
+    if {[info exists cfgVariables($fileType)] != 0 && $cfgVariables($fileType) ne ""} {
+         $w.frame.text insert end "$cfgVariables($fileType) %f"
     }
     unset fileType
     # $w.frame.text insert end [string toupper [string trimleft [file extension $filePath] "."]]

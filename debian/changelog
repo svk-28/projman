@@ -1,9 +1,15 @@
+projman (2.0.0-alpha21) stable; urgency=medium
+
+  *  Исправил ошибку
+  *  Добавлены настройки путей к программам для выполнения редактируемых файлов для каждого поддержимаего типа. И использование этих настроек при выполнении файла.
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Wed,  3 Dec 2025 17:59:31 +0300
+
 projman (2.0.0-alpha20) stable; urgency=medium
 
-  *  Добавлены настройки путей к программам для выполнения редактируемых файлов для каждого поддержимаего типа. И использование этих настроек при выполнении файла.
   *  Добавил вывод номера версии tcl/tl в О Программе
 
- -- Sergey Kalinin <svkalinin@samsonpost.ru>  Mon, 03 Dec 2025 17:22:44 +0300
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Mon, 03 Dec 2025 17:22:44 +0300
 
 projman (2.0.0-alpha19) stable; urgency=medium
 
@@ -415,6 +421,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
