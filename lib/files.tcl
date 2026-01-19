@@ -298,9 +298,13 @@ namespace eval FileOper {
         }
     }
 
-    proc Close {} {
+    proc Close {{nbEditorWindow ""}} {
         global nbEditor modified tree editors
-        set nbItem [$nbEditor select]
+        if {$nbEditorWindow eq ""} {
+            set nbEditorWindow $nbEditor
+        }
+        set nbItem [$nbEditorWindow select]
+        # puts "Procedure FileOper::Close: item - $nbItem"
 	    # puts "close tab $nbItem"
     	   
         if {$nbItem == ""} {return}
@@ -310,14 +314,14 @@ namespace eval FileOper {
                     -icon question -type yesnocancel \
                     -detail [::msgcat::mc "Do you want to save it?"]]
                 switch $answer {
-                    yes {Save close}
+                    yes {Save close $nbEditorWindow}
                     no {}
                     cancel {return "cancel"}
                 }
             }
         }
-        if {[$nbEditor select] eq $nbItem} {
-            $nbEditor forget $nbItem
+        if {[$nbEditorWindow select] eq $nbItem} {
+            $nbEditorWindow forget $nbItem
             destroy $nbItem
         }
         set treeItem "file::[string range $nbItem [expr [string last "." $nbItem] +1] end ]"
@@ -341,10 +345,11 @@ namespace eval FileOper {
         .frmStatus.lblPosition configure -text ""
         .frmStatus.lblEncoding configure -text ""
         .frmStatus.lblSize configure -text ""
-        NB::NextTab $nbEditor 0
+        
+        NB::NextTab $nbEditorWindow 0
     }
     
-    proc Save {{type ""}} {
+    proc Save {{type ""} {nbEditorWindow ""}} {
         global nbEditor tree env activeProject dir
 
         if [info exists activeProject] {
@@ -353,8 +358,15 @@ namespace eval FileOper {
             set dirProject $env(HOME)
         }
         
-        set nbEditorItem [$nbEditor select]
-        # puts "Saved editor text: $nbEditorItem"
+        if {$nbEditorWindow eq ""} {
+            set nbEditorWindow $nbEditor
+            set str [split [focus] "."]
+            set nbEditorWindow "[lindex $str 0].[lindex $str 1].[lindex $str 2]"
+            # puts "FileOper::Save: current window $nbEditorWindow"
+        }
+        # puts "FileOper::Save: $nbEditorWindow"
+        set nbEditorItem [$nbEditorWindow select]
+        puts "Saved editor text: $nbEditorItem"
         if [string match "*untitled*" $nbEditorItem] {
             set filePath [tk_getSaveFile -initialdir $dirProject -filetypes $::types -parent .]
             if {$filePath eq ""} {
@@ -362,7 +374,7 @@ namespace eval FileOper {
             }
             # set fileName [string range $filePath [expr [string last "/" $filePath]+1] end]
             set fileName [file tail $filePath]
-            $nbEditor tab $nbEditorItem -text $fileName
+            $nbEditorWindow tab $nbEditorItem -text $fileName
             # set treeitem [Tree::InsertItem $tree {} $filePath "file" $fileName]
             set lblName "lbl[string range $nbEditorItem [expr [string last "." $nbEditorItem] +1] end]"
             $nbEditorItem.header.$lblName configure -text $filePath
@@ -375,7 +387,7 @@ namespace eval FileOper {
         puts -nonewline $f $editedText
         # puts "$f was saved"
         close $f
-        ResetModifiedFlag $nbEditorItem $nbEditor
+        ResetModifiedFlag $nbEditorItem $nbEditorWindow
         if {[file tail $filePath] eq "projman.ini"} {
             Config::read $dir(cfg)
         }

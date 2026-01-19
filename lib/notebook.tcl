@@ -51,7 +51,8 @@ namespace eval NB {
             return
         }
         if {[$w identify $x $y] == "close_button"} {
-            FileOper::Close
+            # puts "NB::PressTab: w - $w"
+            FileOper::Close $w
         } else {
             set txt [$w select].frmText.t
             if [winfo exists $txt] {
@@ -63,7 +64,12 @@ namespace eval NB {
     proc NextTab {w step} {
         global tree
         set i [expr [$w index end] - 1]
+        # puts "NB::NextTab $w"
         if {[$w select] eq ""} {
+            # puts "NB::NextTab no items availabels"
+            if {$w eq ".frmWork.nbEditor2"} {
+                .frmWork.panelNB forget .frmWork.nbEditor2
+            }
             return
         }
         set nbItemIndex [$w index [$w select]]
@@ -75,7 +81,6 @@ namespace eval NB {
             $w select [expr $nbItemIndex + $step]
         }
         set nbItem [string trimleft [$w select] "$w."]
-        # puts  $nbItem
         append treeItemName "file" "::" $nbItem
         Tree::SelectItem $treeItemName
         

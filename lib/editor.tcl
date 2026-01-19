@@ -1378,6 +1378,7 @@ namespace eval Editor {
             return
         }
         set frmText [Editor::EditorWidget $w $fileType $nb]
+        # puts "Editor::SplitEditorH: w - $w"
         $frmText.t insert end [$w.frmText.t get 0.0 end]
 
         # $w.panelTxt add $w.frmText -weight 0  
@@ -1392,7 +1393,7 @@ namespace eval Editor {
         global cfgVariables
         regsub -all {\.|/|\\|\s|:} $fileFullPath "_" itemName
         set itemName ".frmWork.nbEditor2.$itemName"
-        # puts $itemName
+        puts "Editor::SplitEditoprV: nb item - $itemName"
         if {[winfo exists $itemName] == 1} {
             .frmWork.nbEditor2 forget $itemName
             destroy $itemName
