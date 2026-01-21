@@ -489,7 +489,7 @@ namespace eval FileOper {
         set txt $itemName.frmText.t
         if ![string match "*untitled*" $itemName] {
             set file [open "$fileFullPath" r]
-            $txt insert end [chan read -nonewline $file]  
+            $txt insert end [chan read -nonewline $file]
             close $file
         }
         # Delete emty last line
@@ -497,6 +497,11 @@ namespace eval FileOper {
             $txt delete {end-1 line} end
             # puts ">[$txt get {end-1 line} end]<"
         }
+        # ------------
+        # Thanks https://github.com/wandrien/
+        # https://github.com/wandrien/projman/commit/7d5539ac2031fbdcb0f4a97465ff19d0c348cf33
+        $txt edit reset
+        # -----------
         $txt see 1.0
     }
     
