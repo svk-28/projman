@@ -143,9 +143,14 @@ pack .frmMenu.mnuHelp -side right
 
 # PopUP menu
 menu .popup
-GetFileMenu .popup
 GetEditMenu .popup
-GetViewMenu .popup
+.popup add separator
+menu .popup.file
+.popup add cascade -label [::msgcat::mc "File"] -menu .popup.file
+GetFileMenu .popup.file
+menu .popup.view
+.popup add cascade -label [::msgcat::mc "View"] -menu .popup.view 
+GetViewMenu .popup.view
 
 set frmTool [ttk::frame .frmBody.frmTool]
 ttk::panedwindow .frmBody.panel -orient horizontal -style TPanedwindow
