@@ -1074,10 +1074,10 @@ proc SendSignal {pid signal} {
     if {$tcl_platform(platform) eq "unix"} {
         # На Unix-системах
         switch -- $signal {
-            "SIGINT" { exec kill -INT $pid }  ; # Ctrl+C
-            "SIGTERM" { exec kill -TERM $pid } ; # Завершение
-            "SIGTSTP" { exec kill -TSTP $pid } ; # Ctrl+Z (приостановка)
-            "SIGKILL" { exec kill -KILL $pid } ; # Принудительное завершение
+            "SIGINT"  {catch {exec kill -INT $pid}}  ; # Ctrl+C
+            "SIGTERM" {catch {exec kill -TERM $pid}} ; # Завершение
+            "SIGTSTP" {catch {exec kill -TSTP $pid}} ; # Ctrl+Z (приостановка)
+            "SIGKILL" {catch {exec kill -KILL $pid}} ; # Принудительное завершение
         }
     } else {
         # На Windows
