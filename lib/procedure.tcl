@@ -1134,3 +1134,24 @@ proc ExecutorCommandPathSetting {fileType} {
         puts $cfgVariables($fileType)
     }
 }
+
+# -----------
+# Thanks https://github.com/wandrien/
+# https://github.com/wandrien/projman/commit/22f6e235c3532c20573d44ee7eaaaa1fb56ad544
+proc SendEventToLatestTxtWidget {ev} {
+    global latestTxtWidget
+    if {$latestTxtWidget eq ""} {
+        return
+    } elseif {[winfo exists $latestTxtWidget] && [winfo class $latestTxtWidget] eq "Ctext"} {
+        event generate ${latestTxtWidget}.t $ev
+    } else {
+        set latestTxtWidget ""
+    }
+}
+
+proc Cut {} { SendEventToLatestTxtWidget <<Cut>> }
+proc Copy {} { SendEventToLatestTxtWidget <<Copy>> }
+proc Paste {} { SendEventToLatestTxtWidget <<Paste>> }
+proc Undo {} { SendEventToLatestTxtWidget <<Undo>> }
+proc Redo {} { SendEventToLatestTxtWidget <<Redo>> }
+# ------------

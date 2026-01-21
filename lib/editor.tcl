@@ -796,7 +796,7 @@ namespace eval Editor {
         bind $txt <Control-comma> "Editor::Comment $txt $fileType"
         bind $txt <Control-period> "Editor::Uncomment $txt $fileType"
         bind $txt <Control-eacute> Find
-        bind $txt <Insert> {OverWrite}
+        # bind $txt <Insert> {OverWrite}
         bind $txt <ButtonRelease-1> "Editor::SearchBrackets $txt"
         bind $txt <Button-1><ButtonRelease-1> "Editor::SelectionHighlight $txt"
         bind $txt <<Modified>> "SetModifiedFlag $w $nb auto"
@@ -804,6 +804,7 @@ namespace eval Editor {
         bind $txt <Control-Cyrillic_ghe> "Editor::SearchBrackets %W"
         bind $txt <Control-J> "catch {Editor::GoToFunction $txt}"
         bind $txt <Control-j> "catch {Editor::GoToFunction $txt}; break"
+        bind $txt <Control-y> {Redo; break}
         bind $txt <Control-Cyrillic_o> "catch {Editor::GoToFunction $txt}; break"
         bind $txt <Alt-w>           "$txt delete {insert wordstart} {insert wordend}"
         bind $txt <Alt-odiaeresis>  "$txt delete {insert wordstart} {insert wordend}"

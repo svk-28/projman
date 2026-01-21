@@ -25,8 +25,8 @@ bind . <Control-q> Quit
 bind . <Control-Q> Quit
 bind . <Control-Cyrillic_shorti> Quit
 bind . <Control-eacute> Quit
-bind . <Insert> Add
-bind . <Delete> Del
+# bind . <Insert> Add
+# bind . <Delete> Del
 bind . <F1> ShowHelpDialog
 bind . <Control-n> Editor::New
 bind . <Control-N> Editor::New
@@ -62,6 +62,21 @@ bind . <Alt-Cyrillic_el> {
     }
 }
 
+# -------------
+# Thanks https://github.com/wandrien/
+# https://github.com/wandrien/projman/commit/22f6e235c3532c20573d44ee7eaaaa1fb56ad544
+event add <<Copy>>  <Control-Insert>
+event add <<Paste>> <Shift-Insert>
+event add <<Cut>>   <Shift-Delete>
+
+set latestTxtWidget {}
+bind all <FocusIn> {
+    if {[winfo class %W] eq "Ctext"} {
+        global latestTxtWidget
+        set latestTxtWidget %W
+    }
+}
+# ---------
 bind . <Control-s> {FileOper::Save}
 bind . <Control-S> {FileOper::Save}
 bind . <Control-Cyrillic_hardsign> {FileOper::Save}
