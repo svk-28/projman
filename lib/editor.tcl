@@ -6,7 +6,6 @@
 ######################################################
 # Editor module
 ######################################################
-
 namespace eval Editor {
     variable selectionTex
     # Set the editor option
@@ -928,7 +927,9 @@ namespace eval Editor {
             }
             if {$posNum == $posBegin} {
                if {$symbol == {"} || $symbol == {_}} {
-                    $txt insert $lineEnd.$posEnd "$selText$symbol"
+                    $txt tag remove sel $lineBegin.$posBegin $lineEnd.$posEnd
+                    $txt insert $lineEnd.$posEnd "$symbol"
+                     # $txt tag add sel "$lineBegin.$posBegin + 1 char" "$lineEnd.$posEnd + 1 char"
                 } else {
                     $txt insert $lineEnd.$posEnd "$symbol"
                 }
@@ -937,7 +938,7 @@ namespace eval Editor {
                 if {$posBegin == 0} {
                     $txt insert $pos "$symbol"
                 } else {
-                    $txt insert "$pos + 1 chars" "$symbol"
+                    $txt insert "$pos + 0 chars" "$symbol"
                 }
             }
             $txt highlight $lineBegin.$posBegin $lineEnd.end
@@ -1604,7 +1605,7 @@ namespace eval Editor {
         }
 
         set frmText [ttk::frame $w.frmText2 -border 1]
-        $w.panelTxt add $frmText -weight 1
+        puts "SplitEditorForExecute: $w"
         # focus -force $frmText.t.t
         Execute $fileFullPath $frmText $w
     }
