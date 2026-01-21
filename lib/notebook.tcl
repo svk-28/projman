@@ -55,8 +55,12 @@ namespace eval NB {
             FileOper::Close $w
         } else {
             set txt [$w select].frmText.t
-            if [winfo exists $txt] {
-                focus -force $txt.t
+            if {[winfo exists [$w select].frmText2] == 1} {
+                focus -force [$w select].frmText2.frame.text.t
+            } else {
+                if [winfo exists $txt] {
+                    focus -force $txt.t
+                }
             }
         }
     }
@@ -85,8 +89,13 @@ namespace eval NB {
         Tree::SelectItem $treeItemName
         
         set txt [$w select].frmText.t
-        if [winfo exists $txt] {
-            focus -force $txt.t
+        puts "NextTab: [$w select]"
+        if {[winfo exists [$w select].frmText2] == 1} {
+            focus -force [$w select].frmText2.frame.text.t
+        } else {
+            if [winfo exists $txt] {
+                focus -force $txt.t
+            }
         }
     }
 }
