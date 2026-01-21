@@ -1605,7 +1605,8 @@ namespace eval Editor {
         }
 
         set frmText [ttk::frame $w.frmText2 -border 1]
-        puts "SplitEditorForExecute: $w"
+        $w.panelTxt add $frmText -weight 1
+        # puts "SplitEditorForExecute: $w"
         # focus -force $frmText.t.t
         Execute $fileFullPath $frmText $w
     }
