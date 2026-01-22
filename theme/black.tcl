@@ -124,7 +124,7 @@ namespace eval ttk::theme::black {
             -foreground [list selected $colors(-selectfg)] \
             -highlightbackground [list selected $colors(-lighter)]
     }
-  puts [ttk::style element names]
+  # puts [ttk::style element names]
 }
 
 # A few tricks for Tablelist.

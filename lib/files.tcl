@@ -65,7 +65,7 @@ namespace eval FileOper {
         catch $cmd pipe
         # puts $pipe
         if [regexp -nocase -- {(\w+)/([\w\-_\.]+); charset=([[:alnum:]-]+)} $pipe m fType fExt fCharset] {
-            puts "$fType $fExt $fCharset"
+            DebugPuts "$fType $fExt $fCharset"
         }
         switch $opt {
             "charset" {
@@ -77,7 +77,7 @@ namespace eval FileOper {
         # линуксовый file не всегда корректно определяет тип файла
         # используем пакет из tcl
         lassign [::fileutil::fileType $fileFullPath] fType fBinaryType fBinaryInterp
-        puts "File type is $fType, $fBinaryType, $fBinaryInterp"
+        DebugPuts "File type is $fType, $fBinaryType, $fBinaryInterp"
         set ext [string tolower [file extension $fileFullPath]]
         
         # Установка корректного типа для svg
@@ -99,7 +99,7 @@ namespace eval FileOper {
                 set fBinaryType "binary"
             }
         }
-        puts "File type is $fType, $fBinaryType, $fBinaryInterp, $ext"
+        DebugPuts "File type is $fType, $fBinaryType, $fBinaryInterp, $ext"
 
         switch $fType {
             "binary" {
@@ -366,7 +366,7 @@ namespace eval FileOper {
         }
         # puts "FileOper::Save: $nbEditorWindow"
         set nbEditorItem [$nbEditorWindow select]
-        puts "Saved editor text: $nbEditorItem"
+        DebugPuts "Saved editor text: $nbEditorItem"
         if [string match "*untitled*" $nbEditorItem] {
             set filePath [tk_getSaveFile -initialdir $dirProject -filetypes $::types -parent .]
             if {$filePath eq ""} {
@@ -507,7 +507,7 @@ namespace eval FileOper {
     
     proc Edit {fileFullPath {nbEditor .frmWork.nbEditor}} {
         global tree
-        puts "$fileFullPath"
+        DebugPuts "$fileFullPath"
         if {[file exists $fileFullPath] == 0} {
             return false
         } else {

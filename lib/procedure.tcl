@@ -1114,11 +1114,11 @@ proc ExecutorCommandPathSetting {fileType} {
         } else {
             set cmd "which $cfgVariables($fileType)"
         }
-        puts "ExecutorCommandPathSetting $fileType"
-        puts [catch {exec {*}$cmd} executor_path]
-        puts "executor_path $executor_path"
+        DebugPuts "ExecutorCommandPathSetting $fileType"
+        DebugPuts [catch {exec {*}$cmd} executor_path]
+        DebugPuts "executor_path $executor_path"
         if {[catch {exec {*}$cmd} executor_path]} {
-            puts "Программа $cfgVariables($fileType) для выполнения файлов $fileType не найдена в системе"
+            DebugPuts "Программа $cfgVariables($fileType) для выполнения файлов $fileType не найдена в системе"
             set cfgVariables($fileType) ""
             return
         }
@@ -1127,11 +1127,11 @@ proc ExecutorCommandPathSetting {fileType} {
         
         # puts "Git найден: $first_path"
         set cfgVariables($fileType) $first_path
-        puts "first_path $first_path"
+        DebugPuts "first_path $first_path"
     }
     if {[info exists cfgVariables($fileType)] == 0} {
         set cfgVariables($fileType) ""
-        puts $cfgVariables($fileType)
+        DebugPuts $cfgVariables($fileType)
     }
 }
 
@@ -1157,12 +1157,20 @@ proc Redo {} { SendEventToLatestTxtWidget <<Redo>> }
 # ------------
 
 proc DebugPuts {msg} {
-    global cfgVariables debugFlag
-    if ![info exists cfgVariables(debugFlag)] {
-        set cfgVariables(debugFlag) "true"
+    global cfgVariables
+    if ![info exists cfgVariables(debug)] {
+        set cfgVariables(debug) "true"
     }
-    if {$cfgVariables(debugFlag) eq "true"} {
-        puts "$msg"
+    if ![info exists cfgVariables(debugOut)] {
+        set cfgVariables(debugOut) "stdout"
+    }
+    if {$cfgVariables(debug) eq "true"} {
+        if {$cfgVariables(debugOut) eq "stdout"} {
+            puts "$msg"
+        } elseif {$cfgVariables(debugOut) ne "" } {
+            set logFile [open $cfgVariables(debugOut) "a+"]
+            puts $logFile $::configDefault
+            close $logFile
+        }
     }
 }
-

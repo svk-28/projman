@@ -48,7 +48,7 @@ proc PackagePresent {pkg} {
     foreach item [package names] {
         # puts [string match -nocase Img $item]
         if {[string match -nocase Img $item] == 1} {
-            puts "The $pkg package was found"
+            # puts "The $pkg package was found"
             return true
         }
     }
@@ -69,7 +69,7 @@ if { $::argc > 0 } {
     foreach arg $::argv {
         lappend opened $arg
     }
-    puts $opened
+    # puts $opened
 }
 
 
@@ -97,7 +97,7 @@ source [file join $dir(lib) config.tcl]
 foreach modFile [lsort [glob -nocomplain [file join $dir(lib) *.tcl]]] {
     if {[file tail $modFile] ne "gui.tcl" && [file tail $modFile] ne "config.tcl"} {
         source $modFile
-        puts "Loading module $modFile"
+        # puts "Loading module $modFile"
     }
 }
 
@@ -106,10 +106,10 @@ set dir(theme) "[file join $dir(root) theme]"
 foreach modFile [lsort [glob -nocomplain [file join $dir(theme) *]]] {
     if [file isdirectory $modFile] {
         source $modFile/[file tail $modFile].tcl
-        puts "Loading theme $modFile.tcl"
+        # puts "Loading theme $modFile.tcl"
     } elseif {[file extension $modFile] eq ".tcl"} {
         source $modFile
-        puts "Loading theme $modFile"
+        # puts "Loading theme $modFile"
     }
 }
 
@@ -126,7 +126,7 @@ Config::CheckVariables
 if [::msgcat::mcload [file join $dir(lib) msgs]] {
     puts "Load locale messages... OK"
 }
-puts "Setting the locale... [::msgcat::mclocale]"
+DebugPuts "Setting the locale... [::msgcat::mclocale]"
 
 source [file join $dir(lib) gui.tcl]
 

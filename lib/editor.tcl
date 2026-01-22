@@ -446,8 +446,8 @@ namespace eval Editor {
         # bindtags $w [list [winfo parent $w] $w Text sysAfter all]
         bindtags $w [list [winfo toplevel $w] $w Ctext sysAfter all]
         catch { destroy .varhelper }
-        puts [bindtags $w]
-        puts [bind $w]
+        DebugPuts [bindtags $w]
+        DebugPuts [bind $w]
 
     }
     proc VarHelper {x y w word wordType} {
@@ -460,7 +460,7 @@ namespace eval Editor {
         # set win .varhelper
         # Проверяем если есть выделение то блокировать появление диалога
         if {[$txt tag ranges sel] != ""} {
-            puts "You have selected text [$txt tag ranges sel]"
+            DebugPuts "You have selected text [$txt tag ranges sel]"
             return            
         }
         # puts "$x $y $w $word $wordType"
@@ -1310,7 +1310,7 @@ namespace eval Editor {
         }
         ttk::button $win.bBackward -state disable -image backward_20x20 -command "puts $replaceString"
         ttk::button $win.bDone -image done_20x20 -state disable -command {
-            puts "$findString -> $replaceString, $regexpSet"
+            DebugPuts "$findString -> $replaceString, $regexpSet"
         }
         ttk::button $win.bDoneAll -image doneall_20x20 -command {
             Editor::FindReplaceText $Editor::txt "$findString" "$replaceString" $regexpSet
@@ -1395,7 +1395,7 @@ namespace eval Editor {
         global cfgVariables
         regsub -all {\.|/|\\|\s|:} $fileFullPath "_" itemName
         set itemName ".frmWork.nbEditor2.$itemName"
-        puts "Editor::SplitEditoprV: nb item - $itemName"
+        DebugPuts "Editor::SplitEditoprV: nb item - $itemName"
         if {[winfo exists $itemName] == 1} {
             .frmWork.nbEditor2 forget $itemName
             destroy $itemName
@@ -1415,7 +1415,7 @@ namespace eval Editor {
         # grid columnconfigure .frmWork .frmWork.nbEditor2 -weight 1
         # grid rowconfigure .frmWork .frmWork.nbEditor2 -weight 1
         .frmWork.panelNB add .frmWork.nbEditor2 -weight 0
-        puts [FileOper::Edit $fileFullPath .frmWork.nbEditor2]
+        DebugPuts [FileOper::Edit $fileFullPath .frmWork.nbEditor2]
     }
     
     proc GoToLineNumber {text lineNumber} {
@@ -1456,7 +1456,7 @@ namespace eval Editor {
         bind $win.ent <Return> {
             set lineNumber [.gotoline.ent get]
             # $txt see insert $lineNumber
-            puts $Editor::txt
+            DebugPuts $Editor::txt
             $Editor::txt mark set insert $lineNumber.0
             $Editor::txt see insert
             focus $Editor::txt.t
@@ -1596,7 +1596,7 @@ namespace eval Editor {
             puts $fileFullPath
         }
         # puts [$w.panelTxt panes]
-        puts "$w $fileType $nb $fileFullPath"
+        DebugPuts "$w $fileType $nb $fileFullPath"
         if [winfo exists $w.frmText2] {
             $w.panelTxt forget $w.frmText2
             destroy $w.frmText2

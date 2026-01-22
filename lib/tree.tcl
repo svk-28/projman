@@ -106,7 +106,7 @@ namespace eval Tree {
         set key [lindex [split $id "::"] 0]
         if {$values eq "" || $key eq ""} {return}
         
-        puts "$key $tree $values"
+        DebugPuts "$key $tree $values"
         switch -regexp $key {
             directory {
                 FileOper::ReadFolder  $values
@@ -114,7 +114,7 @@ namespace eval Tree {
             }
             file {
                 set v [FileOper::Edit $values $nbEditor]
-                puts $v
+                DebugPuts $v
                 if {$v eq false} {
                     $tree delete $id
                 }

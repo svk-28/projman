@@ -89,7 +89,7 @@ namespace eval NB {
         Tree::SelectItem $treeItemName
         
         set txt [$w select].frmText.t
-        puts "NextTab: [$w select]"
+        DebugPuts "NextTab: [$w select]"
         if {[winfo exists [$w select].frmText2] == 1} {
             focus -force [$w select].frmText2.frame.text.t
         } else {
