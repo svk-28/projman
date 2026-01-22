@@ -112,10 +112,6 @@ jobs:
           **Дата сборки:** $(date)
           **Коммит:** $(git rev-parse --short HEAD)
           
-          ### Собранные пакеты:
-          - DEB пакет для Debian/Ubuntu
-          - TGZ пакет для OpenBSD"
-          
           # Экранируем переносы строк для JSON
           ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')
           
@@ -127,12 +123,10 @@ jobs:
               -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
               -H "Content-Type: application/json" \
               -d '{
-                "tag_name": "'"$TAG"'",
                 "name": "Projman '"$VERSION"'",
                 "body": "'"$ESCAPED_BODY"'",
                 "draft": false,
-                "prerelease": false,
-                "make_latest": "true"
+                "prerelease": false
               }' \
               "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID")
               
