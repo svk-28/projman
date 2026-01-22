@@ -1,8 +1,5 @@
 name: Simple Release
-on:
-  push:
-    tags:
-      - '*'
+on: [push]
 
 jobs:
   build:
