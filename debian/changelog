@@ -1,3 +1,12 @@
+projman (2.0.0-beta1) stable; urgency=medium
+
+  *  Сделан вывод отладочной информации по запросу.
+  *  Добавлены параметры в файл конфигурации "debug" - включение или отключение отладки и "debugOut" - куда выводить информацию.
+  *  Переделка кода.
+  *  Добавлены процедуры проверки наличия параметров конфигурации в файле и устанвоки переменных по умолчанию.
+
+ -- svk <svk@nuk-svk.ru>  Wed, 21 Jan 2026 16:44:07 +0300
+
 projman (2.0.0-alpha24) stable; urgency=medium
 
   *  Добавил фокус ввода на 'терминал' если он открыт во вкладке (при переключении вкладок).
@@ -32,7 +41,7 @@ projman (2.0.0-alpha21) stable; urgency=medium
 
 projman (2.0.0-alpha20) stable; urgency=medium
 
-  *  Добавил вывод номера версии tcl/tl в О Программе
+  *  Добавление вывод номера версии tcl/tl в О Программе
 
  -- Sergey Kalinin <svk@nuk-svk.ru>  Mon, 03 Dec 2025 17:22:44 +0300
 
@@ -446,6 +455,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
