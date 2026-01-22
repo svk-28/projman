@@ -8,11 +8,11 @@ jobs:
       - name: Клонирование
         run: |
           git clone "${{ vars.main_url }}${{ gitea.repository }}.git" src
-          cd src
+          pwd
 
       - name: Сборка пакетов
         run: |
-          cd src
+          # cd src
           echo "=== Сборка DEB ==="
           cd debian
           ./build-deb-projman.sh
@@ -37,7 +37,7 @@ jobs:
       - name: Создание релиза для тегов
         if: startsWith(gitea.ref, 'refs/tags/')
         run: |
-          cd src
+          # cd src
           TAG_NAME="${GITEA_REF#refs/tags/}"
           
           echo "=== Создание релиза $TAG_NAME ==="
