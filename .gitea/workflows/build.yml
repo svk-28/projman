@@ -83,12 +83,12 @@ jobs:
           if echo "$RESPONSE" | grep -q '"id"'; then
             REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
             echo "Реліз уже существует. ID: $REL_ID"
-            echo "RELEASE_EXISTS=true" >> $GITEA_ENV
-            echo "REL_ID=$REL_ID" >> $GITEA_ENV
+            echo "RELEASE_EXISTS=true" >> $GITHUB_ENV
+            echo "REL_ID=$REL_ID" >> $GITHUB_ENV
           else
             echo "Реліз не существует"
-            echo "RELEASE_EXISTS=false" >> $GITEA_ENV
-            echo "REL_ID=" >> $GITEA_ENV
+            echo "RELEASE_EXISTS=false" >> $GITHUB_ENV
+            echo "REL_ID=" >> $GITHUB_ENV
           fi
 
       - name: Создание или обновление релиза
@@ -109,9 +109,9 @@ jobs:
           # Экранируем переносы строк для JSON
           ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')
           
-          # Проверяем переменную RELEASE_EXISTS правильно
-          if [ "${{ env.RELEASE_EXISTS }}" = "true" ]; then
-            echo "Обновляем существующий релиз ID: ${{ env.REL_ID }}"
+          # Используем переменные окружения ПРАВИЛЬНО
+          if [ "$RELEASE_EXISTS" = "true" ]; then
+            echo "Обновляем существующий релиз ID: $REL_ID"
             
             # Обновляем существующий релиз
             RESPONSE=$(curl -s -X PATCH \
@@ -123,12 +123,9 @@ jobs:
                 "draft": false,
                 "prerelease": false
               }' \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/${{ env.REL_ID }}")
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID")
               
             echo "Ответ обновления релиза: $RESPONSE"
-            
-            # Сохраняем ID релиза для следующего шага
-            echo "REL_ID=${{ env.REL_ID }}" >> $GITEA_ENV
             
           else
             echo "Создаем новый релиз"
@@ -152,13 +149,14 @@ jobs:
             if echo "$RESPONSE" | grep -q '"id"'; then
               NEW_REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
               echo "Новый ID релиза: $NEW_REL_ID"
-              echo "REL_ID=$NEW_REL_ID" >> $GITEA_ENV
+              echo "REL_ID=$NEW_REL_ID" >> $GITHUB_ENV
             else
               echo "ОШИБКА: Не удалось получить ID релиза из ответа"
-              echo "REL_ID=" >> $GITEA_ENV
+              echo "REL_ID=" >> $GITHUB_ENV
               exit 1
             fi
           fi
+
       - name: Загрузка файлов в релиз
         if: env.REL_ID != ''
         run: |
