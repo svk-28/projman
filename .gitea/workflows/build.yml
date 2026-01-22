@@ -110,8 +110,9 @@ jobs:
           
           **Ревизия:** $RELEASE
           **Дата сборки:** $(date)
-          **Коммит:** $(git rev-parse --short HEAD)
-          
+          **Коммит:** $(git rev-parse --short HEAD)"
+
+
           # Экранируем переносы строк для JSON
           ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')
           
