@@ -1,50 +1,69 @@
-name: Simple Release
-on: [push]
+name: Build and Create Tag Release
+on:
+  push:
+    branches:
+      - master
+      - main
 
 jobs:
   build:
     runs-on: tcl-tk-builder
     steps:
-      - name: Get tag name
-        run: |
-          # Просто выводим все переменные для отладки
-          echo "=== Все переменные окружения ==="
-          env | grep -i gitea
-          echo "=== Конец ==="
-          
-          # Пробуем разные способы получить тег
-          echo "Способ 1: $GITEA_REF"
-          echo "Способ 2: ${{ gitea.ref }}"
-          echo "Способ 3: ${{ gitea.ref_name }}"
-          
-          # Сохраняем тег
-          echo "TAG=${{ gitea.ref_name }}" >> $GITEA_ENV
-
-      - name: Checkout
+      - name: Клонирование
         run: |
           git clone "${{ vars.main_url }}${{ gitea.repository }}.git" .
-          echo "Current tag: $(git tag --points-at HEAD)"
+          
+      - name: Получение версии
+        id: get_version
+        run: |
+          VERSION=$(grep "Version" projman.tcl | head -1 | grep -o '[0-9.]\+[a-zA-Z0-9]*' || echo "1.0.0")
+          RELEASE=$(grep "# Release" projman.tcl | tail -1 | awk '{print $NF}' || echo "$(date +%Y%m%d)")
+          
+          # Создаем имя тега из версии
+          TAG="v${VERSION}-${RELEASE}"
+          echo "TAG=$TAG" >> $GITEA_ENV
+          echo "VERSION=$VERSION" >> $GITEA_ENV
+          
+          echo "Будет создан тег: $TAG"
 
-      - name: Build
+      - name: Создание тега в git
+        run: |
+          git config user.email "actions@gitea"
+          git config user.name "Gitea Actions"
+          
+          # Создаем тег локально
+          git tag -a "$TAG" -m "Release $TAG"
+          
+          # Пушим тег на сервер
+          git push origin "$TAG"
+
+      - name: Сборка пакетов
         run: |
           cd debian && ./build-deb-projman.sh
           cd ../openbsd && ./build-package-bsd.sh
-
-      - name: Create and Upload
-        run: |
-          TAG="${{ gitea.ref_name }}"
-          echo "Using tag: $TAG"
           
-          # 1. Создаем релиз
-          echo "Creating release..."
+          echo "Собранные файлы:"
+          ls -la projman*
+
+      - name: Создание релиза с тегом
+        run: |
+          echo "Создаем релиз для тега: $TAG"
+          
           curl -X POST \
             -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"tag_name":"'"$TAG"'","name":"Release '"$TAG"'","draft":false}' \
+            -d '{
+              "tag_name": "'"$TAG"'",
+              "name": "Projman '"$VERSION"'",
+              "body": "## Информация о сборке\n\n- Версия: '"$VERSION"'\n- Дата: '"$(date)"'\n- Коммит: '"$(git rev-parse --short HEAD)"'",
+              "draft": false,
+              "prerelease": false
+            }' \
             "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases"
-          
-          # 2. Загружаем все файлы
-          echo "Uploading files..."
+
+      - name: Загрузка файлов
+        run: |
+          # Загружаем все файлы projman*
           curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
               --upload-file "../projman_2.0.0-beta1_amd64.deb" \
               "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/tags/$TAG/assets?name=../projman_2.0.0-beta1_amd64.deb"
