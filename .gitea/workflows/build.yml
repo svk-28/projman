@@ -45,7 +45,7 @@ jobs:
           
           # 2. Загружаем все файлы
           echo "Uploading files..."
-          for f in $(ls projman* 2>/dev/null); do
+          for f in $(ls ../projman* 2>/dev/null); do
             echo "  $f"
             curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
               --upload-file "$f" \
