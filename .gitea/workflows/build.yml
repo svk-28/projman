@@ -1,87 +1,68 @@
-name: Gitea Actions
-run-name: ${{ gitea.actor }} тестирует Gitea Actions
+name: Сборка Projman
 on: [push]
 
 jobs:
-  Explore-Gitea-Actions:
-    runs-on: tcl-tk-builder  # Ваш корректный runner
+  build:
+    runs-on: tcl-tk-builder
     steps:
-      - name: Клонирование репозитория
+      - name: Клонирование
         run: |
-          git clone "${{ vars.main_url }}${{ gitea.repository }}.git" .
-          pwd
-          ls -la
+          git clone "${{ vars.main_url }}${{ gitea.repository }}.git" src
+          cd src
 
-      - name: Сборка DEB-пакетов
+      - name: Сборка пакетов
         run: |
-          cd projman/debian
+          cd src
+          echo "=== Сборка DEB ==="
+          cd debian
           ./build-deb-projman.sh
+          
+          echo "=== Сборка OpenBSD ==="
           cd ../openbsd
           ./build-package-bsd.sh
-          cd ../../
           
-          # Ищем DEB файл
-          DEB_FILE=$(find . -name "*.deb" -type f | head -1)
-          echo "DEB файл: $DEB_FILE"
-          
-          # Загружаем в репозиторий пакетов
-          curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-            --upload-file "$DEB_FILE" \
-            "${{ vars.main_url }}api/packages/${{ vars.user }}/debian/pool/bookworm/main/upload?version=$(basename "$DEB_FILE" | grep -o '[0-9].*[0-9]')"
+          echo "=== Собранные файлы ==="
+          cd ../..
+          find src -name "*.deb" -o -name "*.tgz" | xargs ls -la
 
-      - name: Извлечение информации о версии
-        id: version_info
+      - name: Извлечение версии
+        id: get_version
         run: |
-          VERSION=$(grep "Version" projman.tcl | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-          RELEASE=$(grep "# Release" projman.tcl | tail -1 | grep -oE '[0-9A-Za-z]+$')
-          echo "VERSION=$VERSION" >> $GITEA_OUTPUT
-          echo "RELEASE=$RELEASE" >> $GITEA_OUTPUT
-          echo "Извлечено: Version=$VERSION, Release=$RELEASE"
+          cd src
+          VERSION=$(grep "Version" projman.tcl | head -1 | grep -o '[0-9.]\+')
+          RELEASE=$(grep "# Release" projman.tcl | tail -1 | awk '{print $NF}')
+          echo "version=$VERSION" >> $GITEA_OUTPUT
+          echo "release=$RELEASE" >> $GITEA_OUTPUT
 
-      - name: Создание релиза (только для тегов)
+      - name: Создание релиза для тегов
         if: startsWith(gitea.ref, 'refs/tags/')
-        id: create_release
         run: |
+          cd src
           TAG_NAME="${GITEA_REF#refs/tags/}"
-          echo "Создание релиза для тега: $TAG_NAME"
           
-          # Создаем релиз через API Gitea
-          response=$(curl -s -X POST \
+          echo "=== Создание релиза $TAG_NAME ==="
+          
+          # Создаем релиз
+          RESPONSE=$(curl -s -X POST \
             -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{
               "tag_name": "'"$TAG_NAME"'",
-              "name": "Projman '"$VERSION"' (Release '"$RELEASE"')",
-              "body": "Автоматический релиз\\n\\nВерсия: '"$VERSION"'\\nРевизия: '"$RELEASE"'\\n\\nСобран: '"$(date)"'",
-              "draft": false,
-              "prerelease": false
+              "name": "Projman '"$TAG_NAME"'",
+              "body": "Версия: '"$VERSION"'\nРевизия: '"$RELEASE"'",
+              "draft": false
             }' \
             "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases")
           
-          echo "Ответ API: $response"
+          echo "Ответ: $RESPONSE"
           
-          # Извлекаем ID созданного релиза
-          RELEASE_ID=$(echo "$response" | grep -o '"id":[0-9]*' | cut -d: -f2)
-          echo "ID релиза: $RELEASE_ID"
-          echo "RELEASE_ID=$RELEASE_ID" >> $GITEA_OUTPUT
-
-      - name: Загрузка пакетов в релиз
-        if: steps.create_release.outputs.RELEASE_ID != ''
-        run: |
-          # Находим все собранные пакеты
-          for package in $(find . -name "projman*" \( -name "*.deb" -o -name "*.tgz" \) -type f); do
-            echo "Загрузка пакета: $(basename "$package")"
-            
-            curl -v --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-              --upload-file "$package" \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/${{ steps.create_release.outputs.RELEASE_ID }}/assets?name=$(basename "$package")"
-            
-            echo "Пакет загружен: $(basename "$package")"
+          # Извлекаем ID релиза
+          REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
+          
+          # Загружаем файлы в релиз
+          for FILE in $(find . -name "projman*" -type f \( -name "*.deb" -o -name "*.tgz" \)); do
+            echo "Загружаем: $FILE"
+            curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "$FILE" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$(basename $FILE)"
           done
-
-      - name: Статус выполнения
-        run: |
-          echo "Статус задания: ${{ job.status }}"
-          echo "Текущая директория: $(pwd)"
-          echo "Содержимое:"
-          ls -la
