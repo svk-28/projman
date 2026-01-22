@@ -45,9 +45,10 @@ jobs:
           
           # 2. Загружаем все файлы
           echo "Uploading files..."
-          for f in $(ls ../projman* 2>/dev/null); do
-            echo "  $f"
-            curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-              --upload-file "$f" \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/tags/$TAG/assets?name=$f"
-          done
+          curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "../projman_2.0.0-beta1_amd64.deb" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/tags/$TAG/assets?name=../projman_2.0.0-beta1_amd64.deb"
+          curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "../projman-2.0.0beta1.tgz" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/tags/$TAG/assets?name=../projman-2.0.0beta1.tgz"
+
