@@ -28,8 +28,8 @@ jobs:
 
       - name: Создание тега в git
         run: |
-          git config user.email "actions@gitea"
-          git config user.name "Gitea Actions"
+          git config user.email "svk@nuk-svk.ru"
+          git config user.name "svk"
           
           # Создаем тег локально
           git tag -a "$TAG" -m "Release $TAG"
