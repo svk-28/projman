@@ -1,4 +1,4 @@
-name: Сборка Projman
+name: Simple Release
 on:
   push:
     tags:
@@ -8,110 +8,49 @@ jobs:
   build:
     runs-on: tcl-tk-builder
     steps:
-      - name: Клонирование репозитория
+      - name: Get tag name
         run: |
-          echo "GITEA_REF = $GITEA_REF"
-          echo "Полный URL: ${{ vars.main_url }}${{ gitea.repository }}.git"
+          # Просто выводим все переменные для отладки
+          echo "=== Все переменные окружения ==="
+          env | grep -i gitea
+          echo "=== Конец ==="
+          
+          # Пробуем разные способы получить тег
+          echo "Способ 1: $GITEA_REF"
+          echo "Способ 2: ${{ gitea.ref }}"
+          echo "Способ 3: ${{ gitea.ref_name }}"
+          
+          # Сохраняем тег
+          echo "TAG=${{ gitea.ref_name }}" >> $GITEA_ENV
+
+      - name: Checkout
+        run: |
           git clone "${{ vars.main_url }}${{ gitea.repository }}.git" .
-          
-          # Получаем имя тега из git
-          TAG_NAME=$(git describe --tags --exact-match 2>/dev/null || echo "")
-          echo "Тег из git: $TAG_NAME"
-          echo "TAG_NAME=$TAG_NAME" >> $GITEA_ENV
+          echo "Current tag: $(git tag --points-at HEAD)"
 
-      - name: Сборка пакетов
+      - name: Build
         run: |
-          echo "=== Сборка DEB пакета ==="
-          cd debian
-          ./build-deb-projman.sh
-          
-          echo "=== Сборка OpenBSD пакета ==="
-          cd ../openbsd
-          ./build-package-bsd.sh
-          
-          echo "=== Список созданных файлов ==="
-          cd ..
-          find . -name "*_amd64.deb" -o -name "*.tgz" -o -name "*.changes" | xargs ls -la 2>/dev/null || true
+          cd debian && ./build-deb-projman.sh
+          cd ../openbsd && ./build-package-bsd.sh
 
-      - name: Поиск файлов
-        id: find_files
+      - name: Create and Upload
         run: |
-          DEB_FILE=$(find . -name "*_amd64.deb" -type f | head -1)
-          TGZ_FILE=$(find . -name "*.tgz" -type f | head -1)
+          TAG="${{ gitea.ref_name }}"
+          echo "Using tag: $TAG"
           
-          echo "Найден DEB: $DEB_FILE"
-          echo "Найден TGZ: $TGZ_FILE"
-          
-          echo "DEB_FILE=$DEB_FILE" >> $GITEA_ENV
-          echo "TGZ_FILE=$TGZ_FILE" >> $GITEA_ENV
-
-      - name: Извлечение версии
-        id: version_info
-        run: |
-          VERSION=$(grep "Version" projman.tcl | head -1 | grep -o '[0-9.]\+[a-zA-Z0-9]*' || echo "unknown")
-          RELEASE=$(grep "# Release" projman.tcl | tail -1 | awk '{print $NF}' || echo "unknown")
-          
-          echo "VERSION=${VERSION}" >> $GITEA_ENV
-          echo "RELEASE=${RELEASE}" >> $GITEA_ENV
-          
-          echo "Версия: $VERSION"
-          echo "Ревизия: $RELEASE"
-
-      - name: Создание релиза
-        run: |
-          echo "=== Создание релиза ==="
-          echo "TAG_NAME из env: $TAG_NAME"
-          
-          if [ -z "$TAG_NAME" ]; then
-            echo "ОШИБКА: TAG_NAME пустой!"
-            echo "Пытаемся получить тег из git..."
-            TAG_NAME=$(git describe --tags --exact-match 2>/dev/null)
-            echo "Тег из git: $TAG_NAME"
-            
-            if [ -z "$TAG_NAME" ]; then
-              echo "Не удалось получить имя тега. Используем версию из projman.tcl"
-              TAG_NAME="v$VERSION"
-            fi
-          fi
-          
-          echo "Будет использован тег: $TAG_NAME"
-          
-          # Создаем релиз
-          RESPONSE=$(curl -s -X POST \
+          # 1. Создаем релиз
+          echo "Creating release..."
+          curl -X POST \
             -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{
-              "tag_name": "'"$TAG_NAME"'",
-              "name": "Projman '"$TAG_NAME"'",
-              "body": "Автоматический релиз\n\nВерсия: '"$VERSION"'\nРевизия: '"$RELEASE"'",
-              "draft": false,
-              "prerelease": false
-            }' \
-            "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases")
+            -d '{"tag_name":"'"$TAG"'","name":"Release '"$TAG"'","draft":false}' \
+            "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases"
           
-          echo "Ответ API: $RESPONSE"
-          
-          # Извлекаем ID релиза
-          if echo "$RESPONSE" | grep -q '"id"'; then
-            REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
-            echo "ID релиза: $REL_ID"
-            echo "REL_ID=$REL_ID" >> $GITEA_ENV
-          else
-            echo "Ошибка создания релиза:"
-            echo "$RESPONSE"
-            exit 1
-          fi
-
-      - name: Загрузка файлов в релиз
-        if: env.REL_ID != ''
-        run: |
-          echo "=== Загрузка файлов ==="
-          
-          # Загружаем все файлы projman
-          for FILE in $(find . -maxdepth 1 -name "projman*" -type f); do
-            echo "Загружаем: $(basename "$FILE")"
-            curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-              --upload-file "$FILE" \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$(basename "$FILE")"
-            echo "OK"
+          # 2. Загружаем все файлы
+          echo "Uploading files..."
+          for f in $(ls projman* 2>/dev/null); do
+            echo "  $f"
+            curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "$f" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/tags/$TAG/assets?name=$f"
           done
