@@ -85,21 +85,23 @@ jobs:
             echo "Реліз уже существует. ID: $REL_ID"
             echo "RELEASE_EXISTS=true" >> $GITEA_ENV
             
-            # Сохраняем REL_ID в файл, а не в $GITEA_ENV
-            echo "$REL_ID" > /tmp/rel_id.txt
+            # Очищаем и сохраняем REL_ID в файл
+            echo -n "$REL_ID" | tr -d '\n' > /tmp/rel_id.txt
           else
             echo "Реліз не существует"
             echo "RELEASE_EXISTS=false" >> $GITEA_ENV
-            echo "" > /tmp/rel_id.txt
+            echo -n "" > /tmp/rel_id.txt
           fi
 
       - name: Создание или обновление релиза
         id: create_release
         run: |
-          # Читаем REL_ID из файла
-          REL_ID=$(cat /tmp/rel_id.txt 2>/dev/null || echo "")
+          # Читаем REL_ID из файла и очищаем от лишних символов
+          REL_ID=$(cat /tmp/rel_id.txt 2>/dev/null | tr -d '\n\r ' || echo "")
           
           echo "=== Работа с релизом для тега $TAG ==="
+          echo "RELEASE_EXISTS: $RELEASE_EXISTS"
+          echo "REL_ID: '$REL_ID'"
           
           RELEASE_BODY="## Projman $VERSION
           
@@ -131,8 +133,15 @@ jobs:
               
             echo "Ответ обновления релиза: $RESPONSE"
             
-            # Сохраняем ID для следующего шага
-            echo "$REL_ID" > /tmp/rel_id.txt
+            # Проверяем ответ
+            if echo "$RESPONSE" | grep -q '"id"'; then
+              echo "Релиз успешно обновлен"
+              echo -n "$REL_ID" > /tmp/rel_id.txt
+            else
+              echo "ОШИБКА: Не удалось обновить релиз"
+              echo "Ответ: $RESPONSE"
+              exit 1
+            fi
             
           else
             echo "Создаем новый релиз"
@@ -154,20 +163,21 @@ jobs:
             
             # Получаем ID нового релиза
             if echo "$RESPONSE" | grep -q '"id"'; then
-              NEW_REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
+              NEW_REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2 | tr -d '\n\r ')
               echo "Новый ID релиза: $NEW_REL_ID"
-              echo "$NEW_REL_ID" > /tmp/rel_id.txt
+              echo -n "$NEW_REL_ID" > /tmp/rel_id.txt
             else
               echo "ОШИБКА: Не удалось получить ID релиза из ответа"
-              echo "" > /tmp/rel_id.txt
+              echo "Ответ: $RESPONSE"
+              echo -n "" > /tmp/rel_id.txt
               exit 1
             fi
           fi
 
       - name: Загрузка файлов в релиз
         run: |
-          # Читаем REL_ID из файла
-          REL_ID=$(cat /tmp/rel_id.txt 2>/dev/null || echo "")
+          # Читаем REL_ID из файла и очищаем
+          REL_ID=$(cat /tmp/rel_id.txt 2>/dev/null | tr -d '\n\r ' || echo "")
           
           if [ -z "$REL_ID" ]; then
             echo "Нет ID релиза, пропускаем загрузку файлов"
@@ -192,17 +202,21 @@ jobs:
             FILENAME=$(basename "$FILE")
             echo "Загружаем: $FILENAME"
             
-            curl -v --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            curl -s --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
               --upload-file "$FILE" \
               "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$FILENAME"
               
-            echo "Файл загружен: $FILENAME"
+            if [ $? -eq 0 ]; then
+              echo "Файл загружен: $FILENAME"
+            else
+              echo "ОШИБКА загрузки: $FILENAME"
+            fi
           done
 
       - name: Финализация
         run: |
           # Читаем REL_ID из файла
-          REL_ID=$(cat /tmp/rel_id.txt 2>/dev/null || echo "")
+          REL_ID=$(cat /tmp/rel_id.txt 2>/dev/null | tr -d '\n\r ' || echo "")
           
           echo "=== Сборка завершена ==="
           echo "Тег: $TAG"
