@@ -97,11 +97,11 @@ jobs:
           echo "=== Работа с релизом для тега $TAG ==="
           
           RELEASE_BODY="## Projman $VERSION
-          
+            
           **Ревизия:** $RELEASE
           **Дата сборки:** $(date)
           **Коммит:** $(git rev-parse --short HEAD)
-          
+            
           ### Собранные пакеты:
           - DEB пакет для Debian/Ubuntu
           - TGZ пакет для OpenBSD"
@@ -109,8 +109,9 @@ jobs:
           # Экранируем переносы строк для JSON
           ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')
           
-          if [ "$RELEASE_EXISTS" = "true" ]; then
-            echo "Обновляем существующий релиз ID: $REL_ID"
+          # Проверяем переменную RELEASE_EXISTS правильно
+          if [ "${{ env.RELEASE_EXISTS }}" = "true" ]; then
+            echo "Обновляем существующий релиз ID: ${{ env.REL_ID }}"
             
             # Обновляем существующий релиз
             RESPONSE=$(curl -s -X PATCH \
@@ -122,9 +123,12 @@ jobs:
                 "draft": false,
                 "prerelease": false
               }' \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID")
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/${{ env.REL_ID }}")
               
             echo "Ответ обновления релиза: $RESPONSE"
+            
+            # Сохраняем ID релиза для следующего шага
+            echo "REL_ID=${{ env.REL_ID }}" >> $GITEA_ENV
             
           else
             echo "Создаем новый релиз"
@@ -149,13 +153,12 @@ jobs:
               NEW_REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
               echo "Новый ID релиза: $NEW_REL_ID"
               echo "REL_ID=$NEW_REL_ID" >> $GITEA_ENV
-              echo "id=$NEW_REL_ID" >> $GITHUB_OUTPUT  # Для совместимости
             else
               echo "ОШИБКА: Не удалось получить ID релиза из ответа"
               echo "REL_ID=" >> $GITEA_ENV
+              exit 1
             fi
           fi
-
       - name: Загрузка файлов в релиз
         if: env.REL_ID != ''
         run: |
@@ -202,4 +205,4 @@ jobs:
           fi
           
           echo "Собранные файлы:"
-          find . -maxdepth 1 -name "projman*" -type f | xargs ls -la 2>/dev/null || echo "Файлы не найдены"
+          find ../ -maxdepth 1 \( -name "*projman*deb" -o -name "*projman*tgz" \) -type f | xargs ls -la 2>/dev/null || echo "Файлы не найдены"
