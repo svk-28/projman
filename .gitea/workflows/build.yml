@@ -44,7 +44,6 @@ jobs:
           cd ../openbsd && ./build-package-bsd.sh
           
           echo "Собранные файлы:"
-          ls -la projman*
 
       - name: Создание релиза с тегом
         run: |
