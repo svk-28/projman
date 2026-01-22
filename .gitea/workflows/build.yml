@@ -1,17 +1,57 @@
 name: Gitea Actions Demo
 run-name: ${{ gitea.actor }} is testing out Gitea Actions 🚀
-on: [push]
+on:
+  push:
+    tags:
+      - '*'  # Любой тег
 
 jobs:
   Explore-Gitea-Actions:
     runs-on: tcl-tk-builder
     steps:
-      - name: Build the packages
+      - name: Build the DEB-packages
         run: |
           git clone ${{ vars.main_url }}${{ gitea.repository }}
           pwd
           cd projman/debian
           ./build-deb-projman.sh
+          cd ../openbsd
+          ./build-package-bsd.sh
           cd ../../
           curl --user ${{secrets.USER}}:${{secrets.API_TOKEN}} --upload-file "$(ls -1| grep projman | grep -E 'deb$')" ${{vars.main_url}}api/packages/${{vars.user}}/debian/pool/bookworm/main/upload
       - run: echo "This job's status is ${{ job.status }}."
+
+      - name: Create release
+        run: |
+          # Создаем релиз через API
+          curl -X POST \
+            -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "tag_name": "'"${{ gitea.ref_name }}"'",
+              "name": "Release '"${{ gitea.ref_name }}"'",
+              "body": "Automated release for '"${{ gitea.ref_name }}"'",
+              "draft": false,
+              "prerelease": false
+            }' \
+            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases"
+
+      - name: Get release ID
+        id: release_info
+        run: |
+          response=$(curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/tags/${{ gitea.ref_name }}")
+          
+          echo "id=$(echo $response | jq -r '.id')" >> $GITHUB_OUTPUT
+
+      - name: Upload Linux package
+        run: |
+          curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            --upload-file "$(ls -1| grep projman | grep -E 'deb$')" \
+            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/${{ steps.release_info.outputs.id }}/assets?name=$(ls -1| grep projman | grep -E 'deb$')"
+
+      - name: Upload OpenBSD package
+        run: |
+          curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            --upload-file "$(ls -1| grep projman | grep -E 'tgz$')" \
+            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/${{ steps.release_info.outputs.id }}/assets?name=$(ls -1| grep projman | grep -E 'tgz$')"
