@@ -1155,3 +1155,14 @@ proc Paste {} { SendEventToLatestTxtWidget <<Paste>> }
 proc Undo {} { SendEventToLatestTxtWidget <<Undo>> }
 proc Redo {} { SendEventToLatestTxtWidget <<Redo>> }
 # ------------
+
+proc DebugPuts {msg} {
+    global cfgVariables debugFlag
+    if ![info exists cfgVariables(debugFlag)] {
+        set cfgVariables(debugFlag) "true"
+    }
+    if {$cfgVariables(debugFlag) eq "true"} {
+        puts "$msg"
+    }
+}
+

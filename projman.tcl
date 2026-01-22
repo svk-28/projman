@@ -119,6 +119,7 @@ if {[file exists [file join $dir(cfg) projman.ini]] ==0} {
     Config::create $dir(cfg)
 }
 Config::read $dir(cfg)
+Config::CheckVariables
 
 ::msgcat::mclocale $cfgVariables(locale)
 

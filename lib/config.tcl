@@ -75,6 +75,9 @@ RB=ruby
 HTM=firefox
 HTML=firefox
 LUA=lua
+\[Debug\]
+debug=false
+debugOut=stdout
 "
 proc Config::create {dir} {
     set cfgFile [open [file join $dir projman.ini]  "w+"]
@@ -130,4 +133,48 @@ proc Config::write {dir} {
     
     ini::commit $cfgFile
     ini::close $cfgFile
+}
+
+# Добавление перменной в список 
+# если отсутствует нужная секция то она будет добавлена.
+proc Config::AddVariable {key value section} {
+    # Проверяем, существует ли уже такая переменная
+    if {[info exists ::cfgVariables($key)]} {
+        DebugPuts "The variable '$key' already exists: $::cfgVariables($key)"
+        return 0
+    }
+    
+    # Добавляем в массив переменных
+    set ::cfgVariables($key) $value
+    
+    # Добавляем в список ключей секции
+    if {[info exists ::cfgINIsections($section)]} {
+        # Проверяем, нет ли уже такого ключа в секции
+        if {[lsearch -exact $::cfgINIsections($section) $key] == -1} {
+            lappend ::cfgINIsections($section) $key
+        }
+    } else {
+        set ::cfgINIsections($section) [list $key]
+    }
+    DebugPuts "Config::AddVariable: The variable '$key' has been added to the array 'cfgVariables'"
+    
+    return 1
+}
+
+# Проверяем наличие переменных в конфиге на основе "эталонного" списка 
+# и выставляем значение по умолчанию если в конфиге переменной нет
+proc Config::CheckVariables {} {
+    set valList [split $::configDefault "\n"]
+    foreach item $valList {
+        if {[regexp -nocase -all -- {\[(\w+)\]} $item -> v1]} {
+            set section $v1
+        }
+        if {[regexp {^([^=]+)=(.*)$} $item -> var value]} {
+            if ![info exists ::cfgVariables($var)] {
+                DebugPuts "Error in Config::CheckVariables: variable ::cfgVariables($var) not found"
+                Config::AddVariable "$var" "$value" "$section"
+                DebugPuts "Config::CheckVariables: The variable cfgVariables($var) setting to default value \"$value\""
+            }
+        }
+    }
 }
