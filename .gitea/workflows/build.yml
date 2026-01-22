@@ -20,7 +20,7 @@ jobs:
 
       - name: Create release
         run: |
-          export VERSION=$(grep "# Version" projman.tcl | grep -oE '\b[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\b')
+          export VERSION=$(grep Version projman.tcl | grep -oE '\b[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\b')
           export RELEASE=$(grep "# Release" projman.tcl | grep -oE '[0-9A-Za-z]+$')
           # Создаем релиз через API
           curl -X POST \
@@ -41,16 +41,21 @@ jobs:
           response=$(curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
             "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/tags/${{ gitea.ref_name }}")
           
-          echo "id=$(echo $response"
+          id=$(echo $response | grep -o '"id":[0-9]*' | cut -d':' -f2 | head -n1)
+          echo "id=$id" >> $GITHUB_OUTPUT
 
       - name: Upload Linux package
         run: |
+          export DEB=$(ls -1| grep projman | grep -E 'deb$')
+          echo "${DEB}"
           curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-            --upload-file "$(ls -1| grep projman | grep -E 'deb$')" \
-            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/${{ steps.release_info.outputs.id }}/assets?name=$(ls -1| grep projman | grep -E 'deb$')"
+            --upload-file "${DEB}" \
+            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/${{ steps.release_info.outputs.id }}/assets?name=${DEB}"
 
       - name: Upload OpenBSD package
         run: |
+          export PKG=$(ls -1| grep projman | grep -E 'tgz$')
+          echo ${PKG}
           curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-            --upload-file "$(ls -1| grep projman | grep -E 'tgz$')" \
-            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/${{ steps.release_info.outputs.id }}/assets?name=$(ls -1| grep projman | grep -E 'tgz$')"
+            --upload-file "${PKG}" \
+            "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/${{ steps.release_info.outputs.id }}/assets?name=${PKG}"
