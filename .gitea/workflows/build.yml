@@ -22,50 +22,43 @@ jobs:
           
           # Создаем имя тега
           TAG="v${VERSION}"
+          echo "TAG=$TAG" >> $GITEA_ENV
+          echo "VERSION=$VERSION" >> $GITEA_ENV
+          echo "RELEASE=$RELEASE" >> $GITEA_ENV
           
-          # Правильный формат для Gitea - в кавычках
-          echo 'TAG="'"${TAG}"'"' >> $GITEA_ENV
-          echo 'VERSION="'"${VERSION}"'"' >> $GITEA_ENV
-          echo 'RELEASE="'"${RELEASE}"'"' >> $GITEA_ENV
-          
-          echo "Тег: ${TAG}"
-          echo "Версия: ${VERSION}"
-          echo "Ревизия: ${RELEASE}"
+          echo "Тег: $TAG"
+          echo "Версия: $VERSION"
+          echo "Ревизия: $RELEASE"
 
       - name: Проверка существования тега
         id: check_tag
         run: |
-          echo "Проверяем тег: ${TAG}"
+          echo "Проверяем тег: $TAG"
           
           # Проверяем на удаленном сервере
-          if git ls-remote --tags origin "${TAG}" 2>/dev/null | grep -q "${TAG}"; then
-            echo "Тег ${TAG} уже существует на удаленном сервере"
-            echo 'TAG_EXISTS_REMOTE="true"' >> $GITEA_ENV
+          if git ls-remote --tags origin "$TAG" 2>/dev/null | grep -q "$TAG"; then
+            echo "Тег $TAG уже существует на удаленном сервере"
+            echo "TAG_EXISTS_REMOTE=true" >> $GITEA_ENV
           else
-            echo "Тег ${TAG} не существует на удаленном сервере"
-            echo 'TAG_EXISTS_REMOTE="false"' >> $GITEA_ENV
+            echo "Тег $TAG не существует на удаленном сервере"
+            echo "TAG_EXISTS_REMOTE=false" >> $GITEA_ENV
           fi
-
-      - name: Создание тега (только если не существует)
-        if: env.TAG_EXISTS_REMOTE == 'true'
-        run: |
-          echo "Тег уже существует, пропускаем создание"
 
       - name: Создание тега (только если не существует)
         if: env.TAG_EXISTS_REMOTE == 'false'
         run: |
-          echo "Создаем новый тег: ${TAG}"
+          echo "Создаем новый тег: $TAG"
           git config user.email "svk@nuk-svk.ru"
           git config user.name "svk"
           
           # Создаем тег локально
-          git tag -a "${TAG}" -m "Release ${TAG} - ${RELEASE}"
+          git tag -a "$TAG" -m "Release $TAG - $RELEASE"
 
           # Настраиваем URL для push
           git remote set-url origin "https://${{ secrets.USER }}:${{ secrets.API_TOKEN }}@git.nuk-svk.ru/${{ gitea.repository }}.git"
 
           # Пушим тег на сервер
-          git push origin "${TAG}"
+          git push origin "$TAG"
 
       - name: Сборка пакетов
         run: |
@@ -89,27 +82,21 @@ jobs:
           
           if echo "$RESPONSE" | grep -q '"id"'; then
             REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
-            echo "Реліз уже существует. ID: $REL_ID"
+            echo "Релиз уже существует. ID: $REL_ID"
+            echo "RELEASE_EXISTS=true" >> $GITEA_ENV
             
-            # Ключевое исправление: пишем в правильном формате
-            echo 'RELEASE_EXISTS="true"' >> $GITEA_ENV
-            echo 'REL_ID="'"${REL_ID}"'"' >> $GITEA_ENV
+            # Используем метод записи через echo без >> для числовых значений
+            echo "REL_ID=${REL_ID}" >> $GITEA_ENV
           else
-            echo "Реліз не существует"
-            echo 'RELEASE_EXISTS="false"' >> $GITEA_ENV
-            echo 'REL_ID=""' >> $GITEA_ENV
+            echo "Релиз не существует"
+            echo "RELEASE_EXISTS=false" >> $GITEA_ENV
+            echo "REL_ID=" >> $GITEA_ENV
           fi
 
       - name: Создание или обновление релиза
         id: create_release
         run: |
           echo "=== Работа с релизом для тега $TAG ==="
-          
-          # Проверяем, что тег существует перед созданием релиза
-          if ! git ls-remote --tags origin "${TAG}" 2>/dev/null | grep -q "${TAG}"; then
-            echo "ОШИБКА: Тег ${TAG} не существует на сервере!"
-            exit 1
-          fi
           
           RELEASE_BODY="## Projman $VERSION
           
@@ -124,8 +111,7 @@ jobs:
           # Экранируем переносы строк для JSON
           ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')
           
-          # Используем переменные напрямую, так как они в окружении
-          if [ "$RELEASE_EXISTS" = "true" ] && [ -n "$REL_ID" ]; then
+          if [ "$RELEASE_EXISTS" = "true" ]; then
             echo "Обновляем существующий релиз ID: $REL_ID"
             
             # Обновляем существующий релиз
@@ -164,12 +150,10 @@ jobs:
             if echo "$RESPONSE" | grep -q '"id"'; then
               NEW_REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
               echo "Новый ID релиза: $NEW_REL_ID"
-              echo 'REL_ID="'"${NEW_REL_ID}"'"' >> $GITEA_ENV
+              echo "REL_ID=${NEW_REL_ID}" >> $GITEA_ENV
             else
               echo "ОШИБКА: Не удалось получить ID релиза из ответа"
-              echo "Ответ сервера: $RESPONSE"
-              echo 'REL_ID=""' >> $GITEA_ENV
-              exit 1
+              echo "REL_ID=" >> $GITEA_ENV
             fi
           fi
 
@@ -194,7 +178,7 @@ jobs:
             FILENAME=$(basename "$FILE")
             echo "Загружаем: $FILENAME"
             
-            curl -s --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            curl -v --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
               --upload-file "$FILE" \
               "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$FILENAME"
               
