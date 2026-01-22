@@ -33,34 +33,32 @@ jobs:
       - name: Проверка существования тега
         id: check_tag
         run: |
-          # Проверяем, существует ли тег локально
-          if git show-ref --tags --quiet --verify -- "refs/tags/$TAG"; then
-            echo "Тег $TAG уже существует локально"
-            echo "TAG_EXISTS=true" >> $GITEA_ENV
-          else
-            echo "Тег $TAG не существует локально"
-            echo "TAG_EXISTS=false" >> $GITEA_ENV
-          fi
+          echo "Проверяем тег: $TAG"
           
           # Проверяем на удаленном сервере
-          git ls-remote --tags origin "$TAG" && echo "TAG_EXISTS_REMOTE=true" >> $GITEA_ENV || echo "TAG_EXISTS_REMOTE=false" >> $GITEA_ENV
+          if git ls-remote --tags origin "$TAG" 2>/dev/null | grep -q "$TAG"; then
+            echo "Тег $TAG уже существует на удаленном сервере"
+            echo "TAG_EXISTS_REMOTE=true" >> $GITEA_ENV
+          else
+            echo "Тег $TAG не существует на удаленном сервере"
+            echo "TAG_EXISTS_REMOTE=false" >> $GITEA_ENV
+          fi
 
       - name: Создание тега (только если не существует)
         if: env.TAG_EXISTS_REMOTE == 'false'
         run: |
           echo "Создаем новый тег: $TAG"
           git config user.email "svk@nuk-svk.ru"
-          git config user.name svk"
+          git config user.name "svk"
           
           # Создаем тег локально
           git tag -a "$TAG" -m "Release $TAG - $RELEASE"
 
+          # Настраиваем URL для push
           git remote set-url origin "https://${{ secrets.USER }}:${{ secrets.API_TOKEN }}@git.nuk-svk.ru/${{ gitea.repository }}.git"
 
           # Пушим тег на сервер
           git push origin "$TAG"
-        env:
-          GIT_ASKPASS: "echo ${{ secrets.API_TOKEN }}"
 
       - name: Сборка пакетов
         run: |
@@ -71,7 +69,7 @@ jobs:
           cd ../openbsd && ./build-package-bsd.sh
           
           echo "=== Собранные файлы ==="
-          find . -name "projman*" -type f | xargs ls -la
+          find . -maxdepth 1 -name "projman*" -type f | xargs ls -la 2>/dev/null || echo "Файлы не найдены"
 
       - name: Проверка существования релиза
         id: check_release
@@ -79,6 +77,8 @@ jobs:
           # Проверяем, существует ли уже релиз для этого тега
           RESPONSE=$(curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
             "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/tags/$TAG" || echo "{}")
+          
+          echo "Ответ API проверки релиза: $RESPONSE"
           
           if echo "$RESPONSE" | grep -q '"id"'; then
             REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
@@ -88,9 +88,11 @@ jobs:
           else
             echo "Реліз не существует"
             echo "RELEASE_EXISTS=false" >> $GITEA_ENV
+            echo "REL_ID=" >> $GITEA_ENV
           fi
 
       - name: Создание или обновление релиза
+        id: create_release
         run: |
           echo "=== Работа с релизом для тега $TAG ==="
           
@@ -104,21 +106,26 @@ jobs:
           - DEB пакет для Debian/Ubuntu
           - TGZ пакет для OpenBSD"
           
+          # Экранируем переносы строк для JSON
+          ESCAPED_BODY=$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')
+          
           if [ "$RELEASE_EXISTS" = "true" ]; then
             echo "Обновляем существующий релиз ID: $REL_ID"
             
             # Обновляем существующий релиз
-            curl -X PATCH \
+            RESPONSE=$(curl -s -X PATCH \
               -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
               -H "Content-Type: application/json" \
               -d '{
                 "name": "Projman '"$VERSION"'",
-                "body": "'"$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')"'",
+                "body": "'"$ESCAPED_BODY"'",
                 "draft": false,
                 "prerelease": false
               }' \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID"
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID")
               
+            echo "Ответ обновления релиза: $RESPONSE"
+            
           else
             echo "Создаем новый релиз"
             
@@ -129,58 +136,70 @@ jobs:
               -d '{
                 "tag_name": "'"$TAG"'",
                 "name": "Projman '"$VERSION"'",
-                "body": "'"$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')"'",
+                "body": "'"$ESCAPED_BODY"'",
                 "draft": false,
                 "prerelease": false
               }' \
               "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases")
             
+            echo "Ответ создания релиза: $RESPONSE"
+            
             # Получаем ID нового релиза
-            REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
-            echo "REL_ID=$REL_ID" >> $GITEA_ENV
+            if echo "$RESPONSE" | grep -q '"id"'; then
+              NEW_REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
+              echo "Новый ID релиза: $NEW_REL_ID"
+              echo "REL_ID=$NEW_REL_ID" >> $GITEA_ENV
+              echo "id=$NEW_REL_ID" >> $GITHUB_OUTPUT  # Для совместимости
+            else
+              echo "ОШИБКА: Не удалось получить ID релиза из ответа"
+              echo "REL_ID=" >> $GITEA_ENV
+            fi
           fi
-          
-          echo "ID релиза: $REL_ID"
 
       - name: Загрузка файлов в релиз
         if: env.REL_ID != ''
         run: |
           echo "=== Загрузка файлов в релиз ==="
+          echo "ID релиза для загрузки: $REL_ID"
           
-          # Сначала удаляем старые файлы с таким же именем (если есть)
-          echo "Проверяем существующие файлы в релизе..."
-          EXISTING_ASSETS=$(curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-            "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets")
+          # Находим все файлы projman
+          FILES=$(find ../ -maxdepth 1 \( -name "*projman*deb" -o -name "*projman*tgz" \) -type f)
+          if [ -z "$FILES" ]; then
+            echo "Нет файлов projman для загрузки"
+            exit 0
+          fi
           
-          # Загружаем все новые файлы
-          for FILE in $(find . -maxdepth 1 -name "projman*" -type f); do
+          echo "Найдены файлы:"
+          echo "$FILES"
+          
+          # Загружаем каждый файл
+          for FILE in $FILES; do
             FILENAME=$(basename "$FILE")
-            echo "Обрабатываем файл: $FILENAME"
+            echo "Загружаем: $FILENAME"
             
-            # Проверяем, существует ли файл с таким именем
-            ASSET_ID=$(echo "$EXISTING_ASSETS" | grep -o "\"name\":\"$FILENAME\".*\"id\":[0-9]*" | grep -o '"id":[0-9]*' | cut -d: -f2)
-            
-            if [ -n "$ASSET_ID" ]; then
-              echo "  Файл уже существует (ID: $ASSET_ID), удаляем..."
-              curl -X DELETE \
-                -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-                "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/assets/$ASSET_ID"
-            fi
-            
-            echo "  Загружаем новый файл..."
-            curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            curl -v --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
               --upload-file "$FILE" \
               "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$FILENAME"
               
-            echo "  Готово!"
+            echo "Файл загружен: $FILENAME"
           done
 
       - name: Финализация
         run: |
           echo "=== Сборка завершена ==="
           echo "Тег: $TAG"
+          echo "Версия: $VERSION"
+          echo "Ревизия: $RELEASE"
           echo "ID релиза: $REL_ID"
-          echo "Файлы в релизе:"
-          curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-            "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets" | \
-            grep -o '"name":"[^"]*"' | cut -d'"' -f4
+          
+          if [ -n "$REL_ID" ]; then
+            echo "Проверяем файлы в релизе..."
+            curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets" | \
+              grep -o '"name":"[^"]*"' | cut -d'"' -f4 || echo "Не удалось получить список файлов"
+          else
+            echo "Релиз не был создан или ID не получен"
+          fi
+          
+          echo "Собранные файлы:"
+          find . -maxdepth 1 -name "projman*" -type f | xargs ls -la 2>/dev/null || echo "Файлы не найдены"
