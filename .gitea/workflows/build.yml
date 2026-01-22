@@ -80,8 +80,10 @@ jobs:
           
           echo "Ответ API проверки релиза: $RESPONSE"
           
+          # Извлекаем id релиза (первый id в JSON)
           if echo "$RESPONSE" | grep -q '"id"'; then
-            REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
+            # Используем sed для точного извлечения первого id (игнорируем id автора)
+            REL_ID=$(echo "$RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p' | head -1)
             echo "Реліз уже существует. ID: $REL_ID"
             echo "RELEASE_EXISTS=true" >> $GITEA_ENV
             
@@ -134,9 +136,8 @@ jobs:
             echo "Ответ обновления релиза: $RESPONSE"
             
             # Проверяем ответ
-            if echo "$RESPONSE" | grep -q '"id"'; then
+            if echo "$RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p' | head -1 | grep -q '[0-9]'; then
               echo "Релиз успешно обновлен"
-              echo -n "$REL_ID" > /tmp/rel_id.txt
             else
               echo "ОШИБКА: Не удалось обновить релиз"
               echo "Ответ: $RESPONSE"
@@ -162,8 +163,8 @@ jobs:
             echo "Ответ создания релиза: $RESPONSE"
             
             # Получаем ID нового релиза
-            if echo "$RESPONSE" | grep -q '"id"'; then
-              NEW_REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2 | tr -d '\n\r ')
+            NEW_REL_ID=$(echo "$RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p' | head -1)
+            if [ -n "$NEW_REL_ID" ]; then
               echo "Новый ID релиза: $NEW_REL_ID"
               echo -n "$NEW_REL_ID" > /tmp/rel_id.txt
             else
