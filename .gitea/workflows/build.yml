@@ -5,42 +5,61 @@ jobs:
   build:
     runs-on: tcl-tk-builder
     steps:
-      - name: Клонирование
+      - name: Клонирование репозитория
         run: |
-          git clone "${{ vars.main_url }}${{ gitea.repository }}.git" src
-          pwd
+          git clone "${{ vars.main_url }}${{ gitea.repository }}.git" .
+          echo "Ревизия: $(git rev-parse --short HEAD)"
 
       - name: Сборка пакетов
         run: |
-          cd src
-          echo "=== Сборка DEB ==="
+          echo "=== Сборка DEB пакета ==="
           cd debian
           ./build-deb-projman.sh
           
-          echo "=== Сборка OpenBSD ==="
+          echo "=== Сборка OpenBSD пакета ==="
           cd ../openbsd
           ./build-package-bsd.sh
           
-          echo "=== Собранные файлы ==="
-          cd ../..
-          find src -name "*.deb" -o -name "*.tgz" | xargs ls -la
+          echo "=== Список созданных файлов ==="
+          cd ..
+          find . -name "*.deb" -o -name "*.tgz" -o -name "*.changes" | xargs ls -la
 
       - name: Извлечение версии
-        id: get_version
+        id: version_info
         run: |
-          cd src
-          VERSION=$(grep "Version" projman.tcl | head -1 | grep -o '[0-9.]\+')
+          VERSION=$(grep "Version" projman.tcl | head -1 | grep -o '[0-9.]\+[a-zA-Z0-9]*')
           RELEASE=$(grep "# Release" projman.tcl | tail -1 | awk '{print $NF}')
-          echo "version=$VERSION" >> $GITEA_OUTPUT
-          echo "release=$RELEASE" >> $GITEA_OUTPUT
-
-      - name: Создание релиза для тегов
-        if: startsWith(gitea.ref, 'refs/tags/')
-        run: |
-          cd src
           TAG_NAME="${GITEA_REF#refs/tags/}"
           
+          echo "VERSION=${VERSION}" >> $GITEA_ENV
+          echo "RELEASE=${RELEASE}" >> $GITEA_ENV
+          echo "TAG_NAME=${TAG_NAME}" >> $GITEA_ENV
+          
+          echo "Версия: $VERSION"
+          echo "Ревизия: $RELEASE"
+          echo "Тег: $TAG_NAME"
+
+      - name: Создание релиза
+        run: |
           echo "=== Создание релиза $TAG_NAME ==="
+          
+          # Ищем основной DEB пакет (бинарный)
+          DEB_FILE=$(find . -name "*_amd64.deb" -type f | head -1)
+          TGZ_FILE=$(find . -name "*.tgz" -type f | head -1)
+          
+          echo "DEB файл: $DEB_FILE"
+          echo "TGZ файл: $TGZ_FILE"
+          
+          # Создаем тело релиза
+          RELEASE_BODY="Версия: $VERSION
+          Ревизия: $RELEASE
+          Дата сборки: $(date)
+          
+          Доступные пакеты:
+          - $(basename "$DEB_FILE") (Debian/Ubuntu)
+          - $(basename "$TGZ_FILE") (OpenBSD)
+          
+          Собран из ревизии: $(git rev-parse --short HEAD)"
           
           # Создаем релиз
           RESPONSE=$(curl -s -X POST \
@@ -48,21 +67,79 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{
               "tag_name": "'"$TAG_NAME"'",
-              "name": "Projman '"$TAG_NAME"'",
-              "body": "Версия: '"$VERSION"'\nРевизия: '"$RELEASE"'",
-              "draft": false
+              "name": "Projman '"$VERSION"'",
+              "body": "'"$(echo "$RELEASE_BODY" | sed ':a;N;$!ba;s/\n/\\n/g')"'",
+              "draft": false,
+              "prerelease": false
             }' \
             "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases")
           
-          echo "Ответ: $RESPONSE"
+          echo "Ответ API: $RESPONSE"
           
           # Извлекаем ID релиза
-          REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
+          if echo "$RESPONSE" | grep -q '"id"'; then
+            REL_ID=$(echo "$RESPONSE" | grep -o '"id":[0-9]*' | cut -d: -f2)
+            echo "ID релиза: $REL_ID"
+            echo "REL_ID=$REL_ID" >> $GITEA_ENV
+          else
+            echo "Ошибка создания релиза!"
+            exit 1
+          fi
+
+      - name: Загрузка DEB пакета
+        if: env.REL_ID != ''
+        run: |
+          DEB_FILE=$(find . -name "*_amd64.deb" -type f | head -1)
+          if [ -f "$DEB_FILE" ]; then
+            echo "Загружаем DEB: $(basename "$DEB_FILE")"
+            curl -v --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "$DEB_FILE" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$(basename "$DEB_FILE")"
+          else
+            echo "DEB файл не найден!"
+            find . -name "*.deb" -type f
+          fi
+
+      - name: Загрузка OpenBSD пакета
+        if: env.REL_ID != ''
+        run: |
+          TGZ_FILE=$(find . -name "*.tgz" -type f | head -1)
+          if [ -f "$TGZ_FILE" ]; then
+            echo "Загружаем TGZ: $(basename "$TGZ_FILE")"
+            curl -v --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "$TGZ_FILE" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$(basename "$TGZ_FILE")"
+          else
+            echo "TGZ файл не найден!"
+            find . -name "*.tgz" -type f
+          fi
+
+      - name: Загрузка дополнительных файлов
+        if: env.REL_ID != ''
+        run: |
+          # Загружаем .changes файл
+          CHANGES_FILE=$(find . -name "*.changes" -type f | head -1)
+          if [ -f "$CHANGES_FILE" ]; then
+            echo "Загружаем changes: $(basename "$CHANGES_FILE")"
+            curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "$CHANGES_FILE" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$(basename "$CHANGES_FILE")"
+          fi
           
-          # Загружаем файлы в релиз
-          for FILE in $(find . -name "projman*" -type f \( -name "*.deb" -o -name "*.tgz" \)); do
-            echo "Загружаем: $FILE"
-            curl -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-              --upload-file "$FILE" \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$(basename $FILE)"
-          done
+          # Загружаем .buildinfo файл
+          BUILDINFO_FILE=$(find . -name "*.buildinfo" -type f | head -1)
+          if [ -f "$BUILDINFO_FILE" ]; then
+            echo "Загружаем buildinfo: $(basename "$BUILDINFO_FILE")"
+            curl --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              --upload-file "$BUILDINFO_FILE" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$(basename "$BUILDINFO_FILE")"
+          fi
+
+      - name: Итоговый отчет
+        run: |
+          echo "=== Сборка завершена ==="
+          echo "Тег: $TAG_NAME"
+          echo "Версия: $VERSION"
+          echo "Созданные файлы:"
+          find . -name "projman*" -type f | xargs ls -la
+
