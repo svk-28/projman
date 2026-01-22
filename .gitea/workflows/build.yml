@@ -199,21 +199,54 @@ jobs:
           echo "Найдены файлы:"
           echo "$FILES"
           
+          # Сначала проверим существующие ассеты
+          echo "=== Проверяем существующие ассеты ==="
+          curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets" | \
+            jq -r '.[].name' 2>/dev/null || echo "Не удалось получить список ассетов"
+          
           # Загружаем каждый файл
           for FILE in $FILES; do
             FILENAME=$(basename "$FILE")
             echo "Загружаем: $FILENAME"
             
-            curl -s --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
-              --upload-file "$FILE" \
-              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets?name=$FILENAME"
-              
-            if [ $? -eq 0 ]; then
-              echo "Файл загружен: $FILENAME"
+            # Используем правильный endpoint для загрузки ассетов
+            UPLOAD_URL="${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets"
+            
+            echo "URL загрузки: $UPLOAD_URL?name=$FILENAME"
+            
+            # Загружаем файл
+            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+              --user "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              -H "Content-Type: application/octet-stream" \
+              -X POST \
+              --data-binary @"$FILE" \
+              "$UPLOAD_URL?name=$FILENAME")
+            
+            HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d':' -f2)
+            API_RESPONSE=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
+            
+            echo "Статус: $HTTP_STATUS"
+            echo "Ответ API: $API_RESPONSE"
+            
+            if [ "$HTTP_STATUS" = "201" ] || [ "$HTTP_STATUS" = "200" ]; then
+              echo "✅ Файл загружен: $FILENAME"
             else
-              echo "ОШИБКА загрузки: $FILENAME"
+              echo "❌ ОШИБКА загрузки: $FILENAME"
+              echo "Детали: $API_RESPONSE"
             fi
+            
+            echo "---"
           done
+          
+          # Проверяем итоговый список ассетов
+          echo "=== Итоговый список ассетов ==="
+          curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+            "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets" | \
+            jq -r '.[] | "\(.name) - \(.browser_download_url)"' 2>/dev/null || \
+            curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
+              "${{ vars.main_url }}api/v1/repos/${{ gitea.repository }}/releases/$REL_ID/assets" | \
+              grep -o '"name":"[^"]*"' | cut -d'"' -f4
 
       - name: Финализация
         run: |
