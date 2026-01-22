@@ -33,10 +33,11 @@ jobs:
           
           # Создаем тег локально
           git tag -a "$TAG" -m "Release $TAG"
+
+          git remote set-url origin "https://${{ secrets.USER }}:${{ secrets.API_TOKEN }}@git.nuk-svk.ru/${{ gitea.repository }}.git"
           
           # Пушим тег на сервер
           git push origin "$TAG"
-
       - name: Сборка пакетов
         run: |
           cd debian && ./build-deb-projman.sh
