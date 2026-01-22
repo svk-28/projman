@@ -172,8 +172,10 @@ proc Config::CheckVariables {} {
         if {[regexp {^([^=]+)=(.*)$} $item -> var value]} {
             if ![info exists ::cfgVariables($var)] {
                 DebugPuts "Error in Config::CheckVariables: variable ::cfgVariables($var) not found"
-                Config::AddVariable "$var" "$value" "$section"
+                # set ::cfgVariables($var) $value
                 DebugPuts "Config::CheckVariables: The variable cfgVariables($var) setting to default value \"$value\""
+                Config::AddVariable "$var" "$value" "$section"
+
             }
         }
     }

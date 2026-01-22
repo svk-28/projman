@@ -1159,10 +1159,10 @@ proc Redo {} { SendEventToLatestTxtWidget <<Redo>> }
 proc DebugPuts {msg} {
     global cfgVariables
     if ![info exists cfgVariables(debug)] {
-        set cfgVariables(debug) "true"
+        return 0
     }
     if ![info exists cfgVariables(debugOut)] {
-        set cfgVariables(debugOut) "stdout"
+        return 0
     }
     if {$cfgVariables(debug) eq "true"} {
         if {$cfgVariables(debugOut) eq "stdout"} {
