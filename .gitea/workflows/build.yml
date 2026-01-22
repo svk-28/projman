@@ -80,17 +80,18 @@ jobs:
           
           echo "Ответ API проверки релиза: $RESPONSE"
           
-          # Извлекаем id релиза (первый id в JSON)
+          # Извлекаем id релиза - первый id в JSON
           if echo "$RESPONSE" | grep -q '"id"'; then
-            # Используем sed для точного извлечения первого id (игнорируем id автора)
-            REL_ID=$(echo "$RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p' | head -1)
-            echo "Реліз уже существует. ID: $REL_ID"
+            # Извлекаем только первый id (id релиза), игнорируем id автора
+            # Используем awk для точного извлечения
+            REL_ID=$(echo "$RESPONSE" | awk -F'"id":' '{print $2}' | awk -F',' '{print $1}' | head -1 | tr -d ' ')
+            echo "Релиз уже существует. ID: $REL_ID"
             echo "RELEASE_EXISTS=true" >> $GITEA_ENV
             
             # Очищаем и сохраняем REL_ID в файл
             echo -n "$REL_ID" | tr -d '\n' > /tmp/rel_id.txt
           else
-            echo "Реліз не существует"
+            echo "Релиз не существует"
             echo "RELEASE_EXISTS=false" >> $GITEA_ENV
             echo -n "" > /tmp/rel_id.txt
           fi
@@ -136,7 +137,7 @@ jobs:
             echo "Ответ обновления релиза: $RESPONSE"
             
             # Проверяем ответ
-            if echo "$RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p' | head -1 | grep -q '[0-9]'; then
+            if echo "$RESPONSE" | grep -q '"id"'; then
               echo "Релиз успешно обновлен"
             else
               echo "ОШИБКА: Не удалось обновить релиз"
@@ -163,7 +164,7 @@ jobs:
             echo "Ответ создания релиза: $RESPONSE"
             
             # Получаем ID нового релиза
-            NEW_REL_ID=$(echo "$RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p' | head -1)
+            NEW_REL_ID=$(echo "$RESPONSE" | awk -F'"id":' '{print $2}' | awk -F',' '{print $1}' | head -1 | tr -d ' ')
             if [ -n "$NEW_REL_ID" ]; then
               echo "Новый ID релиза: $NEW_REL_ID"
               echo -n "$NEW_REL_ID" > /tmp/rel_id.txt
