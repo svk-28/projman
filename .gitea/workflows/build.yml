@@ -20,13 +20,15 @@ jobs:
 
       - name: Create release
         run: |
+          export VERSION=$(grep "# Version" projman.tcl | grep -oE '\b[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\b')
+          export RELEASE=$(grep "# Release" projman.tcl | grep -oE '[0-9A-Za-z]+$')
           # Создаем релиз через API
           curl -X POST \
             -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{
               "tag_name": "'"${{ gitea.ref_name }}"'",
-              "name": "Release '"${{ gitea.ref_name }}"'",
+              "name": "Release '"${{ gitea.ref_name }}" ${VERSION} - ${RELEASE}'",
               "body": "Automated release for '"${{ gitea.ref_name }}"'",
               "draft": false,
               "prerelease": false
@@ -39,7 +41,7 @@ jobs:
           response=$(curl -s -u "${{ secrets.USER }}:${{ secrets.API_TOKEN }}" \
             "${{vars.main_url}}/api/v1/repos/${{ gitea.repository }}/releases/tags/${{ gitea.ref_name }}")
           
-          echo "id=$(echo $response | jq -r '.id')" >> $GITHUB_OUTPUT
+          echo "id=$(echo $response"
 
       - name: Upload Linux package
         run: |
