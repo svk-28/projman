@@ -22,7 +22,7 @@ jobs:
           
           echo "=== Список созданных файлов ==="
           cd ..
-          find . -name "*.deb" -o -name "*.tgz" -o -name "*.changes" | xargs ls -la
+          find ../ -name "*.deb" -o -name "*.tgz" -o -name "*.changes" | xargs ls -la
 
       - name: Извлечение версии
         id: version_info
