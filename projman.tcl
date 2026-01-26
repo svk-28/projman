@@ -114,12 +114,21 @@ foreach modFile [lsort [glob -nocomplain [file join $dir(theme) *]]] {
 }
 
 
-# загружаем пользовательский конфиг, если он отсутствует, то копируем дефолтный
-if {[file exists [file join $dir(cfg) projman.ini]] ==0} {
+# загружаем пользовательский конфиг, если он отсутствует или пустой, то копируем дефолтный
+if {[file exists [file join $dir(cfg) projman.ini]] == 0 || [file size [file join $dir(cfg) projman.ini]] == 0} {
     Config::create $dir(cfg)
 }
 Config::read $dir(cfg)
 Config::CheckVariables
+
+# загружаем пользовательский конфиг для инстурментов, если он отсутствует или пустой, то копируем дефолтный
+if {[file exists [file join $dir(cfg) tools.ini]] == 0 || [file size [file join $dir(cfg) tools.ini]] == 0} {
+    Tools::Create $dir(cfg)
+}
+# Читаем настройки для внешних инструментов
+Tools::Read $dir(cfg)
+Tools::CheckVariables
+Tools::Write $dir(cfg)
 
 ::msgcat::mclocale $cfgVariables(locale)
 

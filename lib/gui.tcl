@@ -135,7 +135,11 @@ GetEditMenu [menu .frmMenu.mnuEdit.m]
 ttk::menubutton .frmMenu.mnuView -text [::msgcat::mc "View"] -menu .frmMenu.mnuView.m
 GetViewMenu [menu .frmMenu.mnuView.m]
 
-pack .frmMenu.mnuFile .frmMenu.mnuEdit .frmMenu.mnuView -side left
+ttk::menubutton .frmMenu.mnuTools -text [::msgcat::mc "Tools"] -menu .frmMenu.mnuTools.m
+Tools::GetMenu [menu .frmMenu.mnuTools.m]
+
+
+pack .frmMenu.mnuFile .frmMenu.mnuEdit .frmMenu.mnuView .frmMenu.mnuTools -side left
 
 ttk::menubutton .frmMenu.mnuHelp -text [::msgcat::mc "Help"] -menu .frmMenu.mnuHelp.m
 GetHelpMenu [menu .frmMenu.mnuHelp.m]
@@ -151,6 +155,9 @@ GetFileMenu .popup.file
 menu .popup.view
 .popup add cascade -label [::msgcat::mc "View"] -menu .popup.view 
 GetViewMenu .popup.view
+menu .popup.tools
+.popup add cascade -label [::msgcat::mc "Tools"] -menu .popup.tools
+Tools::GetMenu .popup.tools
 
 set frmTool [ttk::frame .frmBody.frmTool]
 ttk::panedwindow .frmBody.panel -orient horizontal -style TPanedwindow
