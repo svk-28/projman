@@ -369,6 +369,9 @@ namespace eval Editor {
         if {$txt eq ""} {
             DebugPuts "Editor::SelectionGet: [focus]"
             set txt [focus]
+            if {![string match -nocase "*text*" $txt]} {
+                return ""
+            }
         }        
         set selBegin [lindex [$txt tag ranges sel] 0]
         set selEnd [lindex [$txt tag ranges sel] 1]
