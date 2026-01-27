@@ -11,8 +11,8 @@ namespace eval Tools {} {
 }
 
 set ::toolsDefault "\[VisualRegexp\]
-commandString=tkregexp %s
-description'A graphical front-end to write/debug regular expression
+commandString=tkregexp \"%s\"
+description=A graphical front-end to write/debug regular expression
 icon=
 shortCut=
 \[TkDIFF\]
@@ -124,6 +124,28 @@ proc Tools::GetMenu {m} {
     }
 }
 
+proc Tools::CommandPathSettings {command} {
+    global tcl_platform
+    if [file exists $command] {return $command}
+    
+    if {$tcl_platform(platform) eq "windows"} {
+        set cmd "where $command)"
+    } else {
+        set cmd "which $command"
+    }
+    DebugPuts [catch {exec {*}$cmd} toolsPath]
+    DebugPuts "executor_path $toolsPath"
+    if {[catch {exec {*}$cmd} toolsPath]} {
+        DebugPuts "Программа $command не найдена в системе"
+        return ""
+    }
+    set fullPath [string trim $toolsPath]
+    set firstPath [lindex [split $toolsPath "\n"] 0]
+
+    DebugPuts "Tools::CommandPathSettings: executable path $fullPath"
+    return $fullPath
+}
+
 proc Tools::Execute {toolName} {
     global cfgVariables toolsVariables tree
     if ![dict exists $::toolsVariables $toolName commandString] {
@@ -133,13 +155,22 @@ proc Tools::Execute {toolName} {
         set command [dict get $::toolsVariables $toolName commandString]
         DebugPuts "Tools::Execute: command for $toolName as $command"
     }
-
-    set fullCommand $command
-
+    # 7. Проверять команды на доступность в системе и подставлять полный путь к команде
+    #    если в конфиге не указан полный путь.
+    # Проверем наличие внешгних программ в системе
+    set cmd [lindex [split $command " "] 0]
+    if [file exists $cmd] {
+        set fullCommand $command
+    } else {
+        set fullPathToExec [Tools::CommandPathSettings "$cmd"]
+        set fullCommand [lreplace [split $command " "] 0 0 $fullPathToExec]
+    }
+    DebugPuts "Tools::Execute: $fullPathToExec, $fullCommand"
     # 2. Определять выделен ли текст в открытом редакторе
+    # 5. Заменяем %s на выделенный в редакторе текст 
     set selectedText [Editor::SelectionGet]
     if {$selectedText ne ""} {
-        regsub -all "%s" $command "$selectedText" fullCommand
+        regsub -all "%s" $fullCommand "$selectedText" fullCommand
         DebugPuts "Tools::Execute:  selected text \"$selectedText\", command \"$fullCommand\""
     }
 
@@ -154,14 +185,12 @@ proc Tools::Execute {toolName} {
             if {![string match "*%f*" $fullCommand]} break
             set fullCommand [regsub {%f} $fullCommand $file]
         }
-        DebugPuts "Tools::Execute: $fullCommand"
     }
 
-    # 5. Заменяем %s на выделенный в редакторе текст 
     # 6. Заменяем %d на текущий каталог(и), если он выделен в дереве,
     #    и если не выделено то корневой открытый в дереве
-    # 7. Проверять команды на доступность в системе и подставлять полный путь к команде
-    #    если в конфиге не указан полный путь.
+    DebugPuts "Tools::Execute: $fullCommand"
+
     set pipe [open "|$fullCommand" "r"]
     fileevent $pipe readable
     fconfigure $pipe -buffering none -blocking no
