@@ -136,7 +136,7 @@ proc Tools::CommandPathSettings {command} {
     DebugPuts [catch {exec {*}$cmd} toolsPath]
     DebugPuts "executor_path $toolsPath"
     if {[catch {exec {*}$cmd} toolsPath]} {
-        DebugPuts "Программа $command не найдена в системе"
+        DebugPuts "Tools::CommandPathSettings: Программа $command не найдена в системе"
         return ""
     }
     set fullPath [string trim $toolsPath]
@@ -165,7 +165,12 @@ proc Tools::Execute {toolName} {
         set fullPathToExec [Tools::CommandPathSettings "$cmd"]
         set fullCommand [lreplace [split $command " "] 0 0 $fullPathToExec]
     }
-    DebugPuts "Tools::Execute: $fullPathToExec, $fullCommand"
+    if {$fullPathToExec eq ""} {
+        DebugPuts "Tools::Execute: $command not found"
+        return
+    } else {
+        DebugPuts "Tools::Execute: $fullPathToExec, $fullCommand"
+    }
     # 2. Определять выделен ли текст в открытом редакторе
     # 5. Заменяем %s на выделенный в редакторе текст 
     set selectedText [Editor::SelectionGet]
