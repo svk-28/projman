@@ -29,6 +29,7 @@ proc Tools::Create {dir} {
 }
 
 proc Tools::Read {dir} {
+    set ::toolsVariables ""
     set toolsFile [ini::open [file join $dir tools.ini] "r"]
     foreach section [ini::sections $toolsFile] {
         foreach key [ini::keys $toolsFile $section] {
@@ -104,6 +105,12 @@ proc Tools::CheckVariables {} {
 
 proc Tools::GetMenu {m} {
     global cfgVariables toolsVariables
+    set count [$m index end]
+    if {$count != "none"} {
+        for {set i $count} {$i >= 0} {incr i -1} {
+            $m delete $i
+        }
+    }
     foreach toolName [dict keys $toolsVariables] {
         dict for {key value} [dict get $toolsVariables $toolName] {
             DebugPuts "GetToolsMenu $key $value"
