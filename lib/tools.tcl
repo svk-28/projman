@@ -11,7 +11,7 @@ namespace eval Tools {} {
 }
 
 set ::toolsDefault "\[VisualRegexp\]
-commandString=tkregexp %
+commandString=tkregexp %s
 description'A graphical front-end to write/debug regular expression
 icon=
 shortCut=
@@ -125,7 +125,7 @@ proc Tools::GetMenu {m} {
 }
 
 proc Tools::Execute {toolName} {
-    global cfgVariables toolsVariables
+    global cfgVariables toolsVariables tree
     if ![dict exists $::toolsVariables $toolName commandString] {
         DebugPuts "Tools::Execute: command for $toolName not found"
         return
@@ -133,18 +133,36 @@ proc Tools::Execute {toolName} {
         set command [dict get $::toolsVariables $toolName commandString]
         DebugPuts "Tools::Execute: command for $toolName as $command"
     }
-    # 1. Определять текущий файл
+
+    set fullCommand $command
+
     # 2. Определять выделен ли текст в открытом редакторе
+    set selectedText [Editor::SelectionGet]
+    if {$selectedText ne ""} {
+        regsub -all "%s" $command "$selectedText" fullCommand
+        DebugPuts "Tools::Execute:  selected text \"$selectedText\", command \"$fullCommand\""
+    }
+
+    # 1. Определять текущий файл
     # 3. Опеределять сколько файлов выделено в дереве
     # 4. Заменяем знак %f на имя текущего файла (файлов)
     # regsub -all "%f" $command "$filePath" fullCommand
+    set filesList [Tree::GetSelectedItemValues $tree]
+    if {$filesList ne ""} {
+        foreach file $filesList {
+            # Если больше нет %f для замены, выходим из цикла
+            if {![string match "*%f*" $fullCommand]} break
+            set fullCommand [regsub {%f} $fullCommand $file]
+        }
+        DebugPuts "Tools::Execute: $fullCommand"
+    }
+
     # 5. Заменяем %s на выделенный в редакторе текст 
     # 6. Заменяем %d на текущий каталог(и), если он выделен в дереве,
     #    и если не выделено то корневой открытый в дереве
     # 7. Проверять команды на доступность в системе и подставлять полный путь к команде
     #    если в конфиге не указан полный путь.
-    set pipe [open "|$command" "r"]
+    set pipe [open "|$fullCommand" "r"]
     fileevent $pipe readable
     fconfigure $pipe -buffering none -blocking no
 }
-

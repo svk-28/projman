@@ -363,15 +363,21 @@ namespace eval Editor {
         }
     }
 
-    proc SelectionGet {txt} {
-        variable selectionText
+    proc SelectionGet {{txt ""}} {
+        global nbEditor
+        variable selectionText ""
+        if {$txt eq ""} {
+            DebugPuts "Editor::SelectionGet: [focus]"
+            set txt [focus]
+        }        
         set selBegin [lindex [$txt tag ranges sel] 0]
         set selEnd [lindex [$txt tag ranges sel] 1]
         if {$selBegin ne "" && $selEnd ne ""} {
             set selectionText [$txt get $selBegin $selEnd]
         }
+        return $selectionText
     }
-    
+
     proc SelectionHighlight {txt} {
         variable selectionText
         $txt tag remove lightSelected 1.0 end 
