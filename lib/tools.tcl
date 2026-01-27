@@ -122,6 +122,8 @@ proc Tools::GetMenu {m} {
             }
         }
     }
+    $m add separator
+    $m add command -label "[::msgcat::mc "Settings"]" -command Tools::Settings
 }
 
 proc Tools::CommandPathSettings {command} {
@@ -199,4 +201,12 @@ proc Tools::Execute {toolName} {
     set pipe [open "|$fullCommand" "r"]
     fileevent $pipe readable
     fconfigure $pipe -buffering none -blocking no
+}
+
+# Правка файла настроек
+proc Tools::Settings {} {
+    global dir
+    
+    FileOper::Edit [file join $dir(cfg) tools.ini]
+    # Config::read $dir(cfg)
 }
