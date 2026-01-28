@@ -124,7 +124,7 @@ proc Tools::GetMenu {m} {
         if {[info exists cmd] == 1 && $cmd ne ""} {
             if {[info exists shortCut] == 1 && $shortCut ne ""} {
                 $m add command -label $toolName -accelerator $shortCut -command [list Tools::Execute "$toolName"]
-                bind . <$shortCut>  [list Tools::Execute "$toolName"]
+                bind . <$shortCut>  "[list Tools::Execute "$toolName"]; break"
             } else {
                 $m add command -label $toolName -command [list Tools::Execute "$toolName"]
             }
