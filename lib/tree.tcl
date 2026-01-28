@@ -99,6 +99,7 @@ namespace eval Tree {
     proc PressItem {tree} {
         global nbEditor lexers editors activeProject
         set id [$tree selection]
+        if {[llength $id] > 1} {return}
         $tree tag remove selected
         $tree item $id -tags selected
         SetActiveProject [GetItemID $tree [GetUpperItem $tree $id]]
@@ -160,5 +161,12 @@ namespace eval Tree {
             GetUpperItem $tree $parent
         }
     }
-    
+
+    proc GetSelectedItemValues {tree} {
+        set valuesList ""
+        foreach itemID [$tree selection] {
+            lappend valuesList [GetItemID $tree $itemID]
+        }
+        return $valuesList
+    }
 }
