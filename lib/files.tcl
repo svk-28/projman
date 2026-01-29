@@ -391,6 +391,12 @@ namespace eval FileOper {
         if {[file tail $filePath] eq "projman.ini"} {
             Config::read $dir(cfg)
         }
+        if {[file tail $filePath] eq "tools.ini"} {
+            Tools::Read $dir(cfg)
+            Tools::CheckVariables
+            Tools::GetMenu .popup.tools
+            Tools::GetMenu .frmMenu.mnuTools.m
+        }
         if [string match "*untitled*" $nbEditorItem] {
             FileOper::Close
             if {$type ne "close"} {

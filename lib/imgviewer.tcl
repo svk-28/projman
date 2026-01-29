@@ -19,7 +19,7 @@ proc ImageViewer {f w node} {
     #$w.scrwin setwidget $w.scrwin.f
     openImg $f $w.f.c $node
 }
-        
+ 
 proc openImg {fn w node} {
     global im1 factor
     set im1 [image create photo -file $fn]

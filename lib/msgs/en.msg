@@ -174,6 +174,7 @@
 ::msgcat::mcset en "Title normal"
 ::msgcat::mcset en "Title modify"
 ::msgcat::mcset en "Toolbar"
+::msgcat::mcset en "Tools"
 ::msgcat::mcset en "Undo"
 ::msgcat::mcset en "Update"
 ::msgcat::mcset en "Variables"
@@ -183,6 +184,5 @@
 ::msgcat::mcset en "Was replacement"
 ::msgcat::mcset en "Word wrapping"
 ::msgcat::mcset en "Work dir"
-
 
 

@@ -11,6 +11,7 @@ sed -i "/# Build:.*/c$TXT" projman.tcl
 
 cp projman.tcl projman
 cp changelog-gen.tcl changelog-gen
+cp tkregexp.tcl tkregexp
 
 ./changelog-gen.tcl  --project-name projman --project-version ${VERSION} --project-release ${RELEASE} --out-file debian/changelog --deb --last
 
@@ -25,5 +26,5 @@ dpkg-buildpackage -d
 
 #cp ../projman_${VERSION}-${RELEASE}_amd64.deb /files/
 
-rm -v projman changelog-gen
+rm -v projman changelog-gen tkregexp
 rm -r -v debian/{projman,.debhelper}
