@@ -296,8 +296,8 @@ namespace eval Helper {
     proc SelectFromList {txt} {
         global returnProcessed editors lexers
         set win .varhelper
-        puts "[dict get $editors $txt fileType]"
-        puts "[dict get $lexers [dict get $editors $txt fileType] variableSymbol]"
+        # puts "[dict get $editors $txt fileType]"
+        # puts "[dict get $lexers [dict get $editors $txt fileType] variableSymbol]"
         
         if {![winfo exists $win]} {
             return
@@ -305,7 +305,12 @@ namespace eval Helper {
         set selected [$win.lBox curselection]
         if {$selected ne ""} {
             set text [string trim [$win.lBox get $selected]]
-            set varSymbol [dict get $lexers [dict get $editors $txt fileType] variableSymbol]
+            # DebugPuts "[dict exists $lexers [dict get $editors $txt fileType] variableSymbol]"
+            if [dict exists $lexers [dict get $editors $txt fileType] variableSymbol] {
+                set varSymbol [dict get $lexers [dict get $editors $txt fileType] variableSymbol]
+            } else {
+                set varSymbol ""
+            }
             # Опеределяем что символ перед позицией вставки равен символу переменной из настроек lexers
             # если равен то вставляем выбранное из списка сразу за ним
             # если нет то удаляем введенный текст до этого символа и вставляем выбранное из списка
@@ -332,5 +337,4 @@ namespace eval Helper {
         puts "DEBUG: $msg"
     }
 }
-
 
