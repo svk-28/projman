@@ -16,7 +16,7 @@ namespace eval Editor {
             $node.frmText.t configure -$optionName $value
         }
     }
-    
+
     # Comment one string or selected string
     proc Comment {txt fileType} {
         global lexers cfgVariables
@@ -404,7 +404,14 @@ namespace eval Editor {
     }
 
     proc ReleaseKey {k txt fileType} {
-        global cfgVariables lexers
+        global cfgVariables lexers returnProcessed
+        # Если Return уже обработан в SelectFromList, пропускаем
+        # puts "$returnProcessed $k"
+        if {$k eq "Return" && [info exists returnProcessed]} {
+            unset returnProcessed
+            return
+        }
+        # 
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set posNum [lindex [split $pos "."] 1]
@@ -508,10 +515,68 @@ namespace eval Editor {
         if {$cfgVariables(variableHelper) eq "true"} {
             if {[dict exists $lexers $fileType variableSymbol] != 0} {
                 set varSymbol [dict get $lexers $fileType variableSymbol]
-                set lastSymbol [string last $varSymbol [$txt get $lineNum.0 $pos]]
+                set lineText [$txt get $lineNum.0 $pos]
+                # # Ищем переменную с помощью регулярного выражения
+                # # Паттерн ищет $ за которым идет имя переменной И курсор сразу после имени
+                # if {[regexp "(\\$)(\[a-zA-Z_:\]\[a-zA-Z0-9_:\]*)\$" $lineText -> symbol varName]} {
+                    # # Проверяем, что найденный $ - это действительно начало переменной
+                    # # (а не часть строки или другого символа)
+                    # DebugPuts "Found variable: $symbol$varName"
+                    # 
+                    # # Дополнительная проверка: перед $ не должно быть обратного слэша (экранирование)
+                    # set posOfVarSymbol [string last $varSymbol $lineText]
+                    # if {$posOfVarSymbol > 0} {
+                        # set charBefore [string index $lineText [expr {$posOfVarSymbol - 1}]]
+                        # if {$charBefore eq "\\"} {
+                            # DebugPuts "Dollar sign is escaped, skipping"
+                            # return
+                        # }
+                    # }
+                    # Helper::VarHelper $box_x $box_y $txt $varName vars
+                # }
+                DebugPuts "Line text: '$lineText'"
+                
+                # Проверяем, есть ли $ в строке
+                set lastSymbol [string last $varSymbol $lineText]
                 if {$lastSymbol ne "-1"} {
-                    set word  [string trim [$txt get $lineNum.[expr $lastSymbol + 1] $pos]]
-                    Helper::VarHelper $box_x $box_y $txt $word vars
+                    # Проверяем экранирование
+                    if {$lastSymbol > 0} {
+                        set charBefore [string index $lineText [expr {$lastSymbol - 1}]]
+                        if {$charBefore eq "\\"} {
+                            DebugPuts "Dollar sign is escaped, skipping"
+                            return
+                        }
+                    }
+                    # Берем текст после $
+                    set afterDollar [string range $lineText [expr {$lastSymbol + 1}] end]
+                    DebugPuts "Text after $varSymbol: '$afterDollar'"
+                    # Если после $ ничего нет (только что ввели $) - показываем все переменные
+                    if {$afterDollar eq ""} {
+                        DebugPuts "Just typed $varSymbol, showing all variables"
+                        Helper::VarHelper $box_x $box_y $txt "" vars
+                        return
+                    }
+                    # Проверяем, что введено после $
+                    if {[regexp {^([a-zA-Z_:][a-zA-Z0-9_:]*)?$} $afterDollar -> varName]} {
+                        # Вариант 1: regexp с концом строки - курсор сразу после (возможного) имени
+                        DebugPuts "Cursor after variable name (or $varSymbol only): '$varName'"
+                        Helper::VarHelper $box_x $box_y $txt $varName vars
+                    } elseif {[regexp {^([a-zA-Z_:][a-zA-Z0-9_:]*)} $afterDollar -> varName]} {
+                        # Вариант 2: есть имя переменной, но курсор не обязательно сразу после
+                        DebugPuts "Found variable name: '$varName'"
+                        # Проверяем позицию курсора
+                        set varEndPos [expr {[string length $varName] + 1}] ; # +1 для $
+                        
+                        if {$varEndPos == [string length $lineText]} {
+                            # Курсор сразу после имени
+                            Helper::VarHelper $box_x $box_y $txt $varName vars
+                        } else {
+                            DebugPuts "Cursor not immediately after variable name, skipping"
+                        }
+                    } else {
+                        # После $ что-то недопустимое (например, цифра, скобка и т.д.)
+                        DebugPuts "Invalid characters after $varSymbol"
+                    }
                 }
             } else {
                 set ind [$txt search -backwards -regexp {\W} $pos {insert linestart}]
@@ -523,6 +588,7 @@ namespace eval Editor {
                     # set ind [$txt search -backwards -regexp {^} $pos {insert linestart}]
                     set word [$txt get {insert linestart} $pos]
                 }
+                DebugPuts "> Extracted word: '$word'"
                 if {$word ne ""} {
                     Helper::VarHelper $box_x $box_y $txt $word {}
                 }

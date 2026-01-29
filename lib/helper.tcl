@@ -4,7 +4,7 @@ namespace eval Helper {
     variable ::listActive 0
     # Переменная для отслеживания предыдущего ввода (чтобы не обновлять список без необходимости)
     variable ::previousInput ""
-
+    
     proc VarHelperKey { widget K A } {
         set win .varhelper
         DebugPuts "Helper::VarHelperKey: K=$K, A='$A'"
@@ -16,7 +16,7 @@ namespace eval Helper {
             set ::listActive 0
             return
         }
-        
+
         switch -- $K {
             <Up> {
                 DebugPuts "Processing Up arrow"
@@ -275,7 +275,7 @@ namespace eval Helper {
             }
             return
         }
-        
+
         # Восстанавливаем оригинальные привязки
         foreach binding $::originalBindings {
             set event [lindex $binding 0]
@@ -288,49 +288,49 @@ namespace eval Helper {
                 bind $txt $event $command
             }
         }
-        
+
         # Очищаем сохраненные привязки
         set ::originalBindings {}
     }
 
     proc SelectFromList {txt} {
+        global returnProcessed editors lexers
         set win .varhelper
-        
-        DebugPuts "SelectFromList called"
+        puts "[dict get $editors $txt fileType]"
+        puts "[dict get $lexers [dict get $editors $txt fileType] variableSymbol]"
         
         if {![winfo exists $win]} {
-            DebugPuts "Window doesn't exist"
             return
         }
-        
-        # Получаем выбранный элемент
         set selected [$win.lBox curselection]
-        DebugPuts "Selected index: $selected"
-        
         if {$selected ne ""} {
-            set text [$win.lBox get $selected]
-            DebugPuts "Selected text: $text"
-            
-            # Вставляем выбранный текст в текстовое поле
-            $txt delete "insert - 1 chars wordstart" "insert wordend - 1 chars"
-            $txt insert "insert" $text
-            
-            # Закрываем окно списка
+            set text [string trim [$win.lBox get $selected]]
+            set varSymbol [dict get $lexers [dict get $editors $txt fileType] variableSymbol]
+            # Опеределяем что символ перед позицией вставки равен символу переменной из настроек lexers
+            # если равен то вставляем выбранное из списка сразу за ним
+            # если нет то удаляем введенный текст до этого символа и вставляем выбранное из списка
+            if {[$txt get "insert - 1 char" "insert"] eq $varSymbol} {
+                $txt insert "insert" $text
+            } else {
+                $txt delete "insert - 1 chars wordstart" "insert wordend - 1 chars"
+                $txt insert "insert" $text
+            }        
+            # Закрываем окно
             destroy $win
             set ::listActive 0
             Helper::VarHelperBindingsRestore $txt
             set ::previousInput ""
+
+            # Устанавливаем флаг, что Return уже обработан
+            set returnProcessed 1
+            # after 10 {catch {unset returnProcessed}}
             
-            # Возвращаем фокус
             focus $txt.t
         }
     }
-
     proc DebugPuts {msg} {
         puts "DEBUG: $msg"
     }
 }
-
-
 
 
