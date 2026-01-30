@@ -364,7 +364,7 @@ namespace eval FileOper {
             set nbEditorWindow "[lindex $str 0].[lindex $str 1].[lindex $str 2]"
             # puts "FileOper::Save: current window $nbEditorWindow"
         }
-        # puts "FileOper::Save: $nbEditorWindow"
+
         set nbEditorItem [$nbEditorWindow select]
         DebugPuts "Saved editor text: $nbEditorItem"
         if [string match "*untitled*" $nbEditorItem] {
@@ -382,8 +382,13 @@ namespace eval FileOper {
             set treeItem "file::[string range $nbEditorItem [expr [string last "." $nbEditorItem] +1] end ]"
             set filePath [Tree::GetItemID $tree $treeItem]
         }
+        if {![winfo exists $nbEditorItem.frmText.t]} {
+            DebugPuts "winfo exists $nbEditorWindow.frmText.t equal [winfo exists $nbEditorWindow.frmText.t]"
+            return
+        }
         set editedText [$nbEditorItem.frmText.t get 0.0 end]
         if {$type eq "saveas"} {set filePath [FileOper::SaveDialog]}
+        if {$filePath eq "cancel"} {return}
         DebugPuts "FileOper::Save $filePath"
         set f [open $filePath "w+"]
         puts -nonewline $f $editedText
@@ -638,9 +643,10 @@ namespace eval FileOper {
             set dir $env(HOME)
         }
         set fileName [tk_getSaveFile -initialdir $dir -filetypes $::types -parent .]
+        if {$fileName eq ""} {return "cancel"}
         set fullPath [file join $dir $fileName]
         set file [string range $fullPath [expr [string last "/" $fullPath]+1] end]
-        DebugPuts "FileOper::SaveDialog $fullPath"
+        DebugPuts "FileOper::SaveDialog $fileName $fullPath"
         regsub -all "." $file "_" node
         set dir [file dirname $fullPath]
         set file [file tail $fullPath]
