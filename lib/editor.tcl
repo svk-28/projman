@@ -745,6 +745,8 @@ namespace eval Editor {
         }
         bind $txt <Control-r> "Editor::SplitEditorForExecute $w $fileType $nb "
         bind $txt <Control-Cyrillic_ka> "Editor::SplitEditorForExecute $w $fileType $nb "
+        # bind $txt <Shift-Control-s> FileOper::Close
+        # bind $txt <Shift-Control-Cyrillic_es> "FileOper::Close saveas"
 
         # bind $txt.t <KeyRelease> "Editor::ReleaseKey %K $txt.t $fileType"
         # bind $txt.t <KeyPress> "Editor::PressKey %K $txt.t"

@@ -383,6 +383,8 @@ namespace eval FileOper {
             set filePath [Tree::GetItemID $tree $treeItem]
         }
         set editedText [$nbEditorItem.frmText.t get 0.0 end]
+        if {$type eq "saveas"} {set filePath [FileOper::SaveDialog]}
+        DebugPuts "FileOper::Save $filePath"
         set f [open $filePath "w+"]
         puts -nonewline $f $editedText
         # puts "$f was saved"
@@ -397,7 +399,7 @@ namespace eval FileOper {
             Tools::GetMenu .popup.tools
             Tools::GetMenu .frmMenu.mnuTools.m
         }
-        if [string match "*untitled*" $nbEditorItem] {
+        if {[string match "*untitled*" $nbEditorItem] || $type eq "saveas"} {
             FileOper::Close
             if {$type ne "close"} {
                 FileOper::Edit $filePath
@@ -627,5 +629,28 @@ namespace eval FileOper {
         # set selEnd [lindex [$txt tag ranges sel] 1]
         # puts [$txt get [$txt tag ranges sel]]
     # }
-    
+
+    proc SaveDialog {} {
+        global env project activeProject
+        if [info exists activeProject] {
+            set dir $activeProject
+        } else {
+            set dir $env(HOME)
+        }
+        set fileName [tk_getSaveFile -initialdir $dir -filetypes $::types -parent .]
+        set fullPath [file join $dir $fileName]
+        set file [string range $fullPath [expr [string last "/" $fullPath]+1] end]
+        DebugPuts "FileOper::SaveDialog $fullPath"
+        regsub -all "." $file "_" node
+        set dir [file dirname $fullPath]
+        set file [file tail $fullPath]
+        set name [file rootname $file]
+        set ext [string range [file extension $file] 1 end]
+        if {$fullPath != ""} {
+            # puts $fullPath
+            return $fullPath
+        } else {
+            return
+        }
+    }
 }

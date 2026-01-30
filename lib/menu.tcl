@@ -20,6 +20,8 @@ proc GetFileMenu {m} {
     }
     $m add command -label [::msgcat::mc "Save file"] -command {FileOper::Save}\
         -accelerator "Ctrl+S"
+    $m add command -label [::msgcat::mc "Save as"] -command {FileOper::Save saveas}\
+        -accelerator "Shift+Ctrl+S"
     $m add command -label [::msgcat::mc "Close file"] -command {FileOper::Close}\
         -accelerator "Ctrl+w"
     $m add command -label [::msgcat::mc "Close all"] -command {FileOper::CloseAll}
