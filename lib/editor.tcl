@@ -694,7 +694,7 @@ namespace eval Editor {
         bind $txt <<Modified>> "SetModifiedFlag $w $nb auto"
         bind $txt <Control-u> "Editor::SearchBrackets %W"
         bind $txt <Control-Cyrillic_ghe> "Editor::SearchBrackets %W"
-        bind $txt <Control-J> "catch {Editor::GoToFunction $txt}"
+        bind $txt <Control-J> "catch {Editor::GoToFunction $txt}; break"
         bind $txt <Control-j> "catch {Editor::GoToFunction $txt}; break"
         bind $txt <Control-y> {Redo; break}
         bind $txt <Control-Cyrillic_o> "catch {Editor::GoToFunction $txt}; break"
