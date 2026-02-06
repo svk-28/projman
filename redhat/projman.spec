@@ -71,6 +71,9 @@ fi
 
 %changelog
 * Fri Feb  6 2026 svk <svk@nuk-svk.ru> 2.0.0-beta3
+    -  Откорректировал сборку рпм
+
+* Fri Feb  6 2026 svk <svk@nuk-svk.ru> 2.0.0-beta3
     -  Добавил сборку rpm. Исправил changelog-и
 
 * Fri Feb  6 2026 svk <svk@nuk-svk.ru> 2.0.0-beta3
@@ -222,6 +225,7 @@ fi
     -  Добавлена подсветка имен файлов в выводе git show
     -  Небольшие правки в подсказках по переменным
     -  Исправлена подсветка SHELL переменных а YAML файлах (ansible
+
 
 
 

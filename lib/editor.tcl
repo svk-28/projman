@@ -876,9 +876,15 @@ namespace eval Editor {
         for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
             set line [$txt get $lineNumber.0 $lineNumber.end]
             # Выбираем процедуры (функции, классы и т.д.)
+            # DebugPuts "Editor::RedaStructure: file type $fileType"
+            
             if {[dict exists $lexers $fileType procRegexpCommand] != 0 } {
+                # regexp -nocase -all -line -- {^\s*(?:(\w+)\s+)+(\w+)\s*\((.*?)\)\s*(?:;|\{)} $line match returns procName params
+                # regexp -nocase -all -line -lineanchor -linestop -- {^\s*(?:(\w+)\s+)+(\w+)\s*\((.*?)(,|\))} $line match v1 v2 v3 v4
                 if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
+                    DebugPuts "Editor::RedaStructure: regexp = [dict get $lexers $fileType procRegexpCommand]"
                     set procName_ [string trim $procName]
+                    DebugPuts "Editor::RedaStructure: find the proc $procName_"
                     if {$treeItemName ne ""} {
                         Tree::InsertItem $tree $treeItemName $procName_  "procedure" "$procName_ ($params)"
                     }

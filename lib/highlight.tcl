@@ -210,5 +210,24 @@ namespace eval Highlight {} {
         ctext::addHighlightClass $txt compile_errors #ff5050 {error Error ERROR invalid undefined cannot}
         ctext::addHighlightClassForRegexp $txt url lightblue {\w+://\w.+\w+}
     }
-
+    proc C {txt} {
+        global lexers
+        ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
+        ctext::addHighlightClassForRegexp $txt arrows orange {(->)|(-<)}
+        ctext::addHighlightClass $txt stackControl #19a2a6 [dict get $lexers C commands]
+        ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 float bool byte size_t void char uint32_t uint32}
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\&"
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\*"
+        # ctext::addHighlightClassForRegexp $txt vars_extended #4471ca {\$\{[a-zA-Z0-9\_\-:\./\$\{\}]+\}}
+        ctext::addHighlightClass $txt variable_funcs gold {var type struct}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(//|/\*)[^\n\r]*}    
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+        ctext::addHighlightClass $txt bool #3e803b {nil false true NULL TRUE FALSE}
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt macros #f88ffb {#\w+}
+        ctext::addHighlightClassForRegexp $txt include #68ceff {<[\w./_-]+?>}
+    }
+    proc H {txt} {Highlight::C $txt}
 }
