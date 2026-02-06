@@ -35,8 +35,8 @@ sed -i "s/.*Release:.*/Release:\t${RELEASE}/" ${RPM_BUILD_DIR}/SPECS/projman.spe
 
 fakeroot rpmbuild -ba "${RPM_BUILD_DIR}/SPECS/projman.spec"
 
-# cp ${RPM_BUILD_DIR}/RPMS/noarch/projman-${VERSION}-${RELEASE}.noarch.rpm /files/
-# cp ${RPM_BUILD_DIR}/SRPMS/projman-${VERSION}-${RELEASE}.src.rpm /files/
+cp ${RPM_BUILD_DIR}/RPMS/noarch/projman-${VERSION}-${RELEASE}.noarch.rpm  ../
+cp ${RPM_BUILD_DIR}/SRPMS/projman-${VERSION}-${RELEASE}.src.rpm ../
 
 rm -v projman
 rm -r -v ${RPM_BUILD_DIR}/SPECS/projman.spec
