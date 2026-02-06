@@ -41,4 +41,4 @@ fakeroot rpmbuild -ba "${RPM_BUILD_DIR}/SPECS/projman.spec"
 rm -v projman
 rm -r -v ${RPM_BUILD_DIR}/SPECS/projman.spec
 rm -r -v ${RPM_BUILD_DIR}/SOURCES/projman-${VERSION}-${RELEASE}.tar.gz
-rm -r -v ${RPM_BUILD_DIR}/BUILD/projman
+#rm -r -v ${RPM_BUILD_DIR}/BUILD/projman
