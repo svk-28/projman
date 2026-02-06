@@ -1,11 +1,7 @@
 projman (2.0.0-beta3) stable; urgency=medium
 
+  *  changelog-gen: сделал вывод изменения в формате rpm.spec
   *  Исправил смену регистра в заголовках вкладок
-
- -- svk <svk@nuk-svk.ru>  Thu,  5 Feb 2026 18:49:28 +0300
-
-projman (2.0.0-beta3) stable; urgency=medium
-
   *  Добавил диалог вменю "Сохранить как"
   *  Добавил проверки в диалог FileOper::SaveFile
   *  Вынес код связанный с обработкой подсказок при вводе переменных и процедур в отдельный модуль.
@@ -486,7 +482,6 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
-
 
 
 

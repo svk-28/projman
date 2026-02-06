@@ -67,7 +67,10 @@ jobs:
           
           echo "=== Сборка OpenBSD пакета ==="
           cd ../openbsd && ./build-package-bsd.sh
-          
+
+          echo "=== Сборка RPM пакета ==="
+          cd ../redhat && ./build-rpm.sh
+
           echo "=== Собранные файлы ==="
           find . -maxdepth 1 -name "projman*" -type f | xargs ls -la 2>/dev/null || echo "Файлы не найдены"
 
@@ -187,7 +190,7 @@ jobs:
           echo "ID релиза для загрузки: $REL_ID"
           
           # Находим все файлы projman
-          FILES=$(find ../ -maxdepth 1 \( -name "*projman*deb" -o -name "*projman*tgz" \) -type f)
+          FILES=$(find ../ -maxdepth 1 \( -name "*projman*deb" -o -name "*projman*tgz" -o -name "*projman*rpm" \) -type f)
           if [ -z "$FILES" ]; then
             echo "Нет файлов projman для загрузки"
             exit 0
@@ -227,9 +230,9 @@ jobs:
             echo "Ответ API: $API_RESPONSE"
             
             if [ "$HTTP_STATUS" = "201" ] || [ "$HTTP_STATUS" = "200" ]; then
-              echo "✅ Файл загружен: $FILENAME"
+              echo "Файл загружен: $FILENAME"
             else
-              echo "❌ ОШИБКА загрузки: $FILENAME"
+              echo "ОШИБКА загрузки: $FILENAME"
               echo "Детали: $API_RESPONSE"
             fi
             
@@ -266,4 +269,4 @@ jobs:
           fi
           
           echo "Собранные файлы:"
-          find ../ -maxdepth 1 \( -name "*projman*deb" -o -name "*projman*tgz" \) -type f | xargs ls -la 2>/dev/null || echo "Файлы не найдены"
+          find ../ -maxdepth 1 \( -name "*projman*deb" -o -name "*projman*tgz" -o -name "*projman*rpm"\) -type f | xargs ls -la 2>/dev/null || echo "Файлы не найдены"
