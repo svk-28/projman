@@ -113,7 +113,7 @@ proc StoreProjectInfo {timeStamp changelogFormat} {
     puts $cfgFile "# set args(--project-release) \"$args(--project-release)\""
     puts $cfgFile "set lastCommitTimeStamp \"$timeStamp\""
     puts $cfgFile "set lastCommitTimeStampSec [clock scan $timeStamp]"
-    close $cfgFile   
+    close $cfgFile
 }
 
 
@@ -188,11 +188,11 @@ proc GenerateChangelogRPM {} {
         if {$lastCommitTimeStamp eq ""} {
             set lastCommitTimeStamp [string trim [lindex $record 1]]
         }
-        set timeStamp [clock format [clock scan $timeStamp] -format {%a %e %b %Y}]
+        set timeStamp [clock format [clock scan $timeStamp] -format {%a, %e %b %Y %H:%M:%S %z}]
         if {$index == 0} {
             set commiter [lindex $record 2]
             append outText "$timeStamp [string trim $commiter] <$email> $args(--project-version)-$args(--project-release)\n"
-            StoreProjectInfo $timeStamp "deb"
+            StoreProjectInfo $timeStamp "rpm"
         }
         if {$commiter ne [lindex $record 2]} {
             append outText "\n"
