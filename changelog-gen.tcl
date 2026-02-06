@@ -188,21 +188,22 @@ proc GenerateChangelogRPM {} {
         if {$lastCommitTimeStamp eq ""} {
             set lastCommitTimeStamp [string trim [lindex $record 1]]
         }
-        set timeStamp [clock format [clock scan $timeStamp] -format {%a, %e %b %Y %H:%M:%S %z}]
+        set timeStampForStore [clock format [clock scan $timeStamp] -format {%a, %e %b %Y %H:%M:%S %z}]
+        set timeStamp [clock format [clock scan $timeStamp] -format {%a %b %e %Y}]
         if {$index == 0} {
             set commiter [lindex $record 2]
-            append outText "$timeStamp [string trim $commiter] <$email> $args(--project-version)-$args(--project-release)\n"
-            StoreProjectInfo $timeStamp "rpm"
+            append outText "* $timeStamp [string trim $commiter] <$email> $args(--project-version)-$args(--project-release)\n"
+            StoreProjectInfo $timeStampForStore "rpm"
         }
         if {$commiter ne [lindex $record 2]} {
             append outText "\n"
-            append outText "$timeStamp [string trim $commiter] <$email> $args(--project-version)-$args(--project-release)\n"
+            append outText "* $timeStamp [string trim $commiter] <$email> $args(--project-version)-$args(--project-release)\n"
             set commiter [lindex $record 2]
         }
         
         set commitTex [lindex $record 4]
         # puts "  * $commitTex"
-        append outText "  * $commitTex\n"
+        append outText "    - $commitTex\n"
 
     }
     # puts "\n -- [string trim $commiter] <$email>  $timeStamp"
