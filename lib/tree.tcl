@@ -132,8 +132,10 @@ namespace eval Tree {
                 $nbEditor select $nbItem
                 set txt $nbItem.frmText.t
                 set findString [dict get $lexers [dict get $editors $txt fileType] procFindString]
+                DebugPuts "Tree::PressItem: $findString\n values: $values"
+                regsub -all {\*} $values {\\*} values
                 regsub -all {PROCNAME} $findString $values str
-
+                DebugPuts "Tree::PressItem: $str"
                 Editor::FindFunction $txt "$str"
             }
         }
