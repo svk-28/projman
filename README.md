@@ -17,6 +17,7 @@ Highlightning and source code navigation:
 * Markdown
 * YAML (Ansible support)
 * Lua
+* C
 
 Highlightning:
 
