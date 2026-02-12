@@ -214,6 +214,7 @@
 ::msgcat::mcset ru "Title normal" "Файл нормальный"
 ::msgcat::mcset ru "Title modify" "Файл изменен"
 ::msgcat::mcset ru "Toolbar" "Панель инструментов"
+::msgcat::mcset ru "Tools" "Инструменты"
 ::msgcat::mcset ru "User name" "Имя пользователя"
 ::msgcat::mcset ru "Undo" "Отменить"
 ::msgcat::mcset ru "Update" "Обновить"

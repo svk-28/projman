@@ -18,6 +18,8 @@ cp projman.tcl projman
 sed -i "s+^set\ dir(lib)+set\ dir(lib)\ /usr/share/projman/lib ;#+g" projman
 sed -i "s+\[pwd\]+/usr/share/projman+g" projman
 
+./changelog-gen.tcl  --project-name projman --project-version ${VERSION} --project-release ${RELEASE} --out-file redhat/projman.spec --rpm --last
+
 CUR_DIR=$(pwd)
 
 cd ../
@@ -31,12 +33,12 @@ cp redhat/projman.spec ${RPM_BUILD_DIR}/SPECS/projman.spec
 sed -i "s/.*Version:.*/Version:\t${VERSION}/" ${RPM_BUILD_DIR}/SPECS/projman.spec
 sed -i "s/.*Release:.*/Release:\t${RELEASE}/" ${RPM_BUILD_DIR}/SPECS/projman.spec
 
-rpmbuild -ba "${RPM_BUILD_DIR}/SPECS/projman.spec"
+fakeroot rpmbuild -ba "${RPM_BUILD_DIR}/SPECS/projman.spec"
 
-# cp ${RPM_BUILD_DIR}/RPMS/noarch/projman-${VERSION}-${RELEASE}.noarch.rpm /files/
-# cp ${RPM_BUILD_DIR}/SRPMS/projman-${VERSION}-${RELEASE}.src.rpm /files/
+cp ${RPM_BUILD_DIR}/RPMS/noarch/projman-${VERSION}-${RELEASE}.noarch.rpm  ../
+cp ${RPM_BUILD_DIR}/SRPMS/projman-${VERSION}-${RELEASE}.src.rpm ../
 
 rm -v projman
 rm -r -v ${RPM_BUILD_DIR}/SPECS/projman.spec
 rm -r -v ${RPM_BUILD_DIR}/SOURCES/projman-${VERSION}-${RELEASE}.tar.gz
-rm -r -v ${RPM_BUILD_DIR}/BUILD/projman
+#rm -r -v ${RPM_BUILD_DIR}/BUILD/projman

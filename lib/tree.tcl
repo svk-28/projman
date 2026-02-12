@@ -99,6 +99,7 @@ namespace eval Tree {
     proc PressItem {tree} {
         global nbEditor lexers editors activeProject
         set id [$tree selection]
+        if {[llength $id] > 1} {return}
         $tree tag remove selected
         $tree item $id -tags selected
         SetActiveProject [GetItemID $tree [GetUpperItem $tree $id]]
@@ -131,8 +132,10 @@ namespace eval Tree {
                 $nbEditor select $nbItem
                 set txt $nbItem.frmText.t
                 set findString [dict get $lexers [dict get $editors $txt fileType] procFindString]
+                DebugPuts "Tree::PressItem: $findString\n values: $values"
+                regsub -all {\*} $values {\\*} values
                 regsub -all {PROCNAME} $findString $values str
-
+                DebugPuts "Tree::PressItem: $str"
                 Editor::FindFunction $txt "$str"
             }
         }
@@ -160,5 +163,12 @@ namespace eval Tree {
             GetUpperItem $tree $parent
         }
     }
-    
+
+    proc GetSelectedItemValues {tree} {
+        set valuesList ""
+        foreach itemID [$tree selection] {
+            lappend valuesList [GetItemID $tree $itemID]
+        }
+        return $valuesList
+    }
 }

@@ -16,7 +16,7 @@ namespace eval Editor {
             $node.frmText.t configure -$optionName $value
         }
     }
-    
+
     # Comment one string or selected string
     proc Comment {txt fileType} {
         global lexers cfgVariables
@@ -363,15 +363,24 @@ namespace eval Editor {
         }
     }
 
-    proc SelectionGet {txt} {
-        variable selectionText
+    proc SelectionGet {{txt ""}} {
+        global nbEditor
+        variable selectionText ""
+        if {$txt eq ""} {
+            DebugPuts "Editor::SelectionGet: [focus]"
+            set txt [focus]
+            if {![string match -nocase "*text*" $txt]} {
+                return ""
+            }
+        }        
         set selBegin [lindex [$txt tag ranges sel] 0]
         set selEnd [lindex [$txt tag ranges sel] 1]
         if {$selBegin ne "" && $selEnd ne ""} {
             set selectionText [$txt get $selBegin $selEnd]
         }
+        return $selectionText
     }
-    
+
     proc SelectionHighlight {txt} {
         variable selectionText
         $txt tag remove lightSelected 1.0 end 
@@ -393,236 +402,16 @@ namespace eval Editor {
         }
 
     }
-    proc VarHelperKey { widget K A } {
-        set win .varhelper
-        # if { [winfo exists $win] == 0 	} { return }
-        set ind [$win.lBox curselection]
-        # puts ">>>>>>>>>>>> VarHelperBind <<<<<<<<<<<<<<<<"
-        
-        switch -- $K {
-            Prior   {
-                set up   [expr [$win.lBox index active] - [$win.lBox cget -height]]
-                if { $up < 0 } { set up 0 }
-                $win.lBox activate $up
-                $win.lBox selection clear 0 end
-                $win.lBox selection set $up $up
-            }
-            Next    {
-                set down [expr [$win.lBox index active] + [$win.lBox cget -height]]
-                if { $down >= [$win.lBox index end] }  { set down end }
-                $win.lBox activate $down
-                $win.lBox selection clear 0 end
-                $win.lBox selection set $down $down
-            }
-            Up      {
-                set up   [expr [$win.lBox index active] - 1]
-                if { $up < 0 } { set up 0 }
-                $win.lBox activate $up
-                $win.lBox selection clear 0 end
-                $win.lBox selection set $up $up
-            }
-            Down    {
-                set down [expr [$win.lBox index active] + 1]
-                if { $down >= [$win.lBox index end] }  { set down end }
-                $win.lBox activate $down
-                $win.lBox selection clear 0 end
-                $win.lBox selection set $down $down
-            }
-            Return  {
-                $widget delete "insert - 1 chars wordstart" "insert wordend - 1 chars"
-                $widget insert "insert" [$win.lBox get [$win.lBox curselection]]
-                # eval [bind VarHelperBind <Escape>]
-                Editor::VarHelperEscape $widget
-            }
-            default {
-                $widget insert "insert" $A
-                # eval [bind VarHelperBind <Escape>]
-                Editor::VarHelperEscape $widget
-            }
-        }
-    } ;# proc auto_completition_key
-    proc VarHelperEscape {w} {
-        # puts ">>>>>>>>>>>> VarHelperEscape <<<<<<<<<<<<<<<<"
-        # bindtags $w [list [winfo parent $w] $w Text sysAfter all]
-        bindtags $w [list [winfo toplevel $w] $w Ctext sysAfter all]
-        catch { destroy .varhelper }
-        DebugPuts [bindtags $w]
-        DebugPuts [bind $w]
 
-    }
-    proc VarHelper {x y w word wordType} {
-        global editors lexers variables
-        variable txt 
-        variable win
-        # set txt $w.frmText.t
-        # блокировка открытия диалога если запущен другой
-        set txt $w
-        # set win .varhelper
-        # Проверяем если есть выделение то блокировать появление диалога
-        if {[$txt tag ranges sel] != ""} {
-            DebugPuts "You have selected text [$txt tag ranges sel]"
-            return            
-        }
-        # puts "$x $y $w $word $wordType"
-        set fileType [dict get $editors $txt fileType]
-
-        if {[dict exists $editors $txt variableList] != 0} {
-            set varList [dict get $editors $txt variableList]
-            # puts $varList
-        }
-        if {[dict exists $editors $txt procedureList] != 0} {
-            set procList [dict get $editors $txt procedureList]
-        }
-        # puts $procList
-        # puts ">>>>>>>[dict get $lexers $fileType commands]"
-        if {[dict exists $lexers $fileType commands] !=0} {
-            foreach i [dict get $lexers $fileType commands] {
-                # puts $i
-                lappend procList $i
-            }
-        }
-
-        # if {[dict exists $editors $txt variableList] == 0 && [dict exists $editors $txt procedureList] == 0} {
-            # return
-        # }
-        set findedVars ""
-        switch -- $wordType {
-            vars {
-                foreach i [lsearch -nocase -all $varList $word*] {
-                    # puts [lindex $varList $i]
-                    set item [lindex [lindex $varList $i] 0]
-                    # puts $item
-                    if {[lsearch $findedVars $item] eq "-1"} {
-                        lappend findedVars $item
-                        # puts $item
-                    }
-                }
-            }
-            procedure {
-                foreach i [lsearch -nocase -all $procList $word*] {
-                    # puts [lindex $varList $i]
-                    set item [lindex [lindex $procList $i] 0]
-                    # puts $item
-                    if {[lsearch $findedVars $item] eq "-1"} {
-                        lappend findedVars $item
-                        # puts $item
-                    }
-                }
-            }
-            default {
-                foreach i [lsearch -nocase -all $varList $word*] {
-                    # puts [lindex $varList $i]
-                    set item [lindex [lindex $varList $i] 0]
-                    # puts $item
-                    if {[lsearch $findedVars $item] eq "-1"} {
-                        lappend findedVars $item
-                        # puts $item
-                    }
-                }
-                foreach i [lsearch -nocase -all $procList $word*] {
-                    # puts [lindex $varList $i]
-                    set item [lindex [lindex $procList $i] 0]
-                    # puts $item
-                    if {[lsearch $findedVars $item] eq "-1"} {
-                        lappend findedVars $item
-                        # puts $item
-                    }
-                }
-            }
-        }
-        # unset item
-        # bindtags $txt [list VarHelperBind [winfo toplevel $txt] $txt Ctext sysAfter all]
-        # bindtags $txt.t [list VarHelperBind [winfo parent $txt.t] $txt.t Text sysAfter all]
-        # bind VarHelperBind <Escape> "Editor::VarHelperEscape $txt.t; break"
-            # # bindtags $txt.t {[list [winfo parent $txt.t] $txt.t Text sysAfter all]};
-            # # bindtags $txt {[list [winfo toplevel $txt] $txt Ctext sysAfter all]};
-            # # catch { destroy .varhelper }"
-        # bind VarHelperBind <Key> {Editor::VarHelperKey %W %K %A; break}
-        # 
-        if {$findedVars eq ""} {
+    proc ReleaseKey {k txt fileType} {
+        global cfgVariables lexers returnProcessed
+        # Если Return уже обработан в SelectFromList, пропускаем
+        # puts "$returnProcessed $k"
+        if {$k eq "Return" && [info exists returnProcessed]} {
+            unset returnProcessed
             return
         }
-        # puts $findedVars
-        VarHelperDialog $x $y $w $word $findedVars
-
-    }
-
-    proc VarHelperDialog {x y w word findedVars} {
-        global editors lexers variables
-        variable txt 
-        variable win
-        # puts ">>>>>>>>>>>>>$x $y $w $word $findedVars"
-        # set txt $w.frmText.t
-        # блокировка открытия диалога если запущен другой
-        # if [winfo exists .findVariables] {
-           # return
-        # }
-        # if { [winfo exists $win] } { destroy $win }
-        set txt $w
-        set win .varhelper
-        # if {$findedVars eq ""} {
-            # return
-        # }
-        toplevel $win
-        wm transient $win .
-        wm overrideredirect $win 1
-        
-        listbox $win.lBox -width 30 -border 0
-        pack $win.lBox -expand true -fill y -side left
-        
-        foreach { item } $findedVars {
-            $win.lBox insert end $item
-        }
-        
-        catch { $win.lBox activate 0 ; $win.lBox selection set 0 0 }
-        
-        if { [set height [llength $findedVars]] > 10 } { set height 10 }
-        $win.lBox configure -height $height
-
-        # focus $win.lBox
-        
-        bind $win <Escape> {
-            destroy $Editor::win
-            focus -force $Editor::txt.t
-            break
-        }
-        bind $win.lBox <Escape> {
-            destroy $Editor::win
-            focus -force $Editor::txt.t
-            break
-        }
-        bind VarHelperBind <Control-Return> {
-            $Editor::txt delete "insert - 1 chars wordstart" "insert wordend - 1 chars"
-            $Editor::txt insert "insert" [.varhelper.lBox get [.varhelper.lBox curselection]]
-            # eval [bind VarHelperBind <Escape>]
-            Editor::VarHelperEscape $Editor::txt
-            break
-        }
-
-        # Определям расстояние до края экрана (основного окна) и если
-        # оно меньше размера окна со списком то сдвигаем его вверх
-        set winGeomY [winfo reqheight $win]
-        set winGeomX [winfo reqwidth $win]
-
-        set topHeight [winfo height .]
-        set topWidth [winfo width .]
-        set topLeftUpperX [winfo x .]
-        set topLeftUpperY [winfo y .]
-        set topRightLowerX [expr $topLeftUpperX + $topWidth]
-        set topRightLowerY [expr $topLeftUpperY + $topHeight]
-        
-        if {[expr [expr $x + $winGeomX] > $topRightLowerX]} {
-            set x [expr $x - $winGeomX]
-        }
-        if {[expr [expr $y + $winGeomY] > $topRightLowerY]} {
-            set y [expr $y - $winGeomY]
-        }
-
-        wm geom $win +$x+$y 
-    }
-    
-    proc ReleaseKey {k txt fileType} {
-        global cfgVariables lexers
+        # 
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set posNum [lindex [split $pos "."] 1]
@@ -636,8 +425,53 @@ namespace eval Editor {
         unset lpos
         $txt tag remove lightSelected 1.0 end
         
-        if { [winfo exists .varhelper] } { destroy .varhelper }
-        # puts $k
+        # Обработка ввода для показа окна с подсказками.
+        # if { [winfo exists .varhelper] } { destroy .varhelper }
+        # Флаг, нужно ли показывать новый список
+        set showNewList 1
+        
+        # Проверяем окно списка
+        if {[winfo exists .varhelper]} {
+            # Определяем, какая клавиша отпущена
+            switch -- $k {
+                Up - Down {
+                    # Стрелки - управление списком, окно остается
+                    # НЕ показываем новый список
+                    set showNewList 0
+                    return
+                }
+                Return {
+                    # Enter - выберет элемент, окно закроется в SelectFromList
+                    # НЕ показываем новый список
+                    set showNewList 0
+                    return
+                }
+                Escape {
+                    # Escape - закрыть окно
+                    destroy .varhelper
+                    set ::Helper::listActive 0
+                    Helper::VarHelperBindingsRestore $txt
+                    # НЕ показываем новый список
+                    set showNewList 0
+                    return
+                }
+                Control_L - Control_R - Alt_L - Alt_R - Shift_L - Shift_R {
+                    # Модификаторы - окно остается
+                    # НЕ показываем новый список
+                    set showNewList 0
+                    return
+                }
+                default {
+                    # Любая другая клавиша (буквы, цифры, пробел, Tab и т.д.)
+                    # закрывает окно списка, но ПОКАЗЫВАЕМ новый список
+                    destroy .varhelper
+                    set ::Helper::listActive 0
+                    Helper::VarHelperBindingsRestore $txt
+                    # showNewList остается = 1 (показываем новый список)
+                }
+            }
+        }
+        
         switch $k {
             Return {
                 regexp {^(\s*)} [$txt get [expr $lineNum - 1].0 [expr $lineNum - 1].end] -> spaceStart
@@ -681,10 +515,68 @@ namespace eval Editor {
         if {$cfgVariables(variableHelper) eq "true"} {
             if {[dict exists $lexers $fileType variableSymbol] != 0} {
                 set varSymbol [dict get $lexers $fileType variableSymbol]
-                set lastSymbol [string last $varSymbol [$txt get $lineNum.0 $pos]]
+                set lineText [$txt get $lineNum.0 $pos]
+                # # Ищем переменную с помощью регулярного выражения
+                # # Паттерн ищет $ за которым идет имя переменной И курсор сразу после имени
+                # if {[regexp "(\\$)(\[a-zA-Z_:\]\[a-zA-Z0-9_:\]*)\$" $lineText -> symbol varName]} {
+                    # # Проверяем, что найденный $ - это действительно начало переменной
+                    # # (а не часть строки или другого символа)
+                    # DebugPuts "Found variable: $symbol$varName"
+                    # 
+                    # # Дополнительная проверка: перед $ не должно быть обратного слэша (экранирование)
+                    # set posOfVarSymbol [string last $varSymbol $lineText]
+                    # if {$posOfVarSymbol > 0} {
+                        # set charBefore [string index $lineText [expr {$posOfVarSymbol - 1}]]
+                        # if {$charBefore eq "\\"} {
+                            # DebugPuts "Dollar sign is escaped, skipping"
+                            # return
+                        # }
+                    # }
+                    # Helper::VarHelper $box_x $box_y $txt $varName vars
+                # }
+                DebugPuts "Line text: '$lineText'"
+                
+                # Проверяем, есть ли $ в строке
+                set lastSymbol [string last $varSymbol $lineText]
                 if {$lastSymbol ne "-1"} {
-                    set word  [string trim [$txt get $lineNum.[expr $lastSymbol + 1] $pos]]
-                    Editor::VarHelper $box_x $box_y $txt $word vars
+                    # Проверяем экранирование
+                    if {$lastSymbol > 0} {
+                        set charBefore [string index $lineText [expr {$lastSymbol - 1}]]
+                        if {$charBefore eq "\\"} {
+                            DebugPuts "Dollar sign is escaped, skipping"
+                            return
+                        }
+                    }
+                    # Берем текст после $
+                    set afterDollar [string range $lineText [expr {$lastSymbol + 1}] end]
+                    DebugPuts "Text after $varSymbol: '$afterDollar'"
+                    # Если после $ ничего нет (только что ввели $) - показываем все переменные
+                    if {$afterDollar eq ""} {
+                        DebugPuts "Just typed $varSymbol, showing all variables"
+                        Helper::VarHelper $box_x $box_y $txt "" vars
+                        return
+                    }
+                    # Проверяем, что введено после $
+                    if {[regexp {^([a-zA-Z_:][a-zA-Z0-9_:]*)?$} $afterDollar -> varName]} {
+                        # Вариант 1: regexp с концом строки - курсор сразу после (возможного) имени
+                        DebugPuts "Cursor after variable name (or $varSymbol only): '$varName'"
+                        Helper::VarHelper $box_x $box_y $txt $varName vars
+                    } elseif {[regexp {^([a-zA-Z_:][a-zA-Z0-9_:]*)} $afterDollar -> varName]} {
+                        # Вариант 2: есть имя переменной, но курсор не обязательно сразу после
+                        DebugPuts "Found variable name: '$varName'"
+                        # Проверяем позицию курсора
+                        set varEndPos [expr {[string length $varName] + 1}] ; # +1 для $
+                        
+                        if {$varEndPos == [string length $lineText]} {
+                            # Курсор сразу после имени
+                            Helper::VarHelper $box_x $box_y $txt $varName vars
+                        } else {
+                            DebugPuts "Cursor not immediately after variable name, skipping"
+                        }
+                    } else {
+                        # После $ что-то недопустимое (например, цифра, скобка и т.д.)
+                        DebugPuts "Invalid characters after $varSymbol"
+                    }
                 }
             } else {
                 set ind [$txt search -backwards -regexp {\W} $pos {insert linestart}]
@@ -696,8 +588,9 @@ namespace eval Editor {
                     # set ind [$txt search -backwards -regexp {^} $pos {insert linestart}]
                     set word [$txt get {insert linestart} $pos]
                 }
+                DebugPuts "> Extracted word: '$word'"
                 if {$word ne ""} {
-                    Editor::VarHelper $box_x $box_y $txt $word {}
+                    Helper::VarHelper $box_x $box_y $txt $word {}
                 }
             }
         }
@@ -713,7 +606,7 @@ namespace eval Editor {
                 set word [$txt get {insert linestart} $pos]
             }
             if {$word ne ""} {
-                Editor::VarHelper $box_x $box_y $txt $word procedure
+                Helper::VarHelper $box_x $box_y $txt $word procedure
             }
         }
     }
@@ -788,7 +681,7 @@ namespace eval Editor {
         bind $txt <Control-Cyrillic_em> "Editor::SelectionPaste $txt"
         bind $txt <Control-l> "SearchVariable $txt; break"
         bind $txt <Control-Cyrillic_de> "SearchVariable $txt; break"
-        bind $txt <Control-i> "ImageBase64Encode $txt"
+        bind $txt <Control-i> "ImageBase64Encode"
         bind $txt <Control-Cyrillic_sha> "ImageBase64Encode $txt"
         bind $txt <Control-bracketleft> "Editor::InsertTabular $txt"
         bind $txt <Control-bracketright> "Editor::DeleteTabular $txt"
@@ -801,7 +694,7 @@ namespace eval Editor {
         bind $txt <<Modified>> "SetModifiedFlag $w $nb auto"
         bind $txt <Control-u> "Editor::SearchBrackets %W"
         bind $txt <Control-Cyrillic_ghe> "Editor::SearchBrackets %W"
-        bind $txt <Control-J> "catch {Editor::GoToFunction $txt}"
+        bind $txt <Control-J> "catch {Editor::GoToFunction $txt}; break"
         bind $txt <Control-j> "catch {Editor::GoToFunction $txt}; break"
         bind $txt <Control-y> {Redo; break}
         bind $txt <Control-Cyrillic_o> "catch {Editor::GoToFunction $txt}; break"
@@ -809,6 +702,7 @@ namespace eval Editor {
         bind $txt <Alt-odiaeresis>  "$txt delete {insert wordstart} {insert wordend}"
         bind $txt <Alt-Cyrillic_tse> "$txt delete {insert wordstart} {insert wordend}"
         bind $txt <Alt-r>           "$txt delete {insert linestart} {insert lineend + 1char}"
+        bind $txt <Alt-Cyrillic_ka> "$txt delete {insert linestart} {insert lineend + 1char}"
         bind $txt <Alt-ecircumflex> "$txt delete {insert linestart} {insert lineend + 1char}"
         bind $txt <Alt-Cyrillic_er> "$txt delete {insert linestart} {insert lineend + 1char}"
         bind $txt <Alt-b> "$txt delete {insert linestart} insert"
@@ -852,6 +746,8 @@ namespace eval Editor {
         }
         bind $txt <Control-r> "Editor::SplitEditorForExecute $w $fileType $nb "
         bind $txt <Control-Cyrillic_ka> "Editor::SplitEditorForExecute $w $fileType $nb "
+        # bind $txt <Shift-Control-s> FileOper::Close
+        # bind $txt <Shift-Control-Cyrillic_es> "FileOper::Close saveas"
 
         # bind $txt.t <KeyRelease> "Editor::ReleaseKey %K $txt.t $fileType"
         # bind $txt.t <KeyPress> "Editor::PressKey %K $txt.t"
@@ -981,9 +877,15 @@ namespace eval Editor {
         for {set lineNumber 0} {$lineNumber <= [$txt count -lines 0.0 end]} {incr lineNumber} {
             set line [$txt get $lineNumber.0 $lineNumber.end]
             # Выбираем процедуры (функции, классы и т.д.)
+            # DebugPuts "Editor::RedaStructure: file type $fileType"
+            
             if {[dict exists $lexers $fileType procRegexpCommand] != 0 } {
+                # regexp -nocase -all -line -- {^\s*(?:(\w+)\s+)+(\w+)\s*\((.*?)\)\s*(?:;|\{)} $line match returns procName params
+                # regexp -nocase -all -line -lineanchor -linestop -- {^\s*(?:(\w+)\s+)+(\w+)\s*\((.*?)(,|\))} $line match v1 v2 v3 v4
                 if {[eval [dict get $lexers $fileType procRegexpCommand]]} {
+                    DebugPuts "Editor::RedaStructure: regexp = [dict get $lexers $fileType procRegexpCommand]"
                     set procName_ [string trim $procName]
+                    DebugPuts "Editor::RedaStructure: find the proc $procName_"
                     if {$treeItemName ne ""} {
                         Tree::InsertItem $tree $treeItemName $procName_  "procedure" "$procName_ ($params)"
                     }

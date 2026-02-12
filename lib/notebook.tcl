@@ -13,6 +13,7 @@ namespace eval NB {
     proc InsertItem {nb item type} {
         switch $type {
             file {
+                set titleFileName [file tail $item]
                 set item [string tolower $item]
                 regsub -all {\.|/|\\|\s|:} $item "_" itemName
                 # puts "$item -> $itemName"
@@ -21,7 +22,7 @@ namespace eval NB {
                 } else {
                     set fm [ttk::frame $nb.$itemName]
                     pack $fm -side top -expand true -fill both
-                    $nb add $fm -text [file tail $item];# -image close_12x12 -compound right
+                    $nb add $fm -text $titleFileName;# -image close_12x12 -compound right
                     $nb select $fm
                 }
             }
@@ -32,7 +33,7 @@ namespace eval NB {
                 set fm [ttk::frame $nb.$item]
                 pack $fm -side top -expand true -fill both
                 $nb add $fm -text Git;# -image close_12x12 -compound right
-                $nb select $fm                
+                $nb select $fm
             }
         }
         # puts "NB item - $fm"

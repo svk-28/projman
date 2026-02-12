@@ -104,5 +104,28 @@ dict set lexers LUA procFindString {function\s*?PROCNAME}
 dict set lexers LUA procRegexpCommand {regexp -nocase -all -- {^(local|)\s*?(function)\s([a-zA-Z0-9\-_:]+?)\s+\((.+?)\)} $line match v1 keyWord procName params}
 dict set lexers LUA varRegexpCommand {regexp -nocase -all -- {^(\s*?)([a-zA-Z0-9\-_\.]+)\s+=\s+(.+?)(\s*$|--)} $line match indent varName varValue lineEnd}
 
+#--------------------------------------------------
+# C
+dict set lexers C commentSymbol {//}
+dict set lexers C commentMultilineSymbolBegin {/*}
+dict set lexers C commentMultilineSymbolEnd {*/}
+dict set lexers C procFindString {(\w+)\s+(PROCNAME)\s*\((.*?)(,|\))(\W|$)}
+dict set lexers C procRegexpCommand {regexp -nocase -all -line -- {^(?:(\w+)\s+)+(\*\w+|\w+)\s*\((.*?)(,|\))} $line match returns procName params v4}
+# dict set lexers C procRegexpCommand {regexp -nocase -all -- {\s*?func\s*?(\(\w+\s*?\**?\w+\)|)\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match linkName procName params returns}
+# dict set lexers C varRegexpCommand {regexp -nocase -all -line -- {^\s*?var\s+([a-zA-Z0-9\-_$]+)\s+(.+?)(\s*$)} $line match varName varType lineEnd}
+dict set lexers C commands {auto break case const continue default do else enum extern for goto if inline  int long register restrict return signed sizeof static struct switch typedef typeof typeof_unqual union unsigned void volatile while}
+
+#--------------------------------------------------
+# H
+dict set lexers H commentSymbol {//}
+dict set lexers H commentMultilineSymbolBegin {/*}
+dict set lexers H commentMultilineSymbolEnd {*/}
+# dict set lexers C procFindString {^\s*(?:(\w+)\s+)+(PROCNAME)\s*\((.*?)(,|\))}
+dict set lexers H procFindString {^\s*(?:(\w+)\s+)+(PROCNAME)\s*\((.*?)(,|\))}
+dict set lexers H procRegexpCommand {regexp -nocase -all -line -- {^(?:(\w+)\s+)+(\*\w+|\w+)\s*\((.*?)(,|\))} $line match returns procName params v4}
+# dict set lexers C procRegexpCommand {regexp -nocase -all -- {\s*?func\s*?(\(\w+\s*?\**?\w+\)|)\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match linkName procName params returns}
+# dict set lexers C varRegexpCommand {regexp -nocase -all -line -- {^\s*?var\s+([a-zA-Z0-9\-_$]+)\s+(.+?)(\s*$)} $line match varName varType lineEnd}
+dict set lexers H commands {auto break case const continue default do else enum extern for goto if inline  int long register restrict return signed sizeof static struct switch typedef typeof typeof_unqual union unsigned void volatile while}
+
 # -------------------------------------------------
 dict set lexers ALL varDirectory {variables vars group_vars host_vars defaults}

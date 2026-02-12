@@ -364,7 +364,7 @@ namespace eval FileOper {
             set nbEditorWindow "[lindex $str 0].[lindex $str 1].[lindex $str 2]"
             # puts "FileOper::Save: current window $nbEditorWindow"
         }
-        # puts "FileOper::Save: $nbEditorWindow"
+
         set nbEditorItem [$nbEditorWindow select]
         DebugPuts "Saved editor text: $nbEditorItem"
         if [string match "*untitled*" $nbEditorItem] {
@@ -382,7 +382,14 @@ namespace eval FileOper {
             set treeItem "file::[string range $nbEditorItem [expr [string last "." $nbEditorItem] +1] end ]"
             set filePath [Tree::GetItemID $tree $treeItem]
         }
+        if {![winfo exists $nbEditorItem.frmText.t]} {
+            DebugPuts "winfo exists $nbEditorWindow.frmText.t equal [winfo exists $nbEditorWindow.frmText.t]"
+            return
+        }
         set editedText [$nbEditorItem.frmText.t get 0.0 end]
+        if {$type eq "saveas"} {set filePath [FileOper::SaveDialog]}
+        if {$filePath eq "cancel"} {return}
+        DebugPuts "FileOper::Save $filePath"
         set f [open $filePath "w+"]
         puts -nonewline $f $editedText
         # puts "$f was saved"
@@ -391,7 +398,13 @@ namespace eval FileOper {
         if {[file tail $filePath] eq "projman.ini"} {
             Config::read $dir(cfg)
         }
-        if [string match "*untitled*" $nbEditorItem] {
+        if {[file tail $filePath] eq "tools.ini"} {
+            Tools::Read $dir(cfg)
+            Tools::CheckVariables
+            Tools::GetMenu .popup.tools
+            Tools::GetMenu .frmMenu.mnuTools.m
+        }
+        if {[string match "*untitled*" $nbEditorItem] || $type eq "saveas"} {
             FileOper::Close
             if {$type ne "close"} {
                 FileOper::Edit $filePath
@@ -621,5 +634,29 @@ namespace eval FileOper {
         # set selEnd [lindex [$txt tag ranges sel] 1]
         # puts [$txt get [$txt tag ranges sel]]
     # }
-    
+
+    proc SaveDialog {} {
+        global env project activeProject
+        if [info exists activeProject] {
+            set dir $activeProject
+        } else {
+            set dir $env(HOME)
+        }
+        set fileName [tk_getSaveFile -initialdir $dir -filetypes $::types -parent .]
+        if {$fileName eq ""} {return "cancel"}
+        set fullPath [file join $dir $fileName]
+        set file [string range $fullPath [expr [string last "/" $fullPath]+1] end]
+        DebugPuts "FileOper::SaveDialog $fileName $fullPath"
+        regsub -all "." $file "_" node
+        set dir [file dirname $fullPath]
+        set file [file tail $fullPath]
+        set name [file rootname $file]
+        set ext [string range [file extension $file] 1 end]
+        if {$fullPath != ""} {
+            # puts $fullPath
+            return $fullPath
+        } else {
+            return
+        }
+    }
 }

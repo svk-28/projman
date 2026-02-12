@@ -17,6 +17,7 @@ Highlightning and source code navigation:
 * Markdown
 * YAML (Ansible support)
 * Lua
+* C
 
 Highlightning:
 
@@ -157,6 +158,29 @@ Or type "projman" into terminal, Or choose the name of the program "Projman" on 
 - Alt-Y - Copy current line into buffer
 - Alt-S - Split the edited window horizontally
 - Alt-K - Open folder
+
+### Work with external tools
+ProjMan allows you to connect any external tools to the editor. To do this, you need to add an entry to the file ~/.config/projman/tools.ini.
+
+Calling an external program is available through the main and pop-up menus. To transfer the parameters, write the appropriate template in the file.
+ - %s - template for substituting selected text in the editor
+ - %f - template for substituting selected file\(s\) in the file tree
+
+When adding multiple %f templates, the corresponding number of files allocated in the tree will be substituted.
+
+```
+[TkDIFF]
+commandString=tkdiff %f %f
+description=TkDiff is a Tcl/Tk front-end to diff
+icon=
+shortCut=
+
+[VisualRegexp]
+commandString=tkregexp "%s"
+description=A graphical front-end to write/debug regular expression
+icon=
+shortCut=
+```
 
 ## Credits
 

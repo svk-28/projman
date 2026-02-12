@@ -106,14 +106,14 @@ proc ReadGitLog {} {
     }
 }
 
-proc StoreProjectInfo {timeStamp} {
+proc StoreProjectInfo {timeStamp changelogFormat} {
     global dir args
-    set cfgFile [open [file join $dir(cfg) $args(--project-name).conf]  "w+"]
+    set cfgFile [open [file join $dir(cfg) $args(--project-name).$changelogFormat.conf]  "w+"]
     puts $cfgFile "# set args(--project-version) \"$args(--project-version)\""
     puts $cfgFile "# set args(--project-release) \"$args(--project-release)\""
     puts $cfgFile "set lastCommitTimeStamp \"$timeStamp\""
     puts $cfgFile "set lastCommitTimeStampSec [clock scan $timeStamp]"
-    close $cfgFile   
+    close $cfgFile
 }
 
 
@@ -141,36 +141,76 @@ proc GenerateChangelogDEB {} {
         set timeStamp [clock format [clock scan $timeStamp] -format {%a, %e %b %Y %H:%M:%S %z}]
         # puts "> $commiter"
         if {$index == 0} {
-            puts "$args(--project-name) ($args(--project-version)-$args(--project-release)) stable; urgency=medium\n"
+            # puts "$args(--project-name) ($args(--project-version)-$args(--project-release)) stable; urgency=medium\n"
             append outText "$args(--project-name) ($args(--project-version)-$args(--project-release)) stable; urgency=medium\n\n"
             set commiter [lindex $record 2]
-            StoreProjectInfo $timeStamp
+            StoreProjectInfo $timeStamp "deb"
          	  # puts "\n \[ [string trim $commiter] \]"
         }
         # puts ">> $commiter"
         if {$commiter ne [lindex $record 2]} {
-            puts "\n -- [string trim $commiter] <$email>  $timeStamp"
+            # puts "\n -- [string trim $commiter] <$email>  $timeStamp"
             append outText "\n -- [string trim $commiter] <$email>  $timeStamp\n"
-            puts "\n$args(--project-name) ($args(--project-version)-$args(--project-release)) stable; urgency=medium\n"
+            # puts "\n$args(--project-name) ($args(--project-version)-$args(--project-release)) stable; urgency=medium\n"
             append outText "\n$args(--project-name) ($args(--project-version)-$args(--project-release)) stable; urgency=medium\n\n"
             set commiter [lindex $record 2]
             # puts "\n \[ [string trim $commiter] \]"
         }
         
         set commitTex [lindex $record 4]
-        puts "  * $commitTex"
+        # puts "  * $commitTex"
         append outText "  * $commitTex\n"
 
     }
-    puts "\n -- [string trim $commiter] <$email>  $timeStamp"
+    # puts "\n -- [string trim $commiter] <$email>  $timeStamp"
     append outText "\n -- [string trim $commiter] <$email>  $timeStamp\n"
     return $outText
 }
 
 proc GenerateChangelogRPM {} {
-    puts "GenerateChangelogRPM"
-    
+    global args
+    # puts "GenerateChangelogRPM"
+    set lastCommitTimeStamp ""
+    set commiter ""
+    set commitText ""
+    # ReadGitLog
+    set lst [lsort -integer -index 0 [ReadGitLog]]
+    # puts $lst
+    # exit
+    set outText ""
+    foreach l $lst {
+        set index [lindex $l 0]
+        set line [lindex $l 1]
+        # puts "$index - $line"
+        set record [split $line ","]
+        set timeStamp [string trim [lindex $record 1]]
+        set email [string trim [lindex $record 3]]
+        if {$lastCommitTimeStamp eq ""} {
+            set lastCommitTimeStamp [string trim [lindex $record 1]]
+        }
+        set timeStampForStore [clock format [clock scan $timeStamp] -format {%a, %e %b %Y %H:%M:%S %z}]
+        set timeStamp [clock format [clock scan $timeStamp] -format {%a %b %e %Y}]
+        if {$index == 0} {
+            set commiter [lindex $record 2]
+            append outText "* $timeStamp [string trim $commiter] <$email> $args(--project-version)-$args(--project-release)\n"
+            StoreProjectInfo $timeStampForStore "rpm"
+        }
+        if {$commiter ne [lindex $record 2]} {
+            append outText "\n"
+            append outText "* $timeStamp [string trim $commiter] <$email> $args(--project-version)-$args(--project-release)\n"
+            set commiter [lindex $record 2]
+        }
+        
+        set commitTex [lindex $record 4]
+        # puts "  * $commitTex"
+        append outText "    - $commitTex\n"
+
+    }
+    # puts "\n -- [string trim $commiter] <$email>  $timeStamp"
+    # append outText "\n -- [string trim $commiter] <$email>  $timeStamp\n"
+    return $outText
 }
+
 
 proc GenerateChangelogTXT {} {
     global args
@@ -189,14 +229,15 @@ proc GenerateChangelogTXT {} {
         if {$lastCommitTimeStamp eq ""} {
             set lastCommitTimeStamp [string trim [lindex $record 1]]
         }
-        set timeStamp [clock format [clock scan $timeStamp] -format {%a, %e %b %Y %H:%M:%S %z}]
+        # * Mon Nov 28 2022 Sergey Kalinin <svk@nuk-svk.ru> 2.0.0
+        set timeStamp [clock format [clock scan $timeStamp] -format {%a %b %e %Y %H:%M:%S %z}]
         # puts "> $commiter"
         if {$index == 0} {
             append outText "$args(--project-name) ($args(--project-version)-$args(--project-release))\n"
             set commiter [lindex $record 2]
             puts "\n[string trim $commiter] <$email>  $timeStamp"
             append outText "\n[string trim $commiter] <$email>  $timeStamp\n"
-            StoreProjectInfo $timeStamp
+            StoreProjectInfo $timeStamp "txt"
         }
         if {$commiter ne [lindex $record 2]} {
             puts "\n[string trim $commiter] <$email>  $timeStamp"
@@ -254,6 +295,68 @@ proc StoreChangeLog {outText} {
     } else {
         set outFile [open $args(--out-file)  "w+"]
         puts $outFile $outText
+        puts $outText
+        close $outFile
+    }
+}
+
+proc StoreChangeLogRPM {outText} {
+    global args
+    if [file exists $args(--out-file)] {
+        file copy -force $args(--out-file) "$args(--out-file).tmp"
+
+        set fh [open $args(--out-file) r]
+        set lines [split [read $fh] "\n"]
+        close $fh
+        
+        set result [list]
+        set inserted false
+        
+        foreach line $lines {
+            lappend result $line
+            
+            if {!$inserted && $line eq "%changelog"} {
+                lappend result $outText
+                set inserted true
+            }
+        }
+        
+        set fh [open $args(--out-file) w]
+        puts $fh [join $result "\n"]
+        close $fh
+    }
+}
+
+proc StoreChangeLogRPM_ {outText} {
+    global args
+    
+    puts "Changelog generator write a file $args(--out-file)"
+    
+    if [file exists $args(--out-file)] {
+        file copy -force $args(--out-file) "$args(--out-file).tmp"
+        
+        set origOutFile [open "$args(--out-file).tmp"  "r"]
+        set origText [read $origOutFile]
+        close $origOutFile
+        
+        set outFile [open $args(--out-file)  "w"]
+        puts $outFile $outText
+        puts $outFile $origText
+        close $outFile
+        
+        if [info exists args(--last)] {
+            set outFile [open $args(--out-file)  "r+"]
+            puts $outFile $outText
+            close $outFile
+        } else {
+            set outFile [open $args(--out-file)  "w+"]
+            puts $outFile $outText
+            close $outFile
+        }
+    } else {
+        set outFile [open $args(--out-file)  "w+"]
+        puts $outFile $outText
+        puts $outText
         close $outFile
     }
 }
@@ -311,26 +414,43 @@ if ![info exists args(--project-release)] {
     exit
 }
 
-if [file exists [file join $dir(cfg) $args(--project-name).conf]] {
-    source [file join $dir(cfg) $args(--project-name).conf]
-}
+puts "Running chngelog generator with folowing options:\n"
 
 foreach arg [array names args] {
-    puts "$arg $args($arg)"
+    puts "\t$arg $args($arg)"
 }
 
 if [info exists args(--deb)] {
+    if [file exists [file join $dir(cfg) $args(--project-name).deb.conf]] {
+        source [file join $dir(cfg) $args(--project-name).deb.conf]
+    }
     set outText [GenerateChangelogDEB]
     if [info exists args(--out-file)] {
         StoreChangeLog $outText
+    } else {
+        puts $outText
     }
 }
 if [info exists args(--rpm)] {
-    GenerateChangelogRPM
+    if [file exists [file join $dir(cfg) $args(--project-name).rpm.conf]] {
+        source [file join $dir(cfg) $args(--project-name).rpm.conf]
+    }
+    set outText [GenerateChangelogRPM]
+    # puts $outText
+    if [info exists args(--out-file)] {
+        StoreChangeLogRPM $outText
+    } else {
+        puts $outText
+    }
 }
 if [info exists args(--txt)] {
+    if [file exists [file join $dir(cfg) $args(--project-name).txt.conf]] {
+        source [file join $dir(cfg) $args(--project-name).txt.conf]
+    }
     set outText [GenerateChangelogTXT]
     if [info exists args(--out-file)] {
         StoreChangeLog $outText
+    } else {
+        puts $outText
     }
 }

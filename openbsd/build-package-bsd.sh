@@ -49,7 +49,6 @@ cat > ${WORK_DIR}/${PKG_FULLNAME}/+CONTENTS << EOF
 @depend devel/tklib:tklib-*:tcl-*
 @comment Editor for Tcl/Tk and other languages.
 @arch amd64
-@wantlib pthread
 @ignore
 @cwd /usr/local
 EOF
@@ -78,7 +77,7 @@ Supported languages for highlighting and navigation:
 Tcl/Tk, GO, Perl, Python, Ruby, Shell (BASH), Markdown, YAML (Ansible), Lua.
 EOF
 
-(cd ${WORK_DIR} && tar -czf ../../../${PKG_FULLNAME}.tgz ${PKG_FULLNAME}/)
+(cd ${WORK_DIR}/${PKG_FULLNAME}/ && pwd && ls -1 && tar -czf ../../../../${PKG_FULLNAME}.tgz .)
 
 echo "Package created: ${PKG_FULLNAME}.tgz"
 
