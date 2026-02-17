@@ -1135,17 +1135,73 @@ proc ExecutorCommandPathSetting {fileType} {
     }
 }
 
-# -----------
-# Thanks https://github.com/wandrien/
+# =====================================================================
+# 2026 Vadim Ushakov <wandrien.dev@gmail.com>
 # https://github.com/wandrien/projman/commit/22f6e235c3532c20573d44ee7eaaaa1fb56ad544
-proc SendEventToLatestTxtWidget {ev} {
+proc ReplaceSelection {w newText} {
+    set selStart [$w index sel.first]
+
+    # Сохраняем и отключаем auto-separators
+    set autoSep [$w cget -autoseparators]
+    $w configure -autoseparators 0
+    
+    # Замена текста как атомарный блок в Undo-стеке
+    $w edit separator
+    $w delete sel.first sel.last
+    $w insert $selStart $newText
+    $w edit separator
+    
+    # Восстанавливаем autoseparators
+    $w configure -autoseparators $autoSep
+    
+    # Восстанавливаем выделение на новом тексте
+    set selEnd [$w index "$selStart + [string length $newText] chars"]
+    $w tag add sel $selStart $selEnd
+    
+    # Если ctext поддерживает подсветку - обновляем её
+    catch {$w highlight $selStart $selEnd}
+}
+
+proc HasSelection {w} {
+    set ranges [$w tag ranges sel]
+    return [expr {$ranges ne ""}]
+}
+
+proc GetLatestTxtWidget {} {
     global latestTxtWidget
     if {$latestTxtWidget eq ""} {
-        return
+        # pass
     } elseif {[winfo exists $latestTxtWidget] && [winfo class $latestTxtWidget] eq "Ctext"} {
-        event generate ${latestTxtWidget}.t $ev
+        # pass
     } else {
         set latestTxtWidget ""
+    }
+    return $latestTxtWidget
+}
+
+proc ChoiceTxtWidgetOrLatest {{w ""}} {
+    if {$w ne ""} {
+        return $w
+    }
+    return [GetLatestTxtWidget]
+}
+
+proc ProcessSelection {handle {w ""}} {
+    set w [ChoiceTxtWidgetOrLatest $w]
+    if {$w eq ""} {
+        return
+    }
+    if {![HasSelection $w]} {
+        return
+    }
+    set text [$w get sel.first sel.last]
+    ReplaceSelection $w [$handle $text]
+}
+
+proc SendEventToLatestTxtWidget {ev} {
+    set w [GetLatestTxtWidget]
+    if {$w ne ""} {
+        event generate $w.t $ev
     }
 }
 
@@ -1154,7 +1210,8 @@ proc Copy {} { SendEventToLatestTxtWidget <<Copy>> }
 proc Paste {} { SendEventToLatestTxtWidget <<Paste>> }
 proc Undo {} { SendEventToLatestTxtWidget <<Undo>> }
 proc Redo {} { SendEventToLatestTxtWidget <<Redo>> }
-# ------------
+# 2026 Vadim Ushakov <wandrien.dev@gmail.com>
+# =====================================================================
 
 proc DebugPuts {msg} {
     global cfgVariables

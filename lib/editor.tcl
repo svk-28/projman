@@ -746,6 +746,18 @@ namespace eval Editor {
         }
         bind $txt <Control-r> "Editor::SplitEditorForExecute $w $fileType $nb "
         bind $txt <Control-Cyrillic_ka> "Editor::SplitEditorForExecute $w $fileType $nb "
+
+        bind $txt <Control-Shift-U> {SelectionToUpperCase %W}
+        bind $txt <Control-Shift-u> {SelectionToUpperCase %W}
+        bind $txt <Control-Shift-L> {SelectionToLowerCase %W}
+        bind $txt <Control-Shift-l> {SelectionToLowerCase %W}
+        bind $txt <Control-Shift-T> {SelectionToTitleCase %W}
+        bind $txt <Control-Shift-t> {SelectionToTitleCase %W}
+        bind $txt <Control-Shift-Y> {SelectionToSentenceCase %W}
+        bind $txt <Control-Shift-y> {SelectionToSentenceCase %W}
+        bind $txt <Control-Shift-I> {SelectionToggleCase %W}
+        bind $txt <Control-Shift-i> {SelectionToggleCase %W}
+
         # bind $txt <Shift-Control-s> FileOper::Close
         # bind $txt <Shift-Control-Cyrillic_es> "FileOper::Close saveas"
 

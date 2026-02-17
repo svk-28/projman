@@ -69,6 +69,15 @@ proc GetEditMenu {m} {
     -accelerator "Ctrl+F"
     # $m add command -label [::msgcat::mc "Replace"] -command Replace\
     # -accelerator "Ctrl+R"
+
+    $m add separator
+    menu $m.convertCase
+    $m add cascade -label [::msgcat::mc "Convert case"] -menu $m.convertCase
+    GetConvertCaseMenu $m.convertCase
+    menu $m.convertNamingStyle
+    $m add cascade -label [::msgcat::mc "Convert naming style"] -menu $m.convertNamingStyle
+    GetConvertIdentCaseMenu $m.convertNamingStyle
+
     $m add separator
     $m add command -label [::msgcat::mc "Find in files"] -command "FileOper::FindInFiles"\
     -accelerator "Ctrl+Shift+F"
@@ -138,3 +147,47 @@ proc GetHelpMenu {m} {
 proc PopupMenu {x y} {
     tk_popup .popup $x $y
 }
+
+# ============================================================
+# 2026 Vadim Ushakov <wandrien.dev@gmail.com>
+proc GetConvertCaseMenu {m} {
+    $m add command -label [::msgcat::mc "UPPER CASE"] -command SelectionToUpperCase\
+        -accelerator "Ctrl+Shift+U"
+    $m add command -label [::msgcat::mc "lower case"] -command SelectionToLowerCase\
+        -accelerator "Ctrl+Shift+L"
+    $m add command -label [::msgcat::mc "Title Case"] -command SelectionToTitleCase\
+        -accelerator "Ctrl+Shift+T"
+    $m add command -label [::msgcat::mc "Sentence case"] -command SelectionToSentenceCase\
+        -accelerator "Ctrl+Shift+Y"
+    $m add command -label [::msgcat::mc "iNVERT CASE"] -command SelectionToggleCase\
+        -accelerator "Ctrl+Shift+I"
+}
+proc GetConvertIdentCaseMenu {m} {
+    $m add command -label [::msgcat::mc "flatcase"] -command SelectionToFlatCase
+    $m add command -label [::msgcat::mc "UPPERCASE"] -command SelectionToUpperFlatCase
+
+    $m add separator
+
+    $m add command -label [::msgcat::mc "camelCase"] -command SelectionToCamelCase
+    $m add command -label [::msgcat::mc "PascalCase"] -command SelectionToPascalCase
+
+    $m add separator
+
+    $m add command -label [::msgcat::mc "snake_case"] -command SelectionToSnakeCase
+    $m add command -label [::msgcat::mc "SCREAMING_SNAKE_CASE"] -command SelectionToScreamingSnakeCase
+    $m add command -label [::msgcat::mc "camel_Snake_Case"] -command SelectionToCamelSnakeCase
+    $m add command -label [::msgcat::mc "Title_Case"] -command SelectionToTitleSnakeCase
+
+    $m add separator
+
+    $m add command -label [::msgcat::mc "kebab-case"] -command SelectionToKebabCase
+    $m add command -label [::msgcat::mc "SCREAMING-KEBAB-CASE"] -command SelectionToScreamingKebabCase
+    $m add command -label [::msgcat::mc "Train-Case"] -command SelectionToTrainCase
+
+    $m add separator
+
+    $m add command -label [::msgcat::mc "space separated"] -command SelectionToWords
+}
+# 2026 Vadim Ushakov <wandrien.dev@gmail.com>
+# ============================================================
+

@@ -236,7 +236,7 @@ ttk::style layout TNotebook.Tab {
     }
 }
 bind TNotebook <Button-1> "catch {NB::PressTab %W %x %y}\;[bind TNotebook <Button-1>];break"
-# bind <<NotebookTabChanged>> "NB::PressTab %W %x %y"
+bind <<NotebookTabChanged>> "catch {NB::PressTab %W %x %y}\;[bind TNotebook <Button-1>];break"
 # bind TNotebook <ButtonRelease-1> "NB::PressTab %W %x %y"
 # bind TNotebook <Control-w> FileOper::Close
 # bind . <Control-Tab> "NB::NextTab $nbEditor"
