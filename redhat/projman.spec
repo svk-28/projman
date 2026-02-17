@@ -70,6 +70,10 @@ fi
 %{_iconsdir}/hicolor/48x48/apps/projman.png
 
 %changelog
+* Tue Feb 17 2026 Sergey Kalinin <svkalinin@samsonpost.ru> 2.0.0-beta5
+    -  Добавил код из https://github.com/wandrien/projman/tree/master для работы с выделенным текстом. И внес изменения в связи с этим.
+    -  Исправления работы с С
+
 * Fri Feb 13 2026 svk <svk@nuk-svk.ru> 2.0.0-beta4
     -  Исправлено регулярное выражение для поиска переменных в коде на С.
     -  Добавил экранирование '*' в имени функции для поиска.

@@ -1,3 +1,10 @@
+projman (2.0.0-beta5) stable; urgency=medium
+
+  *  Добавил код из https://github.com/wandrien/projman/tree/master для работы с выделенным текстом. И внес изменения в связи с этим.
+  *  Исправления работы с С
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Fri, 13 Feb 2026 11:27:41 +0300
+
 projman (2.0.0-beta4) stable; urgency=medium
 
   *  Исправлено регулярное выражение для поиска переменных в коде на С.
