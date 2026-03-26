@@ -71,6 +71,10 @@ fi
 
 %changelog
 * Tue Feb 17 2026 Sergey Kalinin <svkalinin@samsonpost.ru> 2.0.0-beta5
+    -  Исправил перевод (все равно какой-то кривой)
+    -  Исправил changelog
+
+* Tue Feb 17 2026 Sergey Kalinin <svkalinin@samsonpost.ru> 2.0.0-beta5
     -  Добавил код из https://github.com/wandrien/projman/tree/master для работы с выделенным текстом. И внес изменения в связи с этим.
     -  Исправления работы с С
 
@@ -238,6 +242,7 @@ fi
     -  Добавлена подсветка имен файлов в выводе git show
     -  Небольшие правки в подсказках по переменным
     -  Исправлена подсветка SHELL переменных а YAML файлах (ansible
+
 
 
 

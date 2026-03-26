@@ -1,5 +1,12 @@
 projman (2.0.0-beta5) stable; urgency=medium
 
+  *  Исправил перевод (все равно какой-то кривой)
+  *  Исправил changelog
+
+ -- Sergey Kalinin <svkalinin@samsonpost.ru>  Tue, 17 Feb 2026 13:00:42 +0300
+
+projman (2.0.0-beta5) stable; urgency=medium
+
   *  Добавил код из https://github.com/wandrien/projman/tree/master для работы с выделенным текстом. И внес изменения в связи с этим.
   *  Исправления работы с С
 
@@ -503,6 +510,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 

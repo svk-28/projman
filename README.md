@@ -163,6 +163,7 @@ Or type "projman" into terminal, Or choose the name of the program "Projman" on 
 ProjMan allows you to connect any external tools to the editor. To do this, you need to add an entry to the file ~/.config/projman/tools.ini.
 
 Calling an external program is available through the main and pop-up menus. To transfer the parameters, write the appropriate template in the file.
+
  - %s - template for substituting selected text in the editor
  - %f - template for substituting selected file\(s\) in the file tree
 
