@@ -15,11 +15,13 @@ proc ShowHelpDialog {} {
 }
 
 proc HelpFileLocation {fileName} {
-    global dir
+    global dir projman
     if [file exists [file join $dir(lib) $fileName]] {
         return [file join $dir(lib) fileName]
     } elseif [file exists [file join /usr/share/doc/projman $fileName]] {
         return [file join /usr/share/doc/projman $fileName]
+    } elseif [file exists [file join /usr/share/doc/projman-$projman(Version) $fileName]] {
+        return [file join /usr/share/doc/projman-$projman(Version) $fileName]
     } else {
         return [file join [pwd] $fileName]
     }

@@ -70,6 +70,10 @@ fi
 %{_iconsdir}/hicolor/48x48/apps/projman.png
 
 %changelog
+* Fri Mar 27 2026 Sergey Kalinin <svk@nuk-svk.ru> 2.0.0-beta6
+    -  Отключил сжатие README.md в пакете
+    -  Добавил README.md по F1. Сделал черновой вариант парсера и визуализатора MD
+
 * Tue Feb 17 2026 Sergey Kalinin <svkalinin@samsonpost.ru> 2.0.0-beta5
     -  Исправил перевод (все равно какой-то кривой)
     -  Исправил changelog
@@ -242,6 +246,7 @@ fi
     -  Добавлена подсветка имен файлов в выводе git show
     -  Небольшие правки в подсказках по переменным
     -  Исправлена подсветка SHELL переменных а YAML файлах (ansible
+
 
 
 

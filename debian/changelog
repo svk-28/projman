@@ -1,5 +1,6 @@
 projman (2.0.0-beta6) stable; urgency=medium
 
+  *  Отключил сжатие README.md в пакете
   *  Добавил README.md по F1. Сделал черновой вариант парсера и визуализатора MD
 
  -- Sergey Kalinin <svk@nuk-svk.ru>  Thu, 26 Mar 2026 19:39:54 +0300
