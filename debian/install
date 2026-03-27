@@ -4,6 +4,6 @@ tkregexp /usr/bin
 lib/*.tcl	/usr/share/projman/lib
 lib/msgs/*	/usr/share/projman/lib/msgs
 theme	/usr/share/projman/
-README.md /usr/share/doc/projman
 projman.desktop	/usr/share/applications
 projman.png /usr/share/pixmaps
+README.md /usr/share/doc/projman/

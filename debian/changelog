@@ -1,9 +1,15 @@
+projman (2.0.0-beta6) stable; urgency=medium
+
+  *  Добавил README.md по F1. Сделал черновой вариант парсера и визуализатора MD
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Thu, 26 Mar 2026 19:39:54 +0300
+
 projman (2.0.0-beta5) stable; urgency=medium
 
   *  Исправил перевод (все равно какой-то кривой)
   *  Исправил changelog
 
- -- Sergey Kalinin <svkalinin@samsonpost.ru>  Tue, 17 Feb 2026 13:00:42 +0300
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Tue, 17 Feb 2026 13:00:42 +0300
 
 projman (2.0.0-beta5) stable; urgency=medium
 
