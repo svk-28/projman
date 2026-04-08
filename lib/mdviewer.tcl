@@ -9,61 +9,65 @@
 #
 ######################################################
 
-proc ShowMD {fileFullPath} {
+proc ShowMD {fileFullPath {reload "false"}} {
     global cfgVariables
 
     set win .viewer
-
-    set parentGeometry [wm geometry .]
-    set parentWidth [winfo width .]
-    set parentHeight [winfo height .]
-    set parentX [winfo x .]
-    set parentY [winfo y .]
+    if {$reload eq "false"} {
+        set parentGeometry [wm geometry .]
+        set parentWidth [winfo width .]
+        set parentHeight [winfo height .]
+        set parentX [winfo x .]
+        set parentY [winfo y .]
+        
+        # Устанавливаем размеры нового окна (меньше на 200)
+        set newWidth [expr {$parentWidth - 200}]
+        set newHeight [expr {$parentHeight - 200}]
+        
+        # Вычисляем позицию для центрирования относительно родительского окна
+        set x [expr {$parentX + ($parentWidth - $newWidth) / 2}]
+        set y [expr {$parentY + ($parentHeight - $newHeight) / 2}]
+        
+        # Применяем геометрию
     
-    # Устанавливаем размеры нового окна (меньше на 200)
-    set newWidth [expr {$parentWidth - 200}]
-    set newHeight [expr {$parentHeight - 200}]
+        if { [winfo exists $win] }  { destroy $win; return false }
+        toplevel $win
+        # wm title $win "[::msgcat::mc "Help"]"
+        wm title $win $fileFullPath
+        wm geometry $win ${newWidth}x${newHeight}+${x}+${y}
+        wm overrideredirect $win 0
+        
+        set frm [ttk::frame $win.frmHelp]
+        pack $frm -expand 1 -fill both
+        
+        set txt [text $frm.txt -wrap $cfgVariables(editorWrap) -background $cfgVariables(textBG) \
+            -xscrollcommand "$win.h set" -yscrollcommand "$frm.v set" -font $cfgVariables(viewerFont)]
+        pack $txt -side left -expand 1 -fill both
+        pack [ttk::scrollbar $frm.v -command "$frm.txt yview"] -side right -fill y
+        ttk::scrollbar $win.h -orient horizontal -command "$frm.txt xview"
+        if {$cfgVariables(editorWrap) eq "none"} {
+            pack $win.h -side bottom -fill x
     
-    # Вычисляем позицию для центрирования относительно родительского окна
-    set x [expr {$parentX + ($parentWidth - $newWidth) / 2}]
-    set y [expr {$parentY + ($parentHeight - $newHeight) / 2}]
-    
-    # Применяем геометрию
-
-    if { [winfo exists $win] }  { destroy $win; return false }
-    toplevel $win
-    wm title $win "[::msgcat::mc "Help"]"
-    wm geometry $win ${newWidth}x${newHeight}+${x}+${y}
-    wm overrideredirect $win 0
-    
-    set frm [ttk::frame $win.frmHelp]
-    pack $frm -expand 1 -fill both
-    
-    set txt [text $frm.txt -wrap $cfgVariables(editorWrap) -background $cfgVariables(textBG) \
-        -xscrollcommand "$win.h set" -yscrollcommand "$frm.v set" -font $cfgVariables(viewerFont)]
-    pack $txt -side left -expand 1 -fill both
-    pack [ttk::scrollbar $frm.v -command "$frm.txt yview"] -side right -fill y
-    ttk::scrollbar $win.h -orient horizontal -command "$frm.txt xview"
-    if {$cfgVariables(editorWrap) eq "none"} {
-        pack $win.h -side bottom -fill x
-
+        }
+        bind .viewer <Escape> {destroy .viewer}
+        
+        $txt tag configure h1 -font $cfgVariables(h1Font)
+        $txt tag configure h2 -font $cfgVariables(h2Font)
+        $txt tag configure h3 -font $cfgVariables(h3Font)
+        $txt tag configure h4 -font $cfgVariables(h4Font)
+        $txt tag configure h5 -font $cfgVariables(h5Font)
+        $txt tag configure h6 -font $cfgVariables(h6Font)
+        $txt tag configure mdList -font $cfgVariables(mdListFont)
+        $txt tag configure codeBlock -foreground $cfgVariables(codeBlockFG) \
+            -background $cfgVariables(codeBlockBG) -font $cfgVariables(codeBlockFont)
+        $txt tag configure italic -font $cfgVariables(italicFont)
+        $txt tag configure bold -font $cfgVariables(boldFont)
+        $txt tag configure italicBold -font $cfgVariables(italicBoldFont)
+        $txt tag configure link -foreground $cfgVariables(linkFG) -font $cfgVariables(linkFont)
+    } else {
+        set txt .viewer.frmHelp.txt
+        $txt delete 0.0 end
     }
-    bind .viewer <Escape> {destroy .viewer}
-    
-    $txt tag configure h1 -font $cfgVariables(h1Font)
-    $txt tag configure h2 -font $cfgVariables(h2Font)
-    $txt tag configure h3 -font $cfgVariables(h3Font)
-    $txt tag configure h4 -font $cfgVariables(h4Font)
-    $txt tag configure h5 -font $cfgVariables(h5Font)
-    $txt tag configure h6 -font $cfgVariables(h6Font)
-    $txt tag configure mdList -font $cfgVariables(mdListFont)
-    $txt tag configure codeBlock -foreground $cfgVariables(codeBlockFG) \
-        -background $cfgVariables(codeBlockBG) -font $cfgVariables(codeBlockFont)
-    $txt tag configure italic -font $cfgVariables(italicFont)
-    $txt tag configure bold -font $cfgVariables(boldFont)
-    $txt tag configure italicBold -font $cfgVariables(italicBoldFont)
-    $txt tag configure link -foreground $cfgVariables(linkFG) -font $cfgVariables(linkFont)
-
     set codeBlockBegin false
 
     set f [open "$fileFullPath" r]
@@ -381,6 +385,4 @@ proc ExtractBlocks {line pattern} {
     }
     return $result
 }
-
-
 

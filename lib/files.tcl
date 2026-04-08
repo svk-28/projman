@@ -395,6 +395,14 @@ namespace eval FileOper {
         # puts "$f was saved"
         close $f
         ResetModifiedFlag $nbEditorItem $nbEditorWindow
+
+        # Проверяем если в редакторе открыт MD-файл и запущен его просмотрщик
+        if {[string toupper [string trimleft [file extension $filePath] "."]] eq "MD" && [winfo exists .viewer]} {
+           if {[wm title .viewer] eq $filePath} {
+              ShowMD $filePath true
+           }
+        } 
+
         if {[file tail $filePath] eq "projman.ini"} {
             Config::read $dir(cfg)
         }

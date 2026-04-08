@@ -97,6 +97,7 @@ codeBlockFont=Monospace 10 italic
 textBG=#333333
 linkFont={Droid Sans Mono} 10 bold
 linkFG=#54bcff
+runViewer=true
 "
 proc Config::create {dir} {
     set cfgFile [open [file join $dir projman.ini]  "w+"]

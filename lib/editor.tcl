@@ -1511,6 +1511,15 @@ namespace eval Editor {
         }
         # puts [$w.panelTxt panes]
         DebugPuts "$w $fileType $nb $fileFullPath"
+
+        # set fileType [string toupper [string trimleft [file extension $filePath] "."]]
+    
+        # Execute the MD-file viewer
+        if {$fileType eq "MD" && $cfgVariables(runViewer) eq "true"} {
+            ShowMD $fileFullPath
+            return
+        }
+        
         if [winfo exists $w.frmText2] {
             $w.panelTxt forget $w.frmText2
             destroy $w.frmText2

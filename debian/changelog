@@ -1,5 +1,11 @@
 projman (2.0.0-beta6) stable; urgency=medium
 
+  *  Новая сборка
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Wed,  8 Apr 2026 16:50:52 +0300
+
+projman (2.0.0-beta6) stable; urgency=medium
+
   *  Добавлены настройки для просмотрщика MD в части касаемой ссылок и выделения текста.
   *  Добавлена обработка тэгов выдеоления текста курсивом или тодщиной. Релизована обработка показа ссылок и вызова брузера при щелчке на ссылке.
   *  Добавлены процедуры отображение подсказок и запуска броузера для ссылок.
@@ -528,6 +534,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
