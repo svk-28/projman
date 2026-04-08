@@ -160,6 +160,7 @@ Or type "projman" into terminal, Or choose the name of the program "Projman" on 
 - Alt-K - Open folder
 
 ### Work with external tools
+
 ProjMan allows you to connect any external tools to the editor. To do this, you need to add an entry to the file ~/.config/projman/tools.ini.
 
 Calling an external program is available through the main and pop-up menus. To transfer the parameters, write the appropriate template in the file.
@@ -186,9 +187,8 @@ shortCut=
 ## Credits
 
 Sergey Kalinin - author
-svk@nuk-svk.ru
-http://nuk-svk.ru
+
+Home page: [nuk-svk.ru](https://nuk-svk.ru). E-mail: [svk@nuk-svk.ru](svk@nuk-svk.ru)
 
 Laurent Riesterer - VisualREGEXP and TkDIFF+ parts
-laurent.riesterer@free.fr
-http://laurent.riesterer.free.fr
+laurent.riesterer@free.fr [http://laurent.riesterer.free.fr](http://laurent.riesterer.free.fr)
