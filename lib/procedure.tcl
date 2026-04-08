@@ -1262,7 +1262,7 @@ proc OpenURL {url} {
 
 proc ShowTooltip {widget showingText} {
     if [winfo exists .baloonTip] {destroy .baloonTip}
-    set tip [toplevel .baloonTip -bg yellow -bd 1 -relief solid]
+    set tip [toplevel .baloonTip -bg white -bd 1 -relief solid]
     wm transient $tip .
     wm overrideredirect $tip 1
     set x [winfo pointerx $widget]
@@ -1274,4 +1274,3 @@ proc ShowTooltip {widget showingText} {
     pack $tip.l
     after 5000 [list destroy $tip]
 }
-
