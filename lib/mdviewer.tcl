@@ -64,6 +64,7 @@ proc ShowMD {fileFullPath {reload "false"}} {
         $txt tag configure bold -font $cfgVariables(boldFont)
         $txt tag configure italicBold -font $cfgVariables(italicBoldFont)
         $txt tag configure link -foreground $cfgVariables(linkFG) -font $cfgVariables(linkFont)
+        $txt tag configure quote -background $cfgVariables(codeBlockBG)
     } else {
         set txt .viewer.frmHelp.txt
         $txt delete 0.0 end
@@ -106,6 +107,13 @@ proc ShowMD {fileFullPath {reload "false"}} {
             ProcessLineWithURL $line $txt $result
         } elseif {$textTag eq "markable"} {
             ProcessLineWithMark $line $txt $result
+        } elseif {$textTag eq "quote"} {
+            set symList [split [lindex $result 2] ">"]
+            for {set i 1} { $i < [llength $symList]} {incr i} {
+                $txt insert end " " quote
+                $txt insert end "  "
+            }
+            $txt insert end [lindex $result 1]\n
         } else {
             $txt insert end "[lindex $result 1]\n" $textTag
         }
@@ -303,6 +311,11 @@ proc MarkDownParser {line} {
         set result [ExtractURL $line {\[([^\]]+)\]\(([^)]+)\)}]
         return [list link $result]
     }
+    # Quoted text
+    if [regexp -nocase -line -- {(^>(?:>|\s)*)(.*)$} $line match v1 v2] {
+        puts "Quoted text $match"
+        return [list quote $v2 $v1]
+    }
 
     return [list {} $line]
 
@@ -385,4 +398,3 @@ proc ExtractBlocks {line pattern} {
     }
     return $result
 }
-

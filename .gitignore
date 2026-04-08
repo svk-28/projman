@@ -8,3 +8,4 @@ debian/*.tmp
 debian/errors
 *.tmp
 errors
+test.tcl

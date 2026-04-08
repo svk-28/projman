@@ -1,5 +1,11 @@
 projman (2.0.0-beta6) stable; urgency=medium
 
+  *  Добавил обновление информации в просмотрщике MD при сохранении открытого в редакторе файла.
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Wed,  8 Apr 2026 18:17:24 +0300
+
+projman (2.0.0-beta6) stable; urgency=medium
+
   *  Новая сборка
 
  -- Sergey Kalinin <svk@nuk-svk.ru>  Wed,  8 Apr 2026 16:50:52 +0300
@@ -534,6 +540,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
