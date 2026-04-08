@@ -1242,3 +1242,36 @@ proc ChooseColor {} {
         $txt insert insert "$color"
     }
 }
+
+proc OpenURL {url} {
+    global tcl_platform
+    
+    if {$tcl_platform(platform) == "windows"} {
+        set cmd "cmd /c start $url"
+    } elseif {$tcl_platform(platform) == "mac"} {
+        set cmd "open $url"
+    } elseif {$tcl_platform(platform) == "unix"} {
+        set cmd "xdg-open $url"
+    }
+    puts $cmd
+    set pipe [open "|$cmd" "r"]
+    puts $pipe
+    fileevent $pipe readable
+    fconfigure $pipe -buffering none -blocking no
+}
+
+proc ShowTooltip {widget showingText} {
+    if [winfo exists .baloonTip] {destroy .baloonTip}
+    set tip [toplevel .baloonTip -bg yellow -bd 1 -relief solid]
+    wm transient $tip .
+    wm overrideredirect $tip 1
+    set x [winfo pointerx $widget]
+    set y [winfo pointery $widget]
+    
+    wm geometry $tip +[expr {$x + 10}]+[expr {$y + 10}]
+    
+    label $tip.l -text $showingText -bg white
+    pack $tip.l
+    after 5000 [list destroy $tip]
+}
+
