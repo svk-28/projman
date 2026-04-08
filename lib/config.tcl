@@ -80,6 +80,7 @@ debug=false
 debugOut=stdout
 \[Viewer\]
 listSymbol=०
+viewerFont={Droid Sans Mono} 10
 h1Font={Droid Sans Mono} 20 bold
 h2Font={Droid Sans Mono} 18 bold
 h3Font={Droid Sans Mono} 16 bold
@@ -87,10 +88,15 @@ h4Font={Droid Sans Mono} 14 bold
 h5Font={Droid Sans Mono} 12 bold
 h6Font={Droid Sans Mono} 10 bold
 mdListFont={Droid Sans Mono} 10
+italicFont={Droid Sans Mono} 10 italic
+boldFont={Droid Sans Mono} 10 bold
+italicBoldFont={Droid Sans Mono} 10 bold italic
 codeBlockBG=#7a7a7a
 codeBlockFG=black
 codeBlockFont=Monospace 10 italic
 textBG=#333333
+linkFont={Droid Sans Mono} 10 bold
+linkFG=#54bcff
 "
 proc Config::create {dir} {
     set cfgFile [open [file join $dir projman.ini]  "w+"]
