@@ -1232,4 +1232,13 @@ proc DebugPuts {msg} {
     }
 }
 
+proc ChooseColor {} {
+    global nbEditor
+    
+    set txt "[$nbEditor select].frmText.t"
 
+    set color [tk_chooseColor -initialcolor white -title  [::msgcat::mc "Choose color"] -parent .]
+    if {$color ne "" && [winfo exists $txt] == 1} {
+        $txt insert insert "$color"
+    }
+}

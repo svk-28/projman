@@ -18,6 +18,7 @@
 ::msgcat::mcset en "Braces foreground"
 ::msgcat::mcset en "Cancel"
 ::msgcat::mcset en "Can't found file:"
+::msgcat::mcset en "Choose color"
 ::msgcat::mcset en "Close"
 ::msgcat::mcset en "Close all"
 ::msgcat::mcset en "Close Project Manager?"
@@ -85,6 +86,7 @@
 ::msgcat::mcset en "Indent foreground"
 ::msgcat::mcset en "Indent background"
 ::msgcat::mcset en "Interface language"
+::msgcat::mcset en "Insert color code"
 ::msgcat::mcset en "Insert image"
 ::msgcat::mcset en "Install Tcl/Tk Project Manager"
 ::msgcat::mcset en "Input file name"
@@ -204,4 +206,3 @@
 ::msgcat::mcset en "SCREAMING-KEBAB-CASE"
 ::msgcat::mcset en "Train-Case"
 ::msgcat::mcset en "space separated"
-
