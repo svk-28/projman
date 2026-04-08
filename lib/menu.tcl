@@ -86,6 +86,8 @@ proc GetEditMenu {m} {
     $m add separator
     $m add command -label [::msgcat::mc "Insert image"] -accelerator "Ctrl+I"\
         -command ImageBase64Encode
+    $m add command -label [::msgcat::mc "Insert color code"]\
+        -command ChooseColor
     $m add separator
     $m add command -label [::msgcat::mc "Settings"] -command Settings
 }
@@ -190,4 +192,3 @@ proc GetConvertIdentCaseMenu {m} {
 }
 # 2026 Vadim Ushakov <wandrien.dev@gmail.com>
 # ============================================================
-
