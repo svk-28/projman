@@ -75,6 +75,7 @@ RB=ruby
 HTM=firefox
 HTML=firefox
 LUA=lua
+TROFF=groff
 \[Debug\]
 debug=false
 debugOut=stdout
