@@ -925,6 +925,22 @@ proc Execute {filePath w activeEditor} {
 
     # Added executor from config
     set fileType [string toupper [string trimleft [file extension $filePath] "."]]
+    switch -regexp -- $fileType {
+        [[:digit:]]+ {
+            if {[FileOper::GetFileMimeType $filePath] eq "troff"} {
+                set fileType TROFF
+            } else {
+                set fileType "Unknow"
+            }
+        }
+        ^$ {
+            if {[FileOper::GetFileMimeType $filePath] eq "troff"} {
+                set fileType TROFF
+            } else {
+                set fileType "Unknow"
+            }
+        }
+    }
     if {[info exists cfgVariables($fileType)] != 0 && $cfgVariables($fileType) ne ""} {
          $w.frame.text insert end "$cfgVariables($fileType) %f"
     }
@@ -1131,7 +1147,7 @@ proc ExecutorCommandPathSetting {fileType} {
     }
     if {[info exists cfgVariables($fileType)] == 0} {
         set cfgVariables($fileType) ""
-        DebugPuts $cfgVariables($fileType)
+        DebugPuts "ExecutorCommandPathSetting: cfgVariables($fileType) = $cfgVariables($fileType)"
     }
 }
 

@@ -1462,7 +1462,25 @@ namespace eval Editor {
 
         }
         set fileType [string toupper [string trimleft [file extension $fileFullPath] "."]]
-        if {$fileType eq ""} {set fileType "Unknown"}
+        # Set file type if file extention is digits
+        switch -regexp -- $fileType {
+            [[:digit:]]+ {
+                if {[FileOper::GetFileMimeType $fileFullPath] eq "troff"} {
+                    set fileType TROFF
+                } else {
+                    set fileType "Unknow"
+                }
+            }
+            ^$ {
+                if {[FileOper::GetFileMimeType $fileFullPath] eq "troff"} {
+                    set fileType TROFF
+                } else {
+                    set fileType "Unknow"
+                }
+            }
+        }
+        DebugPuts "Editor::Editor: file type is \"$fileType\""
+        # if {$fileType eq ""} {set fileType "Unknown"}
 
         ExecutorCommandPathSetting $fileType
         
@@ -1510,7 +1528,7 @@ namespace eval Editor {
             puts $fileFullPath
         }
         # puts [$w.panelTxt panes]
-        DebugPuts "$w $fileType $nb $fileFullPath"
+        DebugPuts "Editor::SplitEditorForExecute: $w $fileType $nb $fileFullPath"
 
         # set fileType [string toupper [string trimleft [file extension $filePath] "."]]
     

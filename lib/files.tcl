@@ -76,7 +76,13 @@ namespace eval FileOper {
         }
         # линуксовый file не всегда корректно определяет тип файла
         # используем пакет из tcl
-        lassign [::fileutil::fileType $fileFullPath] fType fBinaryType fBinaryInterp
+        if { $fType eq "text" && $fExt eq "troff"} {
+            set fType $fExt
+            set fBinaryType "text"
+            set fBinaryInterp "groff"
+        } else {
+            lassign [::fileutil::fileType $fileFullPath] fType fBinaryType fBinaryInterp
+        }
         DebugPuts "File type is $fType, $fBinaryType, $fBinaryInterp"
         set ext [string tolower [file extension $fileFullPath]]
         
@@ -139,6 +145,9 @@ namespace eval FileOper {
                         }
                     }
                 }
+            }
+            "troff" {
+                return troff
             }
             "empty" {
                 return text
@@ -536,7 +545,7 @@ namespace eval FileOper {
             set fileType [FileOper::GetFileMimeType $fileFullPath]
         }
 
-        # puts "$fileType <<<<<<<<<<<"
+        DebugPuts "FileOper::Edit: file type is \"$fileType\""
 
         switch $fileType {
             "text" {
