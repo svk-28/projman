@@ -1,5 +1,11 @@
 projman (2.0.0-beta6) stable; urgency=medium
 
+  *  Новая сборка
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Wed, 15 Apr 2026 17:03:28 +0300
+
+projman (2.0.0-beta6) stable; urgency=medium
+
   *  Добавлена логика для работы с troff/groff файлами
   *  Добавил настройку команды для troff файлов (по умолчанию groff)
   *  Добавлена иконка для troff файлов
@@ -531,6 +537,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 

@@ -7,7 +7,6 @@
 # Working with files module
 ######################################################
 
-
 namespace eval FileOper {
     global packages
     variable types
@@ -47,6 +46,9 @@ namespace eval FileOper {
 
     proc GetFileMimeType {fileFullPath {opt ""}} {
         global cfgVariables
+        if [regexp -nocase -- {untitled} $fileFullPath mattch] {
+            return text
+        }
         # Проверям наличие программы в системе, если есть то добавляем опции
         # если нет то используем тиклевый пакет
         if [file exists $cfgVariables(fileTypeCommand)] {
@@ -67,6 +69,7 @@ namespace eval FileOper {
         if [regexp -nocase -- {(\w+)/([\w\-_\.]+); charset=([[:alnum:]-]+)} $pipe m fType fExt fCharset] {
             DebugPuts "$fType $fExt $fCharset"
         }
+
         switch $opt {
             "charset" {
                 if [info exists fCharset] {
