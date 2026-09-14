@@ -1,0 +1,165 @@
+# black.tcl -
+#
+#   Experimental!
+#
+#  Copyright (c) 2007-2008 Mats Bengtsson
+#
+# $Id: black.tcl,v 1.2 2009/10/25 19:21:30 oberdorfer Exp $
+
+package require Tk;                 # minimum version for Tile
+package require tile;               # depends upon tile
+
+
+namespace eval ttk {
+  namespace eval theme {
+    namespace eval black {
+      variable version 0.1
+    }
+  }
+}
+
+namespace eval ttk::theme::black {
+
+  #variable imgdir [file join [file dirname [info script]] black]
+  #variable I
+  #array set I [tile::LoadImages $imgdir *.png]
+
+  variable dir [file dirname [info script]]
+
+  # NB: These colors must be in sync with the ones in black.rdb
+
+  variable colors
+  array set colors {
+    -disabledfg	"DarkGrey"
+    -frame  	"#424242"
+    -dark	    "#222222"
+    -darker 	"#121212"
+    -darkest	"black"
+    -lighter	"#626262"
+    -lightest 	"#ffffff"
+    -selectbg	"#4a6984"
+    -selectfg	"#ffffff"
+    -font "#c8c8c8"
+  }
+  if {[info commands ::ttk::style] ne ""} {
+    set styleCmd ttk::style
+  } else {
+    set styleCmd style
+  }
+
+    $styleCmd theme create black -parent clam -settings {
+
+        # -----------------------------------------------------------------
+        # Theme defaults
+        #
+        $styleCmd configure "." \
+            -background $colors(-frame) \
+            -foreground white \
+            -bordercolor $colors(-darkest) \
+            -darkcolor $colors(-dark) \
+            -lightcolor $colors(-lighter) \
+            -troughcolor $colors(-darker) \
+            -selectbackground $colors(-selectbg) \
+            -selectforeground $colors(-selectfg) \
+            -selectborderwidth 0 \
+            -font "{Droid Sans Mono} 9" \
+            ;
+    
+        $styleCmd map "." \
+            -background [list disabled $colors(-frame) \
+            active $colors(-lighter)] \
+            -foreground [list disabled $colors(-disabledfg)] \
+            -selectbackground [list  !focus $colors(-darkest)] \
+            -selectforeground [list  !focus white] \
+            ;
+    
+        # ttk widgets.
+        $styleCmd configure TButton \
+            -width -8 -padding {5 1} -relief link
+        $styleCmd configure TMenubutton \
+            -relief flat -arrowsize 0 
+    
+        $styleCmd configure TCheckbutton \
+            -indicatorbackground $colors(-lighter) -indicatormargin {1 1 4 1}
+        $styleCmd configure TRadiobutton \
+            -indicatorbackground $colors(-lighter) -indicatormargin {1 1 4 1}
+    
+        $styleCmd configure TEntry \
+            -fieldbackground gray20 -foreground $colors(-font) \
+            -padding {2 0} -border -1
+        $styleCmd configure TCombobox \
+            -fieldbackground white -foreground  $colors(-font)\
+            -padding {2 0}
+        $styleCmd configure TSpinbox \
+            -fieldbackground white -foreground $colors(-font) \
+            -padding {2 0}
+    
+        $styleCmd configure TNotebook \
+            -border -1
+        $styleCmd configure TNotebook.Tab \
+            -padding {6 2 6 2} \
+            -border -1
+    
+        $styleCmd map TNotebook.Tab -background [list \
+            selected $colors(-lighter)]
+    
+        # tk widgets.
+        $styleCmd map Menu \
+            -background [list active $colors(-dark)] \
+            -foreground [list disabled $colors(-lightest)] \
+    
+        $styleCmd configure TreeCtrl \
+            -background gray30 -itembackground {gray60 gray50} \
+            -itemfill white -itemaccentfill yellow -border -1
+    
+        $styleCmd map Treeview\
+            -background [list selected $colors(-lighter)] \
+            -foreground [list selected $colors(-selectfg)]
+            # -background [list selected $colors(-selectbg)] \
+    
+        $styleCmd configure Treeview -fieldbackground gray25
+
+        $styleCmd map Canvas \
+            -background [list selected $colors(-lighter)] \
+            -foreground [list selected $colors(-selectfg)] \
+            -highlightbackground [list selected $colors(-lighter)]
+    }
+  # puts [ttk::style element names]
+}
+
+# A few tricks for Tablelist.
+
+namespace eval ::tablelist:: {
+
+  proc blackTheme {} {
+    variable themeDefaults
+
+    array set colors [array get ttk::theme::black::colors]
+
+    array set themeDefaults [list \
+      -background	  "Black" \
+      -foreground	  "White" \
+      -disabledforeground $colors(-disabledfg) \
+      -stripebackground	  "#191919" \
+      -selectbackground	  "#4a6984" \
+      -selectforeground	  "DarkRed" \
+      -selectborderwidth 0 \
+      -font		TkTextFont \
+      -labelbackground	$colors(-frame) \
+      -labeldisabledBg	"#dcdad5" \
+      -labelactiveBg	"#eeebe7" \
+      -labelpressedBg	"#eeebe7" \
+      -labelforeground	white \
+      -labeldisabledFg	"#999999" \
+      -labelactiveFg	white \
+      -labelpressedFg	white \
+      -labelfont	TkDefaultFont \
+      -labelborderwidth	2 \
+      -labelpady	1 \
+      -arrowcolor	"" \
+      -arrowstyle	sunken10x9 \
+      ]
+  }
+}
+
+package provide ttk::theme::black $::ttk::theme::black::version

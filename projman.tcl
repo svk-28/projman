@@ -1,0 +1,178 @@
+#!/bin/sh
+# Tcl ignores the next line -*- tcl -*- \
+exec wish8.6 "$0" -- "$@"
+
+######################################################
+#        Tcl/Tk Project manager 2.0
+#        Distributed under GNU Public License
+# Author: Sergey Kalinin svk@nuk-svk.ru
+# Home page: https://nuk-svk.ru
+######################################################
+# Version: 2.0.0
+# Release: beta6
+# Build: 21042026112230
+######################################################
+
+# определим текущую версию, релиз и т.д.
+set f [open [info script] "RDONLY"]
+while {[gets $f line] >=0} {
+    if [regexp -nocase -all -- {version:\s+([0-9]+?.[0-9]+?.[0-9]+?)} $line match v1] {
+        set projman(Version) $v1
+    }
+    if [regexp -nocase -all -- {release:\s+([a-z0-9]+?)} $line match v1] {
+        set projman(Release) $v1
+    }
+    if [regexp -nocase -all -- {build:\s+([a-z0-9]+?)} $line match v1] {
+        set projman(Build) $v1
+    }
+    if [regexp -nocase -all -- {author:\s+(.+?)} $line match v1] {
+        set projman(Author) $v1
+    }
+    if [regexp -nocase -all -- {home page:\s+(.+?)} $line match v1] {
+        set projman(Homepage) $v1
+    }
+}
+close $f
+
+package require msgcat
+package require inifile
+package require ctext
+package require base64
+package require fileutil
+# package require Thread
+package require fileutil::magic::filetype
+
+# Определим установлен ли пакет Img для расширенной поддержки изображений
+proc PackagePresent {pkg} {
+    # puts $pkg
+    foreach item [package names] {
+        # puts [string match -nocase Img $item]
+        if {[string match -nocase Img $item] == 1} {
+            # puts "The $pkg package was found"
+            return true
+        }
+    }
+}
+
+if {[PackagePresent "Img"] eq "true"} {
+    package require Img
+} else {
+    puts "Img not present"
+}
+
+# Устанавливаем текущий каталог
+set dir(root) [pwd]
+set dir(doc) [file join $dir(root) doc]
+
+# ДОбавляем в список файлы (каталоги) из командной строки
+if { $::argc > 0 } {
+    foreach arg $::argv {
+        lappend opened $arg
+    }
+    # puts $opened
+}
+
+
+# Устанавливаем рабочий каталог, если его нет то создаём.
+# Согласно спецификации XDG проверяем наличие переменных и каталогов
+if [info exists env(XDG_CONFIG_HOME)] {
+    set dir(cfg) [file join $env(XDG_CONFIG_HOME) projman]
+} elseif [file exists [file join $env(HOME) .config]] {
+    set dir(cfg) [file join $env(HOME) .config projman]
+} else {
+    set dir(cfg) [file join $env(HOME) .projman]
+}
+
+if {[file exists $dir(cfg)] == 0} {
+    file mkdir $dir(cfg)
+}
+
+# puts "Config dir is $dir(cfg)"
+
+# каталог с модулями
+set dir(lib) "[file join $dir(root) lib]"
+
+source [file join $dir(lib) config.tcl]
+
+foreach modFile [lsort [glob -nocomplain [file join $dir(lib) *.tcl]]] {
+    if {[file tail $modFile] ne "gui.tcl" && [file tail $modFile] ne "config.tcl"} {
+        source $modFile
+        # puts "Loading module $modFile"
+    }
+}
+
+# TTK Theme loading
+set dir(theme) "[file join $dir(root) theme]"
+foreach modFile [lsort [glob -nocomplain [file join $dir(theme) *]]] {
+    if [file isdirectory $modFile] {
+        source $modFile/[file tail $modFile].tcl
+        # puts "Loading theme $modFile.tcl"
+    } elseif {[file extension $modFile] eq ".tcl"} {
+        source $modFile
+        # puts "Loading theme $modFile"
+    }
+}
+
+
+# загружаем пользовательский конфиг, если он отсутствует или пустой, то копируем дефолтный
+if {[file exists [file join $dir(cfg) projman.ini]] == 0 || [file size [file join $dir(cfg) projman.ini]] == 0} {
+    Config::create $dir(cfg)
+}
+Config::read $dir(cfg)
+Config::CheckVariables
+
+# загружаем пользовательский конфиг для инстурментов, если он отсутствует или пустой, то копируем дефолтный
+if {[file exists [file join $dir(cfg) tools.ini]] == 0 || [file size [file join $dir(cfg) tools.ini]] == 0} {
+    Tools::Create $dir(cfg)
+}
+# Читаем настройки для внешних инструментов
+Tools::Read $dir(cfg)
+Tools::CheckVariables
+Tools::Write $dir(cfg)
+
+::msgcat::mclocale $cfgVariables(locale)
+
+if [::msgcat::mcload [file join $dir(lib) msgs]] {
+    puts "Load locale messages... OK"
+}
+DebugPuts "Setting the locale... [::msgcat::mclocale]"
+
+source [file join $dir(lib) gui.tcl]
+
+Git::CommandPathSetting
+
+# Open the PATH if command line argument has been setting
+if [info exists opened] {
+    foreach path $opened {
+        # Приводим путь к полному виду
+        if {[file pathtype $path] ne "absolute"} {
+            set path [file normalize $path]
+        }
+        if [file isdirectory $path] {
+            # set activeProject $path
+            SetActiveProject $path
+            .frmStatus.lblGitLogo configure -image git_logo_20x20
+            .frmStatus.lblGit configure -text "[::msgcat::mc "Branch"]: [Git::Branches current]"
+            FileOper::ReadFolder $path
+            ReadFilesFromDirectory $path $path
+        } elseif [file exists $path] {
+            # ResetModifiedFlag [FileOper::Edit $path] 
+            FileOper::Edit $path
+        }
+    }
+} else {
+    if {$cfgVariables(opened) ne ""} {
+        # puts "<$cfgVariables(opened)"
+        SetActiveProject $cfgVariables(opened)
+        .frmStatus.lblGitLogo configure -image git_logo_20x20
+        .frmStatus.lblGit configure -text "[::msgcat::mc "Branch"]: [Git::Branches current]"
+        FileOper::ReadFolder $cfgVariables(opened)
+        ReadFilesFromDirectory $cfgVariables(opened) $cfgVariables(opened)
+        if {$cfgVariables(editedFiles) ne ""} {
+            foreach f [split $cfgVariables(editedFiles) " "] {
+                # puts $f
+                FileOper::Edit $f
+            }
+        }
+    }
+}

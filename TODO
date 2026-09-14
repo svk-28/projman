@@ -1,0 +1,21 @@
+######################################################
+#	Tcl/Tk Project manager 2.0
+#	Distributed under GNU Public License
+# Author: Sergey Kalinin svk@nuk-svl.ru
+# Home page: https://nuk-svk.ru
+######################################################
+
+--- Ansible ---
+1. Определение всех переменных в отдельный список
+- внутри файла, конструкции вида:
+    set_fact:
+       varName: value
+    set_fact varName value
+    register: varName
+    vars:
+      varName: value
+    vars_files:
+      - var1.yml
+      - var2.yml
+
+3. Если используется роль и переменная не найдена в плэйбуке

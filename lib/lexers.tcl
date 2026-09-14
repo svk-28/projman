@@ -1,0 +1,141 @@
+########################################################
+#
+#-------------------------------------------------------
+# "PROCNAME" in procFindString will be changed on
+# "procName" from procRegexpCommand
+#-------------------------------------------------------
+# TCL/TK
+dict set lexers TCL commentSymbol {#}
+dict set lexers TCL variableSymbol {$}
+dict set lexers TCL procFindString {proc PROCNAME}
+dict set lexers TCL procRegexpCommand {regexp -nocase -all -- {^\s*?(proc) (.*?) \{(.*?)\} \{} $line match keyWord procName params}
+dict set lexers TCL varRegexpCommand {regexp -nocase -all -- {^\s*?set\s+([a-zA-Z0-9\:\-_$]+)\s+(.+?)($|;)} $line match varName varValue lineEnd}
+dict set lexers TCL commands [info commands]
+
+#--------------------------------------------------
+# Go lang
+dict set lexers GO commentSymbol {//}
+dict set lexers GO commentMultilineSymbolBegin {/*}
+dict set lexers GO commentMultilineSymbolEnd {*/}
+dict set lexers GO procFindString {func.*?PROCNAME}
+dict set lexers GO procRegexpCommand {regexp -nocase -all -- {\s*?func\s*?(\(\w+\s*?\**?\w+\)|)\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match linkName procName params returns}
+dict set lexers GO varRegexpCommand {regexp -nocase -all -line -- {^\s*?var\s+([a-zA-Z0-9\-_$]+)\s+(.+?)(\s*$)} $line match varName varType lineEnd}
+
+#--------------------------------------------------
+# SHELL (Bash)
+dict set lexers SH commentSymbol {#}
+dict set lexers SH variableSymbol {$}
+dict set lexers SH procFindString {(function |)\s*?PROCNAME\(\)}
+dict set lexers SH procRegexpCommand {regexp -nocase -all -- {^\s*?(function |)\s*?(.*?)\(()\)} $line match keyWord procName params}
+
+#--------------------------------------------------
+# Python 
+dict set lexers PY commentSymbol {#}
+dict set lexers PY procFindString {(def )\s*?PROCNAME}
+dict set lexers PY procRegexpCommand {regexp -nocase -all -- {^\s*?(def)\s*?(.*?)\((.*?)\):} $line match keyWord procName params}
+dict set lexers PY varRegexpCommand {regexp -nocase -all -line -- {^\s*?(\w+)\s*=\s*(.+)($)} $line match varName varValue lineEnd}
+
+#--------------------------------------------------
+# Ruby 
+dict set lexers RB commentSymbol {#}
+dict set lexers RB commentMultilineSymbolBegin {=begin}
+dict set lexers RB commentMultilineSymbolEnd {end=}
+dict set lexers RB tabSize 2
+dict set lexers RB procFindString {(def |class )\s*?PROCNAME}
+dict set lexers RB procRegexpCommand {regexp -nocase -all -- {^\s*?(def|class)\s([a-zA-Z0-9\-_:\?]+?)($|\s|\(.+?\))} $line match keyWord procName params}
+dict set lexers RB varRegexpCommand {regexp -nocase -all -line -- {^\s*?(\w+)\s*=\s*(.+)($)} $line match varName varValue lineEnd}
+
+#--------------------------------------------------
+# YAML (ansible)
+dict set lexers YML commentSymbol {#}
+# dict set lexers YML variableSymbol {\{\{}
+dict set lexers YML tabSize 2
+dict set lexers YML procFindString {(- name:)\s*?PROCNAME}
+dict set lexers YML procRegexpCommand {regexp -nocase -all -- {^\s*?- (name):\s(.+?)$} $line match keyWord procName}
+dict set lexers YML varRegexpCommand {regexp -nocase -all -- {^(\s*?)([a-zA-Z0-9\-_$]+):\s+(.+?)(\s*$)} $line match indent varName varValue lineEnd}
+dict set lexers YML varRegexpCommandMultiline {regexp -all -line -- {^(\s*)(set_fact|vars):$} $line match indent keyWord}
+
+#--------------------------------------------------
+# MD (markdown)
+dict set lexers MD tabSize 2
+dict set lexers MD procFindString {(#+?)\s*?PROCNAME}
+dict set lexers MD procRegexpCommand {regexp -nocase -all -- {^(#+?)\s(.+?)$} $line match keyWord procName}
+# dict set lexers YML varRegexpCommandMultiline {regexp -all -line -- {^(\s*)(set_fact|vars):$} $line match indent keyWord}
+
+#--------------------------------------------------
+# Perl
+dict set lexers PL commentSymbol {#}
+dict set lexers PL variableSymbol {$}
+dict set lexers PL tabSize 4
+dict set lexers PL procFindString {(sub )\s*?PROCNAME}
+dict set lexers PL procRegexpCommand {regexp -nocase -all -- {^\s*?(sub)\s([a-zA-Z0-9\-_:]+?)($|\(.+?\))} $line match keyWord procName params}
+dict set lexers PL varRegexpCommand {regexp -nocase -all -- {^(\s*?)\$([a-zA-Z0-9\-_$]+)\s+=\s+(.+?)(\s*;$)} $line match indent varName varValue lineEnd}
+
+#--------------------------------------------------
+# INI
+dict set lexers INI commentSymbol {#}
+dict set lexers INI tabSize 4
+dict set lexers INI procFindString {(\[)PROCNAME(\])}
+# dict set lexers INI procRegexpCommand {regexp -nocase -all -- {^\s*?(\[)([a-zA-Z0-9\-_:\s]+?)(\])$} $line match keyWord procName}
+dict set lexers INI procRegexpCommand {regexp -nocase -all -- {^\s*?(\[)(.+?)(\])$} $line match keyWord procName}
+
+# -------------------------------------------------
+# HTML
+dict set lexers HTML commentSymbol {<!--}
+dict set lexers HTML commentMultilineSymbolBegin {<!--}
+dict set lexers HTML commentMultilineSymbolEnd {-->}
+dict set lexers HTML tabSize 4
+dict set lexers HTML procFindString {<h[0-9]>(<.+>|)PROCNAME(</.+>|)</h[0-9]>}
+dict set lexers HTML procRegexpCommand {regexp -nocase -all -- {<h[0-9]>(<.+>|)(.+?)(</.+>|)</h[0-9]>} $line match v1 procName v2}
+
+# -------------------------------------------------
+# HTM
+dict set lexers HTM commentSymbol {<!--}
+dict set lexers HTM commentMultilineSymbolBegin {<!--}
+dict set lexers HTM commentMultilineSymbolEnd {-->}
+dict set lexers HTM tabSize 4
+dict set lexers HTM procFindString {<h[0-9]>(<.+>|)PROCNAME(</.+>|)</h[0-9]>}
+dict set lexers HTM procRegexpCommand {regexp -nocase -all -- {<h[0-9]>(<.+>|)(.+?)(</.+>|)</h[0-9]>} $line match v1 procName v2}
+
+#--------------------------------------------------
+# LUA
+dict set lexers LUA commentSymbol {--}
+dict set lexers LUA procFindString {function\s*?PROCNAME}
+dict set lexers LUA procRegexpCommand {regexp -nocase -all -- {^(local|)\s*?(function)\s([a-zA-Z0-9\-_:]+?)\s+\((.+?)\)} $line match v1 keyWord procName params}
+dict set lexers LUA varRegexpCommand {regexp -nocase -all -- {^(\s*?)([a-zA-Z0-9\-_\.]+)\s+=\s+(.+?)(\s*$|--)} $line match indent varName varValue lineEnd}
+
+#--------------------------------------------------
+# C
+dict set lexers C commentSymbol {//}
+dict set lexers C commentMultilineSymbolBegin {/*}
+dict set lexers C commentMultilineSymbolEnd {*/}
+dict set lexers C procFindString {(\w+)\s+(PROCNAME)\s*\((.*?)(,|\))(\W|$)}
+dict set lexers C procRegexpCommand {regexp -nocase -all -line -- {^(?:(\w+)\s+)+(\*\w+|\w+)\s*\((.*?)(,|\))} $line match returns procName params v4}
+# dict set lexers C procRegexpCommand {regexp -nocase -all -- {\s*?func\s*?(\(\w+\s*?\**?\w+\)|)\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match linkName procName params returns}
+# dict set lexers C varRegexpCommand {regexp -nocase -all -line -- {^\s*?var\s+([a-zA-Z0-9\-_$]+)\s+(.+?)(\s*$)} $line match varName varType lineEnd}
+dict set lexers C varRegexpCommand {regexp -nocase -all -line -- {^\s*(\w+\s+)+(?:[*\s]+)?(\w+)\s*[=;,\[]} $line match varType varName}
+dict set lexers C commands {auto break case const continue default do else enum extern for goto if inline  int long register restrict return signed sizeof static struct switch typedef typeof typeof_unqual union unsigned void volatile while}
+
+#--------------------------------------------------
+# H
+dict set lexers H commentSymbol {//}
+dict set lexers H commentMultilineSymbolBegin {/*}
+dict set lexers H commentMultilineSymbolEnd {*/}
+# dict set lexers C procFindString {^\s*(?:(\w+)\s+)+(PROCNAME)\s*\((.*?)(,|\))}
+dict set lexers H procFindString {^\s*(?:(\w+)\s+)+(PROCNAME)\s*\((.*?)(,|\))}
+dict set lexers H procRegexpCommand {regexp -nocase -all -line -- {^(?:(\w+)\s+)+(\*\w+|\w+)\s*\((.*?)(,|\))} $line match returns procName params v4}
+# dict set lexers C procRegexpCommand {regexp -nocase -all -- {\s*?func\s*?(\(\w+\s*?\**?\w+\)|)\s*?(\w+)\((.*?)\)\s+?([a-zA-Z0-9\{\}\[\]\(\)-_.]*?|)\s*?\{} $line match linkName procName params returns}
+dict set lexers C varRegexpCommand {regexp -nocase -all -line -- {^\s*(\w+\s+)+(?:[*\s]+)?(\w+)\s*[=;,\[]} $line match varType varName}
+dict set lexers H commands {auto break case const continue default do else enum extern for goto if inline  int long register restrict return signed sizeof static struct switch typedef typeof typeof_unqual union unsigned void volatile while}
+
+#--------------------------------------------------
+# Makefile
+dict set lexers MAKEFILE commentSymbol {#}
+dict set lexers MAKEFILE tabSize 2
+dict set lexers MAKEFILE procFindString {^(PROCNAME):}
+dict set lexers MAKEFILE procRegexpCommand {regexp {^([A-Za-z0-9_.-]+):} $line -> procName}
+#dict set lexers MAKEFILE varRegexpCommand {regexp -nocase -all -- {^(\s*?)([a-zA-Z0-9\-_$]+):\s+(.+?)(\s*$)} $line match indent varName varValue lineEnd}
+#dict set lexers MAKEFILE varRegexpCommandMultiline {regexp -all -line -- {^(\s*)(set_fact|vars):$} $line match indent keyWord}
+
+# -------------------------------------------------
+dict set lexers ALL varDirectory {variables vars group_vars host_vars defaults}

@@ -1,0 +1,243 @@
+######################################################
+#                ProjMan 2
+#        Distributed under GNU Public License
+# Author: Sergey Kalinin svk@nuk-svk.ru
+# Copyright (c) "", 2022, https://nuk-svk.ru
+######################################################
+namespace eval Highlight {} {
+    proc TCL {txt} {
+        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 [info commands]
+        ctext::addHighlightClass $txt widgets #9d468d [list canvas ctext button entry label text labelframe frame toplevel scrollbar checkbutton canvas listbox menu menubar menubutton  radiobutton scale entry message tk_chooseDir tk_getSaveFile  tk_getOpenFile tk_chooseColor tk_optionMenu ttk::button ttk::checkbutton ttk::combobox ttk::entry ttk::frame ttk::intro ttk::label ttk::labelframe ttk::menubutton ttk::treeview ttk::notebook ttk::panedwindow ttk::progressbar ttk::radiobutton ttk::scale ttk::scrollbar ttk::separator ttk::sizegrip ttk::spinbox ]
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\$"
+        ctext::addHighlightClass $txt variable_funcs gold {set global variable unset}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt namespaces #4f64ff {::}
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+        ctext::addHighlightClassForRegexp $txt colors #68ceff {(#)(\w)+?(\s|$)} 
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(^|;)\s*(#)[^\n\r]*}
+        ctext::addHighlightClass $txt bool #3e803b {null false true}
+    }
+
+    proc Default {txt} {
+        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z\-_]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 [info commands]
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\$"
+        ctext::addHighlightClass $txt variable_funcs gold {set global variable unset}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClassForRegexp $txt namespaces #4f64ff {::}
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+    }
+    
+    proc SH {txt} {
+        ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {if fi else elseif then while case esac do in exit source echo package mkdir ls rm sed awk grep date jq zip tar gzip mount umount test make curl git iconv less gcc scp rsync cut tr function}
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\$"
+        ctext::addHighlightClassForRegexp $txt vars_extended #4471ca {\$\{[a-zA-Z0-9\_\-:\./\$\{\}]+\}}
+        ctext::addHighlightClass $txt variable_funcs gold {set export}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+    }
+    
+    proc GO {txt} {
+        ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {break default func goto select case defer if map chan else import package switch const fallthrough interface  range continue for go return}
+        ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 float bool byte}
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\&"
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\*"
+        # ctext::addHighlightClassForRegexp $txt vars_extended #4471ca {\$\{[a-zA-Z0-9\_\-:\./\$\{\}]+\}}
+        ctext::addHighlightClass $txt variable_funcs gold {var type struct}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClass $txt bool #3e803b {nil false true}
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+    }
+
+    proc PY {txt} {
+        ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {if else elif for while case switch def import from return make break defer continue package len print with open try: except: in}
+        ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 float bool byte}
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\&"
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\*"
+        # ctext::addHighlightClass $txt variable_funcs gold {var type struct}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+    }
+    
+    proc YAML {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt stackControl #19a2a6 {\s*?[\w]+:}
+        ctext::addHighlightClassForRegexp $txt vars #4471ca {(\$|\*|\&)[\.a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt varsansible #4471ca {(\{\{)(\s*?|)[\.a-zA-Z0-9\_\-]+((\s*?|))(\}\})}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+    }
+    
+    proc YML {txt} {
+        Highlight::YAML $txt
+    }
+    
+    proc XML {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt stackControl #19a2a6 {(<|<\\)*?[\w]+(/|)(>)}
+        ctext::addHighlightClassForRegexp $txt vars #4471ca {(\$|\*|\&)[\.a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        # ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        # ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClassForSpecialChars $txt tags lightgreen {<>/}
+    }
+    
+    proc HTML {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt stackControl #19a2a6 {(<|</)([\w]+)}
+        ctext::addHighlightClassForRegexp $txt vars #4471ca {(\$|\*|\&)[\.a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {(\s)([\w]+)(=)}
+        ctext::addHighlightClassForSpecialChars $txt tags lightgreen {<>/}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(<\!--)\s*(.+)\s*(-->)} 
+    }
+    
+    proc HTM {txt} {
+        Highlight::HTML $txt
+    }
+    
+    proc RB {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {def end class if else for while case when require module begin rescue self return include unless raise private new do synchronize}
+        ctext::addHighlightClassForRegexp $txt vars #4471ca {(\$|\*|\&)[\.a-zA-Z0-9\_\-\[\]]+}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClassForRegexp $txt namespaces #4f64ff {::}
+        ctext::addHighlightClassForRegexp $txt dog #0082ff {(@)[\.a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClass $txt bool #7e5fb3 {nil false true}
+        
+    }
+    
+    proc MD {txt} {
+        ctext::addHighlightClassForRegexp $txt comments #666666 {^\s+?(#|//).*$}
+        ctext::addHighlightClassForRegexp $txt lists #4471ca {(\*|-|\+)+}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt url #19a2a6 {(http|https|ftp|ssh)(://)(\w|\.|-|/)+?}
+        ctext::addHighlightClassForRegexp $txt email #467a7b {(\w|\.|-)+?(@)(\w|\.|-)+?($|\s)}
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt sharp #975db4 {^(#+?)\s(.*?)$}
+        ctext::addHighlightClassForRegexp $txt quotedtext #a9b36c {^(\s*?)(>+).+?$}
+        ctext::addHighlightClassForRegexp $txt italictext #dff74e {((_|\*)+?)(\w+?)((_|\*)+?)}
+    }
+    
+    proc PL {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {sub my end class new if else elsif for foreach while case when use ne eq print exit chdir rand die lt gt le ge say unless return chomp package push exec grep eval warn scalar next continue close module require}
+        ctext::addHighlightClassForRegexp $txt vars #4471ca {(\$|\*|\&)[\.a-zA-Z0-9\_\-\[\]]+}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        # ctext::addHighlightClassForSpecialChars $txt dog #0082ff {@}
+        ctext::addHighlightClassForRegexp $txt dog #0082ff {(@)[\.a-zA-Z0-9\_\-\[\]]+}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+        ctext::addHighlightClassForRegexp $txt namespaces #0093ff {->|\+\+|::}
+    }
+    
+    proc INI {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
+        ctext::addHighlightClassForRegexp $txt stackControl #4471ca {^(\s*?)\[[\.a-zA-Z0-9\_\-\[\]\s\.:]+\]}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt dog #0082ff {(@)[\.a-zA-Z0-9\_\-\[\]]+}
+        ctext::addHighlightClassForRegexp $txt colors #68ceff {(#)[\w]+?}
+        ctext::addHighlightClassForRegexp $txt keyword #19a2a6 {^(\s*?).+(\s*?=)}
+        ctext::addHighlightClassForSpecialChars $txt equal #0082ff {=}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(^\s*#|^\s*;|\s+;)[^\n\r]*}    
+        ctext::addHighlightClassForRegexp $txt colors #68ceff {(#)(\w)+?(\s|$)} 
+    }
+    
+    proc DESKTOP {txt} {
+        Highlight::INI $txt
+    }
+
+    proc SPEC {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z0-9]+}
+        ctext::addHighlightClassForRegexp $txt macros #0082ff {(%)[\.a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt var #4471ca {(\$)[\.a-zA-Z0-9\_\-\[\]]+}
+        # ctext::addHighlightClassForRegexp $txt colors #68ceff {(#)[^\n\r]*}
+        ctext::addHighlightClassForRegexp $txt keyword #68ceff {^(\s*?)[a-zA-Z0-9\_\-]+(\s*?:)}
+        ctext::addHighlightClassForSpecialChars $txt equal #0082ff {=}
+        ctext::addHighlightClassForRegexp $txt changelog lightgreen {^(\s*?)(\*|\-)(.+?)$}
+        ctext::addHighlightClass $txt shelcommand #19a2a6 {if fi else elseif then while case esac do in exit source echo package mkdir ls rm sed awk grep date jq zip tar gzip mount umount test make curl git iconv less gcc scp rsync cut tr function install}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+    }
+    proc LUA {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
+        ctext::addHighlightClass $txt stackControl #19a2a6 {and break do else elseif end false for function goto if in local nil not or repeat return then true until while}
+        # ctext::addHighlightClassForRegexp $txt vars #4471ca {(\$|\*|\&)[\.a-zA-Z0-9\_\-\[\]]+}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(--)[^\n\r]*}    
+        ctext::addHighlightClassForRegexp $txt namespaces #0093ff {->|\+\+|::}
+        ctext::addHighlightClass $txt bool #3e803b {null false true}
+    }
+    proc ExecuteColorized {txt} {
+        # ctext::addHighlightClassForRegexp $txt flags orange {\s-[a-zA-Z]+}
+        # ctext::addHighlightClass $txt stackControl #19a2a6 [info commands]
+        # ctext::addHighlightClass $txt widgets #9d468d [list canvas ctext button entry label text labelframe frame toplevel scrollbar checkbutton canvas listbox menu menubar menubutton  radiobutton scale entry message tk_chooseDir tk_getSaveFile  tk_getOpenFile tk_chooseColor tk_optionMenu ttk::button ttk::checkbutton ttk::combobox ttk::entry ttk::frame ttk::intro ttk::label ttk::labelframe ttk::menubutton ttk::treeview ttk::notebook ttk::panedwindow ttk::progressbar ttk::radiobutton ttk::scale ttk::scrollbar ttk::separator ttk::sizegrip ttk::spinbox ]
+        # ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\$"
+        # ctext::addHighlightClass $txt variable_funcs gold {set global variable unset}
+        # # ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        # ctext::addHighlightClassForRegexp $txt namespaces #4f64ff {::}
+        # ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).+("|'|`)}
+        # ctext::addHighlightClassForRegexp $txt colors #68ceff {(#)(\w)+?(\s|$)} 
+        # ctext::addHighlightClassForRegexp $txt comments #666666 {(^|;)\s*(#)[^\n\r]*}
+        # ctext::addHighlightClass $txt bool #3e803b {null false true}
+        # ctext::addHighlightClassForRegexp $txt paths lightblue {(\s)([\w]+)(=)}
+        # ctext::addHighlightClassForSpecialChars $txt tags lightgreen {<>/}
+        # ctext::addHighlightClassForRegexp $txt tags #199100 {/.+\s}
+        ctext::addHighlightClassForRegexp $txt gopaths lightblue {(.+?):(\d+):(\d+):}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {(\\|/|\.|^)((\w)|(\.)|(/)|([\.\w]))+?\s}
+        ctext::addHighlightClass $txt compile_errors #ff5050 {error Error ERROR invalid undefined cannot}
+        ctext::addHighlightClassForRegexp $txt url lightblue {\w+://\w.+\w+}
+    }
+    proc C {txt} {
+        global lexers
+        ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
+        ctext::addHighlightClassForRegexp $txt arrows orange {(->)|(-<)}
+        ctext::addHighlightClass $txt stackControl #19a2a6 [dict get $lexers C commands]
+        ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 float bool byte size_t void char uint32_t uint32}
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\&"
+        ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\*"
+        # ctext::addHighlightClassForRegexp $txt vars_extended #4471ca {\$\{[a-zA-Z0-9\_\-:\./\$\{\}]+\}}
+        ctext::addHighlightClass $txt variable_funcs gold {var type struct}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(//|/\*)[^\n\r]*}    
+        ctext::addHighlightClassForSpecialChars $txt qoute #b84a0c {"'`}
+        ctext::addHighlightClass $txt bool #3e803b {nil false true NULL TRUE FALSE}
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt macros #f88ffb {#\w+}
+        ctext::addHighlightClassForRegexp $txt include #68ceff {<[\w./_-]+?>}
+    }
+    proc H {txt} {Highlight::C $txt}
+
+    proc MAKEFILE {txt} {
+        ctext::addHighlightClassForRegexp $txt qoute #b84a0c {("|'|`).*?("|'|`)}
+        ctext::addHighlightClassForRegexp $txt stackControl #19a2a6 {\s*?[\w]+:}
+        ctext::addHighlightClassForRegexp $txt vars #4471ca {(\$|\*|\&)[\.a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt varsansible #4471ca {(\{\{)(\s*?|)[\.a-zA-Z0-9\_\-]+((\s*?|))(\}\})}
+        ctext::addHighlightClassForSpecialChars $txt brackets green {[]{}()}
+        ctext::addHighlightClassForRegexp $txt paths lightblue {\.[a-zA-Z0-9\_\-]+}
+        ctext::addHighlightClassForRegexp $txt comments #666666 {(#|//)[^\n\r]*}    
+    }
+}

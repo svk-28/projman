@@ -1,0 +1,203 @@
+######################################################
+#                ProjMan 2
+#        Distributed under GNU Public License
+# Author: Sergey Kalinin svk@nuk-svk.ru
+# Copyright (c) "", 2022, https://nuk-svk.ru
+######################################################
+# The config file procedures
+# create
+# copy
+# save
+######################################################
+
+namespace eval Config {} {
+    variable cfgINISections
+    variable cfgVariables
+}
+
+if [info exists env(LANG)] {
+    set locale $env(LANG)
+} else {
+    set locale "en"
+}
+
+set ::configDefault "\[General\]
+cfgModifyDate=''
+searchCommand=/usr/bin/grep
+searchCommandOptions=-r -n -H
+gitCommand=
+# must return a mime type of file
+fileTypeCommand=/usr/bin/file
+fileTypeCommandOptions=-i -b
+\[GUI\]
+locale=$locale
+theme=dark
+toolBarShow=true
+menuShow=true
+statusBarShow=true
+filesPanelShow=true
+filesPanelPlace=left
+geometry=800x600
+guiFont={Droid Sans Mono} 9
+guiFontBold={Droid Sans Mono} 9 bold
+guiFG=#cccccc
+\[Editor\]
+autoFormat=true
+font=Monospace 10
+fontBold=Monospace 10
+backGround=#333333
+foreground=#cccccc
+selectbg=#10a410a410a4
+selectLightBg=grey
+nbNormal=#000000
+nbModify=#ffff5d705d70
+lineNumberFG=#444444
+lineNumberBG=#151515
+selectBorder=0
+# must be: none, word or char
+editorWrap=word
+lineNumberShow=true
+tabSize=4
+procedureHelper=false
+variableHelper=true
+multilineComments=true
+\[UserSession\]
+opened=
+editedFiles=
+recentFolder=
+\[Executor\]
+TCL=tclsh
+GO=go
+PY=python3
+SH=bash
+PL=perl
+RB=ruby
+HTM=firefox
+HTML=firefox
+LUA=lua
+TROFF=groff
+\[Debug\]
+debug=false
+debugOut=stdout
+\[Viewer\]
+listSymbol=०
+viewerFont={Droid Sans Mono} 10
+h1Font={Droid Sans Mono} 20 bold
+h2Font={Droid Sans Mono} 18 bold
+h3Font={Droid Sans Mono} 16 bold
+h4Font={Droid Sans Mono} 14 bold
+h5Font={Droid Sans Mono} 12 bold
+h6Font={Droid Sans Mono} 10 bold
+mdListFont={Droid Sans Mono} 10
+italicFont={Droid Sans Mono} 10 italic
+boldFont={Droid Sans Mono} 10 bold
+italicBoldFont={Droid Sans Mono} 10 bold italic
+codeBlockBG=#7a7a7a
+codeBlockFG=black
+codeBlockFont=Monospace 10 italic
+textBG=#333333
+linkFont={Droid Sans Mono} 10 bold
+linkFG=#54bcff
+runViewer=true
+"
+proc Config::create {dir} {
+    set cfgFile [open [file join $dir projman.ini]  "w+"]
+    puts $cfgFile $::configDefault        
+    close $cfgFile
+}
+
+proc Config::read {dir} {
+    set cfgFile [ini::open [file join $dir projman.ini] "r"]
+    foreach section [ini::sections $cfgFile] {
+        foreach key [ini::keys $cfgFile $section] {
+            lappend ::cfgINIsections($section)  $key
+            set ::cfgVariables($key)  [ini::value $cfgFile $section $key]
+        }
+    }
+    ini::close $cfgFile
+}
+
+proc Config::write {dir} {
+    global activeProject editors
+    set cfgFile [ini::open [file join $dir projman.ini] "w"]
+    foreach section  [array names ::cfgINIsections] {
+        foreach key $::cfgINIsections($section) {
+            ini::set $cfgFile $section $key $::cfgVariables($key)
+        }
+    }
+    set systemTime [clock seconds]
+    # Set a config modify time (i don't know why =))'
+    ini::set $cfgFile "General" cfgModifyDate [clock format $systemTime -format "%D %H:%M:%S"]
+    ini::set $cfgFile "UserSession" editedFiles ""
+    
+    # Save an top level window geometry into config
+    ini::set $cfgFile "GUI" geometry [wm geometry .]
+    if {[info exists activeProject] !=0 && $activeProject ne ""} {
+        ini::set $cfgFile "UserSession" opened $activeProject
+        # Добавим пути к открытым в редакторе файлам в переменную
+        if [info exists editors] {
+            foreach i [dict keys $editors] {
+                # puts [dict get $editors $i]
+                if [dict exists $editors $i fileFullPath] {
+                    lappend edited [dict get $editors $i fileFullPath]
+                }
+            }
+            if [info exists edited] {
+                ini::set $cfgFile "UserSession" editedFiles $edited
+            }
+        }
+    } else {
+        ini::set $cfgFile "UserSession" opened ""
+        ini::set $cfgFile "UserSession" editedFiles ""
+    }
+    # puts $editors
+    
+    ini::commit $cfgFile
+    ini::close $cfgFile
+}
+
+# Добавление перменной в список 
+# если отсутствует нужная секция то она будет добавлена.
+proc Config::AddVariable {key value section} {
+    # Проверяем, существует ли уже такая переменная
+    if {[info exists ::cfgVariables($key)]} {
+        DebugPuts "The variable '$key' already exists: $::cfgVariables($key)"
+        return 0
+    }
+    
+    # Добавляем в массив переменных
+    set ::cfgVariables($key) $value
+    
+    # Добавляем в список ключей секции
+    if {[info exists ::cfgINIsections($section)]} {
+        # Проверяем, нет ли уже такого ключа в секции
+        if {[lsearch -exact $::cfgINIsections($section) $key] == -1} {
+            lappend ::cfgINIsections($section) $key
+        }
+    } else {
+        set ::cfgINIsections($section) [list $key]
+    }
+    DebugPuts "Config::AddVariable: The variable '$key' has been added to the array 'cfgVariables'"
+    
+    return 1
+}
+
+# Проверяем наличие переменных в конфиге на основе "эталонного" списка 
+# и выставляем значение по умолчанию если в конфиге переменной нет
+proc Config::CheckVariables {} {
+    set valList [split $::configDefault "\n"]
+    foreach item $valList {
+        if {[regexp -nocase -all -- {\[(\w+)\]} $item -> v1]} {
+            set section $v1
+        }
+        if {[regexp {^([^=]+)=(.*)$} $item -> var value]} {
+            if ![info exists ::cfgVariables($var)] {
+                DebugPuts "Error in Config::CheckVariables: variable ::cfgVariables($var) not found"
+                # set ::cfgVariables($var) $value
+                DebugPuts "Config::CheckVariables: The variable cfgVariables($var) setting to default value \"$value\""
+                Config::AddVariable "$var" "$value" "$section"
+
+            }
+        }
+    }
+}
