@@ -23,6 +23,8 @@ Highlightning:
 
 * HTML
 * XML
+* Makefile
+* Groff/Troff
 
 ## Requirements
 
