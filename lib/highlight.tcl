@@ -47,7 +47,7 @@ namespace eval Highlight {} {
     proc GO {txt} {
         ctext::addHighlightClassForRegexp $txt flags orange {-+[a-zA-Z\-_]+}
         ctext::addHighlightClass $txt stackControl #19a2a6 {break default func goto select case defer if map chan else import package switch const fallthrough interface  range continue for go return}
-        ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 float bool byte}
+        ctext::addHighlightClass $txt types #7187d5 {string int int16 int32 int64 uint32 uint64 float bool byte}
         ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\&"
         ctext::addHighlightClassWithOnlyCharStart $txt vars #4471ca "\*"
         # ctext::addHighlightClassForRegexp $txt vars_extended #4471ca {\$\{[a-zA-Z0-9\_\-:\./\$\{\}]+\}}
