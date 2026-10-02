@@ -1,5 +1,11 @@
 projman (2.0.0-beta7) stable; urgency=medium
 
+  *  Новая сборка
+
+ -- svk <svk@nuk-svk.ru>  Fri,  2 Oct 2026 16:11:22 +0300
+
+projman (2.0.0-beta7) stable; urgency=medium
+
   *  Добавлено выравнивание выделенного текста по колонкам. Добавлены меню и сочетания клавиш для этого
   *  Добавлена подсветка некоторых типов для GO
 
@@ -535,6 +541,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
