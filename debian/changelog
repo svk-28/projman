@@ -1,3 +1,11 @@
+projman (2.0.0-beta7) stable; urgency=medium
+
+  *  Добавлено выравнивание выделенного текста по колонкам. Добавлены меню и сочетания клавиш для этого
+  *  Добавлегна подсветка некоторых типов для  GO
+  *  Обновил readme
+
+ -- svk <svk@nuk-svk.ru>  Wed, 16 Sep 2026 10:51:26 +0300
+
 projman (2.0.0-beta6) stable; urgency=medium
 
   *  Добавлена  логика работы с Makefile (подсветка, навигация по структуре)
@@ -528,6 +536,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 

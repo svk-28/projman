@@ -1,16 +1,15 @@
 proc AlignSelectedText {text} {
-    global cfgVariables lexers
+    global cfgVariables
     set i 1
+    set tabSize $cfgVariables(tabSize)
     # set lst($i) ""
     foreach line [split [string map {"\r\n" "\n"} $text] "\n"] {
         if {$i == 1} {
             regexp -nocase -- {^(\s*)} $line -> space
-            # puts ">>$space<< [string length $space]"
-            if {[string length $space] > 0} {
-                set indent [string repeat " " $cfgVariables(tabSize)]
-            } else {
-                set indent ""
-            }
+            set indentLength [string length $space]
+            set steps [expr {int(ceil(double($indentLength) / $tabSize))}]
+            set indentCount [expr {$steps * $tabSize}]
+            set indent [string repeat " " $indentCount]
         }
         set words [regexp -all -inline {\S+} $line]
         foreach word $words {
