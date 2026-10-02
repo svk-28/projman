@@ -71,6 +71,9 @@ proc GetEditMenu {m} {
     # -accelerator "Ctrl+R"
 
     $m add separator
+    menu $m.formatText
+    $m add cascade -label [::msgcat::mc "Format text"] -menu $m.formatText
+    GetTextFormatMenu $m.formatText
     menu $m.convertCase
     $m add cascade -label [::msgcat::mc "Convert case"] -menu $m.convertCase
     GetConvertCaseMenu $m.convertCase
@@ -192,3 +195,9 @@ proc GetConvertIdentCaseMenu {m} {
 }
 # 2026 Vadim Ushakov <wandrien.dev@gmail.com>
 # ============================================================
+
+proc GetTextFormatMenu {m} {
+    $m add command -label [::msgcat::mc "Align by Columns"] -command AlignSelectedTextByColumns \
+        -accelerator "Ctrl-Shift-F"
+}
+

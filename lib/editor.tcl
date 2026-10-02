@@ -757,6 +757,9 @@ namespace eval Editor {
         bind $txt <Control-Shift-y> {SelectionToSentenceCase %W}
         bind $txt <Control-Shift-I> {SelectionToggleCase %W}
         bind $txt <Control-Shift-i> {SelectionToggleCase %W}
+        bind $txt <Control-Shift-f> {AlignSelectedTextByColumns %W}
+        bind $txt <Control-Shift-F> {AlignSelectedTextByColumns %W}
+        bind $txt <Control-Shift-Cyrillic_ef> {AlignSelectedTextByColumns %W}
 
         # bind $txt <Shift-Control-s> FileOper::Close
         # bind $txt <Shift-Control-Cyrillic_es> "FileOper::Close saveas"
