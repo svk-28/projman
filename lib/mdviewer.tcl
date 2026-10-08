@@ -65,17 +65,29 @@ proc ShowMD {fileFullPath {reload "false"}} {
         $txt tag configure italicBold -font $cfgVariables(italicBoldFont)
         $txt tag configure link -foreground $cfgVariables(linkFG) -font $cfgVariables(linkFont)
         $txt tag configure quote -background $cfgVariables(codeBlockBG)
+        $txt tag configure table -font $cfgVariables(viewerFont)
+
     } else {
         set txt .viewer.frmHelp.txt
         $txt delete 0.0 end
     }
     set codeBlockBegin false
+    set tableBegin false
+    set table ""
 
     set f [open "$fileFullPath" r]
     set lineNumber 0
     while {[gets $f line] >= 0} {
         # puts $line
         if {$line eq ""} {
+            # Tables
+            if {$tableBegin} {
+                # puts "Finded table end"
+                set tableBegin false
+                InsertTableIntoText $table $txt
+                set table ""
+            }
+            # Code block
             if {$codeBlockBegin eq "true"} {
                 $txt insert end "\n" codeBlock
             } else {
@@ -92,6 +104,9 @@ proc ShowMD {fileFullPath {reload "false"}} {
         } elseif {$textTag eq "codeBlock" && $codeBlockBegin eq "true"} {
             set codeBlockBegin false
         }
+        # puts ">$line< $textTag"
+        set prevEmpty 0
+        
         if {$codeBlockBegin eq "true"} {
             set textTag "codeBlock"
         }
@@ -114,6 +129,13 @@ proc ShowMD {fileFullPath {reload "false"}} {
                 $txt insert end "  "
             }
             $txt insert end [lindex $result 1]\n
+        } elseif {$textTag eq "table" && $tableBegin eq "false"} {
+            # puts "Finded table begin"
+            set tableBegin true
+            lappend table [ProcessLineWithTable $tableBegin $line]
+        } elseif {$textTag eq "table" && $tableBegin} {
+            set cells [ProcessLineWithTable $tableBegin $line]
+            lappend table $cells
         } else {
             $txt insert end "[lindex $result 1]\n" $textTag
         }
@@ -313,8 +335,13 @@ proc MarkDownParser {line} {
     }
     # Quoted text
     if [regexp -nocase -line -- {(^>(?:>|\s)*)(.*)$} $line match v1 v2] {
-        puts "Quoted text $match"
+        # puts "Quoted text $match"
         return [list quote $v2 $v1]
+    }
+
+    if [regexp  {^\s*\|.*\|\s*$} $line match] {
+        # puts "Finded table row"
+        return [list table ""]
     }
 
     return [list {} $line]
@@ -398,3 +425,97 @@ proc ExtractBlocks {line pattern} {
     }
     return $result
 }
+
+proc InsertTableIntoText {table txt} {
+    set rowCount 0
+    set cellCount 0
+    foreach row $table {
+        foreach cellString $row {
+            lappend lst($rowCount) [string trim $cellString]
+        }
+        incr rowCount
+    }
+
+    foreach index [array names lst]  {
+        set listLength [llength $lst($index)]
+        for {set i 0} {$i < $listLength} {incr i} {
+            set word [lindex $lst($index) $i]
+            set wordLength [string length $word]
+            
+            if ![info exists maxLength($i)] {
+                set maxLength($i) $wordLength
+            }
+            if {$wordLength > $maxLength($i)} {
+                set maxLength($i) $wordLength
+            }
+            # puts "word: $word \t wordLength $wordLength \t $maxLength($i)"
+        }
+        # puts "maxLength([expr $i - 1]) $maxLength([expr $i - 1])"
+        
+    }
+    set rowLength 1   ;# начальный │
+
+    set ncols [llength [lsort -integer [array names maxLength]]]
+ 
+    set headerBorder "┌"
+    set footerBorder "└"
+    set separator "├"
+    for {set i 0} {$i < $ncols} {incr i} {
+        set x [expr {$maxLength($i) + 2}]
+        append headerBorder [string repeat "─" $x]
+        append footerBorder [string repeat "─" $x]
+        append separator [string repeat "─" $x]
+        if {$i == $ncols - 1} {
+            append headerBorder "┐\n"
+            append footerBorder "┘\n"
+            append separator "┤\n"
+        } else {
+            append headerBorder "┬"
+            append footerBorder "┴"
+            append separator "┼"
+        }
+    }
+    puts "rowLength $rowLength"
+    set textOut "$headerBorder"
+  
+    foreach index [lsort -integer [array names lst]]  {
+        set wordOut "│"
+        if {[llength $lst($index)] == 1 && [lindex $lst($index) 0] eq "\uE000"} {
+            append textOut $separator
+            continue
+        }
+        set listLength [llength $lst($index)]
+        for {set i 0} {$i < $listLength} {incr i} {
+            set word [lindex $lst($index) $i]
+            set wordLength [string length $word]
+            set indentCount [expr $maxLength($i) - $wordLength]
+            append wordOut " $word[string repeat " " $indentCount] │"
+            # if {$i == [expr $listLength -1]} {append wordOut "│"}
+        }
+        append textOut "[string trimright $wordOut]\n"
+    }
+    append textOut $footerBorder
+
+    # return $textOut
+    $txt insert end $textOut table
+}
+
+proc SeparatorDetect {line} {
+    return [regexp {^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$} $line]
+}
+
+
+proc ProcessLineWithTable {tableBegin line} {
+    # puts "$line"
+    set line [string trim $line]
+
+    if {[SeparatorDetect $line]} {
+        # puts "Find separator"
+        return [list "\uE000"]
+    }
+
+    # 2. Потом разобрать на ячейки
+    set line [string trim $line "|"]
+    return [lmap cell [split $line "|"] {string trim $cell}]
+}
+
