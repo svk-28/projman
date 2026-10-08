@@ -79,15 +79,37 @@ proc ShowMD {fileFullPath {reload "false"}} {
     set lineNumber 0
     while {[gets $f line] >= 0} {
         # puts $line
-        if {$line eq ""} {
-            # Tables
-            if {$tableBegin} {
-                # puts "Finded table end"
+        # if {$line eq ""} {
+            # # Tables
+            # if {$tableBegin} {
+                # # puts "Finded table end"
+                # set tableBegin false
+                # InsertTableIntoText $table $txt
+                # set table ""
+            # }
+            # # Code block
+            # if {$codeBlockBegin eq "true"} {
+                # $txt insert end "\n" codeBlock
+            # } else {
+                # $txt insert end "\n"
+            # }
+            # incr lineNumber
+            # continue
+        # }
+        if {$tableBegin} {
+            if {$line eq ""} {
                 set tableBegin false
                 InsertTableIntoText $table $txt
                 set table ""
+                $txt insert end "\n"
+            } else {
+                lappend table [ProcessLineWithTable $tableBegin $line]
             }
-            # Code block
+            incr lineNumber
+            continue
+        }
+    
+        if {$line eq ""} {
             if {$codeBlockBegin eq "true"} {
                 $txt insert end "\n" codeBlock
             } else {
@@ -96,6 +118,7 @@ proc ShowMD {fileFullPath {reload "false"}} {
             incr lineNumber
             continue
         }
+    
         set result [MarkDownParser $line]
         # puts $result
         set textTag [lindex $result 0]
@@ -518,4 +541,3 @@ proc ProcessLineWithTable {tableBegin line} {
     set line [string trim $line "|"]
     return [lmap cell [split $line "|"] {string trim $cell}]
 }
-
