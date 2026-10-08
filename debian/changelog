@@ -1,3 +1,10 @@
+projman (2.0.0-beta8) stable; urgency=medium
+
+  *  Добавлено вставка/удаление пробелов в начале строки для выделенного блока текста
+  *  Добавил перевод
+
+ -- svk <svk@nuk-svk.ru>  Fri,  2 Oct 2026 18:31:44 +0300
+
 projman (2.0.0-beta7) stable; urgency=medium
 
   *  Новая сборка
@@ -541,6 +548,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
