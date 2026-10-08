@@ -1,5 +1,12 @@
 projman (2.0.0-beta8) stable; urgency=medium
 
+  *  Добавил вывод таблиц в MD просмотрщик
+  *  Новая сборка
+
+ -- svk <svk@nuk-svk.ru>  Thu,  8 Oct 2026 10:08:10 +0300
+
+projman (2.0.0-beta8) stable; urgency=medium
+
   *  Добавлено вставка/удаление пробелов в начале строки для выделенного блока текста
   *  Добавил перевод
 
@@ -548,6 +555,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
