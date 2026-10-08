@@ -174,16 +174,18 @@ namespace eval Editor {
         }
     }
 
-    proc InsertTabular {txt} {
+proc InsertTabular {txt {tabSize 0}} {
         global cfgVariables lexers editors
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
         set lineNum [lindex [split $pos "."] 0]
         set fileType [dict get $editors $txt fileType]
-        if {[dict exists $lexers $fileType tabSize] != 0 } {
-            set tabSize [dict get $lexers $fileType tabSize]
-        } else {
-            set tabSize $cfgVariables(tabSize)
+        if {$tabSize == 0} {
+            if {[dict exists $lexers $fileType tabSize] != 0 } {
+                set tabSize [dict get $lexers $fileType tabSize]
+            } else {
+                set tabSize $cfgVariables(tabSize)
+            }
         }
         # puts "Select : $selIndex"
         for {set i 0} {$i < $tabSize} { incr i} {
@@ -218,21 +220,23 @@ namespace eval Editor {
             $txt insert  $lineNum.[lindex [split $v2] 0] $tabInsert
         }
     }
-    proc DeleteTabular {txt} {
+    proc DeleteTabular {txt {tabSize 0}} {
         global cfgVariables lexers editors
         set selIndex [$txt tag ranges sel]
         set pos [$txt index insert]
         set fileType [dict get $editors $txt fileType]
-        if {[dict exists $lexers $fileType tabSize] != 0 } {
-            set tabSize [dict get $lexers $fileType tabSize]
-        } else {
-            set tabSize $cfgVariables(tabSize)
+        if {$tabSize == 0} {
+            if {[dict exists $lexers $fileType tabSize] != 0 } {
+                set tabSize [dict get $lexers $fileType tabSize]
+            } else {
+                set tabSize $cfgVariables(tabSize)
+            }
         }
         set lineNum [lindex [split $pos "."] 0]
         if {$selIndex != ""} {
             set lineBegin [lindex [split [lindex $selIndex 0] "."] 0]
             set lineEnd [lindex [split [lindex $selIndex 1] "."] 0]
-            set posBegin [lindex [split [lindex $selIndex 1] "."] 0]
+            set posBegin [lindex [split [lindex $selIndex 0] "."] 0]
             set posEnd [lindex [split [lindex $selIndex 1] "."] 1]
             if {$lineEnd == $lineNum && $posEnd == 0} {
                 set lineEnd [expr $lineEnd - 1]
@@ -760,6 +764,8 @@ namespace eval Editor {
         bind $txt <Control-Shift-f> {AlignSelectedTextByColumns %W}
         bind $txt <Control-Shift-F> {AlignSelectedTextByColumns %W}
         bind $txt <Control-Shift-Cyrillic_ef> {AlignSelectedTextByColumns %W}
+        bind $txt <Control-space> "Editor::InsertTabular $txt 1; break"
+        bind $txt <Control-BackSpace> "Editor::DeleteTabular $txt 1; break"
 
         # bind $txt <Shift-Control-s> FileOper::Close
         # bind $txt <Shift-Control-Cyrillic_es> "FileOper::Close saveas"
@@ -1558,5 +1564,5 @@ namespace eval Editor {
         # focus -force $frmText.t.t
         Execute $fileFullPath $frmText $w
     }
-
 }
+
