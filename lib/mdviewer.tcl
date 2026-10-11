@@ -66,49 +66,48 @@ proc ShowMD {fileFullPath {reload "false"}} {
         $txt tag configure link -foreground $cfgVariables(linkFG) -font $cfgVariables(linkFont)
         $txt tag configure quote -background $cfgVariables(codeBlockBG)
         $txt tag configure table -font $cfgVariables(viewerFont)
+        $txt tag configure strike -overstrike 1
 
     } else {
         set txt .viewer.frmHelp.txt
         $txt delete 0.0 end
     }
+
+    set f [open "$fileFullPath" r]
+    set lstLines {}
+    while {[gets $f line] >= 0} {
+        lappend lstLines $line
+    }
+    close $f
+    RenderMD $txt $lstLines
+}
+
+proc RenderMD {txt lstLines} {
+    global cfgVariables
+    set lstLinesLength [llength $lstLines]
     set codeBlockBegin false
     set tableBegin false
     set table ""
 
-    set f [open "$fileFullPath" r]
     set lineNumber 0
-    while {[gets $f line] >= 0} {
-        # puts $line
-        # if {$line eq ""} {
-            # # Tables
-            # if {$tableBegin} {
-                # # puts "Finded table end"
-                # set tableBegin false
-                # InsertTableIntoText $table $txt
-                # set table ""
-            # }
-            # # Code block
-            # if {$codeBlockBegin eq "true"} {
-                # $txt insert end "\n" codeBlock
-            # } else {
-                # $txt insert end "\n"
-            # }
-            # incr lineNumber
-            # continue
-        # }
+    while {$lineNumber < $lstLinesLength} {
+        set line [lindex $lstLines $lineNumber]
         if {$tableBegin} {
-            if {$line eq ""} {
+            if {![regexp {^\s*\|} $line]} {
+                # Конец таблицы
                 set tableBegin false
                 InsertTableIntoText $table $txt
                 set table ""
                 $txt insert end "\n"
+                if {$line eq ""} {
+                    incr lineNumber
+                }
             } else {
                 lappend table [ProcessLineWithTable $tableBegin $line]
+                incr lineNumber
             }
-            incr lineNumber
             continue
         }
-    
         if {$line eq ""} {
             if {$codeBlockBegin eq "true"} {
                 $txt insert end "\n" codeBlock
@@ -122,6 +121,20 @@ proc ShowMD {fileFullPath {reload "false"}} {
         set result [MarkDownParser $line]
         # puts $result
         set textTag [lindex $result 0]
+        # Заголовки
+        if {[lsearch -exact {h1 h2 h3 h4 h5 h6} $textTag] >= 0} {
+            $txt insert end "[lindex $result 1]\n" $textTag
+            set nextLineNumber [expr {$lineNumber + 1}]
+            set nextLine ""
+            if {$nextLineNumber < $lstLinesLength} {
+                set nextLine [lindex $lstLines $nextLineNumber]
+            }
+            if {$nextLine ne ""} {
+                $txt insert end "\n"
+            }
+            incr lineNumber
+            continue
+        }
         if {$textTag eq "codeBlock" && $codeBlockBegin eq "false"} {
             set codeBlockBegin true
         } elseif {$textTag eq "codeBlock" && $codeBlockBegin eq "true"} {
@@ -164,51 +177,85 @@ proc ShowMD {fileFullPath {reload "false"}} {
         }
         incr lineNumber
     }
-    close $f
-}
 
+}
+# proc ProcessLineWithCode {line txt} {
+    # set codeBlocks [ExtractCodeBlocks $line {`{1,3}([^`]+)`{1,3}}]
+    # 
+    # if {[llength $codeBlocks] == 0} {
+        # $txt insert end "$line\n"
+        # return
+    # }
+    # 
+    # set lastPos 0
+    # 
+    # foreach block $codeBlocks {
+        # # Извлекаем данные из блока
+        # set fullMatch   [lindex $block 0]
+        # set codeText    [lindex $block 1]
+        # set matchPos    [lindex $block 2]
+        # set codePos     [lindex $block 3]
+        # 
+        # set start       [lindex $matchPos 0]
+        # set end         [lindex $matchPos 1]
+        # 
+        # # Вставляем текст перед кодом
+        # if {$start > $lastPos} {
+            # set textBefore [string range $line $lastPos [expr {$start - 1}]]
+            # $txt insert end $textBefore
+        # }
+        # 
+        # # Вставляем код с соответствующим тегом
+        # if {[string match "```*" $fullMatch]} {
+            # $txt insert end $codeText codeBlock
+        # } else {
+            # $txt insert end $codeText code_inline
+        # }
+        # 
+        # set lastPos [expr {$end + 1}]
+    # }
+    # 
+    # # Вставляем остаток строки
+    # if {$lastPos < [string length $line]} {
+        # $txt insert end [string range $line $lastPos end]
+    # }
+    # 
+    # $txt insert end "\n"
+# }
 proc ProcessLineWithCode {line txt} {
     set codeBlocks [ExtractCodeBlocks $line {`{1,3}([^`]+)`{1,3}}]
-    
-    if {[llength $codeBlocks] == 0} {
-        $txt insert end "$line\n"
-        return
+    foreach block [ParseLineWithCode $line $codeBlocks] {
+        $txt insert end [lindex $block 0] [lindex $block 1]
     }
-    
+    $txt insert end "\n"
+        
+}
+
+proc ParseLineWithCode {line codeBlocks} {
+    set resultList {}
+    if {[llength $codeBlocks] == 0} {
+        return [list [list $line ""]]
+    }
     set lastPos 0
-    
     foreach block $codeBlocks {
-        # Извлекаем данные из блока
-        set fullMatch   [lindex $block 0]
-        set codeText    [lindex $block 1]
-        set matchPos    [lindex $block 2]
-        set codePos     [lindex $block 3]
-        
-        set start       [lindex $matchPos 0]
-        set end         [lindex $matchPos 1]
-        
-        # Вставляем текст перед кодом
+        set fullMatch [lindex $block 0]
+        set codeText  [lindex $block 1]
+        set start     [lindex [lindex $block 2] 0]
+        set end       [lindex [lindex $block 2] 1]
         if {$start > $lastPos} {
-            set textBefore [string range $line $lastPos [expr {$start - 1}]]
-            $txt insert end $textBefore
+            lappend resultList [list [string range $line $lastPos [expr {$start - 1}]] ""]
         }
-        
-        # Вставляем код с соответствующим тегом
         if {[string match "```*" $fullMatch]} {
-            $txt insert end $codeText codeBlock
+            lappend resultList [list $codeText codeBlock]
         } else {
-            $txt insert end $codeText code_inline
+            lappend resultList [list $codeText code_inline]
         }
-        
         set lastPos [expr {$end + 1}]
     }
-    
-    # Вставляем остаток строки
     if {$lastPos < [string length $line]} {
-        $txt insert end [string range $line $lastPos end]
+        lappend resultList [list [string range $line $lastPos end] ""]
     }
-    
-    $txt insert end "\n"
+    return $resultList
 }
 
 # Функция вставки ссылки
@@ -244,7 +291,11 @@ proc ProcessLineWithURL {line txt urlList} {
     }
     set resultLine ""
     set lastPos 0
+    puts "line: $line"
+    puts "list: $urlList"
     foreach url [lindex $urlList 1] {
+        puts "url: $url"
+       
         set start [lindex [lindex $url 1] 0]
         set end [lindex [lindex $url 1] 1]
         set linkName [lindex [lindex $url 2] 0]
@@ -271,22 +322,63 @@ proc ProcessLineWithURL {line txt urlList} {
     $txt insert end "\n"
 }
 
-proc ProcessLineWithMark {line txt textList} {
-    if {[llength $textList] == 0} {
+proc ProcessLineWithURL_ {line txt lst} {
+    set urlList [lindex $lst 1]
+    if {[llength $urlList] == 0} {
         $txt insert end "$line\n"
         return
     }
-    set resultLine ""
+    puts "line: $line"
+    puts "list: $lst"
+    puts "ParseLineWithURL: [ParseLineWithURL $line $urlList]"
+    foreach url [ParseLineWithURL $line $urlList] {
+        puts "url: $url"
+        $txt insert end [lindex $url 0] [lindex $url 1] [lindex $url 2]
+    }
+    $txt insert end "\n"
+        
+}
+proc ParseLineWithURL {line urlList} {
+    set resultList {}
+    if {[llength $urlList] == 0} {
+        return [list [list $line ""]]
+    }
+    set lastPos 0
+    puts "urlList: $urlList"
+    foreach url $urlList {
+        set start [lindex [lindex $url 1] 0]
+        set end   [lindex [lindex $url 1] 1]
+        set linkName [lindex [lindex $url 2] 0]
+        set urlName  [lindex [lindex $url 3] 0]
+        puts "$start; $end; $linkName; $urlName"
+        if {$start > $lastPos} {
+            lappend resultList [list [string range $line $lastPos [expr {$start - 1}]] ""]
+        }
+        # Специальный маркер для ссылки — потому что InsertLink нужен URL
+        lappend resultList [list $linkName "$urlName"]
+        set lastPos [expr {$end + 1}]
+    }
+    if {$lastPos < [string length $line]} {
+        lappend resultList [list [string range $line $lastPos end] ""]
+    }
+    return $resultList
+}
+
+proc ParseLineWithMark {line textList} {
+    set resultList {}
     set lastPos 0
     foreach record [lindex $textList 1] {
         set start [lindex [lindex $record 2] 0]
         set end [lindex [lindex $record 2] 1]
         set markableText [lindex $record 1]
-
+        set prefix [lindex $record 5]
         # Вставляем текст перед ссылкой
         if {$start > $lastPos} {
-            set textBefore [string range $line $lastPos [expr {$start - 1}]]
-            $txt insert end $textBefore
+            lappend resultList [list [string range $line $lastPos [expr {$start - 1}]] ""]
+        }
+        # Пробелы БЕЗ тега
+        if {$prefix ne ""} {
+            lappend resultList [list $prefix ""]
         }
         switch [lindex $record 4] {
             "*"  {set tag italic}
@@ -295,20 +387,39 @@ proc ProcessLineWithMark {line txt textList} {
             "_"  {set tag italic}
             "__" {set tag bold}
             "___" {set tag italicBold}
-        }
-        $txt insert end " $markableText" $tag
+            "`" {set tag codeBlock}
+            "``" {set tag codeBlock}
+            "```" {set tag codeBlock}
+            "~~" {set tag strike}
+            default {set tag ""}
+       }
+        lappend resultList [list "$markableText" $tag]
         set lastPos [expr {$end + 1}]
     }
 
     # Вставляем остаток строки
     if {$lastPos < [string length $line]} {
-        $txt insert end [string range $line $lastPos end]
+        lappend resultList [list [string range $line $lastPos end] ""]
     }
     
+    return $resultList
+}
+
+proc ProcessLineWithMark {line txt textList} {
+    foreach segment [ParseLineWithMark $line $textList] {
+        $txt insert end [lindex $segment 0] [lindex $segment 1]
+    }
     $txt insert end "\n"
 }
 
 proc MarkDownParser {line} {
+    # Table
+    # [regexp  {^\s*\|.*\|\s*$} $line match]
+    if [regexp  {^\s*\|} $line match] {
+        # puts "Finded table row"
+        return [list table ""]
+    }
+
     # Title
     # [regexp -nocase -line -- {^(#{1,6})\s\w+} $line match sharp]
     if [regexp -nocase -all -line -- {^(#{1,6})\s(.+)} $line match sharp title] {
@@ -335,22 +446,23 @@ proc MarkDownParser {line} {
 
     # One string code blockregexp -nocase -all -line -- {(`{1,3}([^`]+)`{1,3})} string match v1 v2
     
-    if [regexp -nocase -all -line -- {`{1,3}([^`]+)`{1,3}} $line match v1 code v2] {
-        # puts $line
-        set result [ExtractCodeBlocks $line {`{1,3}([^`]+)`{1,3}}]
-        # puts "$v1, $code, $v2"
-        # puts "$result"
-        return [list codeBlockOneString $result]
-    }
+    # if [regexp -nocase -all -line -- {`{1,3}([^`]+)`{1,3}} $line match v1 code v2] {
+        # # puts $line
+        # set result [ExtractCodeBlocks $line {`{1,3}([^`]+)`{1,3}}]
+        # # puts "$v1, $code, $v2"
+        # # puts "$result"
+        # return [list codeBlockOneString $result]
+    # }
     # Line break (\, <br>, "  ")
     if [regexp -nocase -all -line -linestop -- {(.*)(\B|<br>| {2,})$} $line match v1 v2] {
         return [list breakTheLine $v1]
     }
     # Italic text
-    if [regexp -nocase -all -line -linestop -- {(^|\s+)(_{1,3}|\*{1,3})([^_\*]+)(_{1,3}|\*{1,3})} $line match v1 v2 v3 v4] {
-        set result [ExtractBlocks $line {(^|\s+)(_{1,3}|\*{1,3})([^_\*]+)(_{1,3}|\*{1,3})}]
+    if [regexp -nocase -all -line -linestop -- {(^|\s+)(_{1,3}|\*{1,3}|`{1,3}|~~)([^_\*~]+)(_{1,3}|\*{1,3}|`{1,3}|~~)} $line match v1 v2 v3 v4] {
+        set result [ExtractBlocks $line {(^|\s+)(_{1,3}|\*{1,3}|`{1,3}|~~)([^_\*`~]+)(_{1,3}|\*{1,3}|`{1,3}|~~)}]
         return [list markable $result]
     }
+
     # URL (link) parser
     if [regexp -nocase -all -line -linestop -- {\[([^\]]+)\]\(([^)]+)\)} $line match v1 v2] {
         set result [ExtractURL $line {\[([^\]]+)\]\(([^)]+)\)}]
@@ -362,10 +474,6 @@ proc MarkDownParser {line} {
         return [list quote $v2 $v1]
     }
 
-    if [regexp  {^\s*\|.*\|\s*$} $line match] {
-        # puts "Finded table row"
-        return [list table ""]
-    }
 
     return [list {} $line]
 
@@ -441,15 +549,25 @@ proc ExtractBlocks {line pattern} {
         
         # Получаем полный текст с кавычками
         set fullMatch [string range $line $start $end]
+
+        # Префикс (пробелы или пустая строка)
+        set v1Start [lindex $v1 0]
+        set v1End   [lindex $v1 1]
+        if {$v1Start >= 0 && $v1End >= $v1Start} {
+            set prefix [string range $line $v1Start $v1End]
+        } else {
+            set prefix ""
+        }
         
-        lappend result [list $fullMatch $codeText [list $start $end] [list $codeStart $codeEnd] [string range $line [lindex $blockSymbolBegin 0] [lindex $blockSymbolBegin 1]]]
+        lappend result [list $fullMatch $codeText [list $start $end] [list $codeStart $codeEnd] \
+            [string range $line [lindex $blockSymbolBegin 0] [lindex $blockSymbolBegin 1]] $prefix]
         
         set pos [expr {$end + 1}]
     }
     return $result
 }
 
-proc InsertTableIntoText {table txt} {
+proc InsertTableIntoText_ {table txt} {
     set rowCount 0
     set cellCount 0
     foreach row $table {
@@ -509,7 +627,7 @@ proc InsertTableIntoText {table txt} {
         }
         set listLength [llength $lst($index)]
         for {set i 0} {$i < $listLength} {incr i} {
-            set word [lindex $lst($index) $i]
+            set word [ParseCell [lindex $lst($index) $i]]
             set wordLength [string length $word]
             set indentCount [expr $maxLength($i) - $wordLength]
             append wordOut " $word[string repeat " " $indentCount] │"
@@ -521,6 +639,123 @@ proc InsertTableIntoText {table txt} {
 
     # return $textOut
     $txt insert end $textOut table
+}
+
+proc InsertTableIntoText {table txt} {
+    # ============================================================
+    # ПРОХОД 1. Собрать ячейки (как было)
+    # ============================================================
+    set rowCount 0
+    foreach row $table {
+        foreach cellString $row {
+            lappend lst($rowCount) [string trim $cellString]
+        }
+        incr rowCount
+    }
+
+    # ============================================================
+    # ПРОХОД 2. ParseCell + ширины по ВИДИМОЙ длине
+    # ============================================================
+    foreach index [array names lst] {
+        set listLength [llength $lst($index)]
+        for {set i 0} {$i < $listLength} {incr i} {
+            set cellRaw [lindex $lst($index) $i]
+
+            # Разбор ячейки в сегменты
+            if {$cellRaw eq "\uE000"} {
+                set parsed($index,$i) "\uE000"
+                set wordLength 0
+            } else {
+                set parsed($index,$i) [ParseCell $cellRaw]
+                # Видимая длина — сумма длин текстов в сегментах
+                set wordLength 0
+                foreach seg $parsed($index,$i) {
+                    incr wordLength [string length [lindex $seg 0]]
+                }
+            }
+
+            if {![info exists maxLength($i)]} {
+                set maxLength($i) $wordLength
+            }
+            if {$wordLength > $maxLength($i)} {
+                set maxLength($i) $wordLength
+            }
+        }
+    }
+
+    # ============================================================
+    # ПРОХОД 3. Рамки (как было)
+    # ============================================================
+    set ncols [llength [lsort -integer [array names maxLength]]]
+
+    set headerBorder "┌"
+    set footerBorder "└"
+    set separator "├"
+    for {set i 0} {$i < $ncols} {incr i} {
+        set x [expr {$maxLength($i) + 2}]
+        append headerBorder [string repeat "─" $x]
+        append footerBorder [string repeat "─" $x]
+        append separator [string repeat "─" $x]
+        if {$i == $ncols - 1} {
+            append headerBorder "┐\n"
+            append footerBorder "┘\n"
+            append separator "┤\n"
+        } else {
+            append headerBorder "┬"
+            append footerBorder "┴"
+            append separator "┼"
+        }
+    }
+
+    # ============================================================
+    # ПРОХОД 4. Эмиссия
+    # ============================================================
+    $txt insert end $headerBorder table
+
+    foreach index [lsort -integer [array names lst]] {
+        # Строка-разделитель
+        if {[llength $lst($index)] == 1 && [lindex $lst($index) 0] eq "\uE000"} {
+            $txt insert end $separator table
+            continue
+        }
+
+        $txt insert end "│" table
+
+        set listLength [llength $lst($index)]
+        for {set i 0} {$i < $listLength} {incr i} {
+            set cell $parsed($index,$i)
+            if {$cell eq "\uE000"} { set cell {} }
+
+            # Видимая длина — уже посчитана, но можно пересчитать
+            set vlen 0
+            foreach seg $cell { incr vlen [string length [lindex $seg 0]] }
+            set pad [expr {$maxLength($i) - $vlen}]
+
+            # Левый пробел
+            $txt insert end " " table
+
+            # Сегменты — каждый со своим тегом
+            foreach seg $cell {
+                set text [lindex $seg 0]
+                set tag  [lindex $seg 1]
+                if {[string match "LINK:*" $tag]} {
+                    InsertLink $txt $text [string range $tag 5 end]
+                } elseif {$tag ne ""} {
+                    $txt insert end $text [list table $tag]
+                } else {
+                    $txt insert end $text table
+                }
+            }
+
+            # Правый паддинг
+            if {$pad > 0} {
+                $txt insert end [string repeat " " $pad] table
+            }
+            $txt insert end " │" table
+        }
+        $txt insert end "\n" table
+    }
+    $txt insert end $footerBorder table
 }
 
 proc SeparatorDetect {line} {
@@ -540,4 +775,65 @@ proc ProcessLineWithTable {tableBegin line} {
     # 2. Потом разобрать на ячейки
     set line [string trim $line "|"]
     return [lmap cell [split $line "|"] {string trim $cell}]
+}
+
+
+
+# proc ParseCell {cell} {
+    # # Ячейка — одна строка. Применяем те же детекторы, что и MarkDownParser,
+    # # но БЕЗ конкуренции (не return, а последовательно).
+    # # Возвращает список сегментов {{text tag} ...} — как ParseLineWithMark.
+# 
+# puts "ParseCell : $cell"
+# 
+    # # Шаг 1. Код
+    # set codeBlocks [ExtractCodeBlocks $cell {`{1,3}([^`]+)`{1,3}}]
+    # if {[llength $codeBlocks] > 0} {
+        # return [ParseLineWithCode $cell $codeBlocks]
+    # }
+# 
+    # # Шаг 2. Bold/italic/strike
+    # set markList [ExtractBlocks $cell {(`{1,3}|\*{1,3}|_{1,3}|~~)([^`*_~]+)\1}]
+    # if {[llength $markList] > 0} {
+        # return [ParseLineWithMark $cell $markList]
+    # }
+# 
+    # # Шаг 3. Ссылки
+    # set urlList [ExtractURL $cell {\[([^\]]+)\]\(([^)]+)\)}]
+    # if {[llength $urlList] > 0} {
+        # return [ParseLineWithURL $cell $urlList]
+    # }
+# 
+    # # Ничего не нашли
+    # return [list [list $cell ""]]
+# }
+
+proc ParseCell {cell} {
+    puts "=== ParseCell: <$cell>"
+
+    # Шаг 1. Код
+    set codeBlocks [ExtractCodeBlocks $cell {`{1,3}([^`]+)`{1,3}}]
+    puts "  codeBlocks: $codeBlocks"
+    if {[llength $codeBlocks] > 0} {
+        return [ParseLineWithCode $cell $codeBlocks]
+    }
+
+    # Шаг 2. Bold/italic/strike
+    set markList [ExtractBlocks $cell {(^|\s+)(_{1,3}|\*{1,3}|`{1,3}|~~)([^_\*`~]+)(_{1,3}|\*{1,3}|`{1,3}|~~)}]
+    puts "  markList: <$markList>"
+    puts "  markList length: [llength $markList]"
+    if {[llength $markList] > 0} {
+        set parsed [ParseLineWithMark $cell $markList]
+        puts "  parsed: <$parsed>"
+        return $parsed
+    }
+
+    # Шаг 3. Ссылки
+    set urlList [ExtractURL $cell {\[([^\]]+)\]\(([^)]+)\)}]
+    puts "  urlList: <$urlList>"
+    if {[llength $urlList] > 0} {
+        return [ParseLineWithURL $cell $urlList]
+    }
+
+    return [list [list $cell ""]]
 }

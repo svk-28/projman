@@ -761,9 +761,15 @@ proc InsertTabular {txt {tabSize 0}} {
         bind $txt <Control-Shift-y> {SelectionToSentenceCase %W}
         bind $txt <Control-Shift-I> {SelectionToggleCase %W}
         bind $txt <Control-Shift-i> {SelectionToggleCase %W}
-        bind $txt <Control-Shift-f> {AlignSelectedTextByColumns %W}
-        bind $txt <Control-Shift-F> {AlignSelectedTextByColumns %W}
-        bind $txt <Control-Shift-Cyrillic_ef> {AlignSelectedTextByColumns %W}
+        bind $txt <Control-Shift-f> {AlignSelectedTextBySpace %W}
+        bind $txt <Control-Shift-F> {AlignSelectedTextBySpace %W}
+        bind $txt <Control-Shift-Cyrillic_ef> {AlignSelectedTextBy %W}
+        bind $txt <Control-Shift-b> {AlignSelectedTextByBar %W}
+        bind $txt <Control-Shift-B> {AlignSelectedTextByBar %W}
+        bind $txt <Control-Shift-Cyrillic_be> {AlignSelectedTextByBar %W}
+        bind $txt <Control-Shift-s> {AlignSelectedTextBySemi %W}
+        bind $txt <Control-Shift-S> {AlignSelectedTextBySemi %W}
+        bind $txt <Control-Shift-Cyrillic_es> {AlignSelectedTextBySemi %W}
         bind $txt <Control-space> "Editor::InsertTabular $txt 1; break"
         bind $txt <Control-BackSpace> "Editor::DeleteTabular $txt 1; break"
 
@@ -1565,4 +1571,3 @@ proc InsertTabular {txt {tabSize 0}} {
         Execute $fileFullPath $frmText $w
     }
 }
-

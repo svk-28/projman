@@ -197,7 +197,10 @@ proc GetConvertIdentCaseMenu {m} {
 # ============================================================
 
 proc GetTextFormatMenu {m} {
-    $m add command -label [::msgcat::mc "Align by Columns"] -command AlignSelectedTextByColumns \
+    $m add command -label "[::msgcat::mc "Align Columns by"] 'space'" -command AlignSelectedTextBySpace \
         -accelerator "Ctrl-Shift-F"
+    $m add command -label "[::msgcat::mc "Align Columns by"] '|'" -command AlignSelectedTextByBar \
+        -accelerator "Ctrl-Shift-B"
+    $m add command -label "[::msgcat::mc "Align Columns by"] ';'" -command AlignSelectedTextBySemi \
+        -accelerator "Ctrl-Shift-S"
 }
-

@@ -10,7 +10,7 @@
 ::msgcat::mcset ru "Add to existing project" "Добавить в существующий проект"
 ::msgcat::mcset ru "Add to project" "Добавить в проект"
 ::msgcat::mcset ru "Add new branch" "Создать новую ветку"
-::msgcat::mcset ru "Align by Columns" "Выровнять по столбцам"
+::msgcat::mcset ru "Align Columns by" "Выровнять стоблцы по"
 ::msgcat::mcset ru "Archive created in" "Архив помещен в"
 ::msgcat::mcset ru "Archive directory" "Каталог c архивами"
 ::msgcat::mcset ru "Archive file mask" "Маска архива"
