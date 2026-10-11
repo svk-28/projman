@@ -1,3 +1,16 @@
+projman (2.0.0-beta9) stable; urgency=medium
+
+  *  Добавлено выравнивание текста по '|' и ';'
+
+ -- Sergey Kalinin <svk@nuk-svk.ru>  Thu,  8 Oct 2026 22:39:11 +0300
+
+projman (2.0.0-beta9) stable; urgency=medium
+
+  *  Быстрый фикс отображения таблиц в МД
+  *  Быстрый фикс отображения таблиц в МД
+
+ -- svk <svk@nuk-svk.ru>  Thu,  8 Oct 2026 22:38:22 +0300
+
 projman (2.0.0-beta8) stable; urgency=medium
 
   *  Добавил вывод таблиц в MD просмотрщик
@@ -555,6 +568,7 @@ projman (2.0.0-alfa0) stable; urgency=medium
   *  Some changes into GUI (tabs)
 
  -- svkalinin <banzaj28@yandex.ru>  Thu,  5 Jul 2018 08:41:18 +0300
+
 
 
 
